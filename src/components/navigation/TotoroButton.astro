@@ -1,0 +1,66 @@
+---
+interface Props {
+  label?: string;
+}
+
+const { label = "Ghibli" } = Astro.props;
+---
+
+<a class="totoro-button" href="/ghibli/" aria-label="Enter the Ghibli gallery">
+  <span class="totoro-mark" aria-hidden="true">
+    <svg viewBox="0 0 48 48" role="presentation">
+      <path d="M24 6c-5.8 0-9.4 4.1-10.7 9.2C9.5 16.7 7 20.3 7 25.1 7 34.4 14.6 41 24 41s17-6.6 17-15.9c0-4.8-2.5-8.4-6.3-9.9C33.4 10.1 29.8 6 24 6Z" />
+      <path d="M16.2 17.5 12.8 12M31.8 17.5 35.2 12" />
+      <circle cx="19" cy="23" r="1.8" />
+      <circle cx="29" cy="23" r="1.8" />
+      <path d="M18.5 30.5c3.7 2.1 7.3 2.1 11 0" />
+    </svg>
+  </span>
+  <span class="totoro-label">{label}</span>
+</a>
+
+<style>
+  .totoro-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: var(--color-paper-50);
+    transition: opacity var(--duration-fast) ease;
+  }
+
+  .totoro-button:hover {
+    opacity: 0.68;
+  }
+
+  .totoro-mark {
+    display: grid;
+    width: 2.35rem;
+    height: 2.35rem;
+    place-items: center;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 50%;
+  }
+
+  svg {
+    width: 1.45rem;
+    height: 1.45rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.45;
+  }
+
+  .totoro-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 640px) {
+    .totoro-label {
+      display: none;
+    }
+  }
+</style>
