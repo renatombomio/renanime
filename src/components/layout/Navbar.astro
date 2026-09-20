@@ -4,24 +4,24 @@ import Divider from "../ui/Divider.astro";
 import TotoroButton from "../navigation/TotoroButton.astro";
 
 const links = [
-  { label: "Home", href: "/" },
-  { label: "Favorites", href: "/#favorites" },
-  { label: "Collection", href: "/collection/" },
-  { label: "Genres", href: "/#genres" },
-  { label: "Search", href: "/search/" },
-  { label: "Pending", href: "/pending/" },
-  { label: "Coming Soon", href: "/coming-soon/" }
+  { label: "Inicio", href: "/" },
+  { label: "Favoritos", href: "/#favorites" },
+  { label: "Colección", href: "/collection/" },
+  { label: "Géneros", href: "/#genres" },
+  { label: "Buscar", href: "/search/" },
+  { label: "Pendientes", href: "/pending/" },
+  { label: "Próximamente", href: "/coming-soon/" }
 ];
 ---
 
 <header class="site-header">
   <Container class="header-inner">
-    <a class="wordmark" href="/" aria-label="Renanime home">
+    <a class="wordmark" href="/" aria-label="Inicio de Renanime">
       <span class="wordmark-main">RENANIME</span>
-      <span class="wordmark-sub">PERSONAL ANIME GALLERY</span>
+      <span class="wordmark-sub">GALERÍA PERSONAL DE ANIME</span>
     </a>
 
-    <nav aria-label="Primary navigation">
+    <nav aria-label="Navegación principal">
       <ul>
         {links.map((link) => (
           <li><a href={link.href}>{link.label}</a></li>
