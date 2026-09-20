@@ -1,60 +1,156 @@
 ---
 import Container from "../ui/Container.astro";
 import Divider from "../ui/Divider.astro";
+
+const year = new Date().getFullYear();
+const links = [
+  { label: "Inicio", href: "/" },
+  { label: "Favoritos", href: "/#favorites" },
+  { label: "Colección", href: "/collection/" },
+  { label: "Géneros", href: "/#genres" },
+  { label: "Buscar", href: "/search/" }
+];
 ---
 
 <footer class="site-footer">
   <Divider />
   <Container class="footer-inner">
-    <div>
-      <span class="eyebrow">Galería de Renanime</span>
-      <p>Un archivo personal de historias, mundos y personajes.</p>
+    <div class="footer-top">
+      <div class="footer-intro">
+        <span class="eyebrow">Galería personal de anime</span>
+        <h2><span>Renanime's</span> Gallery.</h2>
+        <p>
+          Un archivo personal de historias, mundos y personajes que se quedan un poco más de lo esperado.
+        </p>
+      </div>
+
+      <nav aria-label="Navegación del pie de página">
+        <span class="footer-label">Explorar</span>
+        <ul>
+          {links.map((link) => (
+            <li><a href={link.href}>{link.label}</a></li>
+          ))}
+          <li><a href="/ghibli/">Ghibli</a></li>
+        </ul>
+      </nav>
     </div>
 
-    <div class="footer-meta">
-      <span>Hecho con curiosidad</span>
-      <span>© {new Date().getFullYear()} Renanime</span>
+    <div class="footer-bottom">
+      <span>REN / ANIME / {year}</span>
+      <span>Hecho con curiosidad.</span>
+      <span>© {year} RENANIME</span>
     </div>
   </Container>
 </footer>
 
 <style>
-  .footer-inner {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: var(--space-8);
-    padding-block: var(--space-12);
+  .site-footer {
+    position: relative;
+    background: var(--color-ink-950);
   }
 
-  p {
-    margin: var(--space-3) 0 0;
+  .footer-inner {
+    padding-block: clamp(4.5rem, 9vw, 8rem) 1.5rem;
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(9rem, 0.4fr);
+    gap: clamp(3rem, 10vw, 10rem);
+    align-items: end;
+  }
+
+  .footer-intro {
+    max-width: 44rem;
+  }
+
+  .footer-intro h2 {
+    margin: var(--space-4) 0 var(--space-6);
+    color: var(--color-paper-50);
+    font-family: var(--font-heading);
+    font-size: clamp(3rem, 8vw, 7.5rem);
+    font-weight: var(--weight-regular);
+    letter-spacing: var(--tracking-tight);
+    line-height: 0.88;
+  }
+
+  .footer-intro h2 span {
+    color: var(--color-accent);
+  }
+
+  .footer-intro p {
+    max-width: 34rem;
+    margin: 0;
     color: var(--color-muted-400);
     font-size: var(--text-sm);
+    line-height: 1.65;
   }
 
-  .footer-meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.35rem;
+  nav {
+    justify-self: end;
+    min-width: 9rem;
+  }
+
+  .footer-label {
+    display: block;
+    margin-bottom: var(--space-4);
     color: var(--color-muted-500);
-    font-family: var(--font-mono);
+    font-family: var(--font-meta);
     font-size: var(--text-xs);
-    text-align: right;
+    letter-spacing: var(--tracking-label);
     text-transform: uppercase;
-    letter-spacing: 0.08em;
   }
 
-  @media (max-width: 640px) {
-    .footer-inner {
-      align-items: flex-start;
-      flex-direction: column;
+  ul {
+    display: grid;
+    gap: 0.7rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    color: var(--color-muted-400);
+    font-family: var(--font-meta);
+    font-size: var(--text-xs);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  a:hover,
+  a:focus-visible {
+    color: var(--color-paper-50);
+  }
+
+  .footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-top: clamp(4rem, 9vw, 8rem);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+    color: var(--color-muted-500);
+    font-family: var(--font-meta);
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 720px) {
+    .footer-top {
+      grid-template-columns: 1fr;
+      gap: var(--space-12);
     }
 
-    .footer-meta {
+    nav {
+      justify-self: start;
+    }
+
+    .footer-bottom {
       align-items: flex-start;
-      text-align: left;
+      flex-direction: column;
+      gap: 0.55rem;
     }
   }
 </style>
