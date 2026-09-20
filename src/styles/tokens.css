@@ -1,12 +1,16 @@
-/* Renanime — Dark Cinematic Editorial design tokens */
+/* Renanime — Dark Cinematic Editorial design system */
 
 :root {
-  /* Color */
+  /* ─────────────────────────────────────────────
+     Color
+     ───────────────────────────────────────────── */
+
   --color-ink-950: #090909;
   --color-ink-900: #0d0d0d;
   --color-ink-850: #121212;
   --color-ink-800: #171717;
   --color-ink-700: #222222;
+  --color-ink-600: #2d2d2d;
 
   --color-paper-50: #f5f2ec;
   --color-paper-100: #ebe7df;
@@ -24,10 +28,20 @@
   --color-border-strong: rgba(245, 242, 236, 0.22);
   --color-overlay: rgba(9, 9, 9, 0.72);
 
-  /* Typography */
-  --font-display: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  /* Editorial gradients */
+  --gradient-hero: linear-gradient(180deg, rgba(9, 9, 9, 0.08) 0%, rgba(9, 9, 9, 0.86) 100%);
+  --gradient-vignette: radial-gradient(circle at center, transparent 35%, rgba(9, 9, 9, 0.72) 100%);
+  --gradient-surface: linear-gradient(135deg, rgba(245, 242, 236, 0.05), rgba(245, 242, 236, 0));
+
+  /* ─────────────────────────────────────────────
+     Typography
+     ───────────────────────────────────────────── */
+
+  --font-display: "Comico", sans-serif;
+  --font-heading: "Comico", sans-serif;
   --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-meta: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-mono: var(--font-meta);
 
   --text-xs: 0.6875rem;
   --text-sm: 0.8125rem;
@@ -39,11 +53,25 @@
   --text-4xl: 4.5rem;
   --text-display: clamp(3.5rem, 9vw, 9rem);
 
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  --tracking-tight: -0.055em;
+  --tracking-heading: -0.04em;
+  --tracking-body: 0;
+  --tracking-label: 0.14em;
+  --tracking-meta: 0.04em;
+
   --leading-tight: 0.94;
   --leading-snug: 1.15;
   --leading-body: 1.6;
+  --leading-meta: 1.2;
 
-  /* Spacing */
+  /* ─────────────────────────────────────────────
+     Spacing
+     ───────────────────────────────────────────── */
+
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -58,26 +86,71 @@
   --space-24: 6rem;
   --space-32: 8rem;
 
-  /* Layout */
-  --container-max: 1440px;
-  --gutter: clamp(1.25rem, 4vw, 4rem);
   --section-space: clamp(5rem, 10vw, 10rem);
+  --section-space-compact: clamp(3.5rem, 7vw, 6rem);
 
-  /* Shape */
+  /* ─────────────────────────────────────────────
+     Layout
+     ───────────────────────────────────────────── */
+
+  --container-max: 1440px;
+  --content-max: 960px;
+  --reading-max: 680px;
+  --gutter: clamp(1.25rem, 4vw, 4rem);
+
+  --grid-gap: clamp(0.75rem, 1.5vw, 1.5rem);
+  --grid-gap-lg: clamp(1.5rem, 3vw, 3rem);
+
+  /* ─────────────────────────────────────────────
+     Shape
+     ───────────────────────────────────────────── */
+
   --radius-sm: 2px;
   --radius-md: 6px;
   --radius-lg: 12px;
   --radius-pill: 999px;
 
-  /* Motion */
+  /* ─────────────────────────────────────────────
+     Shadows / depth
+     ───────────────────────────────────────────── */
+
+  --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.18);
+  --shadow-deep: 0 24px 80px rgba(0, 0, 0, 0.32);
+  --shadow-image: 0 18px 50px rgba(0, 0, 0, 0.28);
+
+  /* ─────────────────────────────────────────────
+     Opacity
+     ───────────────────────────────────────────── */
+
+  --opacity-disabled: 0.42;
+  --opacity-muted: 0.68;
+  --opacity-overlay: 0.72;
+  --opacity-hover: 0.88;
+  --opacity-full: 1;
+
+  /* ─────────────────────────────────────────────
+     Motion language
+     ───────────────────────────────────────────── */
+
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-linear: linear;
+
+  --duration-instant: 0ms;
   --duration-fast: 180ms;
   --duration-base: 400ms;
   --duration-slow: 800ms;
   --duration-cinematic: 1200ms;
+  --duration-crossfade: 1600ms;
 
-  /* Layering */
+  --motion-distance-sm: 10px;
+  --motion-distance-md: 24px;
+  --motion-distance-lg: 48px;
+
+  /* ─────────────────────────────────────────────
+     Z-index
+     ───────────────────────────────────────────── */
+
   --z-base: 0;
   --z-content: 10;
   --z-header: 50;
@@ -91,11 +164,21 @@
   }
 }
 
+@media (min-width: 1280px) {
+  :root {
+    --grid-gap: 1.5rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   :root {
     --duration-fast: 0ms;
     --duration-base: 0ms;
     --duration-slow: 0ms;
     --duration-cinematic: 0ms;
+    --duration-crossfade: 0ms;
+    --motion-distance-sm: 0px;
+    --motion-distance-md: 0px;
+    --motion-distance-lg: 0px;
   }
 }
