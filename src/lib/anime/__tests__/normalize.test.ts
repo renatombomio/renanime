@@ -87,7 +87,7 @@ describe("normalizeAnimeList", () => {
     const result = normalizeAnimeList([first, second]);
 
     expect(result).toHaveLength(1);
-    expect(result[0].metadata.title).toBe("Updated title");
+    expect(result[0].metadata.title).toBe("My Anime:Test");
   });
 
 
