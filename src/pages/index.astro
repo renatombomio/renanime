@@ -16,10 +16,8 @@ import SectionHeader from "../components/ui/SectionHeader.astro";
   <main>
     <section class="intro">
       <Container>
-        <div class="intro-grid">
-          <div>
-            <h1>Renanime's<br /><em>Gallery.</em></h1>
-          </div>
+        <div class="intro-content">
+          <h1><span class="name-accent">Ren</span>anime's<br /><em>Gallery.</em></h1>
 
           <div class="intro-copy">
             <p>
@@ -73,11 +71,7 @@ import SectionHeader from "../components/ui/SectionHeader.astro";
     padding-block: clamp(7rem, 15vw, 13rem) var(--space-16);
   }
 
-  .intro-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1.5fr) minmax(15rem, 0.5fr);
-    align-items: end;
-    gap: var(--space-12);
+  .intro-content {
     padding-bottom: var(--space-12);
   }
 
@@ -89,6 +83,10 @@ import SectionHeader from "../components/ui/SectionHeader.astro";
     font-weight: 500;
     letter-spacing: -0.065em;
     line-height: 0.84;
+  }
+
+  .name-accent {
+    color: var(--color-accent-soft);
   }
 
   h1 em {
@@ -104,7 +102,8 @@ import SectionHeader from "../components/ui/SectionHeader.astro";
   .intro-copy {
     display: grid;
     gap: var(--space-8);
-    max-width: 22rem;
+    max-width: 30rem;
+    margin-top: var(--space-10);
     padding-bottom: 0.4rem;
   }
 
@@ -130,11 +129,6 @@ import SectionHeader from "../components/ui/SectionHeader.astro";
     .intro {
       min-height: 70vh;
       padding-top: 6rem;
-    }
-
-    .intro-grid {
-      grid-template-columns: 1fr;
-      gap: var(--space-10);
     }
 
     h1 {
