@@ -1,12 +1,12 @@
 ---
-interface Props {
-  label?: string;
-}
-
-const { label = "Ghibli" } = Astro.props;
 ---
 
-<a class="totoro-button" href="/ghibli/" aria-label="Entrar en la galería de Ghibli">
+<a
+  class="totoro-button"
+  href="/ghibli/"
+  aria-label="Entrar en la galería de Ghibli"
+  title="Ghibli"
+>
   <span class="totoro-mark" aria-hidden="true">
     <svg viewBox="0 0 48 48" role="presentation">
       <path d="M24 6c-5.8 0-9.4 4.1-10.7 9.2C9.5 16.7 7 20.3 7 25.1 7 34.4 14.6 41 24 41s17-6.6 17-15.9c0-4.8-2.5-8.4-6.3-9.9C33.4 10.1 29.8 6 24 6Z" />
@@ -16,29 +16,28 @@ const { label = "Ghibli" } = Astro.props;
       <path d="M18.5 30.5c3.7 2.1 7.3 2.1 11 0" />
     </svg>
   </span>
-  <span class="totoro-label">{label}</span>
 </a>
 
 <style>
   .totoro-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.65rem;
-    color: var(--color-paper-50);
-    transition: opacity var(--duration-fast) ease;
-  }
-
-  .totoro-button:hover {
-    opacity: 0.68;
-  }
-
-  .totoro-mark {
-    display: grid;
-    width: 2.35rem;
-    height: 2.35rem;
+    display: inline-grid;
+    width: 2.65rem;
+    height: 2.65rem;
     place-items: center;
+    color: var(--color-paper-50);
     border: 1px solid var(--color-border-strong);
     border-radius: 50%;
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out),
+      transform var(--duration-base) var(--ease-out);
+  }
+
+  .totoro-button:hover,
+  .totoro-button:focus-visible {
+    color: var(--color-accent-soft);
+    border-color: var(--color-accent);
+    transform: translateY(-1px);
   }
 
   svg {
@@ -51,16 +50,15 @@ const { label = "Ghibli" } = Astro.props;
     stroke-width: 1.45;
   }
 
-  .totoro-label {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
   @media (max-width: 640px) {
-    .totoro-label {
-      display: none;
+    .totoro-button {
+      width: 2.35rem;
+      height: 2.35rem;
+    }
+
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
     }
   }
 </style>
