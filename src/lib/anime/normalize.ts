@@ -50,19 +50,65 @@ export function normalizeAnime(entry: AnimeEntry): AnimeEntry {
   };
 }
 
+function mergeAnimeEntries(primary: AnimeEntry, secondary: AnimeEntry): AnimeEntry {
+  return {
+    ...primary,
+    external: {
+      anilist: primary.external.anilist ?? secondary.external.anilist,
+      mal: primary.external.mal ?? secondary.external.mal,
+    },
+    metadata: {
+      ...primary.metadata,
+      synopsis: primary.metadata.synopsis ?? secondary.metadata.synopsis,
+      year: primary.metadata.year ?? secondary.metadata.year,
+      episodes: primary.metadata.episodes ?? secondary.metadata.episodes,
+      duration: primary.metadata.duration ?? secondary.metadata.duration,
+      studios: primary.metadata.studios.length > 0
+        ? primary.metadata.studios
+        : secondary.metadata.studios,
+      genres: primary.metadata.genres.length > 0
+        ? primary.metadata.genres
+        : secondary.metadata.genres,
+      images: {
+        cover: primary.metadata.images.cover || secondary.metadata.images.cover,
+        banner: primary.metadata.images.banner ?? secondary.metadata.images.banner,
+      },
+    },
+  };
+}
+
 export function normalizeAnimeList(entries: AnimeEntry[]): AnimeEntry[] {
-  const unique = new Map<string, AnimeEntry>();
+  const unique: AnimeEntry[] = [];
+  const byAnilist = new Map<number, number>();
+  const byMal = new Map<number, number>();
 
   for (const entry of entries) {
     const normalized = normalizeAnime(entry);
-    const key = normalized.external.anilist
-      ? `anilist:${normalized.external.anilist}`
-      : normalized.external.mal
-        ? `mal:${normalized.external.mal}`
-        : normalized.id;
+    const anilistId = normalized.external.anilist;
+    const malId = normalized.external.mal;
 
-    unique.set(key, normalized);
+    const existingIndex =
+      (anilistId !== undefined ? byAnilist.get(anilistId) : undefined) ??
+      (malId !== undefined ? byMal.get(malId) : undefined);
+
+    if (existingIndex === undefined) {
+      unique.push(normalized);
+      const index = unique.length - 1;
+      if (anilistId !== undefined) byAnilist.set(anilistId, index);
+      if (malId !== undefined) byMal.set(malId, index);
+      continue;
+    }
+
+    const merged = mergeAnimeEntries(unique[existingIndex], normalized);
+    unique[existingIndex] = merged;
+
+    if (merged.external.anilist !== undefined) {
+      byAnilist.set(merged.external.anilist, existingIndex);
+    }
+    if (merged.external.mal !== undefined) {
+      byMal.set(merged.external.mal, existingIndex);
+    }
   }
 
-  return [...unique.values()];
+  return unique;
 }
