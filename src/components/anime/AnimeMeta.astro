@@ -1,0 +1,30 @@
+---
+interface Props {
+  type?: string;
+  year?: string | number;
+  genres?: string[];
+}
+const { type, year, genres = [] } = Astro.props;
+---
+<div class="meta">
+  {type && <span>{type}</span>}
+  {year && <span>{year}</span>}
+  {genres.length > 0 && <span>{genres.slice(0, 2).join(" · ")}</span>}
+</div>
+
+<style>
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.7rem;
+    color: var(--color-muted-400);
+    font-size: var(--text-xs);
+    line-height: 1.4;
+  }
+
+  .meta span + span::before {
+    content: "·";
+    margin-right: 0.7rem;
+    color: var(--color-muted-600);
+  }
+</style>
