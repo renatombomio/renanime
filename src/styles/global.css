@@ -10,11 +10,14 @@ html {
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
   min-width: 320px;
+  min-height: 100vh;
   margin: 0;
+  overflow-x: hidden;
   background: var(--color-ink-950);
   color: var(--color-paper-50);
   line-height: var(--leading-body);
@@ -64,12 +67,23 @@ a {
   outline-offset: 4px;
 }
 
-body {
-  overflow-x: hidden;
+:disabled {
+  cursor: not-allowed;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+}
+
+@media (hover: hover) {
+  a,
+  button {
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      opacity var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out);
   }
 }
