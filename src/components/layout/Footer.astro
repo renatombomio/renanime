@@ -4,8 +4,18 @@ const year = new Date().getFullYear();
 
 <footer class="site-footer">
   <div class="footer-line"></div>
+
   <div class="footer-inner">
-    <p class="closing">Las historias terminan.<br />Lo que dejan, no.</p>
+    <p class="closing">
+      Todas las historias tienen un final.<br />
+      A veces amargo, otras placentero,<br />
+      pero cada final solo trae nuevos comienzos.
+    </p>
+
+    <p class="thanks">
+      Gracias por visitar mi galería de Anime.
+    </p>
+
     <div class="footer-meta">
       <span>RENANIME</span>
       <span>© {year}</span>
@@ -24,29 +34,42 @@ const year = new Date().getFullYear();
   }
 
   .footer-inner {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: var(--space-8);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: clamp(2rem, 8vw, 8rem);
+    align-items: end;
     width: min(100% - (var(--gutter) * 2), var(--container-max));
     margin-inline: auto;
-    padding-block: 2.25rem 1.5rem;
+    padding-block: clamp(3.5rem, 7vw, 6rem) 1.5rem;
   }
 
   .closing {
+    grid-column: 1;
     margin: 0;
     color: var(--color-paper-200);
     font-family: var(--font-heading);
     font-size: clamp(1.5rem, 3vw, 2.75rem);
     font-weight: var(--weight-regular);
     letter-spacing: var(--tracking-heading);
-    line-height: 1;
+    line-height: 1.08;
+  }
+
+  .thanks {
+    grid-column: 1;
+    margin: var(--space-8) 0 0;
+    color: var(--color-muted-400);
+    font-size: var(--text-sm);
+    line-height: var(--leading-body);
   }
 
   .footer-meta {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: end;
     display: flex;
-    align-items: center;
-    gap: var(--space-5);
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.45rem;
     color: var(--color-muted-500);
     font-family: var(--font-meta);
     font-size: 0.58rem;
@@ -56,13 +79,19 @@ const year = new Date().getFullYear();
 
   @media (max-width: 640px) {
     .footer-inner {
+      display: flex;
       align-items: flex-start;
       flex-direction: column;
-      padding-block: 2rem 1.25rem;
+      padding-block: 3rem 1.25rem;
+    }
+
+    .closing {
+      font-size: clamp(1.35rem, 7vw, 2rem);
     }
 
     .footer-meta {
-      gap: var(--space-4);
+      align-items: flex-start;
+      margin-top: var(--space-8);
     }
   }
 </style>
