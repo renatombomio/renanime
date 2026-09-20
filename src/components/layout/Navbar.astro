@@ -1,0 +1,122 @@
+---
+import Container from "../ui/Container.astro";
+import Divider from "../ui/Divider.astro";
+import TotoroButton from "../navigation/TotoroButton.astro";
+
+const links = [
+  { label: "Home", href: "/" },
+  { label: "Favorites", href: "/#favorites" },
+  { label: "Collection", href: "/collection/" },
+  { label: "Genres", href: "/#genres" },
+  { label: "Search", href: "/search/" },
+  { label: "Pending", href: "/pending/" },
+  { label: "Coming Soon", href: "/coming-soon/" }
+];
+---
+
+<header class="site-header">
+  <Container class="header-inner">
+    <a class="wordmark" href="/" aria-label="Renanime home">
+      <span class="wordmark-main">RENANIME</span>
+      <span class="wordmark-sub">PERSONAL ANIME GALLERY</span>
+    </a>
+
+    <nav aria-label="Primary navigation">
+      <ul>
+        {links.map((link) => (
+          <li><a href={link.href}>{link.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <TotoroButton />
+  </Container>
+
+  <Divider />
+</header>
+
+<style>
+  .site-header {
+    position: relative;
+    z-index: var(--z-header);
+    background: rgba(9, 9, 9, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .header-inner {
+    display: grid;
+    grid-template-columns: minmax(11rem, 1fr) auto minmax(11rem, 1fr);
+    align-items: center;
+    min-height: 5.5rem;
+    gap: var(--space-8);
+  }
+
+  .wordmark {
+    display: inline-flex;
+    width: fit-content;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .wordmark-main {
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+  }
+
+  .wordmark-sub {
+    color: var(--color-muted-400);
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.12em;
+  }
+
+  nav ul {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 2vw, 1.75rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  nav a {
+    color: var(--color-muted-300, var(--color-muted-400));
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color var(--duration-fast) ease;
+    white-space: nowrap;
+  }
+
+  nav a:hover,
+  nav a:focus-visible {
+    color: var(--color-paper-50);
+  }
+
+  .totoro-button {
+    justify-self: end;
+  }
+
+  @media (max-width: 1080px) {
+    .header-inner {
+      grid-template-columns: 1fr auto;
+    }
+
+    nav {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .header-inner {
+      min-height: 4.75rem;
+    }
+
+    .wordmark-main {
+      font-size: 0.82rem;
+    }
+  }
+</style>
