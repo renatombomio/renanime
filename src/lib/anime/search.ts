@@ -1,7 +1,9 @@
 import type { AnimeEntry } from "../../types/anime";
 import type { AnimeSearchOptions } from "../../types/api";
+import type { PersonalAnimeEntry } from "../../types/personal";
 import { anilistProvider } from "../api/anilist";
 import { jikanProvider } from "../api/jikan";
+import { normalizeAnimeList } from "./normalize";
 
 export interface SearchResult extends AnimeEntry {
   collectionStatus: "WATCHED" | "PENDING" | "NOT_IN_COLLECTION";
@@ -20,27 +22,18 @@ export function filterAnimeCollection(collection: AnimeEntry[], query: string): 
 }
 
 function dedupe(entries: AnimeEntry[]): AnimeEntry[] {
-  const byExternalId = new Map<string, AnimeEntry>();
-
-  for (const entry of entries) {
-    const key = entry.external.anilist
-      ? `anilist:${entry.external.anilist}`
-      : entry.external.mal
-        ? `mal:${entry.external.mal}`
-        : entry.id;
-
-    if (!byExternalId.has(key)) byExternalId.set(key, entry);
-  }
-
-  return [...byExternalId.values()];
+  return normalizeAnimeList(entries);
 }
 
 export async function searchAnime(options: AnimeSearchOptions): Promise<AnimeEntry[]> {
-  const results = await anilistProvider.search(options);
+  try {
+    const results = await anilistProvider.search(options);
+    if (results.length > 0) return normalizeAnimeList(results);
+  } catch {
+    // Fall through to Jikan when AniList is unavailable.
+  }
 
-  if (results.length > 0) return results;
-
-  return jikanProvider.search(options);
+  return normalizeAnimeList(await jikanProvider.search(options));
 }
 
 export function mergeProviderResults(
@@ -48,4 +41,15 @@ export function mergeProviderResults(
   secondary: AnimeEntry[]
 ): AnimeEntry[] {
   return dedupe([...primary, ...secondary]);
+}
+
+export function getCollectionStatus(
+  animeId: string,
+  states: PersonalAnimeEntry[],
+): SearchResult["collectionStatus"] {
+  const state = states.find((entry) => entry.animeId === animeId)?.state;
+
+  if (state?.watched) return "WATCHED";
+  if (state?.pending) return "PENDING";
+  return "NOT_IN_COLLECTION";
 }
