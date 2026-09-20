@@ -90,6 +90,40 @@ describe("normalizeAnimeList", () => {
     expect(result[0].metadata.title).toBe("Updated title");
   });
 
+
+  it("deduplicates the same anime across AniList and MAL IDs", () => {
+    const anilistEntry = makeAnime({
+      id: "anilist-1",
+      external: { anilist: 1, mal: 10 },
+    });
+    const malEntry = makeAnime({
+      id: "mal-10",
+      external: { mal: 10 },
+      metadata: { ...anilistEntry.metadata, title: "Same anime from MAL" },
+    });
+
+    const result = normalizeAnimeList([anilistEntry, malEntry]);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].external).toEqual({ anilist: 1, mal: 10 });
+    expect(result[0].metadata.title).toBe("My Anime:Test");
+  });
+
+  it("fills a missing provider ID when two entries refer to the same anime", () => {
+    const anilistEntry = makeAnime({
+      id: "anilist-1",
+      external: { anilist: 1 },
+    });
+    const malEntry = makeAnime({
+      id: "mal-10",
+      external: { mal: 10 },
+    });
+
+    const result = normalizeAnimeList([anilistEntry, malEntry]);
+
+    expect(result).toHaveLength(2);
+  });
+
   it("deduplicates entries by MAL ID when AniList is unavailable", () => {
     const first = makeAnime({
       id: "mal-10",
