@@ -1,17 +1,147 @@
 ---
-
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/layout/Navbar.astro";
+import Footer from "../components/layout/Footer.astro";
+import Container from "../components/ui/Container.astro";
+import Divider from "../components/ui/Divider.astro";
+import SectionHeader from "../components/ui/SectionHeader.astro";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout
+  title="Renanime's Gallery — Personal Anime Archive"
+  description="Renanime's personal anime gallery: favorites, collection, genres, pending titles and upcoming releases."
+>
+  <Navbar />
+
+  <main>
+    <section class="intro">
+      <Container>
+        <div class="intro-grid">
+          <div>
+            <span class="eyebrow">Personal archive / 001</span>
+            <h1>Stories I<br /><em>kept.</em></h1>
+          </div>
+
+          <div class="intro-copy">
+            <p>
+              A personal gallery of anime that stayed with me — collected,
+              remembered and revisited.
+            </p>
+            <span class="intro-index">REN / ANIME / 2026</span>
+          </div>
+        </div>
+
+        <Divider />
+      </Container>
+    </section>
+
+    <section id="favorites" class="placeholder-section section-space">
+      <Container>
+        <SectionHeader
+          eyebrow="01 / Curated"
+          title="Favorites"
+          description="The most personal part of the collection. The actual titles will arrive with the collection data layer."
+        />
+      </Container>
+    </section>
+
+    <section id="collection" class="placeholder-section section-space">
+      <Container>
+        <SectionHeader
+          eyebrow="02 / Archive"
+          title="Collection"
+          description="The complete watched archive, separated into series and movies."
+        />
+      </Container>
+    </section>
+
+    <section id="genres" class="placeholder-section section-space">
+      <Container>
+        <SectionHeader
+          eyebrow="03 / Taxonomy"
+          title="Genres"
+          description="Genres will be generated from the titles actually present in the collection."
+        />
+      </Container>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .intro {
+    min-height: min(72vh, 48rem);
+    display: grid;
+    align-items: end;
+    padding-block: clamp(7rem, 15vw, 13rem) var(--space-16);
+  }
+
+  .intro-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(15rem, 0.5fr);
+    align-items: end;
+    gap: var(--space-12);
+    padding-bottom: var(--space-12);
+  }
+
+  h1 {
+    margin: 0;
+    color: var(--color-paper-50);
+    font-family: var(--font-display);
+    font-size: clamp(4rem, 12vw, 11rem);
+    font-weight: 500;
+    letter-spacing: -0.065em;
+    line-height: 0.84;
+  }
+
+  h1 em {
+    color: var(--color-paper-300);
+    font-weight: 400;
+  }
+
+  .intro-copy {
+    display: grid;
+    gap: var(--space-8);
+    max-width: 22rem;
+    padding-bottom: 0.4rem;
+  }
+
+  .intro-copy p {
+    margin: 0;
+    color: var(--color-paper-200);
+    font-size: var(--text-lg);
+    line-height: 1.45;
+  }
+
+  .intro-index {
+    color: var(--color-muted-500);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+  }
+
+  .placeholder-section {
+    border-top: 0;
+  }
+
+  @media (max-width: 720px) {
+    .intro {
+      min-height: 70vh;
+      padding-top: 6rem;
+    }
+
+    .intro-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-10);
+    }
+
+    h1 {
+      font-size: clamp(3.75rem, 20vw, 7rem);
+    }
+
+    .intro-copy {
+      max-width: 28rem;
+    }
+  }
+</style>
