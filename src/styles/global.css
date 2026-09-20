@@ -1,3 +1,4 @@
+@import url("https://api.fontshare.com/v2/css?f[]=comico@400&display=swap");
 @import "tailwindcss";
 @import "./tokens.css";
 @import "./utilities.css";
