@@ -1,4 +1,5 @@
 import type { AnimeEntry } from "../types/anime";
+import type { PersonalAnimeEntry } from "../types/personal";
 
 const animeCollection: AnimeEntry[] = [];
 
@@ -20,4 +21,15 @@ export function getAnimeByExternalId(
 export function setAnimeCollection(entries: AnimeEntry[]): void {
   animeCollection.length = 0;
   animeCollection.push(...entries);
+}
+
+export function getPersonalCollection(
+  states: PersonalAnimeEntry[],
+): Array<{ anime: AnimeEntry; state: PersonalAnimeEntry["state"] }> {
+  return states
+    .map((entry) => {
+      const anime = getAnimeById(entry.animeId);
+      return anime ? { anime, state: entry.state } : null;
+    })
+    .filter((entry): entry is { anime: AnimeEntry; state: PersonalAnimeEntry["state"] } => entry !== null);
 }
