@@ -1,0 +1,27 @@
+---
+interface Props {
+  score?: number | null;
+}
+const { score } = Astro.props;
+---
+{score !== null && score !== undefined && (
+  <span class="rating" aria-label={`Puntuación personal: ${score} sobre 10`}>
+    <span aria-hidden="true">★</span> {score.toFixed(1)}
+  </span>
+)}
+
+<style>
+  .rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: var(--color-paper-200);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.04em;
+  }
+
+  .rating span {
+    color: var(--color-accent);
+  }
+</style>
