@@ -134,14 +134,14 @@ export const animeLibrary: LibraryEntry[] = [
   { animeId: "personal-131", title: "Dead Account", state: { status: "PENDING", favorite: false, recommended: false } },
   { animeId: "personal-132", title: "Yuusha-kei ni Shosu", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-133", title: "Hikaru ga Shinda Natsu", state: { status: "PENDING", favorite: false, recommended: false } },
-  { animeId: "personal-134", title: "100 Meters", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: false } },
+  { animeId: "personal-134", title: "100 Meters", format: "MOVIE", state: { status: "WATCHED", favorite: false, recommended: false } },
   { animeId: "personal-135", title: "Gachiakuta", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-136", title: "Ninja Kamui", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-137", title: "Scissor Seven", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-138", title: "The Eminence in Shadow", state: { status: "PENDING", favorite: false, recommended: false } },
   { animeId: "personal-139", title: "Cowboy Bebop", state: { status: "WATCHED", favorite: false, recommended: false } },
   { animeId: "personal-140", title: "Jujutsu Kaisen", state: { status: "WATCHED", favorite: false, recommended: false } },
-  { animeId: "personal-141", title: "The Boy and the Heron", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: false } },
+  { animeId: "personal-141", title: "The Boy and the Heron", format: "MOVIE", state: { status: "WATCHED", favorite: false, recommended: false } },
 ];
 
 export function getLibrary(): LibraryEntry[] {
