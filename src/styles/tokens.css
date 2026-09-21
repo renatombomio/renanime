@@ -37,8 +37,8 @@
      Typography
      ───────────────────────────────────────────── */
 
-  --font-display: "Comico", sans-serif;
-  --font-heading: "Comico", sans-serif;
+  --font-display: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-heading: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-meta: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --font-mono: var(--font-meta);
