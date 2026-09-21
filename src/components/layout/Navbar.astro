@@ -16,8 +16,8 @@ const links = [
 
 <header class="site-header">
   <Container class="header-inner">
-    <a class="brand" href="/" aria-label="Inicio">
-      <span aria-hidden="true">RA</span>
+    <a class="brand" href="/" aria-label="Inicio de Renanime">
+      <span class="brand-r">R</span><span>A</span>
     </a>
 
     <nav aria-label="Navegación principal">
@@ -27,7 +27,6 @@ const links = [
         ))}
       </ul>
     </nav>
-
 
     <div class="mobile-menu">
       <MobileMenu client:load />
@@ -40,30 +39,36 @@ const links = [
     position: sticky;
     top: 0;
     z-index: var(--z-header);
-    background: rgba(9, 9, 9, 0.9);
-    border-bottom: 1px solid var(--color-border);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    background: rgba(5, 5, 5, 0.94);
+    border-bottom: 1px solid rgba(245, 242, 236, 0.09);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 
   .header-inner {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: 5rem minmax(0, 1fr) 5rem;
     align-items: center;
-    min-height: 4.5rem;
-    padding-block: 0.75rem;
-    gap: clamp(1.5rem, 4vw, 4rem);
+    min-height: 4.25rem;
+    gap: 1rem;
   }
 
   .brand {
     display: inline-flex;
-    align-items: center;
+    align-items: baseline;
+    justify-self: start;
+    width: fit-content;
     color: var(--color-paper-50);
     font-family: var(--font-body);
-    font-size: 0.78rem;
-    font-weight: var(--weight-medium);
-    letter-spacing: 0.02em;
+    font-size: 1rem;
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.055em;
     line-height: 1;
+  }
+
+  .brand-r {
+    color: var(--color-accent);
   }
 
   nav {
@@ -75,7 +80,7 @@ const links = [
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: clamp(0.8rem, 1.7vw, 1.5rem);
+    gap: clamp(0.8rem, 1.55vw, 1.45rem);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -85,18 +90,19 @@ const links = [
     position: relative;
     color: var(--color-muted-400);
     font-family: var(--font-meta);
-    font-size: 0.58rem;
+    font-size: 0.61rem;
     font-weight: var(--weight-medium);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.085em;
     line-height: 1;
     text-transform: uppercase;
     white-space: nowrap;
+    transition: color var(--duration-fast) var(--ease-out);
   }
 
   nav a::after {
     position: absolute;
     right: 0;
-    bottom: -0.45rem;
+    bottom: -0.6rem;
     left: 0;
     height: 1px;
     background: var(--color-accent);
@@ -116,18 +122,15 @@ const links = [
     transform: scaleX(1);
   }
 
-
   .mobile-menu {
     display: none;
+    justify-self: end;
   }
 
   @media (max-width: 1120px) {
     .header-inner {
-      grid-template-columns: auto auto;
-      justify-content: space-between;
-      min-height: 4.25rem;
-      padding-block: 0.65rem;
-      gap: 1rem;
+      grid-template-columns: 1fr auto;
+      min-height: 4rem;
     }
 
     nav {
@@ -139,5 +142,13 @@ const links = [
     }
   }
 
-  @media (max-width: 520px) {  }
+  @media (max-width: 520px) {
+    .header-inner {
+      min-height: 3.75rem;
+    }
+
+    .brand {
+      font-size: 0.95rem;
+    }
+  }
 </style>
