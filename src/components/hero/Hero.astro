@@ -31,28 +31,28 @@ for (const config of heroSlides) {
 <HeroCarousel client:load slides={slides} />
 
 <style>
-  .hero {
+  :global(.hero ) {
     position: relative;
     min-height: min(86vh, 58rem);
     overflow: hidden;
     background: var(--color-ink-950);
   }
 
-  .hero-media,
+  :global(.hero-media) {
   .hero-image,
   .hero-vignette,
-  .hero-grain {
+  :global(.hero-grain ) {
     position: absolute;
     inset: 0;
   }
 
-  .hero-image {
+  :global(.hero-image ) {
     background-position: center;
     background-size: cover;
     will-change: transform, opacity;
   }
 
-  .hero-vignette {
+  :global(.hero-vignette ) {
     background:
       linear-gradient(90deg, rgba(9, 9, 9, 0.96) 0%, rgba(9, 9, 9, 0.72) 35%, rgba(9, 9, 9, 0.18) 72%, rgba(9, 9, 9, 0.5) 100%),
       linear-gradient(0deg, rgba(9, 9, 9, 0.9) 0%, rgba(9, 9, 9, 0.08) 42%, rgba(9, 9, 9, 0.28) 100%);
@@ -64,7 +64,7 @@ for (const config of heroSlides) {
     pointer-events: none;
   }
 
-  .hero-inner {
+  :global(.hero-inner ) {
     position: relative;
     z-index: 1;
     display: flex;
@@ -76,11 +76,11 @@ for (const config of heroSlides) {
     justify-content: space-between;
   }
 
-  .hero-brand {
+  :global(.hero-brand ) {
     align-self: flex-start;
   }
 
-  .hero-kicker {
+  :global(.hero-kicker ) {
     margin: 0;
     color: var(--color-paper-50);
     font-family: var(--font-body);
@@ -89,11 +89,11 @@ for (const config of heroSlides) {
     letter-spacing: 0.02em;
   }
 
-  .hero-accent {
+  :global(.hero-accent ) {
     color: var(--color-accent);
   }
 
-  .hero-brand h1 {
+  :global(.hero-brand h1 ) {
     margin: 0.25rem 0 0;
     color: var(--color-paper-50);
     font-family: "Comico", var(--font-body);
@@ -103,19 +103,19 @@ for (const config of heroSlides) {
     line-height: 0.8;
   }
 
-  .hero-slides {
+  :global(.hero-slides ) {
     position: relative;
     min-height: 11rem;
     margin-top: clamp(3rem, 8vw, 7rem);
   }
 
-  .hero-content {
+  :global(.hero-content ) {
     position: absolute;
     inset: 0;
     max-width: 34rem;
   }
 
-  .hero-eyebrow {
+  :global(.hero-eyebrow ) {
     margin: 0 0 0.75rem;
     color: var(--color-accent-soft);
     font-family: var(--font-meta);
@@ -124,7 +124,7 @@ for (const config of heroSlides) {
     text-transform: uppercase;
   }
 
-  .hero-content h2 {
+  :global(.hero-content h2 ) {
     margin: 0;
     color: var(--color-paper-50);
     font-family: var(--font-body);
@@ -134,7 +134,7 @@ for (const config of heroSlides) {
     line-height: 0.98;
   }
 
-  .hero-note {
+  :global(.hero-note ) {
     max-width: 30rem;
     margin: 1rem 0 0;
     color: var(--color-paper-200);
@@ -142,7 +142,7 @@ for (const config of heroSlides) {
     line-height: 1.55;
   }
 
-  .hero-meta {
+  :global(.hero-meta ) {
     display: flex;
     gap: 1rem;
     margin-top: 1.5rem;
@@ -153,19 +153,19 @@ for (const config of heroSlides) {
     text-transform: uppercase;
   }
 
-  .hero-controls {
+  :global(.hero-controls ) {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
     gap: 2rem;
   }
 
-  .hero-progress {
+  :global(.hero-progress ) {
     display: flex;
     gap: 0.75rem;
   }
 
-  .hero-progress button {
+  :global(.hero-progress button ) {
     display: grid;
     place-items: center;
     width: 2.25rem;
@@ -181,13 +181,13 @@ for (const config of heroSlides) {
     backdrop-filter: blur(8px);
   }
 
-  .hero-progress button.is-active {
+  :global(.hero-progress button.is-active ) {
     border-color: var(--color-paper-50);
     background: var(--color-paper-50);
     color: var(--color-ink-950);
   }
 
-  .hero-scroll {
+  :global(.hero-scroll ) {
     margin: 0;
     color: var(--color-muted-400);
     font-family: var(--font-meta);
@@ -197,28 +197,28 @@ for (const config of heroSlides) {
   }
 
   @media (max-width: 720px) {
-    .hero {
+    :global(.hero) {
       min-height: 88vh;
     }
 
-    .hero-inner {
+    :global(.hero-inner) {
       min-height: 88vh;
       padding-top: 6rem;
     }
 
-    .hero-brand h1 {
+    :global(.hero-brand h1) {
       font-size: clamp(4rem, 20vw, 7rem);
     }
 
-    .hero-slides {
+    :global(.hero-slides) {
       min-height: 13rem;
     }
 
-    .hero-controls {
+    :global(.hero-controls) {
       align-items: flex-start;
     }
 
-    .hero-scroll {
+    :global(.hero-scroll) {
       display: none;
     }
   }
