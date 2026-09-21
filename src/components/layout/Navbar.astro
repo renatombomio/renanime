@@ -47,19 +47,17 @@ const links = [
   }
 
   .header-inner {
-    display: grid;
-    grid-template-columns: 8rem minmax(0, 1fr) 8rem;
+    display: flex;
     align-items: center;
     min-height: 6rem;
     padding-block: 1.25rem;
-    gap: 2rem;
   }
 
   .brand {
     display: inline-flex;
     align-items: baseline;
-    justify-self: start;
-    width: fit-content;
+    flex: 0 0 8rem;
+    width: 8rem;
     color: var(--color-paper-50);
     font-family: var(--font-body);
     font-size: 1.15rem;
@@ -73,7 +71,7 @@ const links = [
   }
 
   nav {
-    justify-self: center;
+    flex: 1 1 auto;
     min-width: 0;
   }
 
@@ -81,7 +79,7 @@ const links = [
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: clamp(1.25rem, 2vw, 2.1rem);
+    gap: clamp(1.4rem, 2.2vw, 2.4rem);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -125,12 +123,12 @@ const links = [
 
   .mobile-menu {
     display: none;
-    justify-self: end;
+    flex: 0 0 8rem;
+    justify-content: flex-end;
   }
 
   @media (max-width: 1120px) {
     .header-inner {
-      grid-template-columns: 1fr auto;
       min-height: 4.75rem;
       padding-block: 0.85rem;
     }
@@ -140,17 +138,24 @@ const links = [
     }
 
     .mobile-menu {
-      display: block;
+      display: flex;
     }
   }
 
   @media (max-width: 520px) {
     .header-inner {
       min-height: 4.25rem;
+      padding-block: 0.7rem;
     }
 
     .brand {
+      flex-basis: 4rem;
+      width: 4rem;
       font-size: 1rem;
+    }
+
+    .mobile-menu {
+      flex-basis: 4rem;
     }
   }
 </style>
