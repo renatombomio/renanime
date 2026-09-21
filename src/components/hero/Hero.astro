@@ -40,20 +40,16 @@ for (const config of heroSlides) {
     position: absolute;
     inset: 0;
     z-index: 1;
+    overflow: hidden;
+    background: var(--color-ink-950);
   }
 
-  :global(.hero-image) {
-    position: absolute;
-    inset: 0;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    will-change: transform, opacity;
-  }
-
-  :global(.hero-vignette),
-  :global(.hero-grain) {
-    display: none;
+  :global(.hero-video) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
   }
 
   :global(.hero-inner) {
@@ -61,7 +57,7 @@ for (const config of heroSlides) {
     z-index: 3;
     display: flex;
     width: min(calc(100% - (var(--gutter) * 2)), var(--container-max));
-    min-height: min(70vw, calc(100svh - 88px));
+    min-height: min(78vw, calc(100svh - 88px));
     margin-inline: auto;
     padding-block: clamp(4rem, 7vw, 6rem) clamp(2rem, 4vw, 3rem);
     flex-direction: column;
@@ -153,27 +149,31 @@ for (const config of heroSlides) {
 
   @media (max-width: 720px) {
     :global(.hero) {
-      background: var(--color-ink-950);
+      min-height: calc(100svh - 68px);
     }
 
     :global(.hero-media) {
-      position: relative;
-      aspect-ratio: 16 / 9;
+      position: absolute;
+      inset: 0;
     }
 
-    :global(.hero-image) {
-      background-size: contain;
+    :global(.hero-video) {
+      object-fit: cover;
+      object-position: center;
     }
 
     :global(.hero-inner) {
       width: 100%;
-      min-height: auto;
-      padding: 2.5rem var(--gutter) 2rem;
+      min-height: calc(100svh - 68px);
+      padding: 5rem var(--gutter) 2.5rem;
     }
 
     :global(.hero-title) {
-      position: static !important;
-      margin-top: 0;
+      position: absolute !important;
+      left: var(--gutter);
+      right: var(--gutter);
+      bottom: 5rem;
+      margin: 0;
     }
 
     :global(.hero-kicker) {
@@ -187,15 +187,6 @@ for (const config of heroSlides) {
     :global(.hero-copy) {
       margin-top: 1.5rem;
       font-size: 0.95rem;
-    }
-
-    :global(.hero-controls) {
-      margin-top: 3rem;
-      align-items: center;
-    }
-
-    :global(.hero-scroll) {
-      display: none;
     }
   }
 </style>
