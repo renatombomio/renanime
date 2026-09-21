@@ -189,14 +189,35 @@ const entries = getWatchedLibrary();
   }
 
   :global(.poster-placeholder) {
-    display: grid;
-    place-items: center;
-    height: 100%;
-    padding: 1.5rem;
+    position: relative;
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: .65rem;
+    padding: 1rem;
+    background: radial-gradient(circle at 18% 18%, rgba(245,242,236,.08), transparent 38%), linear-gradient(145deg, var(--color-ink-700), var(--color-ink-950));
+    color: var(--color-paper-50);
+  }
+
+  :global(.poster-placeholder strong) {
+    max-width: 90%;
+    font-size: .9rem;
+    font-weight: 500;
+    line-height: 1.08;
+  }
+
+  :global(.placeholder-index) {
     color: var(--color-muted-400);
-    text-align: center;
     font-family: var(--font-meta);
-    font-size: .62rem;
+    font-size: .5rem;
+    letter-spacing: .12em;
+  }
+
+  :global(.placeholder-rule) {
+    width: 2rem;
+    height: 1px;
+    background: var(--color-accent);
   }
 
   :global(.card-top) {
