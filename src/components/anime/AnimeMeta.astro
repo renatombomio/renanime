@@ -1,30 +1,10 @@
 ---
-interface Props {
-  type?: string;
-  year?: string | number;
-  genres?: string[];
-}
-const { type, year, genres = [] } = Astro.props;
+interface Props { type?: string; year?: string | number; genres?: string[]; }
+const { type, year, genres=[] } = Astro.props;
+const items = [type, year, genres.length ? genres.slice(0,2).join(" · ") : undefined].filter(Boolean);
 ---
-<div class="meta">
-  {type && <span>{type}</span>}
-  {year && <span>{year}</span>}
-  {genres.length > 0 && <span>{genres.slice(0, 2).join(" · ")}</span>}
-</div>
-
+{items.length > 0 && <div class="anime-meta">{items.map((item)=><span>{item}</span>)}</div>}
 <style>
-  .meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem 0.7rem;
-    color: var(--color-muted-400);
-    font-size: var(--text-xs);
-    line-height: 1.4;
-  }
-
-  .meta span + span::before {
-    content: "·";
-    margin-right: 0.7rem;
-    color: var(--color-muted-600);
-  }
+.anime-meta{display:flex;flex-wrap:wrap;gap:.25rem .7rem;color:var(--color-muted-400);font:var(--text-xs)/1.4 var(--font-mono);letter-spacing:.01em}
+.anime-meta span+span::before{content:"·";margin-right:.7rem;color:var(--color-muted-600)}
 </style>
