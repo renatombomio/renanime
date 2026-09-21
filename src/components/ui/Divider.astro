@@ -1,9 +1,8 @@
 ---
-interface Props {
-  class?: string;
-}
-
-const { class: className = "" } = Astro.props;
+interface Props { class?: string; }
+const { class: className="" } = Astro.props;
 ---
-
 <div class:list={["editorial-rule", className]} aria-hidden="true"></div>
+<style>
+  .editorial-rule { width:100%; height:1px; background:var(--color-border); }
+</style>
