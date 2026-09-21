@@ -78,12 +78,6 @@ export const animeLibrary: LibraryEntry[] = [
   { animeId: "personal-074", title: "Re:Zero kara Hajimeru Isekai Seikatsu", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-075", title: "Akagami no Shirayuki-hime", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-076", title: "Kimi no Na wa", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: true } },
-  { animeId: "personal-077", title: "Spirited Away", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: true } },
-  { animeId: "personal-078", title: "Howl's Moving Castle", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: true } },
-  { animeId: "personal-079", title: "Princess Mononoke", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: true } },
-  { animeId: "personal-080", title: "Arrietty", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: true } },
-  { animeId: "personal-081", title: "Ponyo", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: true } },
-  { animeId: "personal-082", title: "My Neighbor Totoro", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-083", title: "Another", state: { status: "WATCHED", favorite: false, recommended: false } },
   { animeId: "personal-084", title: "Ousama Game", state: { status: "PENDING", favorite: false, recommended: false } },
   { animeId: "personal-085", title: "Dorohedoro", state: { status: "WATCHED", favorite: false, recommended: false } },
@@ -142,7 +136,6 @@ export const animeLibrary: LibraryEntry[] = [
   { animeId: "personal-138", title: "The Eminence in Shadow", state: { status: "PENDING", favorite: false, recommended: false } },
   { animeId: "personal-139", title: "Cowboy Bebop", state: { status: "WATCHED", favorite: false, recommended: false } },
   { animeId: "personal-140", title: "Jujutsu Kaisen", state: { status: "WATCHED", favorite: false, recommended: false } },
-  { animeId: "personal-141", title: "The Boy and the Heron", format: "MOVIE", state: { status: "WATCHED", favorite: false, recommended: false } },
 ];
 
 export function getLibrary(): LibraryEntry[] {
