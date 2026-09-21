@@ -28,4 +28,5 @@ export interface AnimeEntry {
   id: string;
   external: AnimeExternalIds;
   metadata: AnimeMetadata;
+  franchiseId?: string;
 }
