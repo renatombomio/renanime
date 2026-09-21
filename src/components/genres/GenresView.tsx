@@ -146,9 +146,8 @@ export default function GenresView({ entries }: Props) {
             key={genre.name}
             onClick={() => setSelected(selected === genre.name ? null : genre.name)}
           >
-            <span className="genre-index">{String(index + 1).padStart(2, "0")}</span>
             <span className="genre-name">{genre.name}</span>
-            <span className="genre-count">{genre.entries.length}</span>
+            <span className="genre-count">{genre.entries.length} títulos</span>
           </button>
         ))}
       </div>
@@ -178,11 +177,9 @@ export default function GenresView({ entries }: Props) {
                         <img src={image} alt="" loading={index < 6 ? "eager" : "lazy"} />
                       ) : (
                         <div className="genre-anime-placeholder">
-                          <span>{String(index + 1).padStart(2, "0")}</span>
                           <strong>{entry.title}</strong>
                         </div>
                       )}
-                      <span className="genre-anime-index">{String(index + 1).padStart(2, "0")}</span>
                     </div>
                     <div className="genre-anime-info">
                       <strong>{media?.title?.romaji || media?.title?.english || entry.title}</strong>
