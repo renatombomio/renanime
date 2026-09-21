@@ -643,12 +643,12 @@ section[id] {
   .genre-results-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 }
 @media (max-width: 800px) {
-  .genres-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .genres-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .genre-results-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 @media (max-width: 560px) {
   .genres-meta { font-size: .46rem; }
-  .genres-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; }
+  .genres-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6rem; }
   .genre-card { padding: .85rem; }
   .genre-name { font-size: 1.35rem; }
   .genre-results { margin-top: 2.5rem; }
