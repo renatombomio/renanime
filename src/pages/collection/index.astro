@@ -1,0 +1,289 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/layout/Navbar.astro";
+import Footer from "../../components/layout/Footer.astro";
+import SectionHeader from "../../components/ui/SectionHeader.astro";
+import CollectionView from "../../components/collection/CollectionView";
+import { getWatchedLibrary } from "../../data/library";
+
+const entries = getWatchedLibrary();
+---
+
+<Layout title="Colección — Renanime's Gallery">
+  <Navbar />
+
+  <main class="collection-page">
+    <div class="collection-header">
+      <SectionHeader
+        eyebrow="Mi colección"
+        title="Colección"
+        description="Aquí están todos los animes que he visto. Son muchos, pero nunca parece suficiente. Porque esa es la magia del anime: terminas una historia y, de alguna manera, ya estás buscando la siguiente."
+      />
+    </div>
+
+    <section class="collection-content" aria-label="Colección de anime">
+      <CollectionView entries={entries} client:load />
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .collection-page {
+    min-height: 60vh;
+    padding-block: clamp(6rem, 11vw, 10rem) var(--section-space);
+  }
+
+  .collection-header,
+  .collection-content {
+    width: min(calc(100% - (var(--gutter) * 2)), var(--container-max));
+    margin-inline: auto;
+  }
+
+  .collection-header {
+    margin-bottom: clamp(3.5rem, 7vw, 6rem);
+  }
+
+  .collection-content {
+    container-type: inline-size;
+  }
+
+  :global(.collection-toolbar) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  :global(.collection-filters),
+  :global(.collection-tools) {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  :global(.collection-filters button) {
+    padding: .65rem .9rem;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--color-muted-400);
+    font-family: var(--font-meta);
+    font-size: .65rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  :global(.collection-filters button:hover),
+  :global(.collection-filters button.is-active) {
+    border-color: var(--color-border-strong);
+    color: var(--color-paper-50);
+  }
+
+  :global(.collection-tools input),
+  :global(.collection-tools select) {
+    min-height: 2.5rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-ink-900);
+    color: var(--color-paper-50);
+    padding: .65rem .8rem;
+    font-family: var(--font-body);
+    font-size: .8rem;
+    outline: none;
+  }
+
+  :global(.collection-tools input) {
+    width: min(15rem, 32vw);
+  }
+
+  :global(.collection-tools input:focus),
+  :global(.collection-tools select:focus) {
+    border-color: var(--color-border-strong);
+  }
+
+  :global(.collection-count) {
+    margin: 1rem 0 2rem;
+    color: var(--color-muted-400);
+    font-family: var(--font-meta);
+    font-size: .62rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  :global(.collection-grid) {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: clamp(2.5rem, 4vw, 4rem) clamp(1rem, 2vw, 2rem);
+  }
+
+  :global(.collection-card) {
+    min-width: 0;
+  }
+
+  :global(.collection-card a) {
+    display: block;
+    color: inherit;
+  }
+
+  :global(.poster) {
+    position: relative;
+    aspect-ratio: 2 / 3;
+    overflow: hidden;
+    background: var(--color-ink-800);
+  }
+
+  :global(.poster img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 500ms cubic-bezier(.2,.7,.2,1);
+  }
+
+  :global(.collection-card a:hover .poster img) {
+    transform: scale(1.035);
+  }
+
+  :global(.poster-placeholder) {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    padding: 1.5rem;
+    color: var(--color-muted-400);
+    text-align: center;
+    font-family: var(--font-meta);
+    font-size: .62rem;
+  }
+
+  :global(.card-indicators) {
+    position: absolute;
+    top: .65rem;
+    right: .65rem;
+    display: flex;
+    gap: .35rem;
+  }
+
+  :global(.card-indicators span) {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 1px solid rgba(245,242,236,.35);
+    border-radius: 999px;
+    background: rgba(9,9,9,.58);
+    color: var(--color-paper-50);
+    font-family: var(--font-meta);
+    font-size: .7rem;
+    backdrop-filter: blur(8px);
+  }
+
+  :global(.format-badge) {
+    position: absolute;
+    bottom: .65rem;
+    left: .65rem;
+    padding: .35rem .5rem;
+    background: rgba(9,9,9,.72);
+    color: var(--color-paper-50);
+    font-family: var(--font-meta);
+    font-size: .55rem;
+    letter-spacing: .1em;
+  }
+
+  :global(.card-info) {
+    display: grid;
+    gap: .45rem;
+    padding-top: .85rem;
+  }
+
+  :global(.card-info h3) {
+    margin: 0;
+    color: var(--color-paper-50);
+    font-family: var(--font-body);
+    font-size: .95rem;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  :global(.meta) {
+    display: flex;
+    gap: .7rem;
+    color: var(--color-muted-400);
+    font-family: var(--font-meta);
+    font-size: .58rem;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  :global(.load-more) {
+    display: block;
+    margin: 4rem auto 0;
+    padding: .8rem 1.2rem;
+    border: 1px solid var(--color-border-strong);
+    background: transparent;
+    color: var(--color-paper-50);
+    font-family: var(--font-meta);
+    font-size: .62rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  :global(.load-more:hover) {
+    background: var(--color-paper-50);
+    color: var(--color-ink-950);
+  }
+
+  :global(.loading),
+  :global(.empty) {
+    margin: 3rem 0;
+    color: var(--color-muted-400);
+    text-align: center;
+  }
+
+  :global(.sr-only) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (max-width: 1100px) {
+    :global(.collection-grid) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 800px) {
+    :global(.collection-toolbar) {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    :global(.collection-tools) {
+      justify-content: space-between;
+    }
+
+    :global(.collection-tools input) {
+      width: 100%;
+    }
+
+    :global(.collection-grid) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    :global(.collection-grid) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2.5rem .8rem;
+    }
+  }
+</style>
