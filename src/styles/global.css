@@ -159,3 +159,14 @@ a {
   padding-left: 0.35rem;
   color: var(--color-accent-soft);
 }
+
+
+section[id] {
+  scroll-margin-top: 6rem;
+}
+
+@media (min-width: 521px) and (max-width: 1120px) {
+  .mobile-panel {
+    top: 74px;
+  }
+}
