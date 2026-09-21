@@ -4,6 +4,10 @@ export interface AnimeFranchise {
   id: string;
   name: string;
   animeIds: string[];
+  /**
+   * Only released/known titles belong here.
+   * New franchise releases must be added explicitly instead of inheriting WATCHED.
+   */
 }
 
 export interface FranchiseRelation {
