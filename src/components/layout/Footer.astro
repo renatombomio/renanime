@@ -1,96 +1,65 @@
 ---
+import Container from "../ui/Container.astro";
+
 const year = new Date().getFullYear();
 ---
 
 <footer class="site-footer">
   <div class="footer-line"></div>
 
-  <div class="footer-inner">
+  <Container class="footer-inner">
     <p class="closing">
       Todas las historias tienen un final.<br />
       A veces amargo, otras placentero,<br />
       pero cada final solo trae nuevos comienzos.
     </p>
 
-    <p class="thanks">
-      Gracias por visitar mi galería de Anime.
-    </p>
+    <p class="thanks">Gracias por visitar mi galería de Anime.</p>
 
     <div class="footer-meta">
-      <span>RENANIME</span>
+      <span>RA</span>
       <span>© {year}</span>
     </div>
-  </div>
+  </Container>
 </footer>
 
 <style>
-  .site-footer {
-    background: var(--color-ink-950);
-  }
-
-  .footer-line {
-    height: 1px;
-    background: var(--color-border);
-  }
-
+  .site-footer { background: var(--color-ink-950); }
+  .footer-line { height: 1px; background: var(--color-border); }
   .footer-inner {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    column-gap: clamp(2rem, 8vw, 8rem);
-    align-items: end;
-    width: min(100% - (var(--gutter) * 2), var(--container-max));
-    margin-inline: auto;
-    padding-block: clamp(3.5rem, 7vw, 6rem) 1.5rem;
+    position: relative;
+    padding-block: clamp(3rem, 6vw, 5rem) 1.5rem;
   }
-
   .closing {
-    grid-column: 1;
     margin: 0;
+    max-width: 46rem;
     color: var(--color-paper-200);
-    font-family: var(--font-heading);
-    font-size: clamp(1.5rem, 3vw, 2.75rem);
-    font-weight: var(--weight-regular);
-    letter-spacing: var(--tracking-heading);
-    line-height: 1.08;
+    font-family: var(--font-body);
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    line-height: 1.5;
   }
-
   .thanks {
-    grid-column: 1;
-    margin: var(--space-8) 0 0;
+    margin: var(--space-6) 0 0;
     color: var(--color-muted-400);
     font-size: var(--text-sm);
-    line-height: var(--leading-body);
   }
-
   .footer-meta {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    align-self: end;
+    position: absolute;
+    right: var(--gutter);
+    bottom: 1.5rem;
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.45rem;
+    gap: var(--space-4);
     color: var(--color-muted-500);
     font-family: var(--font-meta);
     font-size: 0.58rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
-
   @media (max-width: 640px) {
-    .footer-inner {
-      display: flex;
-      align-items: flex-start;
-      flex-direction: column;
-      padding-block: 3rem 1.25rem;
-    }
-
-    .closing {
-      font-size: clamp(1.35rem, 7vw, 2rem);
-    }
-
+    .footer-inner { padding-block: 2.75rem 1.25rem; }
+    .closing { font-size: 1.05rem; }
     .footer-meta {
-      align-items: flex-start;
+      position: static;
       margin-top: var(--space-8);
     }
   }
