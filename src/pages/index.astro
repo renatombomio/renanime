@@ -7,6 +7,7 @@ import Hero from "../components/hero/Hero.astro";
 import SectionHeader from "../components/ui/SectionHeader.astro";
 import CollectionView from "../components/collection/CollectionView";
 import FavoritesView from "../components/favorites/FavoritesView";
+import GenresView from "../components/genres/GenresView";
 import { getFavoritesLibrary, getWatchedLibrary } from "../data/library";
 
 const favoriteEntries = getFavoritesLibrary();
@@ -49,12 +50,17 @@ const collectionEntries = getWatchedLibrary();
       </Container>
     </section>
 
-    <section id="genres" class="placeholder-section section-space">
+    <section id="genres" class="genres-section section-space">
       <Container>
         <SectionHeader
+          eyebrow="El mapa"
           title="Géneros"
           description="Venga, toma un mapa. Aquí puedes explorar los animes que he visto por género, para encontrar algo que te apetezca y dejar de dar golpes de ciego en ese océano infinito que es el anime."
         />
+
+        <div class="genres-view-wrap">
+          <GenresView entries={collectionEntries} client:load />
+        </div>
       </Container>
     </section>
   </main>
@@ -281,6 +287,198 @@ const collectionEntries = getWatchedLibrary();
 
     :global(.favorite-caption h3) {
       font-size: .82rem;
+    }
+  }
+
+  .genres-view-wrap {
+    margin-top: clamp(3rem, 6vw, 5rem);
+  }
+
+  :global(.genres-view) {
+    width: 100%;
+  }
+
+  :global(.genres-meta) {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: .85rem;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-muted-400);
+    font-family: var(--font-meta);
+    font-size: .52rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  :global(.genres-grid) {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-left: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-border);
+  }
+
+  :global(.genre-card) {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: end;
+    gap: .8rem;
+    min-height: 8rem;
+    padding: 1.25rem;
+    border: 0;
+    border-right: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    background: transparent;
+    color: var(--color-paper-50);
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 220ms ease;
+  }
+
+  :global(.genre-card:hover),
+  :global(.genre-card.is-active) {
+    background: var(--color-ink-800);
+  }
+
+  :global(.genre-card::before) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--color-paper-50);
+    content: "";
+    transition: width 300ms ease;
+  }
+
+  :global(.genre-card:hover::before),
+  :global(.genre-card.is-active::before) {
+    width: 100%;
+  }
+
+  :global(.genre-index),
+  :global(.genre-count) {
+    color: var(--color-muted-500);
+    font-family: var(--font-meta);
+    font-size: .5rem;
+    letter-spacing: .08em;
+  }
+
+  :global(.genre-name) {
+    align-self: center;
+    font-family: "Comico", var(--font-display);
+    font-size: clamp(1.25rem, 2vw, 2rem);
+    line-height: 1;
+  }
+
+  :global(.genre-results) {
+    margin-top: 2rem;
+    border-top: 1px solid var(--color-border-strong);
+  }
+
+  :global(.genre-results-head) {
+    display: flex;
+    justify-content: space-between;
+    padding: .85rem 0;
+    color: var(--color-muted-400);
+    font-family: var(--font-meta);
+    font-size: .52rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  :global(.genre-results-title) {
+    color: var(--color-paper-50);
+  }
+
+  :global(.genre-results-list) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid var(--color-border);
+  }
+
+  :global(.genre-results-list a) {
+    display: grid;
+    grid-template-columns: 2rem 1fr auto;
+    gap: .8rem;
+    align-items: center;
+    min-width: 0;
+    padding: .8rem 0;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-paper-200);
+  }
+
+  :global(.genre-results-list a:nth-child(odd)) {
+    padding-right: 1.25rem;
+    border-right: 1px solid var(--color-border);
+  }
+
+  :global(.genre-results-list a:nth-child(even)) {
+    padding-left: 1.25rem;
+  }
+
+  :global(.genre-results-list a:hover) {
+    color: var(--color-paper-50);
+  }
+
+  :global(.genre-results-list span) {
+    color: var(--color-muted-500);
+    font-family: var(--font-meta);
+    font-size: .5rem;
+  }
+
+  :global(.genre-results-list strong) {
+    overflow: hidden;
+    font-size: .78rem;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  :global(.genres-empty) {
+    margin: 2rem 0;
+    color: var(--color-muted-400);
+    font-family: var(--font-meta);
+    font-size: .55rem;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 800px) {
+    :global(.genres-grid) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    :global(.genres-meta) {
+      font-size: .46rem;
+    }
+
+    :global(.genres-grid) {
+      grid-template-columns: 1fr;
+    }
+
+    :global(.genre-card) {
+      min-height: 5.5rem;
+      padding: 1rem;
+    }
+
+    :global(.genre-name) {
+      font-size: 1.45rem;
+    }
+
+    :global(.genre-results-list) {
+      grid-template-columns: 1fr;
+    }
+
+    :global(.genre-results-list a:nth-child(odd)) {
+      padding-right: 0;
+      border-right: 0;
+    }
+
+    :global(.genre-results-list a:nth-child(even)) {
+      padding-left: 0;
     }
   }
 
