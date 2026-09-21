@@ -17,7 +17,7 @@ const year = new Date().getFullYear();
     <p class="thanks">Gracias por visitar mi galería de Anime.</p>
 
     <div class="footer-meta">
-      <span>RA</span>
+      <span>Renanime</span>
       <span>© {year}</span>
     </div>
   </Container>
@@ -35,22 +35,22 @@ const year = new Date().getFullYear();
 
   .footer-inner {
     position: relative;
-    padding-block: 2.5rem 1.25rem;
+    padding-block: 3rem 1.25rem;
   }
 
   .closing {
+    max-width: 34rem;
     margin: 0;
-    max-width: 42rem;
     color: var(--color-paper-200);
     font-family: var(--font-body);
-    font-size: clamp(0.95rem, 1.5vw, 1.15rem);
-    line-height: 1.45;
+    font-size: 0.875rem;
+    line-height: 1.55;
   }
 
   .thanks {
     margin: 1rem 0 0;
     color: var(--color-muted-400);
-    font-size: var(--text-xs);
+    font-size: 0.75rem;
     line-height: 1.4;
   }
 
@@ -69,11 +69,7 @@ const year = new Date().getFullYear();
 
   @media (max-width: 640px) {
     .footer-inner {
-      padding-block: 2.25rem 1rem;
-    }
-
-    .closing {
-      font-size: 0.95rem;
+      padding-block: 2.5rem 1rem;
     }
 
     .footer-meta {
