@@ -105,13 +105,18 @@ export default function GenresView({ entries }: Props) {
   const catalog = useMemo(() => buildGenreCatalog(entries, genresByAnimeId), [entries, genresByAnimeId]);
   const selectedGenre = catalog.find((genre) => genre.name === selected);
 
+  const selectedEntryIds = selectedGenre?.entries.map((entry) => entry.animeId).join("|") ?? "";
+
   useEffect(() => {
-    if (!selectedGenre) return;
+    if (!selected || !selectedEntryIds) return;
+    const genre = catalog.find((item) => item.name === selected);
+    if (!genre) return;
+
     let cancelled = false;
 
     async function loadImages() {
       setResultsLoading(true);
-      const media = await fetchMediaMetadata(selectedGenre.entries, true);
+      const media = await fetchMediaMetadata(genre.entries, true);
       if (!cancelled) {
         setMetadata((current) => ({ ...current, ...media }));
         setResultsLoading(false);
@@ -120,7 +125,7 @@ export default function GenresView({ entries }: Props) {
 
     loadImages();
     return () => { cancelled = true; };
-  }, [selectedGenre]);
+  }, [selected, selectedEntryIds]);
 
   useEffect(() => {
     if (selected && !selectedGenre) setSelected(null);
