@@ -1,41 +1,15 @@
 ---
-interface Props {
-  src: string;
-  alt: string;
-  ratio?: "portrait" | "landscape";
-}
-const { src, alt, ratio = "portrait" } = Astro.props;
+interface Props { src?: string; alt: string; ratio?: "portrait" | "landscape"; loading?: "lazy" | "eager"; }
+const { src, alt, ratio="portrait", loading="lazy" } = Astro.props;
 ---
 <div class:list={["anime-poster", ratio === "landscape" && "is-landscape"]}>
-  <img src={src} alt={alt} loading="lazy" decoding="async" />
+  {src ? <img src={src} alt={alt} loading={loading} decoding="async" /> : <div class="poster-placeholder" aria-hidden="true"><span>RENANIME</span></div>}
 </div>
-
 <style>
-  .anime-poster {
-    position: relative;
-    aspect-ratio: 2 / 3;
-    overflow: hidden;
-    background: var(--color-ink-800);
-  }
-
-  .anime-poster.is-landscape {
-    aspect-ratio: 16 / 9;
-  }
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform var(--duration-slow) var(--ease-out);
-  }
-
-  .anime-poster:hover img {
-    transform: scale(1.035);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .anime-poster:hover img {
-      transform: none;
-    }
-  }
+.anime-poster{position:relative;aspect-ratio:2/3;overflow:hidden;background:var(--color-ink-800)}
+.anime-poster.is-landscape{aspect-ratio:16/9}
+img{width:100%;height:100%;object-fit:cover;transition:transform var(--duration-slow) var(--ease-out)}
+.anime-poster:hover img{transform:scale(1.035)}
+.poster-placeholder{display:grid;place-items:center;width:100%;height:100%;background:linear-gradient(145deg,var(--color-ink-800),var(--color-ink-900));color:var(--color-muted-600);font:var(--text-xs)/1 var(--font-mono);letter-spacing:.14em}
+@media(prefers-reduced-motion:reduce){.anime-poster:hover img{transform:none}}
 </style>
