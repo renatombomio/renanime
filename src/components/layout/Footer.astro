@@ -24,43 +24,61 @@ const year = new Date().getFullYear();
 </footer>
 
 <style>
-  .site-footer { background: var(--color-ink-950); }
-  .footer-line { height: 1px; background: var(--color-border); }
+  .site-footer {
+    background: #000;
+  }
+
+  .footer-line {
+    height: 1px;
+    background: var(--color-border);
+  }
+
   .footer-inner {
     position: relative;
-    padding-block: clamp(3rem, 6vw, 5rem) 1.5rem;
+    padding-block: 2.5rem 1.25rem;
   }
+
   .closing {
     margin: 0;
-    max-width: 46rem;
+    max-width: 42rem;
     color: var(--color-paper-200);
     font-family: var(--font-body);
-    font-size: clamp(1.1rem, 2vw, 1.5rem);
-    line-height: 1.5;
+    font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+    line-height: 1.45;
   }
+
   .thanks {
-    margin: var(--space-6) 0 0;
+    margin: 1rem 0 0;
     color: var(--color-muted-400);
-    font-size: var(--text-sm);
+    font-size: var(--text-xs);
+    line-height: 1.4;
   }
+
   .footer-meta {
     position: absolute;
     right: var(--gutter);
-    bottom: 1.5rem;
+    bottom: 1.25rem;
     display: flex;
     gap: var(--space-4);
     color: var(--color-muted-500);
     font-family: var(--font-meta);
-    font-size: 0.58rem;
+    font-size: 0.55rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
+
   @media (max-width: 640px) {
-    .footer-inner { padding-block: 2.75rem 1.25rem; }
-    .closing { font-size: 1.05rem; }
+    .footer-inner {
+      padding-block: 2.25rem 1rem;
+    }
+
+    .closing {
+      font-size: 0.95rem;
+    }
+
     .footer-meta {
       position: static;
-      margin-top: var(--space-8);
+      margin-top: 1.5rem;
     }
   }
 </style>
