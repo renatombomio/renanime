@@ -37,13 +37,15 @@ const year = new Date().getFullYear();
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-block: clamp(5rem, 10vw, 8rem) 2rem;
+    width: 100%;
+    padding-block: clamp(8rem, 16vw, 12rem) 3rem;
     text-align: center;
   }
 
   .closing {
+    width: 100%;
     max-width: 44rem;
-    margin: 0;
+    margin: 0 auto;
     color: var(--color-paper-200);
     font-family: var(--font-body);
     font-size: clamp(1rem, 1.6vw, 1.2rem);
@@ -72,7 +74,7 @@ const year = new Date().getFullYear();
 
   @media (max-width: 640px) {
     .footer-inner {
-      padding-block: 4.5rem 1.75rem;
+      padding-block: 6rem 2rem;
     }
 
     .closing {
