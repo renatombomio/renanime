@@ -1,4 +1,4 @@
-import type { LibraryEntry } from "../types/personal";
+import type { LibraryEntry } from "../types/personal";\nimport { franchiseMovies } from "./franchise-movies";
 
 export const animeLibrary: LibraryEntry[] = [
   { animeId: "personal-001", title: "Boku no Hero Academia", state: { status: "WATCHED", favorite: false, recommended: true } },
@@ -67,7 +67,7 @@ export const animeLibrary: LibraryEntry[] = [
   { animeId: "personal-064", title: "Shokugeki no Souma", state: { status: "WATCHED", favorite: false, recommended: false } },
   { animeId: "personal-065", title: "Mahoutsukai no Yome", state: { status: "WATCHED", favorite: false, recommended: false } },
   { animeId: "personal-066", title: "Tsurezure Children", state: { status: "WATCHED", favorite: false, recommended: true } },
-  { animeId: "personal-067", title: "Koe no Katachi", state: { status: "WATCHED", favorite: false, recommended: false } },
+  { animeId: "personal-067", title: "Koe no Katachi", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: false } },
   { animeId: "personal-068", title: "Anohana", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-069", title: "Domestic na Kanojo", state: { status: "WATCHED", favorite: false, recommended: false } },
   { animeId: "personal-070", title: "Koi to Uso", state: { status: "WATCHED", favorite: false, recommended: true } },
@@ -76,13 +76,13 @@ export const animeLibrary: LibraryEntry[] = [
   { animeId: "personal-073", title: "Kiznaiver", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-074", title: "Re:Zero kara Hajimeru Isekai Seikatsu", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-075", title: "Akagami no Shirayuki-hime", state: { status: "WATCHED", favorite: false, recommended: true } },
-  { animeId: "personal-076", title: "Kimi no Na wa", state: { status: "WATCHED", favorite: false, recommended: true } },
-  { animeId: "personal-077", title: "Spirited Away", state: { status: "WATCHED", favorite: false, recommended: true } },
-  { animeId: "personal-078", title: "Howl's Moving Castle", state: { status: "WATCHED", favorite: false, recommended: true } },
-  { animeId: "personal-079", title: "Princess Mononoke", state: { status: "WATCHED", favorite: false, recommended: true } },
-  { animeId: "personal-080", title: "Arrietty", state: { status: "WATCHED", favorite: false, recommended: true } },
-  { animeId: "personal-081", title: "Ponyo", state: { status: "WATCHED", favorite: false, recommended: true } },
-  { animeId: "personal-082", title: "My Neighbor Totoro", state: { status: "WATCHED", favorite: false, recommended: true } },
+  { animeId: "personal-076", title: "Kimi no Na wa", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: true } },
+  { animeId: "personal-077", title: "Spirited Away", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: true } },
+  { animeId: "personal-078", title: "Howl's Moving Castle", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: true } },
+  { animeId: "personal-079", title: "Princess Mononoke", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: true } },
+  { animeId: "personal-080", title: "Arrietty", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: true } },
+  { animeId: "personal-081", title: "Ponyo", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: true } },
+  { animeId: "personal-082", title: "My Neighbor Totoro", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-083", title: "Another", state: { status: "WATCHED", favorite: false, recommended: false } },
   { animeId: "personal-084", title: "Ousama Game", state: { status: "PENDING", favorite: false, recommended: false } },
   { animeId: "personal-085", title: "Dorohedoro", state: { status: "WATCHED", favorite: false, recommended: false } },
@@ -134,28 +134,28 @@ export const animeLibrary: LibraryEntry[] = [
   { animeId: "personal-131", title: "Dead Account", state: { status: "PENDING", favorite: false, recommended: false } },
   { animeId: "personal-132", title: "Yuusha-kei ni Shosu", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-133", title: "Hikaru ga Shinda Natsu", state: { status: "PENDING", favorite: false, recommended: false } },
-  { animeId: "personal-134", title: "100 Meters", state: { status: "WATCHED", favorite: false, recommended: false } },
+  { animeId: "personal-134", title: "100 Meters", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: false } },
   { animeId: "personal-135", title: "Gachiakuta", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-136", title: "Ninja Kamui", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-137", title: "Scissor Seven", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-138", title: "The Eminence in Shadow", state: { status: "PENDING", favorite: false, recommended: false } },
   { animeId: "personal-139", title: "Cowboy Bebop", state: { status: "WATCHED", favorite: false, recommended: false } },
   { animeId: "personal-140", title: "Jujutsu Kaisen", state: { status: "WATCHED", favorite: false, recommended: false } },
-  { animeId: "personal-141", title: "The Boy and the Heron", state: { status: "WATCHED", favorite: false, recommended: false } },
+  { animeId: "personal-141", title: "The Boy and the Heron", state: { format: "MOVIE", status: "WATCHED", favorite: false, recommended: false } },
 ];
 
 export function getLibrary(): LibraryEntry[] {
-  return [...animeLibrary];
+  return [...animeLibrary, ...franchiseMovies];
 }
 
 export function getWatchedLibrary(): LibraryEntry[] {
-  return animeLibrary.filter((entry) => entry.state.status === "WATCHED");
+  return [...animeLibrary, ...franchiseMovies].filter((entry) => entry.state.status === "WATCHED");
 }
 
 export function getPendingLibrary(): LibraryEntry[] {
-  return animeLibrary.filter((entry) => entry.state.status === "PENDING");
+  return [...animeLibrary, ...franchiseMovies].filter((entry) => entry.state.status === "PENDING");
 }
 
 export function getRecommendedLibrary(): LibraryEntry[] {
-  return animeLibrary.filter((entry) => entry.state.recommended);
+  return [...animeLibrary, ...franchiseMovies].filter((entry) => entry.state.recommended);
 }
