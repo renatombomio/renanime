@@ -7,6 +7,7 @@ type Sort = "TITLE" | "YEAR_DESC" | "YEAR_ASC";
 interface PersonalEntry {
   animeId: string;
   title: string;
+  format?: "SERIES" | "MOVIE";
   state: {
     status: Status;
     favorite: boolean;
@@ -125,7 +126,7 @@ export default function CollectionView({ entries }: Props) {
     return entries
       .filter((entry) => {
         if (filter === "ALL") return true;
-        const format = media[entry.animeId]?.format;
+        const format = entry.format ?? media[entry.animeId]?.format;
         if (filter === "MOVIES") return format === "MOVIE";
         return format !== "MOVIE";
       })
@@ -213,7 +214,7 @@ export default function CollectionView({ entries }: Props) {
       <div className="collection-grid">
         {page.map((entry) => {
           const item = media[entry.animeId];
-          const type = item?.format === "MOVIE" ? "MOVIE" : "SERIES";
+          const type = entry.format ?? (item?.format === "MOVIE" ? "MOVIE" : "SERIES");
           return (
             <article className="collection-card" key={entry.animeId}>
               <a href={`/anime/${entry.animeId}`} aria-label={`Ver ${entry.title}`}>
