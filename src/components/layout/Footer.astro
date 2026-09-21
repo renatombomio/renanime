@@ -34,47 +34,59 @@ const year = new Date().getFullYear();
   }
 
   .footer-inner {
-    position: relative;
-    padding-block: 3rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-block: clamp(5rem, 10vw, 8rem) 2rem;
+    text-align: center;
   }
 
   .closing {
-    max-width: 34rem;
+    max-width: 44rem;
     margin: 0;
     color: var(--color-paper-200);
     font-family: var(--font-body);
-    font-size: 0.875rem;
-    line-height: 1.55;
+    font-size: clamp(1rem, 1.6vw, 1.2rem);
+    line-height: 1.8;
+    letter-spacing: 0.01em;
   }
 
   .thanks {
-    margin: 1rem 0 0;
+    margin: 2.5rem 0 0;
     color: var(--color-muted-400);
     font-size: 0.75rem;
-    line-height: 1.4;
+    line-height: 1.5;
+    letter-spacing: 0.04em;
   }
 
   .footer-meta {
-    position: absolute;
-    right: var(--gutter);
-    bottom: 1.25rem;
     display: flex;
-    gap: var(--space-4);
+    gap: var(--space-5);
+    margin-top: 4rem;
     color: var(--color-muted-500);
     font-family: var(--font-meta);
     font-size: 0.55rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
   }
 
   @media (max-width: 640px) {
     .footer-inner {
-      padding-block: 2.5rem 1rem;
+      padding-block: 4.5rem 1.75rem;
+    }
+
+    .closing {
+      max-width: 20rem;
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+
+    .thanks {
+      margin-top: 2rem;
     }
 
     .footer-meta {
-      position: static;
-      margin-top: 1.5rem;
+      margin-top: 3rem;
     }
   }
 </style>
