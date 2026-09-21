@@ -65,16 +65,16 @@ for (const config of heroSlides) {
   }
 
   :global(.hero-title) {
-    max-width: 42rem;
-    margin-top: auto;
-    padding-top: 0;
+    width: min(100%, 58rem);
+    margin: auto auto 3.5rem;
+    text-align: center;
   }
 
   :global(.hero-kicker) {
     margin: 0;
     color: var(--color-paper-50);
     font-family: var(--font-body);
-    font-size: clamp(2.75rem, 4.5vw, 4.5rem);
+    font-size: clamp(3rem, 5.5vw, 5.5rem);
     font-weight: 600;
     letter-spacing: 0.02em;
     text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
@@ -88,10 +88,10 @@ for (const config of heroSlides) {
     margin: 0.25rem 0 0;
     color: var(--color-paper-50);
     font-family: "Comico", var(--font-body);
-    font-size: clamp(4rem, 7.5vw, 7.5rem);
+    font-size: clamp(3.75rem, 5.5vw, 5.75rem);
     font-weight: 400;
     letter-spacing: -0.045em;
-    line-height: 0.8;
+    line-height: 0.88;
     text-shadow: 0 3px 24px rgba(0, 0, 0, 0.45);
   }
 
@@ -100,6 +100,7 @@ for (const config of heroSlides) {
     color: var(--color-paper-200);
     font-size: var(--text-lg);
     line-height: 1.45;
+    text-align: center;
     text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
   }
 
@@ -172,16 +173,17 @@ for (const config of heroSlides) {
       position: absolute !important;
       left: var(--gutter);
       right: var(--gutter);
-      bottom: 3.5rem;
+      bottom: 3rem;
       margin: 0;
+      text-align: center;
     }
 
     :global(.hero-kicker) {
-      font-size: 2rem;
+      font-size: 2.4rem;
     }
 
     :global(.hero-title h1) {
-      font-size: clamp(4.75rem, 20vw, 6.5rem);
+      font-size: clamp(4rem, 17vw, 5.5rem);
     }
 
     :global(.hero-copy) {
