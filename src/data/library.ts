@@ -4,10 +4,10 @@ import { franchiseMovies } from "./franchise-movies";
 export const animeLibrary: LibraryEntry[] = [
   { animeId: "personal-001", title: "Boku no Hero Academia", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-002", title: "Dragon Ball Z", state: { status: "WATCHED", favorite: false, recommended: true } },
-  { animeId: "personal-003", title: "Naruto", state: { status: "WATCHED", favorite: false, recommended: true } },
+  { animeId: "personal-003", title: "Naruto", state: { status: "WATCHED", favorite: true, recommended: true } },
   { animeId: "personal-004", title: "Bleach", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-005", title: "Shingeki no Kyojin", state: { status: "WATCHED", favorite: false, recommended: true } },
-  { animeId: "personal-006", title: "One Piece", state: { status: "WATCHED", favorite: false, recommended: true } },
+  { animeId: "personal-006", title: "One Piece", state: { status: "WATCHED", favorite: true, recommended: true } },
   { animeId: "personal-007", title: "Akame ga Kill!", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-008", title: "Toradora!", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-009", title: "Fullmetal Alchemist", state: { status: "WATCHED", favorite: false, recommended: true } },
@@ -135,7 +135,7 @@ export const animeLibrary: LibraryEntry[] = [
   { animeId: "personal-137", title: "Scissor Seven", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-138", title: "The Eminence in Shadow", state: { status: "PENDING", favorite: false, recommended: false } },
   { animeId: "personal-139", title: "Cowboy Bebop", state: { status: "WATCHED", favorite: false, recommended: false } },
-  { animeId: "personal-140", title: "Jujutsu Kaisen", state: { status: "WATCHED", favorite: false, recommended: false } },
+  { animeId: "personal-140", title: "Jujutsu Kaisen", state: { status: "WATCHED", favorite: true, recommended: false } },
 ];
 
 export function getLibrary(): LibraryEntry[] {
