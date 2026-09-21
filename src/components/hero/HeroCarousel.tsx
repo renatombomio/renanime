@@ -86,7 +86,7 @@ export default function HeroCarousel({ slides }: Props) {
       </div>
 
       <div className="hero-inner">
-        <div className="hero-title">
+        <div className="hero-title" style={{ position: "absolute", inset: "auto auto 9rem 0", zIndex: 3 }}>
           <p className="hero-kicker">
             <span className="hero-accent">Ren</span>anime's
           </p>
