@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface FavoriteEntry {
   animeId: string;
@@ -23,6 +23,7 @@ interface Props {
 export default function FavoritesView({ entries }: Props) {
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(true);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -50,7 +51,7 @@ export default function FavoritesView({ entries }: Props) {
         });
         if (!cancelled) setMedia(result);
       } catch {
-        // The editorial card falls back to the personal title when metadata is unavailable.
+        // Personal titles remain visible if metadata is unavailable.
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -60,28 +61,42 @@ export default function FavoritesView({ entries }: Props) {
     return () => { cancelled = true; };
   }, [entries]);
 
+  const scroll = (direction: "prev" | "next") => {
+    trackRef.current?.scrollBy({
+      left: direction === "next" ? trackRef.current.clientWidth * 0.72 : -trackRef.current.clientWidth * 0.72,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <div className="favorites-view">
       <div className="favorites-intro">
-        <span className="favorites-index">01 — 03</span>
-        <span className="favorites-note">Una selección personal</span>
+        <div>
+          <span className="favorites-index">01 — 05</span>
+          <span className="favorites-note">Una selección personal</span>
+        </div>
+
+        <div className="favorites-controls" aria-label="Navegar favoritos">
+          <button type="button" onClick={() => scroll("prev")} aria-label="Favoritos anteriores">←</button>
+          <button type="button" onClick={() => scroll("next")} aria-label="Siguientes favoritos">→</button>
+        </div>
       </div>
 
-      <div className="favorites-grid">
+      <div className="favorites-track" ref={trackRef}>
         {entries.map((entry, index) => {
           const item = media[entry.animeId];
           const title = item?.title.romaji || item?.title.english || entry.title;
           const year = item?.startDate?.year;
 
           return (
-            <article className={`favorite-card favorite-card--${index + 1}`} key={entry.animeId}>
+            <article className="favorite-card" key={entry.animeId}>
               <a href={`/anime/${entry.animeId}`} aria-label={`Ver ${title}`}>
                 <div className="favorite-media">
                   {item?.coverImage?.extraLarge || item?.coverImage?.large ? (
                     <img
                       src={item.coverImage.extraLarge || item.coverImage.large || ""}
                       alt={title}
-                      loading={index === 0 ? "eager" : "lazy"}
+                      loading={index < 2 ? "eager" : "lazy"}
                     />
                   ) : (
                     <div className="favorite-placeholder">
@@ -89,11 +104,13 @@ export default function FavoritesView({ entries }: Props) {
                       <strong>{entry.title}</strong>
                     </div>
                   )}
+
                   <div className="favorite-overlay">
                     <span className="favorite-mark">★</span>
-                    <span className="favorite-year">{year ?? "—"}</span>
+                    <span>{year ?? "—"}</span>
                   </div>
                 </div>
+
                 <div className="favorite-caption">
                   <span className="favorite-number">0{index + 1}</span>
                   <div>
