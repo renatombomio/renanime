@@ -11,6 +11,7 @@ export interface PersonalAnimeState {
 
 export interface PersonalAnimeEntry {
   animeId: string;
+  format?: "SERIES" | "MOVIE";
   state: PersonalAnimeState;
   franchiseId?: string;
 }
