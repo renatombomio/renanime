@@ -91,6 +91,9 @@ a {
 
 .mobile-nav {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .mobile-toggle {
@@ -108,36 +111,51 @@ a {
 
 .mobile-toggle span {
   display: block;
-  width: 1.05rem;
+  width: 1.25rem;
   height: 1px;
   background: currentColor;
+  transition: transform 180ms ease, opacity 180ms ease;
+}
+
+.mobile-toggle:hover {
+  color: var(--color-paper-50);
 }
 
 .mobile-panel {
   position: fixed;
-  top: 4rem;
-  right: var(--gutter);
-  left: var(--gutter);
+  top: 68px;
+  right: 16px;
+  left: 16px;
   z-index: var(--z-overlay);
-  padding: var(--space-6);
-  border: 1px solid rgba(245, 242, 236, 0.1);
-  background: #050505;
-  box-shadow: var(--shadow-deep);
+  padding: 1.5rem;
+  border: 1px solid rgba(245, 242, 236, 0.12);
+  background: rgba(5, 5, 5, 0.98);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
 }
 
 .mobile-panel nav {
   display: grid;
-  gap: 1rem;
+  gap: 0;
 }
 
 .mobile-panel a {
+  display: block;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid rgba(245, 242, 236, 0.08);
   color: var(--color-paper-200);
-  font-family: var(--font-meta);
-  font-size: var(--text-sm);
-  letter-spacing: 0.08em;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
+  transition: color 180ms ease, padding-left 180ms ease;
 }
 
-.mobile-panel a:hover {
+.mobile-panel a:last-child {
+  border-bottom: 0;
+}
+
+.mobile-panel a:hover,
+.mobile-panel a:focus-visible {
+  padding-left: 0.35rem;
   color: var(--color-accent-soft);
 }
