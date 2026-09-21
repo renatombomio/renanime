@@ -39,6 +39,7 @@ for (const config of heroSlides) {
   :global(.hero-media) {
     position: absolute;
     inset: 0;
+    z-index: 1;
   }
 
   :global(.hero-image) {
@@ -57,7 +58,7 @@ for (const config of heroSlides) {
 
   :global(.hero-inner) {
     position: relative;
-    z-index: 2;
+    z-index: 3;
     display: flex;
     width: min(calc(100% - (var(--gutter) * 2)), var(--container-max));
     min-height: min(70vw, calc(100svh - 88px));
@@ -70,7 +71,7 @@ for (const config of heroSlides) {
   :global(.hero-title) {
     max-width: 42rem;
     margin-top: auto;
-    padding-top: clamp(18rem, 32vw, 30rem);
+    padding-top: 0;
   }
 
   :global(.hero-kicker) {
@@ -171,7 +172,8 @@ for (const config of heroSlides) {
     }
 
     :global(.hero-title) {
-      padding-top: 0;
+      position: static !important;
+      margin-top: 0;
     }
 
     :global(.hero-kicker) {
