@@ -153,3 +153,7 @@ export function getPendingLibrary(): LibraryEntry[] {
 export function getRecommendedLibrary(): LibraryEntry[] {
   return [...animeLibrary, ...franchiseMovies].filter((entry) => entry.state.recommended);
 }
+
+export function getFavoritesLibrary(): LibraryEntry[] {
+  return [...animeLibrary, ...franchiseMovies].filter((entry) => entry.state.favorite);
+}
