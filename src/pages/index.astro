@@ -3,7 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/layout/Navbar.astro";
 import Footer from "../components/layout/Footer.astro";
 import Container from "../components/ui/Container.astro";
-import Divider from "../components/ui/Divider.astro";
+import Hero from "../components/hero/Hero.astro";
 import SectionHeader from "../components/ui/SectionHeader.astro";
 ---
 
@@ -14,23 +14,7 @@ import SectionHeader from "../components/ui/SectionHeader.astro";
   <Navbar />
 
   <main id="main-content">
-    <section class="intro">
-      <Container>
-        <div class="intro-content">
-          <h1><span class="hero-name"><span class="name-accent">Ren</span>anime's</span><br /><span class="hero-gallery">Gallery.</span></h1>
-
-          <div class="intro-copy">
-            <p>
-              Anime a través de mis ojos.<br />
-              Este es mi regalo para ti.
-            </p>
-            <span class="intro-index">REN / ANIME / 2026</span>
-          </div>
-        </div>
-
-        <Divider />
-      </Container>
-    </section>
+    <Hero />
 
     <section id="favorites" class="placeholder-section section-space">
       <Container>
@@ -64,84 +48,7 @@ import SectionHeader from "../components/ui/SectionHeader.astro";
 </Layout>
 
 <style>
-  .intro {
-    min-height: min(72vh, 48rem);
-    display: grid;
-    align-items: end;
-    padding-block: clamp(7rem, 15vw, 13rem) var(--space-16);
-  }
-
-  .intro-content {
-    padding-bottom: var(--space-12);
-  }
-
-  h1 {
-    margin: 0;
-    color: var(--color-paper-50);
-    font-family: var(--font-display);
-    font-size: clamp(4rem, 12vw, 11rem);
-    font-weight: 500;
-    letter-spacing: -0.065em;
-    line-height: 0.84;
-  }
-
-  .name-accent {
-    color: var(--color-accent);
-  }
-
-  .hero-name {
-    font-family: var(--font-display);
-    font-style: normal;
-  }
-
-  .hero-gallery {
-    color: var(--color-paper-300);
-    font-family: "Comico", var(--font-display);
-    font-size: 0.88em;
-    font-style: normal;
-    font-weight: 400;
-    letter-spacing: 0.01em;
-    text-transform: uppercase;
-  }
-
-  .intro-copy {
-    display: grid;
-    gap: var(--space-8);
-    max-width: 30rem;
-    margin-top: var(--space-10);
-    padding-bottom: 0.4rem;
-  }
-
-  .intro-copy p {
-    margin: 0;
-    color: var(--color-paper-200);
-    font-size: var(--text-lg);
-    line-height: 1.45;
-  }
-
-  .intro-index {
-    color: var(--color-muted-500);
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    letter-spacing: 0.12em;
-  }
-
   .placeholder-section {
     border-top: 0;
-  }
-
-  @media (max-width: 720px) {
-    .intro {
-      min-height: 70vh;
-      padding-top: 6rem;
-    }
-
-    h1 {
-      font-size: clamp(3rem, 15vw, 6rem);
-    }
-
-    .intro-copy {
-      max-width: 28rem;
-    }
   }
 </style>
