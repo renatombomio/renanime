@@ -62,12 +62,23 @@ const entries = getWatchedLibrary();
   :global(.collection-tools) {
     display: flex;
     align-items: center;
-    gap: .5rem;
+    gap: .65rem;
+  }
+
+  :global(.collection-filters) {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  :global(.collection-filters::-webkit-scrollbar) {
+    display: none;
   }
 
   :global(.collection-filters button) {
-    padding: .65rem .9rem;
-    border: 1px solid transparent;
+    position: relative;
+    flex: 0 0 auto;
+    padding: .65rem .15rem .7rem;
+    border: 0;
     background: transparent;
     color: var(--color-muted-400);
     font-family: var(--font-meta);
@@ -77,10 +88,26 @@ const entries = getWatchedLibrary();
     cursor: pointer;
   }
 
+  :global(.collection-filters button::after) {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    background: var(--color-paper-50);
+    content: "";
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 180ms ease;
+  }
+
   :global(.collection-filters button:hover),
   :global(.collection-filters button.is-active) {
-    border-color: var(--color-border-strong);
     color: var(--color-paper-50);
+  }
+
+  :global(.collection-filters button.is-active::after) {
+    transform: scaleX(1);
   }
 
   :global(.collection-tools input),
@@ -116,7 +143,7 @@ const entries = getWatchedLibrary();
   :global(.collection-grid) {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: clamp(2.5rem, 4vw, 4rem) clamp(1rem, 2vw, 2rem);
+    gap: clamp(3rem, 5vw, 5rem) clamp(.85rem, 1.8vw, 1.75rem);
   }
 
   :global(.collection-card) {
@@ -135,16 +162,30 @@ const entries = getWatchedLibrary();
     background: var(--color-ink-800);
   }
 
+  :global(.poster::after) {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(9,9,9,.08) 45%, rgba(9,9,9,.82) 100%);
+    content: "";
+    opacity: .82;
+    pointer-events: none;
+    transition: opacity 300ms ease;
+  }
+
   :global(.poster img) {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 500ms cubic-bezier(.2,.7,.2,1);
+    transition: transform 650ms cubic-bezier(.2,.7,.2,1);
   }
 
   :global(.collection-card a:hover .poster img) {
     transform: scale(1.035);
+  }
+
+  :global(.collection-card a:hover .poster::after) {
+    opacity: .96;
   }
 
   :global(.poster-placeholder) {
@@ -158,61 +199,90 @@ const entries = getWatchedLibrary();
     font-size: .62rem;
   }
 
-  :global(.card-indicators) {
+  :global(.card-top) {
     position: absolute;
     top: .65rem;
     right: .65rem;
+    left: .65rem;
+    z-index: 2;
     display: flex;
-    gap: .35rem;
+    justify-content: space-between;
+    align-items: flex-start;
   }
 
-  :global(.card-indicators span) {
-    display: grid;
-    place-items: center;
-    width: 1.75rem;
-    height: 1.75rem;
-    border: 1px solid rgba(245,242,236,.35);
-    border-radius: 999px;
+  :global(.format-badge),
+  :global(.score-badge) {
+    padding: .35rem .45rem;
+    border: 1px solid rgba(245,242,236,.22);
     background: rgba(9,9,9,.58);
     color: var(--color-paper-50);
     font-family: var(--font-meta);
-    font-size: .7rem;
+    font-size: .52rem;
+    letter-spacing: .1em;
+    line-height: 1;
     backdrop-filter: blur(8px);
   }
 
-  :global(.format-badge) {
+  :global(.score-badge) {
+    border-radius: 999px;
+    letter-spacing: .02em;
+  }
+
+  :global(.card-overlay) {
     position: absolute;
-    bottom: .65rem;
-    left: .65rem;
-    padding: .35rem .5rem;
-    background: rgba(9,9,9,.72);
+    right: .7rem;
+    bottom: .7rem;
+    left: .7rem;
+    z-index: 2;
     color: var(--color-paper-50);
+  }
+
+  :global(.card-overlay-title) {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: .78rem;
+    font-weight: 500;
+    line-height: 1.15;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  :global(.card-overlay-meta) {
+    display: flex;
+    gap: .55rem;
+    margin-top: .35rem;
+    color: var(--color-paper-200);
     font-family: var(--font-meta);
-    font-size: .55rem;
-    letter-spacing: .1em;
+    font-size: .5rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
   }
 
   :global(.card-info) {
     display: grid;
-    gap: .45rem;
-    padding-top: .85rem;
+    gap: .35rem;
+    padding-top: .7rem;
   }
 
   :global(.card-info h3) {
+    display: -webkit-box;
+    overflow: hidden;
     margin: 0;
     color: var(--color-paper-50);
     font-family: var(--font-body);
-    font-size: .95rem;
+    font-size: .82rem;
     font-weight: 500;
     line-height: 1.2;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
   :global(.meta) {
     display: flex;
-    gap: .7rem;
+    gap: .65rem;
     color: var(--color-muted-400);
     font-family: var(--font-meta);
-    font-size: .58rem;
+    font-size: .52rem;
     letter-spacing: .04em;
     text-transform: uppercase;
   }
@@ -281,9 +351,63 @@ const entries = getWatchedLibrary();
   }
 
   @media (max-width: 560px) {
+    :global(.collection-page) {
+      padding-top: 4.5rem;
+    }
+
+    :global(.collection-header) {
+      margin-bottom: 2.5rem;
+    }
+
+    :global(.collection-tools) {
+      width: 100%;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: .5rem;
+    }
+
+    :global(.collection-tools input) {
+      width: 100%;
+      min-width: 0;
+    }
+
+    :global(.collection-tools select) {
+      width: auto;
+      max-width: 7rem;
+    }
+
     :global(.collection-grid) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 2.5rem .8rem;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2.25rem .65rem;
+    }
+
+    :global(.card-info) {
+      padding-top: .55rem;
+    }
+
+    :global(.card-info h3) {
+      font-size: .72rem;
+    }
+
+    :global(.meta) {
+      font-size: .46rem;
+      gap: .45rem;
+    }
+
+    :global(.card-overlay) {
+      right: .5rem;
+      bottom: .5rem;
+      left: .5rem;
+    }
+
+    :global(.card-overlay-title) {
+      font-size: .68rem;
+    }
+
+    :global(.format-badge),
+    :global(.score-badge) {
+      padding: .28rem .35rem;
+      font-size: .45rem;
     }
   }
 </style>
