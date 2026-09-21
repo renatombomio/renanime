@@ -1,4 +1,5 @@
-import type { LibraryEntry } from "../types/personal";\nimport { franchiseMovies } from "./franchise-movies";
+import type { LibraryEntry } from "../types/personal";
+import { franchiseMovies } from "./franchise-movies";
 
 export const animeLibrary: LibraryEntry[] = [
   { animeId: "personal-001", title: "Boku no Hero Academia", state: { status: "WATCHED", favorite: false, recommended: true } },
