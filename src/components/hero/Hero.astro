@@ -1,0 +1,225 @@
+---
+import HeroCarousel, { type HeroSlide } from "./HeroCarousel";
+import { heroSlides } from "../../data/hero";
+import { anilistProvider } from "../../lib/api/anilist";
+
+const slides: HeroSlide[] = [];
+
+for (const config of heroSlides) {
+  try {
+    const anime = await anilistProvider.getById(config.anilistId);
+
+    if (anime) {
+      slides.push({
+        id: config.id,
+        title: anime.metadata.title,
+        year: anime.metadata.year,
+        format: anime.metadata.format,
+        synopsis: anime.metadata.synopsis,
+        banner: anime.metadata.images.banner,
+        cover: anime.metadata.images.cover,
+        eyebrow: config.eyebrow,
+        note: config.note,
+      });
+    }
+  } catch {
+    // Keep the hero resilient if AniList is temporarily unavailable.
+  }
+}
+---
+
+<HeroCarousel client:load slides={slides} />
+
+<style>
+  .hero {
+    position: relative;
+    min-height: min(86vh, 58rem);
+    overflow: hidden;
+    background: var(--color-ink-950);
+  }
+
+  .hero-media,
+  .hero-image,
+  .hero-vignette,
+  .hero-grain {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero-image {
+    background-position: center;
+    background-size: cover;
+    will-change: transform, opacity;
+  }
+
+  .hero-vignette {
+    background:
+      linear-gradient(90deg, rgba(9, 9, 9, 0.96) 0%, rgba(9, 9, 9, 0.72) 35%, rgba(9, 9, 9, 0.18) 72%, rgba(9, 9, 9, 0.5) 100%),
+      linear-gradient(0deg, rgba(9, 9, 9, 0.9) 0%, rgba(9, 9, 9, 0.08) 42%, rgba(9, 9, 9, 0.28) 100%);
+  }
+
+  .hero-grain {
+    opacity: 0.055;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    min-height: min(86vh, 58rem);
+    width: min(calc(100% - (var(--gutter) * 2)), var(--container-max));
+    margin-inline: auto;
+    padding-block: clamp(7rem, 13vw, 10rem) clamp(2rem, 5vw, 4rem);
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .hero-brand {
+    align-self: flex-start;
+  }
+
+  .hero-kicker {
+    margin: 0;
+    color: var(--color-paper-50);
+    font-family: var(--font-body);
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .hero-accent {
+    color: var(--color-accent);
+  }
+
+  .hero-brand h1 {
+    margin: 0.25rem 0 0;
+    color: var(--color-paper-50);
+    font-family: "Comico", var(--font-body);
+    font-size: clamp(4.5rem, 12vw, 10rem);
+    font-weight: 400;
+    letter-spacing: -0.045em;
+    line-height: 0.8;
+  }
+
+  .hero-slides {
+    position: relative;
+    min-height: 11rem;
+    margin-top: clamp(3rem, 8vw, 7rem);
+  }
+
+  .hero-content {
+    position: absolute;
+    inset: 0;
+    max-width: 34rem;
+  }
+
+  .hero-eyebrow {
+    margin: 0 0 0.75rem;
+    color: var(--color-accent-soft);
+    font-family: var(--font-meta);
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .hero-content h2 {
+    margin: 0;
+    color: var(--color-paper-50);
+    font-family: var(--font-body);
+    font-size: clamp(2rem, 4vw, 4rem);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 0.98;
+  }
+
+  .hero-note {
+    max-width: 30rem;
+    margin: 1rem 0 0;
+    color: var(--color-paper-200);
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    color: var(--color-muted-400);
+    font-family: var(--font-meta);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .hero-controls {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .hero-progress {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .hero-progress button {
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 1px solid rgba(245, 242, 236, 0.24);
+    border-radius: 999px;
+    background: rgba(9, 9, 9, 0.2);
+    color: var(--color-muted-400);
+    font-family: var(--font-meta);
+    font-size: 0.58rem;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+  }
+
+  .hero-progress button.is-active {
+    border-color: var(--color-paper-50);
+    background: var(--color-paper-50);
+    color: var(--color-ink-950);
+  }
+
+  .hero-scroll {
+    margin: 0;
+    color: var(--color-muted-400);
+    font-family: var(--font-meta);
+    font-size: 0.58rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 720px) {
+    .hero {
+      min-height: 88vh;
+    }
+
+    .hero-inner {
+      min-height: 88vh;
+      padding-top: 6rem;
+    }
+
+    .hero-brand h1 {
+      font-size: clamp(4rem, 20vw, 7rem);
+    }
+
+    .hero-slides {
+      min-height: 13rem;
+    }
+
+    .hero-controls {
+      align-items: flex-start;
+    }
+
+    .hero-scroll {
+      display: none;
+    }
+  }
+</style>
