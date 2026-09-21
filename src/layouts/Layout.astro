@@ -24,6 +24,26 @@ import "../styles/global.css";
   </head>
 
   <body>
+    <a class="skip-link" href="#main-content">Saltar al contenido</a>
     <slot />
   </body>
 </html>
+
+<style>
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 999;
+    padding: 0.65rem 0.8rem;
+    background: var(--color-paper-50);
+    color: var(--color-ink-950);
+    font: var(--text-xs)/1 var(--font-mono);
+    transform: translateY(-150%);
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+</style>
