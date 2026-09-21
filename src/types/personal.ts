@@ -11,3 +11,7 @@ export interface PersonalAnimeEntry {
   animeId: string;
   state: PersonalAnimeState;
 }
+
+export interface LibraryEntry extends PersonalAnimeEntry {
+  title: string;
+}
