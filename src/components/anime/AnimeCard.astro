@@ -3,110 +3,26 @@ import AnimePoster from "./AnimePoster.astro";
 import AnimeMeta from "./AnimeMeta.astro";
 import AnimeBadge from "./AnimeBadge.astro";
 import AnimeRating from "./AnimeRating.astro";
-
-interface Props {
-  title: string;
-  image: string;
-  href?: string;
-  type?: string;
-  year?: string | number;
-  genres?: string[];
-  score?: number | null;
-  status?: string;
-  badge?: string;
-}
-
-const {
-  title,
-  image,
-  href = "#",
-  type,
-  year,
-  genres = [],
-  score = null,
-  status,
-  badge
-} = Astro.props;
+interface Props { title:string; image?:string; href?:string; type?:string; year?:string|number; genres?:string[]; score?:number|null; status?:string; badge?:string; }
+const {title,image,href="#",type,year,genres=[],score=null,status,badge}=Astro.props;
 ---
-
 <article class="anime-card">
   <a class="card-link" href={href} aria-label={`Ver ${title}`}>
     <div class="poster-wrap">
-      <AnimePoster src={image} alt={title} />
-      {(badge || status) && (
-        <div class="badges">
-          {badge && <AnimeBadge tone="accent">{badge}</AnimeBadge>}
-          {status && <AnimeBadge>{status}</AnimeBadge>}
-        </div>
-      )}
+      <AnimePoster src={image} alt={title}/>
+      {(badge||status)&&<div class="badges">{badge&&<AnimeBadge tone="accent">{badge}</AnimeBadge>}{status&&<AnimeBadge>{status}</AnimeBadge>}</div>}
     </div>
-
     <div class="card-content">
-      <div class="title-row">
-        <h3>{title}</h3>
-        <AnimeRating score={score} />
-      </div>
-      <AnimeMeta type={type} year={year} genres={genres} />
+      <div class="title-row"><h3>{title}</h3><AnimeRating score={score}/></div>
+      <AnimeMeta type={type} year={year} genres={genres}/>
     </div>
   </a>
 </article>
-
 <style>
-  .anime-card {
-    min-width: 0;
-  }
-
-  .card-link {
-    display: block;
-  }
-
-  .poster-wrap {
-    position: relative;
-    overflow: hidden;
-    background: var(--color-ink-800);
-  }
-
-  .badges {
-    position: absolute;
-    top: 0.75rem;
-    left: 0.75rem;
-    right: 0.75rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-
-  .card-content {
-    display: grid;
-    gap: 0.55rem;
-    padding-top: 0.9rem;
-  }
-
-  .title-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0.75rem;
-  }
-
-  h3 {
-    min-width: 0;
-    margin: 0;
-    color: var(--color-paper-50);
-    font-family: var(--font-display);
-    font-size: var(--text-lg);
-    font-weight: 500;
-    letter-spacing: -0.025em;
-    line-height: 1.1;
-  }
-
-  .card-link:hover h3 {
-    color: var(--color-accent-soft);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .card-link:hover h3 {
-      color: var(--color-paper-50);
-    }
-  }
+.anime-card{min-width:0}.card-link{display:block}.poster-wrap{position:relative;overflow:hidden;background:var(--color-ink-800)}
+.badges{position:absolute;top:.75rem;left:.75rem;right:.75rem;display:flex;flex-wrap:wrap;gap:.4rem}
+.card-content{display:grid;gap:.55rem;padding-top:.9rem}.title-row{display:flex;align-items:baseline;justify-content:space-between;gap:.75rem}
+h3{min-width:0;margin:0;color:var(--color-paper-50);font-family:var(--font-display);font-size:var(--text-lg);font-weight:500;letter-spacing:-.025em;line-height:1.15}
+.card-link:hover h3{color:var(--color-accent-soft)}.card-link:focus-visible{outline:none}.card-link:focus-visible .poster-wrap{outline:1px solid var(--color-paper-50);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.card-link:hover h3{color:var(--color-paper-50)}}
 </style>
