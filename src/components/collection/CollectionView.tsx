@@ -33,6 +33,13 @@ interface Props {
 const PAGE_SIZE = 24;
 
 async function findMedia(title: string): Promise<Media | null> {
+  const cacheKey = "renanime:collection:" + title.toLowerCase();
+
+  try {
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) return JSON.parse(cached) as Media | null;
+  } catch {}
+
   const query = `
     query SearchAnime($search: String!) {
       Page(page: 1, perPage: 1) {
@@ -48,15 +55,47 @@ async function findMedia(title: string): Promise<Media | null> {
     }
   `;
 
-  const response = await fetch("https://graphql.anilist.co", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify({ query, variables: { search: title } }),
-  });
+  try {
+    const response = await fetch("https://graphql.anilist.co", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ query, variables: { search: title } }),
+    });
+    if (response.ok) {
+      const payload = await response.json();
+      const item = payload.data?.Page?.media?.[0] ?? null;
+      if (item?.coverImage?.extraLarge || item?.coverImage?.large) {
+        try { sessionStorage.setItem(cacheKey, JSON.stringify(item)); } catch {}
+        return item;
+      }
+    }
+  } catch {}
 
-  if (!response.ok) return null;
-  const payload = await response.json();
-  return payload.data?.Page?.media?.[0] ?? null;
+  try {
+    const url = new URL("https://api.jikan.moe/v4/anime");
+    url.searchParams.set("q", title);
+    url.searchParams.set("limit", "1");
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    const payload = await response.json();
+    const anime = payload.data?.[0];
+    if (!anime) return null;
+    const fallback: Media = {
+      id: anime.mal_id,
+      title: { romaji: anime.title, english: anime.title_english },
+      genres: anime.genres?.map((genre: { name: string }) => genre.name) ?? [],
+      startDate: { year: anime.year ?? null },
+      format: anime.type === "Movie" ? "MOVIE" : anime.type?.toUpperCase() ?? null,
+      coverImage: {
+        extraLarge: anime.images?.jpg?.large_image_url ?? null,
+        large: anime.images?.jpg?.image_url ?? null,
+      },
+    };
+    try { sessionStorage.setItem(cacheKey, JSON.stringify(fallback)); } catch {}
+    return fallback;
+  } catch {
+    return null;
+  }
 }
 
 export default function CollectionView({ entries }: Props) {
@@ -183,7 +222,11 @@ export default function CollectionView({ entries }: Props) {
                       loading="lazy"
                     />
                   ) : (
-                    <div className="poster-placeholder">{entry.title}</div>
+                    <div className="poster-placeholder">
+                      <span className="placeholder-index">{String(entries.indexOf(entry) + 1).padStart(2, "0")}</span>
+                      <strong>{entry.title}</strong>
+                      <span className="placeholder-rule" />
+                    </div>
                   )}
                   <div className="card-top">
                     <span className="format-badge">{type === "MOVIE" ? "FILM" : "SERIES"}</span>
@@ -213,7 +256,9 @@ export default function CollectionView({ entries }: Props) {
         })}
       </div>
 
-      {loading && <p className="loading">Cargando historias…</p>}
+      {loading && (
+        <p className="loading">Actualizando imágenes…</p>
+      )}
 
       {remaining > 0 && (
         <button className="load-more" type="button" onClick={() => setVisible((current) => current + PAGE_SIZE)}>
