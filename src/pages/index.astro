@@ -68,7 +68,7 @@ const collectionEntries = getWatchedLibrary();
   }
 
   .favorites-view-wrap {
-    margin-top: clamp(3.5rem, 7vw, 6rem);
+    margin-top: clamp(3rem, 6vw, 5rem);
   }
 
   :global(.favorites-view) {
@@ -77,9 +77,10 @@ const collectionEntries = getWatchedLibrary();
 
   :global(.favorites-intro) {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: baseline;
-    padding-bottom: .8rem;
+    gap: 1rem;
+    padding-bottom: .85rem;
     border-bottom: 1px solid var(--color-border);
     color: var(--color-muted-400);
     font-family: var(--font-meta);
@@ -88,23 +89,51 @@ const collectionEntries = getWatchedLibrary();
     text-transform: uppercase;
   }
 
-  :global(.favorites-grid) {
-    display: grid;
-    grid-template-columns: 1.15fr .925fr .925fr;
-    gap: clamp(1rem, 2vw, 2rem);
-    align-items: end;
+  :global(.favorites-intro > div:first-child) {
+    display: flex;
+    align-items: baseline;
+    gap: .9rem;
+  }
+
+  :global(.favorites-controls) {
+    display: flex;
+    gap: .35rem;
+  }
+
+  :global(.favorites-controls button) {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--color-border);
+    background: transparent;
+    color: var(--color-paper-200);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: .85rem;
+  }
+
+  :global(.favorites-controls button:hover) {
+    border-color: var(--color-border-strong);
+    color: var(--color-paper-50);
+  }
+
+  :global(.favorites-track) {
+    display: flex;
+    gap: clamp(.8rem, 1.5vw, 1.35rem);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding: 1.25rem 0 .9rem;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  :global(.favorites-track::-webkit-scrollbar) {
+    display: none;
   }
 
   :global(.favorite-card) {
+    flex: 0 0 clamp(13.5rem, 20vw, 18rem);
     min-width: 0;
-  }
-
-  :global(.favorite-card--2) {
-    margin-top: clamp(3rem, 8vw, 8rem);
-  }
-
-  :global(.favorite-card--3) {
-    margin-top: clamp(1.5rem, 4vw, 4rem);
+    scroll-snap-align: start;
   }
 
   :global(.favorite-card a) {
@@ -118,14 +147,10 @@ const collectionEntries = getWatchedLibrary();
     background: var(--color-ink-800);
   }
 
-  :global(.favorite-card--1 .favorite-media) {
-    aspect-ratio: 4 / 5;
-  }
-
   :global(.favorite-media::after) {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, transparent 48%, rgba(9,9,9,.72));
+    background: linear-gradient(180deg, transparent 48%, rgba(9,9,9,.68));
     content: "";
     pointer-events: none;
   }
@@ -134,19 +159,18 @@ const collectionEntries = getWatchedLibrary();
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 800ms cubic-bezier(.2,.7,.2,1), filter 500ms ease;
+    transition: transform 650ms cubic-bezier(.2,.7,.2,1);
   }
 
   :global(.favorite-card a:hover .favorite-media img) {
-    transform: scale(1.025);
-    filter: saturate(1.04);
+    transform: scale(1.035);
   }
 
   :global(.favorite-overlay) {
     position: absolute;
-    right: .8rem;
-    bottom: .8rem;
-    left: .8rem;
+    right: .7rem;
+    bottom: .65rem;
+    left: .7rem;
     z-index: 2;
     display: flex;
     justify-content: space-between;
@@ -158,20 +182,20 @@ const collectionEntries = getWatchedLibrary();
   }
 
   :global(.favorite-mark) {
-    font-size: .9rem;
+    font-size: .8rem;
   }
 
   :global(.favorite-caption) {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: .8rem;
-    padding-top: .85rem;
+    gap: .7rem;
+    padding-top: .7rem;
   }
 
   :global(.favorite-number) {
     color: var(--color-muted-500);
     font-family: var(--font-meta);
-    font-size: .55rem;
+    font-size: .52rem;
     letter-spacing: .08em;
   }
 
@@ -179,16 +203,16 @@ const collectionEntries = getWatchedLibrary();
     margin: 0;
     color: var(--color-paper-50);
     font-family: var(--font-body);
-    font-size: clamp(.9rem, 1.35vw, 1.2rem);
+    font-size: clamp(.82rem, 1vw, 1rem);
     font-weight: 500;
-    line-height: 1.1;
+    line-height: 1.12;
   }
 
   :global(.favorite-caption p) {
-    margin: .3rem 0 0;
+    margin: .25rem 0 0;
     color: var(--color-muted-400);
     font-family: var(--font-meta);
-    font-size: .52rem;
+    font-size: .48rem;
     letter-spacing: .06em;
     text-transform: uppercase;
   }
@@ -197,8 +221,8 @@ const collectionEntries = getWatchedLibrary();
     display: grid;
     height: 100%;
     align-content: end;
-    gap: .7rem;
-    padding: 1rem;
+    gap: .65rem;
+    padding: .9rem;
     background: linear-gradient(145deg, var(--color-ink-700), var(--color-ink-950));
     color: var(--color-paper-50);
   }
@@ -206,24 +230,58 @@ const collectionEntries = getWatchedLibrary();
   :global(.favorite-placeholder span) {
     color: var(--color-muted-400);
     font-family: var(--font-meta);
-    font-size: .55rem;
+    font-size: .52rem;
   }
 
   :global(.favorite-placeholder strong) {
-    max-width: 80%;
-    font-size: 1rem;
+    max-width: 85%;
+    font-size: .9rem;
     font-weight: 500;
     line-height: 1.05;
   }
 
   :global(.favorites-loading) {
     display: block;
-    margin-top: 1rem;
+    margin-top: .4rem;
     color: var(--color-muted-500);
     font-family: var(--font-meta);
-    font-size: .52rem;
+    font-size: .5rem;
     letter-spacing: .08em;
     text-transform: uppercase;
+  }
+
+  @media (max-width: 700px) {
+    :global(.favorites-intro) {
+      font-size: .48rem;
+    }
+
+    :global(.favorites-intro > div:first-child) {
+      gap: .55rem;
+    }
+
+    :global(.favorites-note) {
+      display: none;
+    }
+
+    :global(.favorites-controls button) {
+      width: 1.8rem;
+      height: 1.8rem;
+      font-size: .75rem;
+    }
+
+    :global(.favorites-track) {
+      gap: .65rem;
+      padding-top: 1rem;
+      padding-right: 12vw;
+    }
+
+    :global(.favorite-card) {
+      flex-basis: 68vw;
+    }
+
+    :global(.favorite-caption h3) {
+      font-size: .82rem;
+    }
   }
 
   .collection-view-wrap {
