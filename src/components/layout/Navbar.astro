@@ -9,7 +9,8 @@ const links = [
   { label: "Géneros", href: "/#genres" },
   { label: "Buscar", href: "/search/" },
   { label: "Pendientes", href: "/pending/" },
-  { label: "Próximamente", href: "/coming-soon/" }
+  { label: "Próximamente", href: "/coming-soon/" },
+  { label: "El secreto de Ren", href: "/ghibli/" }
 ];
 ---
 
@@ -27,9 +28,6 @@ const links = [
       </ul>
     </nav>
 
-    <a class="secret-link" href="/ghibli/" aria-label="El secreto de Ren">
-      El secreto de Ren
-    </a>
 
     <div class="mobile-menu">
       <MobileMenu client:load />
@@ -83,8 +81,7 @@ const links = [
     list-style: none;
   }
 
-  nav a,
-  .secret-link {
+  nav a {
     position: relative;
     color: var(--color-muted-400);
     font-family: var(--font-meta);
@@ -96,8 +93,7 @@ const links = [
     white-space: nowrap;
   }
 
-  nav a::after,
-  .secret-link::after {
+  nav a::after {
     position: absolute;
     right: 0;
     bottom: -0.45rem;
@@ -111,24 +107,15 @@ const links = [
   }
 
   nav a:hover,
-  nav a:focus-visible,
-  .secret-link:hover,
-  .secret-link:focus-visible {
+  nav a:focus-visible {
     color: var(--color-paper-50);
   }
 
   nav a:hover::after,
-  nav a:focus-visible::after,
-  .secret-link:hover::after,
-  .secret-link:focus-visible::after {
+  nav a:focus-visible::after {
     transform: scaleX(1);
   }
 
-  .secret-link {
-    justify-self: end;
-    color: var(--color-muted-500);
-    letter-spacing: 0.06em;
-  }
 
   .mobile-menu {
     display: none;
@@ -147,39 +134,10 @@ const links = [
       display: none;
     }
 
-    .secret-link {
-      margin-left: auto;
-    }
-
     .mobile-menu {
       display: block;
     }
-
-    .header-inner {
-      grid-template-columns: auto minmax(0, auto) auto;
-    }
-
-    .mobile-menu {
-      grid-column: 3;
-    }
-
-    .secret-link {
-      grid-column: 2;
-    }
   }
 
-  @media (max-width: 520px) {
-    .header-inner {
-      grid-template-columns: auto minmax(0, 1fr) auto;
-    }
-
-    .secret-link {
-      justify-self: end;
-      font-size: 0.52rem;
-    }
-
-    .mobile-menu {
-      grid-column: 3;
-    }
-  }
+  @media (max-width: 520px) {  }
 </style>
