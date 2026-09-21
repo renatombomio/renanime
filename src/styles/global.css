@@ -539,3 +539,193 @@ section[id] {
     font-size: .45rem;
   }
 }
+
+/* Genres — shared by the home section and any future genre page */
+.genres-view {
+  width: 100%;
+}
+
+.genres-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: .85rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-muted-400);
+  font-family: var(--font-meta);
+  font-size: .52rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.genres-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--color-border);
+  border-left: 1px solid var(--color-border);
+}
+
+.genre-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: end;
+  gap: .8rem;
+  min-height: 8rem;
+  padding: 1.25rem;
+  border: 0;
+  border-right: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-paper-50);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 220ms ease;
+}
+
+.genre-card:hover,
+.genre-card.is-active {
+  background: var(--color-ink-800);
+}
+
+.genre-card::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--color-paper-50);
+  content: "";
+  transition: width 300ms ease;
+}
+
+.genre-card:hover::before,
+.genre-card.is-active::before {
+  width: 100%;
+}
+
+.genre-index,
+.genre-count {
+  color: var(--color-muted-500);
+  font-family: var(--font-meta);
+  font-size: .5rem;
+  letter-spacing: .08em;
+}
+
+.genre-name {
+  align-self: center;
+  font-family: "Comico", var(--font-display);
+  font-size: clamp(1.25rem, 2vw, 2rem);
+  line-height: 1;
+}
+
+.genre-results {
+  margin-top: 2rem;
+  border-top: 1px solid var(--color-border-strong);
+}
+
+.genre-results-head {
+  display: flex;
+  justify-content: space-between;
+  padding: .85rem 0;
+  color: var(--color-muted-400);
+  font-family: var(--font-meta);
+  font-size: .52rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.genre-results-title {
+  color: var(--color-paper-50);
+}
+
+.genre-results-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--color-border);
+}
+
+.genre-results-list a {
+  display: grid;
+  grid-template-columns: 2rem 1fr auto;
+  gap: .8rem;
+  align-items: center;
+  min-width: 0;
+  padding: .8rem 0;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-paper-200);
+}
+
+.genre-results-list a:nth-child(odd) {
+  padding-right: 1.25rem;
+  border-right: 1px solid var(--color-border);
+}
+
+.genre-results-list a:nth-child(even) {
+  padding-left: 1.25rem;
+}
+
+.genre-results-list a:hover {
+  color: var(--color-paper-50);
+}
+
+.genre-results-list span {
+  color: var(--color-muted-500);
+  font-family: var(--font-meta);
+  font-size: .5rem;
+}
+
+.genre-results-list strong {
+  overflow: hidden;
+  font-size: .78rem;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.genres-empty {
+  margin: 2rem 0;
+  color: var(--color-muted-400);
+  font-family: var(--font-meta);
+  font-size: .55rem;
+  text-transform: uppercase;
+}
+
+@media (max-width: 800px) {
+  .genres-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .genres-meta {
+    font-size: .46rem;
+  }
+
+  .genres-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .genre-card {
+    min-height: 5.5rem;
+    padding: 1rem;
+  }
+
+  .genre-name {
+    font-size: 1.45rem;
+  }
+
+  .genre-results-list {
+    grid-template-columns: 1fr;
+  }
+
+  .genre-results-list a:nth-child(odd) {
+    padding-right: 0;
+    border-right: 0;
+  }
+
+  .genre-results-list a:nth-child(even) {
+    padding-left: 0;
+  }
+}
+\n
