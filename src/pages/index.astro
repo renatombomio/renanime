@@ -5,6 +5,10 @@ import Footer from "../components/layout/Footer.astro";
 import Container from "../components/ui/Container.astro";
 import Hero from "../components/hero/Hero.astro";
 import SectionHeader from "../components/ui/SectionHeader.astro";
+import CollectionView from "../components/collection/CollectionView";
+import { getWatchedLibrary } from "../data/library";
+
+const collectionEntries = getWatchedLibrary();
 ---
 
 <Layout
@@ -25,12 +29,16 @@ import SectionHeader from "../components/ui/SectionHeader.astro";
       </Container>
     </section>
 
-    <section id="collection" class="placeholder-section section-space">
+    <section id="collection" class="collection-section section-space">
       <Container>
         <SectionHeader
           title="Colección"
           description="Aquí están todos los animes que he visto. Son muchos, pero nunca parece suficiente. Porque esa es la magia del anime: terminas una historia y, de alguna manera, ya estás buscando la siguiente."
         />
+
+        <div class="collection-view-wrap">
+          <CollectionView entries={collectionEntries} client:load />
+        </div>
       </Container>
     </section>
 
@@ -50,5 +58,9 @@ import SectionHeader from "../components/ui/SectionHeader.astro";
 <style>
   .placeholder-section {
     border-top: 0;
+  }
+
+  .collection-view-wrap {
+    margin-top: clamp(3.5rem, 7vw, 6rem);
   }
 </style>
