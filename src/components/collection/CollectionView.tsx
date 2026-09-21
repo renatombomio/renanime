@@ -185,18 +185,26 @@ export default function CollectionView({ entries }: Props) {
                   ) : (
                     <div className="poster-placeholder">{entry.title}</div>
                   )}
-                  <div className="card-indicators">
-                    {entry.state.favorite && <span title="Favorito">★</span>}
-                    {entry.state.recommended && <span title="Recomendado">+</span>}
+                  <div className="card-top">
+                    <span className="format-badge">{type === "MOVIE" ? "FILM" : "SERIES"}</span>
+                    {entry.state.personalScore !== undefined && (
+                      <span className="score-badge">{entry.state.personalScore.toFixed(1)}</span>
+                    )}
                   </div>
-                  <span className="format-badge">{type}</span>
+                  <div className="card-overlay">
+                    <div className="card-overlay-title">{item?.title.romaji || item?.title.english || entry.title}</div>
+                    <div className="card-overlay-meta">
+                      {item?.startDate?.year || "—"}
+                      {entry.state.favorite && <span>★</span>}
+                      {entry.state.recommended && <span>+</span>}
+                    </div>
+                  </div>
                 </div>
                 <div className="card-info">
                   <h3>{item?.title.romaji || item?.title.english || entry.title}</h3>
                   <div className="meta">
                     <span>{item?.startDate?.year || "—"}</span>
-                    <span>{type}</span>
-                    {entry.state.personalScore !== undefined && <span>{entry.state.personalScore.toFixed(1)}</span>}
+                    <span>{type === "MOVIE" ? "Film" : "Series"}</span>
                   </div>
                 </div>
               </a>
