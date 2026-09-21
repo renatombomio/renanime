@@ -1,0 +1,49 @@
+---
+import SectionHeader from "../ui/SectionHeader.astro";
+import AnimeGrid from "../anime/AnimeGrid.astro";
+import AnimeCard from "../anime/AnimeCard.astro";
+import { getWatchedLibrary } from "../../data/library";
+
+const collection = getWatchedLibrary();
+const preview = collection.slice(0, 12);
+---
+
+<section id="collection" class="collection-section section-space">
+  <SectionHeader
+    title="Colección"
+    description="Aquí están todos los animes que he visto. Son muchos, pero nunca parece suficiente. Porque esa es la magia del anime: terminas una historia y, de alguna manera, ya estás buscando la siguiente."
+  />
+
+  <div class="collection-toolbar" aria-label="Filtros de colección">
+    <span class="collection-count">{collection.length} historias</span>
+    <div class="collection-filters">
+      <button class="filter is-active" type="button">Todo</button>
+      <button class="filter" type="button">Series</button>
+      <button class="filter" type="button">Películas</button>
+    </div>
+  </div>
+
+  <AnimeGrid>
+    {preview.map((anime) => (
+      <AnimeCard
+        title={anime.title}
+        image=""
+        href="/collection/"
+        badge={anime.state.recommended ? "RECOMENDADO" : undefined}
+      />
+    ))}
+  </AnimeGrid>
+
+  <a class="view-all" href="/collection/">Ver toda la colección →</a>
+</section>
+
+<style>
+  .collection-section { display: grid; gap: 2.5rem; }
+  .collection-toolbar { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding-block:1rem; border-top:1px solid var(--color-border); border-bottom:1px solid var(--color-border); }
+  .collection-count { color:var(--color-muted-400); font: var(--text-xs)/1 var(--font-mono); letter-spacing:.1em; text-transform:uppercase; }
+  .collection-filters { display:flex; gap:.35rem; }
+  .filter { border:1px solid var(--color-border); background:transparent; color:var(--color-muted-400); padding:.55rem .8rem; font:var(--text-xs)/1 var(--font-mono); text-transform:uppercase; cursor:pointer; }
+  .filter.is-active, .filter:hover { color:var(--color-paper-50); border-color:var(--color-border-strong); }
+  .view-all { justify-self:end; color:var(--color-paper-200); font:var(--text-xs)/1 var(--font-mono); letter-spacing:.08em; text-transform:uppercase; }
+  @media(max-width:600px){ .collection-toolbar{align-items:flex-start; flex-direction:column}.collection-filters{width:100%}.filter{flex:1}.view-all{justify-self:start} }
+</style>
