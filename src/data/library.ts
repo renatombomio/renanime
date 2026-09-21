@@ -98,7 +98,6 @@ export const animeLibrary: LibraryEntry[] = [
   { animeId: "personal-100", title: "Vivy: Fluorite Eye's Song", state: { status: "WATCHED", favorite: false, recommended: false } },
   { animeId: "personal-101", title: "Arifureta: From Commonplace to World's Strongest", state: { status: "WATCHED", favorite: false, recommended: false } },
   { animeId: "personal-102", title: "Sono Bisque Doll wa Koi wo Suru", state: { status: "WATCHED", favorite: false, recommended: true } },
-  { animeId: "personal-103", title: "Shuumatsu no Harem", state: { status: "WATCHED", favorite: false, recommended: false } },
   { animeId: "personal-104", title: "Gleipnir", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-105", title: "Youkoso Jitsuryoku Shijou Shugi no Kyoushitsu e", state: { status: "WATCHED", favorite: false, recommended: true } },
   { animeId: "personal-106", title: "SWORD GAI The Animation", state: { status: "WATCHED", favorite: false, recommended: false } },
