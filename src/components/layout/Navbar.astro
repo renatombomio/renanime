@@ -27,11 +27,13 @@ const links = [
       </ul>
     </nav>
 
-    <div class="header-secret">
-      <a href="/ghibli/" aria-label="El secreto de Ren">El secreto de Ren</a>
-    </div>
+    <a class="secret-link" href="/ghibli/" aria-label="El secreto de Ren">
+      El secreto de Ren
+    </a>
 
-    <div class="mobile-menu"><MobileMenu client:load /></div>
+    <div class="mobile-menu">
+      <MobileMenu client:load />
+    </div>
   </Container>
 </header>
 
@@ -40,7 +42,7 @@ const links = [
     position: sticky;
     top: 0;
     z-index: var(--z-header);
-    background: rgba(9, 9, 9, 0.84);
+    background: rgba(9, 9, 9, 0.9);
     border-bottom: 1px solid var(--color-border);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
@@ -48,7 +50,7 @@ const links = [
 
   .header-inner {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     min-height: 4.25rem;
     gap: clamp(1.5rem, 3vw, 3rem);
@@ -77,6 +79,7 @@ const links = [
 
   nav {
     justify-self: center;
+    min-width: 0;
   }
 
   nav ul {
@@ -90,7 +93,7 @@ const links = [
   }
 
   nav a,
-  .header-secret a {
+  .secret-link {
     position: relative;
     color: var(--color-muted-400);
     font-family: var(--font-meta);
@@ -103,7 +106,7 @@ const links = [
   }
 
   nav a::after,
-  .header-secret a::after {
+  .secret-link::after {
     position: absolute;
     right: 0;
     bottom: -0.55rem;
@@ -118,19 +121,19 @@ const links = [
 
   nav a:hover,
   nav a:focus-visible,
-  .header-secret a:hover,
-  .header-secret a:focus-visible {
+  .secret-link:hover,
+  .secret-link:focus-visible {
     color: var(--color-paper-50);
   }
 
   nav a:hover::after,
   nav a:focus-visible::after,
-  .header-secret a:hover::after,
-  .header-secret a:focus-visible::after {
+  .secret-link:hover::after,
+  .secret-link:focus-visible::after {
     transform: scaleX(1);
   }
 
-  .header-secret {
+  .secret-link {
     justify-self: end;
   }
 
@@ -140,17 +143,19 @@ const links = [
 
   @media (max-width: 1120px) {
     .header-inner {
-      grid-template-columns: 1fr auto auto;
+      grid-template-columns: 1fr auto;
+      min-height: 4.25rem;
       gap: var(--space-3);
     }
 
     nav,
-    .header-secret {
+    .secret-link {
       display: none;
     }
 
     .mobile-menu {
       display: block;
+      justify-self: end;
     }
   }
 
