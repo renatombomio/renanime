@@ -1,43 +1,15 @@
 ---
-interface Props {
-  eyebrow?: string;
-  title: string;
-  description?: string;
-  id?: string;
-}
-
+interface Props { eyebrow?: string; title: string; description?: string; id?: string; }
 const { eyebrow, title, description, id } = Astro.props;
 ---
-
 <header id={id} class="section-header">
   {eyebrow && <span class="eyebrow">{eyebrow}</span>}
   <h2>{title}</h2>
   {description && <p>{description}</p>}
 </header>
-
 <style>
-  .section-header {
-    display: grid;
-    gap: var(--space-4);
-    max-width: var(--content-max);
-  }
-
-  h2 {
-    margin: 0;
-    color: var(--color-paper-50);
-    font-family: var(--font-heading);
-    font-size: clamp(2.25rem, 5vw, 4.5rem);
-    font-weight: var(--weight-regular);
-    letter-spacing: var(--tracking-heading);
-    line-height: var(--leading-tight);
-  }
-
-  p {
-    max-width: var(--reading-max);
-    margin: 0;
-    color: var(--color-muted-400);
-    font-family: var(--font-body);
-    font-size: var(--text-base);
-    line-height: var(--leading-body);
-  }
+  .section-header { display:grid; gap:var(--space-4); max-width:48rem; }
+  .eyebrow { color:var(--color-muted-400); font:var(--text-xs)/1 var(--font-mono); letter-spacing:.12em; text-transform:uppercase; }
+  h2 { margin:0; color:var(--color-paper-50); font-family:"Comico",var(--font-display); font-size:clamp(2.5rem,6vw,5rem); font-weight:400; letter-spacing:-.02em; line-height:var(--leading-tight); }
+  p { max-width:42rem; margin:0; color:var(--color-muted-400); font-family:var(--font-body); font-size:var(--text-base); line-height:var(--leading-body); }
 </style>
