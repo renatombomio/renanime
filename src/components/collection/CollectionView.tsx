@@ -32,70 +32,83 @@ interface Props {
 
 const PAGE_SIZE = 24;
 
-async function findMedia(title: string): Promise<Media | null> {
-  const cacheKey = "renanime:collection:" + title.toLowerCase();
+async function findMediaBatch(entries: PersonalEntry[]): Promise<Record<string, Media | null>> {
+  const unique = entries.filter((entry, index, list) => list.findIndex((item) => item.animeId === entry.animeId) === index);
+  const result: Record<string, Media | null> = {};
+  const unresolved: PersonalEntry[] = [];
 
-  try {
-    const cached = sessionStorage.getItem(cacheKey);
-    if (cached) return JSON.parse(cached) as Media | null;
-  } catch {}
-
-  const query = `
-    query SearchAnime($search: String!) {
-      Page(page: 1, perPage: 1) {
-        media(search: $search, type: ANIME, sort: SEARCH_MATCH) {
-          id
-          title { romaji english }
-          genres
-          startDate { year }
-          format
-          coverImage { extraLarge large }
-        }
+  for (const entry of unique) {
+    const cacheKey = "renanime:collection:" + entry.title.toLowerCase();
+    try {
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) {
+        result[entry.animeId] = JSON.parse(cached) as Media | null;
+        continue;
       }
-    }
-  `;
-
-  try {
-    const response = await fetch("https://graphql.anilist.co", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ query, variables: { search: title } }),
-    });
-    if (response.ok) {
-      const payload = await response.json();
-      const item = payload.data?.Page?.media?.[0] ?? null;
-      if (item?.coverImage?.extraLarge || item?.coverImage?.large) {
-        try { sessionStorage.setItem(cacheKey, JSON.stringify(item)); } catch {}
-        return item;
-      }
-    }
-  } catch {}
-
-  try {
-    const url = new URL("https://api.jikan.moe/v4/anime");
-    url.searchParams.set("q", title);
-    url.searchParams.set("limit", "1");
-    const response = await fetch(url);
-    if (!response.ok) return null;
-    const payload = await response.json();
-    const anime = payload.data?.[0];
-    if (!anime) return null;
-    const fallback: Media = {
-      id: anime.mal_id,
-      title: { romaji: anime.title, english: anime.title_english },
-      genres: anime.genres?.map((genre: { name: string }) => genre.name) ?? [],
-      startDate: { year: anime.year ?? null },
-      format: anime.type === "Movie" ? "MOVIE" : anime.type?.toUpperCase() ?? null,
-      coverImage: {
-        extraLarge: anime.images?.jpg?.large_image_url ?? null,
-        large: anime.images?.jpg?.image_url ?? null,
-      },
-    };
-    try { sessionStorage.setItem(cacheKey, JSON.stringify(fallback)); } catch {}
-    return fallback;
-  } catch {
-    return null;
+    } catch {}
+    unresolved.push(entry);
   }
+
+  for (let offset = 0; offset < unresolved.length; offset += 15) {
+    const chunk = unresolved.slice(offset, offset + 15);
+    const variables: Record<string, string> = {};
+    const fields = chunk.map((entry, index) => {
+      const key = "s" + index;
+      const alias = "a" + index;
+      variables[key] = entry.title;
+      return `${alias}: Page(page: 1, perPage: 1) { media(search: $${key}, type: ANIME, sort: SEARCH_MATCH) { id title { romaji english } genres startDate { year } format coverImage { extraLarge large } } }`;
+    }).join("\n");
+
+    const definitions = chunk.map((_, index) => `$s${index}: String!`).join(", ");
+    const query = `query BatchSearch(${definitions}) { ${fields} }`;
+
+    try {
+      const response = await fetch("https://graphql.anilist.co", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ query, variables }),
+      });
+
+      if (response.ok) {
+        const payload = await response.json();
+        chunk.forEach((entry, index) => {
+          const item = payload.data?.["a" + index]?.media?.[0] ?? null;
+          result[entry.animeId] = item;
+          if (item) {
+            try { sessionStorage.setItem("renanime:collection:" + entry.title.toLowerCase(), JSON.stringify(item)); } catch {}
+          }
+        });
+      }
+    } catch {}
+  }
+
+  return result;
+}
+
+async function findJikanFallback(entries: PersonalEntry[]): Promise<Record<string, Media | null>> {
+  const result: Record<string, Media | null> = {};
+  for (const entry of entries) {
+    try {
+      const url = new URL("https://api.jikan.moe/v4/anime");
+      url.searchParams.set("q", entry.title);
+      url.searchParams.set("limit", "1");
+      const response = await fetch(url);
+      if (!response.ok) continue;
+      const payload = await response.json();
+      const anime = payload.data?.[0];
+      if (!anime) continue;
+      result[entry.animeId] = {
+        id: anime.mal_id,
+        title: { romaji: anime.title, english: anime.title_english },
+        genres: anime.genres?.map((genre: { name: string }) => genre.name) ?? [],
+        startDate: { year: anime.year ?? null },
+        format: anime.type === "Movie" ? "MOVIE" : anime.type?.toUpperCase() ?? null,
+        coverImage: { extraLarge: anime.images?.jpg?.large_image_url ?? null, large: anime.images?.jpg?.image_url ?? null },
+      };
+      try { sessionStorage.setItem("renanime:collection:" + entry.title.toLowerCase(), JSON.stringify(result[entry.animeId])); } catch {}
+    } catch {}
+  }
+  return result;
 }
 
 export default function CollectionView({ entries }: Props) {
@@ -134,35 +147,25 @@ export default function CollectionView({ entries }: Props) {
   const pageIds = page.map((entry) => entry.animeId).join("|");
 
   useEffect(() => {
-    const missing = page
-      .filter((entry) => !(entry.animeId in media))
-      .slice(0, PAGE_SIZE);
-
+    const missing = page.filter((entry) => !(entry.animeId in media));
     if (!missing.length) return;
 
     let cancelled = false;
     setLoading(true);
 
-    Promise.all(
-      missing.map(async (entry) => {
-        try {
-          return [entry.animeId, await findMedia(entry.title)] as const;
-        } catch {
-          return [entry.animeId, null] as const;
-        }
-      }),
-    )
-      .then((results) => {
-        if (cancelled) return;
-        setMedia((current) => ({ ...current, ...Object.fromEntries(results) }));
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+    findMediaBatch(missing).then(async (results) => {
+      if (cancelled) return;
+      setMedia((current) => ({ ...current, ...results }));
 
-    return () => {
-      cancelled = true;
-    };
+      const failed = missing.filter((entry) => !results[entry.animeId]?.coverImage?.extraLarge && !results[entry.animeId]?.coverImage?.large);
+      if (!failed.length) return;
+      const fallback = await findJikanFallback(failed.slice(0, 6));
+      if (!cancelled) setMedia((current) => ({ ...current, ...fallback }));
+    }).finally(() => {
+      if (!cancelled) setLoading(false);
+    });
+
+    return () => { cancelled = true; };
   }, [pageIds]);
 
   useEffect(() => {
@@ -180,7 +183,7 @@ export default function CollectionView({ entries }: Props) {
               className={filter === item ? "is-active" : ""}
               onClick={() => setFilter(item)}
             >
-              {item === "ALL" ? "All" : item === "SERIES" ? "Series" : "Movies"}
+              {item === "ALL" ? "Collection" : item === "SERIES" ? "Series" : "Movies"}
             </button>
           ))}
         </div>
