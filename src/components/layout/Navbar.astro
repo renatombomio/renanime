@@ -2,6 +2,7 @@
 import Container from "../ui/Container.astro";
 import Divider from "../ui/Divider.astro";
 import TotoroButton from "../navigation/TotoroButton.astro";
+import MobileMenu from "../navigation/MobileMenu";
 
 const links = [
   { label: "Inicio", href: "/" },
@@ -28,6 +29,7 @@ const links = [
       </ul>
     </nav>
 
+    <div class="mobile-menu"><MobileMenu client:load /></div>
     <TotoroButton />
   </Container>
 </header>
@@ -58,7 +60,7 @@ const links = [
     width: fit-content;
   }
 
-  .brand-mark {
+  .mobile-menu {\n    display: none;\n  }\n\n  .brand-mark {
     display: grid;
     width: 2rem;
     height: 2rem;
@@ -126,7 +128,7 @@ const links = [
 
   @media (max-width: 1120px) {
     .header-inner {
-      grid-template-columns: 1fr auto;
+      grid-template-columns: 1fr auto auto;
     }
 
     nav {
@@ -134,7 +136,7 @@ const links = [
     }
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 1120px) {\n  .mobile-menu {\n    display: block;\n  }\n}\n\n@media (max-width: 640px) {
     .header-inner {
       min-height: 3.75rem;
     }
