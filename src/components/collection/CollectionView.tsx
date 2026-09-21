@@ -92,23 +92,31 @@ export default function CollectionView({ entries }: Props) {
   const page = filtered.slice(0, visible);
   const remaining = filtered.length - page.length;
 
+  const pageIds = page.map((entry) => entry.animeId).join("|");
+
   useEffect(() => {
     const missing = page
       .filter((entry) => !(entry.animeId in media))
-      .slice(0, PAGE_SIZE)
-      .map((entry) => entry);
+      .slice(0, PAGE_SIZE);
 
     if (!missing.length) return;
 
     let cancelled = false;
     setLoading(true);
 
-    Promise.all(missing.map(async (entry) => [entry.animeId, await findMedia(entry.title)] as const))
+    Promise.all(
+      missing.map(async (entry) => {
+        try {
+          return [entry.animeId, await findMedia(entry.title)] as const;
+        } catch {
+          return [entry.animeId, null] as const;
+        }
+      }),
+    )
       .then((results) => {
         if (cancelled) return;
         setMedia((current) => ({ ...current, ...Object.fromEntries(results) }));
       })
-      .catch(() => undefined)
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
@@ -116,7 +124,7 @@ export default function CollectionView({ entries }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [page, media]);
+  }, [pageIds]);
 
   useEffect(() => {
     setVisible(PAGE_SIZE);
