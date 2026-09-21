@@ -1,29 +1,9 @@
 ---
-interface Props {
-  children: string;
-  tone?: "default" | "accent";
-}
-const { children, tone = "default" } = Astro.props;
+interface Props { children: string; tone?: "default" | "accent"; }
+const { children, tone="default" } = Astro.props;
 ---
-<span class:list={["badge", tone === "accent" && "is-accent"]}>{children}</span>
-
+<span class:list={["anime-badge", tone === "accent" && "is-accent"]}>{children}</span>
 <style>
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    min-height: 1.75rem;
-    padding-inline: 0.55rem;
-    border: 1px solid var(--color-border);
-    background: rgba(9, 9, 9, 0.76);
-    color: var(--color-paper-100);
-    font-size: var(--text-xs);
-    letter-spacing: 0.04em;
-    line-height: 1;
-    backdrop-filter: blur(8px);
-  }
-
-  .badge.is-accent {
-    border-color: rgba(164, 138, 104, 0.45);
-    color: var(--color-accent-soft);
-  }
+.anime-badge{display:inline-flex;align-items:center;min-height:1.7rem;padding:.38rem .55rem;border:1px solid var(--color-border);background:rgba(9,9,9,.78);color:var(--color-paper-100);font:var(--text-xs)/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;backdrop-filter:blur(8px)}
+.anime-badge.is-accent{border-color:rgba(164,138,104,.5);color:var(--color-accent-soft)}
 </style>
