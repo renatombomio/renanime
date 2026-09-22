@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => {
             target: 'https://api.themoviedb.org',
             changeOrigin: true,
             secure: true,
-            rewrite: (path) => path.replace(/^\\/api\\/tmdb/, '/3'),
+            rewrite: (path) => path.replace(/^\/api\/tmdb/, '/3'),
             headers: env.TMDB_READ_ACCESS_TOKEN
               ? { Authorization: `Bearer ${env.TMDB_READ_ACCESS_TOKEN}` }
               : undefined,
