@@ -883,3 +883,58 @@ section[id] {
   .genre-results-head > div { grid-column:1/-1; grid-row:2; }
   .genre-results-head > span { grid-column:2; grid-row:1; }
 }
+
+
+/* Favorites — TMDB artwork layer */
+.favorite-media {
+  isolation: isolate;
+}
+
+.favorite-media > img:not(.favorite-logo) {
+  position: relative;
+  z-index: 0;
+}
+
+.favorite-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(9, 9, 9, 0.02) 25%, rgba(9, 9, 9, 0.68) 100%);
+  pointer-events: none;
+}
+
+.favorite-logo-wrap {
+  position: absolute;
+  right: 1rem;
+  bottom: .9rem;
+  left: 1rem;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  min-height: 28%;
+  pointer-events: none;
+}
+
+.favorite-logo {
+  display: block;
+  width: min(58%, 14rem);
+  height: auto;
+  max-height: 5rem;
+  object-fit: contain;
+  object-position: left bottom;
+  filter: drop-shadow(0 3px 10px rgba(0, 0, 0, .72));
+}
+
+@media (max-width: 700px) {
+  .favorite-logo-wrap {
+    right: .7rem;
+    bottom: .65rem;
+    left: .7rem;
+  }
+
+  .favorite-logo {
+    width: min(64%, 10rem);
+    max-height: 3.75rem;
+  }
+}
