@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
+import { getTmdbArtworkBatch, type TmdbArtwork } from "../../lib/api/tmdb";
+
 interface FavoriteEntry {
   animeId: string;
   title: string;
@@ -22,6 +24,7 @@ interface Props {
 
 export default function FavoritesView({ entries }: Props) {
   const [media, setMedia] = useState<Record<string, Media | null>>({});
+  const [artwork, setArtwork] = useState<Record<string, TmdbArtwork | null>>({});
   const [loading, setLoading] = useState(true);
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -31,25 +34,32 @@ export default function FavoritesView({ entries }: Props) {
     async function load() {
       const variables: Record<string, string> = {};
       const fields = entries.map((entry, index) => {
-        variables[`s${index}`] = entry.title;
-        return `a${index}: Page(page: 1, perPage: 1) { media(search: $s${index}, type: ANIME, sort: SEARCH_MATCH) { title { romaji english } startDate { year } coverImage { extraLarge large } } }`;
+        variables[\`s\${index}\`] = entry.title;
+        return \`a\${index}: Page(page: 1, perPage: 1) { media(search: $s\${index}, type: ANIME, sort: SEARCH_MATCH) { title { romaji english } startDate { year } coverImage { extraLarge large } } }\`;
       }).join("\n");
-      const definitions = entries.map((_, index) => `$s${index}: String!`).join(", ");
-      const query = `query Favorites(${definitions}) { ${fields} }`;
+      const definitions = entries.map((_, index) => \`$s\${index}: String!\`).join(", ");
+      const query = \`query Favorites(\${definitions}) { \${fields} }\`;
 
       try {
-        const response = await fetch("https://graphql.anilist.co", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify({ query, variables }),
-        });
-        if (!response.ok) return;
-        const payload = await response.json();
-        const result: Record<string, Media | null> = {};
-        entries.forEach((entry, index) => {
-          result[entry.animeId] = payload.data?.[`a${index}`]?.media?.[0] ?? null;
-        });
-        if (!cancelled) setMedia(result);
+        const [aniListResponse, tmdbResult] = await Promise.all([
+          fetch("https://graphql.anilist.co", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({ query, variables }),
+          }),
+          getTmdbArtworkBatch(entries),
+        ]);
+
+        if (aniListResponse.ok) {
+          const payload = await aniListResponse.json();
+          const result: Record<string, Media | null> = {};
+          entries.forEach((entry, index) => {
+            result[entry.animeId] = payload.data?.[\`a\${index}\`]?.media?.[0] ?? null;
+          });
+          if (!cancelled) setMedia(result);
+        }
+
+        if (!cancelled) setArtwork(tmdbResult);
       } catch {
         // Personal titles remain visible if metadata is unavailable.
       } finally {
@@ -84,29 +94,36 @@ export default function FavoritesView({ entries }: Props) {
           const item = media[entry.animeId];
           const title = item?.title.romaji || item?.title.english || entry.title;
           const year = item?.startDate?.year;
+          const visual = artwork[entry.title];
+          const image = visual?.backdrop || item?.coverImage?.extraLarge || item?.coverImage?.large;
 
           return (
             <article className="favorite-card" key={entry.animeId}>
-              <a href={`/anime/${entry.animeId}`} aria-label={`Ver ${title}`}>
+              <a href={\`/anime/\${entry.animeId}\`} aria-label={\`Ver \${title}\`}>
                 <div className="favorite-media">
-                  {item?.coverImage?.extraLarge || item?.coverImage?.large ? (
+                  {image ? (
                     <img
-                      src={item.coverImage.extraLarge || item.coverImage.large || ""}
-                      alt={title}
+                      src={image}
+                      alt=""
                       loading={index < 2 ? "eager" : "lazy"}
                     />
                   ) : (
                     <div className="favorite-placeholder">
-                      <span>{String(index + 1).padStart(2, "0")}</span>
                       <strong>{entry.title}</strong>
                     </div>
                   )}
 
+                  {visual?.logo && (
+                    <div className="favorite-logo-wrap">
+                      <img className="favorite-logo" src={visual.logo} alt={title} loading="lazy" />
+                    </div>
+                  )}
 
+                  <div className="favorite-scrim" aria-hidden="true" />
                 </div>
 
                 <div className="favorite-caption">
-                  <h3>{title}</h3>
+                  {!visual?.logo && <h3>{title}</h3>}
                   {year && <span>{year}</span>}
                 </div>
               </a>
