@@ -31,7 +31,7 @@ interface Props {
   entries: PersonalEntry[];
 }
 
-const PAGE_SIZE = 24;
+const PAGE_SIZE = 9;
 
 async function findMediaBatch(entries: PersonalEntry[]): Promise<Record<string, Media | null>> {
   const unique = entries.filter((entry, index, list) => list.findIndex((item) => item.animeId === entry.animeId) === index);
