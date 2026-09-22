@@ -34,11 +34,11 @@ export default function FavoritesView({ entries }: Props) {
     async function load() {
       const variables: Record<string, string> = {};
       const fields = entries.map((entry, index) => {
-        variables[\`s\${index}\`] = entry.title;
-        return \`a\${index}: Page(page: 1, perPage: 1) { media(search: $s\${index}, type: ANIME, sort: SEARCH_MATCH) { title { romaji english } startDate { year } coverImage { extraLarge large } } }\`;
+        variables[`s${index}`] = entry.title;
+        return `a${index}: Page(page: 1, perPage: 1) { media(search: $s${index}, type: ANIME, sort: SEARCH_MATCH) { title { romaji english } startDate { year } coverImage { extraLarge large } } }`;
       }).join("\n");
-      const definitions = entries.map((_, index) => \`$s\${index}: String!\`).join(", ");
-      const query = \`query Favorites(\${definitions}) { \${fields} }\`;
+      const definitions = entries.map((_, index) => `$s${index}: String!`).join(", ");
+      const query = `query Favorites(${definitions}) { ${fields} }`;
 
       try {
         const [aniListResponse, tmdbResult] = await Promise.all([
@@ -54,7 +54,7 @@ export default function FavoritesView({ entries }: Props) {
           const payload = await aniListResponse.json();
           const result: Record<string, Media | null> = {};
           entries.forEach((entry, index) => {
-            result[entry.animeId] = payload.data?.[\`a\${index}\`]?.media?.[0] ?? null;
+            result[entry.animeId] = payload.data?.[`a${index}`]?.media?.[0] ?? null;
           });
           if (!cancelled) setMedia(result);
         }
@@ -99,7 +99,7 @@ export default function FavoritesView({ entries }: Props) {
 
           return (
             <article className="favorite-card" key={entry.animeId}>
-              <a href={\`/anime/\${entry.animeId}\`} aria-label={\`Ver \${title}\`}>
+              <a href={`/anime/${entry.animeId}`} aria-label={`Ver ${title}`}>
                 <div className="favorite-media">
                   {image ? (
                     <img
