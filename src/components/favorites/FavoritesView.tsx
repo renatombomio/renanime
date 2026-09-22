@@ -71,10 +71,7 @@ export default function FavoritesView({ entries }: Props) {
   return (
     <div className="favorites-view">
       <div className="favorites-intro">
-        <div>
-          <span className="favorites-index">01 — 05</span>
-          <span className="favorites-note">Una selección personal</span>
-        </div>
+        <span className="favorites-note">Una selección personal</span>
 
         <div className="favorites-controls" aria-label="Navegar favoritos">
           <button type="button" onClick={() => scroll("prev")} aria-label="Favoritos anteriores">←</button>
@@ -105,18 +102,12 @@ export default function FavoritesView({ entries }: Props) {
                     </div>
                   )}
 
-                  <div className="favorite-overlay">
-                    <span className="favorite-mark">★</span>
-                    <span>{year ?? "—"}</span>
-                  </div>
+
                 </div>
 
                 <div className="favorite-caption">
-                  <span className="favorite-number">0{index + 1}</span>
-                  <div>
-                    <h3>{title}</h3>
-                    <p>{entry.title === "Naruto" ? "Naruto / Shippuden" : entry.title}</p>
-                  </div>
+                  <h3>{title}</h3>
+                  {year && <span>{year}</span>}
                 </div>
               </a>
             </article>
