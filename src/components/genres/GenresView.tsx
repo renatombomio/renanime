@@ -155,7 +155,6 @@ export default function GenresView({ entries }: Props) {
           </div>
         </>
       ) : (
-      {selectedGenre && (
         <section className="genre-results" aria-label={"Animes de género " + selectedGenre.name}>
           <div className="genre-results-head">
             <button type="button" className="genre-back" onClick={() => setSelected(null)}>
@@ -197,8 +196,6 @@ export default function GenresView({ entries }: Props) {
             </div>
           )}
         </section>
-      )}
-
       )}
 
       {!loading && catalog.length === 0 && (
