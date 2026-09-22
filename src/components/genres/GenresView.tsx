@@ -133,30 +133,36 @@ export default function GenresView({ entries }: Props) {
 
   return (
     <div className="genres-view">
-      <div className="genres-meta">
-        <span>{loading ? "Construyendo mapa…" : catalog.length + " géneros en tu colección"}</span>
-        <span>{entries.length} títulos de mi colección</span>
-      </div>
+      {!selectedGenre ? (
+        <>
+          <div className="genres-meta">
+            <span>{loading ? "Construyendo mapa…" : catalog.length + " géneros en tu colección"}</span>
+            <span>{entries.length} títulos</span>
+          </div>
 
-      <div className="genres-grid">
-        {catalog.map((genre, index) => (
-          <button
-            type="button"
-            className={"genre-card " + (selected === genre.name ? "is-active" : "")}
-            key={genre.name}
-            onClick={() => setSelected(selected === genre.name ? null : genre.name)}
-          >
-            <span className="genre-name">{genre.name}</span>
-            <span className="genre-count">{genre.entries.length} títulos</span>
-          </button>
-        ))}
-      </div>
-
+          <div className="genres-grid">
+            {catalog.map((genre) => (
+              <button
+                type="button"
+                className="genre-card"
+                key={genre.name}
+                onClick={() => setSelected(genre.name)}
+              >
+                <span className="genre-name">{genre.name}</span>
+                <span className="genre-count">{genre.entries.length} títulos</span>
+              </button>
+            ))}
+          </div>
+        </>
+      ) : (
       {selectedGenre && (
         <section className="genre-results" aria-label={"Animes de género " + selectedGenre.name}>
           <div className="genre-results-head">
+            <button type="button" className="genre-back" onClick={() => setSelected(null)}>
+              ← Géneros
+            </button>
             <div>
-              <span className="genre-results-kicker">Tu colección</span>
+              <span className="genre-results-kicker">Mi colección</span>
               <span className="genre-results-title">{selectedGenre.name}</span>
             </div>
             <span>{selectedGenre.entries.length} títulos</span>
@@ -191,6 +197,8 @@ export default function GenresView({ entries }: Props) {
             </div>
           )}
         </section>
+      )}
+
       )}
 
       {!loading && catalog.length === 0 && (
