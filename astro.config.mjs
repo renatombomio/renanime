@@ -8,6 +8,7 @@ import tailwindcss from '@tailwindcss/vite';
 // https://astro.build/config
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
+  const tmdbToken = env.TMDB_READ_ACCESS_TOKEN;
 
   return {
     integrations: [react()],
@@ -21,9 +22,13 @@ export default defineConfig(({ mode }) => {
             changeOrigin: true,
             secure: true,
             rewrite: (path) => path.replace(/^\/api\/tmdb/, '/3'),
-            headers: env.TMDB_READ_ACCESS_TOKEN
-              ? { Authorization: `Bearer ${env.TMDB_READ_ACCESS_TOKEN}` }
-              : undefined,
+            configure: (proxy) => {
+              proxy.on('proxyReq', (proxyReq) => {
+                if (tmdbToken) {
+                  proxyReq.setHeader('Authorization', `Bearer ${tmdbToken}`);
+                }
+              });
+            },
           },
         },
       },
