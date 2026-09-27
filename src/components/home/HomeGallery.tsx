@@ -97,8 +97,8 @@ export default function HomeGallery({ entries }: Props) {
   useEffect(() => {
     if (!hasMore || !sentinelRef.current) return;
     const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting && !loading) {
+      (observerEntries) => {
+        if (observerEntries[0]?.isIntersecting && !loading) {
           setVisible((current) => Math.min(current + PAGE_SIZE, entries.length));
         }
       },
