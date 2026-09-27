@@ -24,7 +24,7 @@ export default function ShaderGradientBackground() {
           cPolarAngle={90}
           lightType="3d"
           brightness={1.2}
-          grain="on"
+          grain="off"
           reflection={0.1}
           zoomOut={false}
           positionX={-1.4}
