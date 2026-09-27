@@ -4,7 +4,7 @@ export const prerender = false;
 
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 
-export const ALL: APIRoute = async ({ params, request }) => {
+export const GET: APIRoute = async ({ params, request }) => {
   const token = import.meta.env.TMDB_READ_ACCESS_TOKEN;
 
   if (!token) {
