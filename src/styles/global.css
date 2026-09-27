@@ -885,7 +885,7 @@ section[id] {
 
 .favorites-track {
   display: flex;
-  gap: .9rem;
+  gap: 1rem;
   overflow-x: auto;
   padding: 1.25rem 0 .75rem;
   scroll-snap-type: x mandatory;
@@ -897,7 +897,7 @@ section[id] {
 }
 
 .favorite-card {
-  flex: 0 0 clamp(10.75rem, 14vw, 13.25rem);
+  flex: 0 0 clamp(14rem, 18vw, 17.5rem);
   min-width: 0;
   scroll-snap-align: start;
 }
@@ -1014,7 +1014,7 @@ section[id] {
 .genre-back:hover { color:var(--color-paper-50); }
 
 @media (max-width:700px) {
-  .favorite-card { flex-basis: 10rem; }
+  .favorite-card { flex-basis: 11.5rem; }
   .favorite-caption {
     min-height: 5rem;
     padding: .65rem .7rem .75rem;
