@@ -980,8 +980,13 @@ section[id] {
 .genre-back:hover { color:var(--color-paper-50); }
 
 @media (max-width:700px) {
-  .favorite-card { flex-basis:calc((100% - .5rem)/2); }
-  .favorite-caption h3 { font-size:.68rem; }
+  .favorite-card { flex-basis: 10rem; }
+  .favorite-caption {
+    min-height: 5rem;
+    padding: .65rem .7rem .75rem;
+  }
+  .favorite-caption h3 { font-size: .7rem; }
+  .favorite-caption span { font-size: .54rem; }
 }
 @media (max-width:560px) {
   .genre-results-head { grid-template-columns:1fr auto; }
