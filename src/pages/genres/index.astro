@@ -1,0 +1,39 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/layout/Navbar.astro";
+import Footer from "../../components/layout/Footer.astro";
+import Container from "../../components/ui/Container.astro";
+import SectionHeader from "../../components/ui/SectionHeader.astro";
+import GenresView from "../../components/genres/GenresView";
+import { getWatchedLibrary } from "../../data/library";
+
+const entries = getWatchedLibrary();
+---
+
+<Layout title="Géneros — Renanime's Gallery">
+  <Navbar />
+  <main class="genres-page">
+    <Container>
+      <SectionHeader
+        eyebrow="El mapa"
+        title="Géneros"
+        description="Explora los animes que he visto por género."
+      />
+      <div class="genres-page-content">
+        <GenresView entries={entries} client:load />
+      </div>
+    </Container>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .genres-page {
+    min-height: 70vh;
+    padding-block: clamp(6rem, 11vw, 10rem) var(--section-space);
+  }
+
+  .genres-page-content {
+    margin-top: clamp(3rem, 6vw, 5rem);
+  }
+</style>
