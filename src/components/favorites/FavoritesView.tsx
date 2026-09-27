@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { getTmdbArtworkBatch, type TmdbArtwork } from "../../lib/api/tmdb";
+import { getTmdbLogoBatch } from "../../lib/api/tmdb";
 
 interface FavoriteEntry {
   animeId: string;
@@ -24,7 +24,7 @@ interface Props {
 
 export default function FavoritesView({ entries }: Props) {
   const [media, setMedia] = useState<Record<string, Media | null>>({});
-  const [artwork, setArtwork] = useState<Record<string, TmdbArtwork | null>>({});
+  const [logos, setLogos] = useState<Record<string, string | null>>({});
   const [loading, setLoading] = useState(true);
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -47,7 +47,7 @@ export default function FavoritesView({ entries }: Props) {
             headers: { "Content-Type": "application/json", Accept: "application/json" },
             body: JSON.stringify({ query, variables }),
           }),
-          getTmdbArtworkBatch(entries),
+          getTmdbLogoBatch(entries),
         ]);
 
         if (aniListResponse.ok) {
@@ -59,7 +59,7 @@ export default function FavoritesView({ entries }: Props) {
           if (!cancelled) setMedia(result);
         }
 
-        if (!cancelled) setArtwork(tmdbResult);
+        if (!cancelled) setLogos(tmdbResult);
       } catch {
         // Personal titles remain visible if metadata is unavailable.
       } finally {
@@ -94,8 +94,8 @@ export default function FavoritesView({ entries }: Props) {
           const item = media[entry.animeId];
           const title = item?.title.romaji || item?.title.english || entry.title;
           const year = item?.startDate?.year;
-          const visual = artwork[entry.title];
-          const image = visual?.backdrop || item?.coverImage?.extraLarge || item?.coverImage?.large;
+          const logo = logos[entry.title];
+          const image = item?.coverImage?.extraLarge || item?.coverImage?.large;
 
           return (
             <article className="favorite-card" key={entry.animeId}>
@@ -113,9 +113,9 @@ export default function FavoritesView({ entries }: Props) {
                     </div>
                   )}
 
-                  {visual?.logo && (
+                  {logo && (
                     <div className="favorite-logo-wrap">
-                      <img className="favorite-logo" src={visual.logo} alt={title} loading="lazy" />
+                      <img className="favorite-logo" src={logo} alt={title} loading="lazy" />
                     </div>
                   )}
 
@@ -123,7 +123,7 @@ export default function FavoritesView({ entries }: Props) {
                 </div>
 
                 <div className="favorite-caption">
-                  {!visual?.logo && <h3>{title}</h3>}
+                  {!logo && <h3>{title}</h3>}
                   {year && <span>{year}</span>}
                 </div>
               </a>
