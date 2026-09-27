@@ -25,14 +25,13 @@
     "tailwindcss": "^4.3.3",
     "@react-three/fiber": "^9.0.0",
     "@shadergradient/react": "^2.4.20",
-    "camera-controls": "^3.1.2",
-    "three": "^0.179.1",
+    "three": "^0.174.0",
     "three-stdlib": "^2.36.0"
   },
   "allowScripts": {
     "esbuild": true
   },
   "devDependencies": {
-    "@types/three": "^0.179.0"
+    "@types/three": "^0.174.0"
   }
 }
