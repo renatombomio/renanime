@@ -16,9 +16,10 @@ interface GenreMedia {
 }
 
 const BATCH_SIZE = 25;
+const CACHE_PREFIX = "renanime:collection:v2:";
 
 function getCacheKey(entry: LibraryEntry) {
-  return "renanime:collection:" + entry.title.toLowerCase();
+  return CACHE_PREFIX + entry.title.toLowerCase();
 }
 
 async function fetchMediaMetadata(entries: LibraryEntry[], includeImages = false): Promise<Record<string, GenreMedia>> {
@@ -189,7 +190,7 @@ export default function GenresView({ entries }: Props) {
                     </div>
                     <div className="genre-anime-info">
                       <strong>{media?.title?.romaji || media?.title?.english || entry.title}</strong>
-                      <span>{media?.startDate?.year ? new Date(media.startDate.year, Math.max((media.startDate.month ?? 1) - 1, 0), media.startDate.day ?? 1).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }) : "Fecha desconocida"}</span>
+                      <span>{media?.startDate?.year ? media.startDate.month && media.startDate.day ? new Date(media.startDate.year, media.startDate.month - 1, media.startDate.day).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }) : String(media.startDate.year) : "Fecha desconocida"} · {entry.format === "MOVIE" || media?.format === "MOVIE" ? "Film" : "Series"}</span>
                     </div>
                   </a>
                 );
