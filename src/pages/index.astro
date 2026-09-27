@@ -8,6 +8,7 @@ import SectionHeader from "../components/ui/SectionHeader.astro";
 import CollectionView from "../components/collection/CollectionView";
 import FavoritesView from "../components/favorites/FavoritesView";
 import GenresView from "../components/genres/GenresView";
+import ShaderGradientBackground from "../components/background/ShaderGradientBackground";
 import { getFavoritesLibrary, getWatchedLibrary } from "../data/library";
 
 const favoriteEntries = getFavoritesLibrary();
@@ -21,7 +22,11 @@ const collectionEntries = getWatchedLibrary();
   <Navbar />
 
   <main id="main-content">
-    <Hero />
+    <div class="site-shader-background" aria-hidden="true">
+      <ShaderGradientBackground client:load />
+    </div>
+    <div class="site-content-layer">
+      <Hero />
 
     <section id="favorites" class="favorites-section section-space">
       <Container>
@@ -73,5 +78,48 @@ const collectionEntries = getWatchedLibrary();
   .collection-view-wrap,
   .genres-view-wrap {
     margin-top: clamp(3rem, 6vw, 5rem);
+  }
+</style>
+
+<style>
+  main#main-content {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .site-shader-background {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    min-height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .site-shader-background::after {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(5, 5, 5, 0.74) 0%, rgba(5, 5, 5, 0.9) 30%, rgba(5, 5, 5, 0.96) 100%),
+      radial-gradient(circle at 50% 8%, rgba(255, 90, 31, 0.12), transparent 34%);
+    content: "";
+    pointer-events: none;
+  }
+
+  .site-shader-background :global(canvas) {
+    width: 100% !important;
+    height: 100% !important;
+    opacity: 0.95;
+  }
+
+  .site-content-layer {
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-shader-background {
+      display: none;
+    }
   }
 </style>
