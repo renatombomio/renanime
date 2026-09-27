@@ -32,6 +32,7 @@ interface Props {
 }
 
 const PAGE_SIZE = 9;
+const CACHE_PREFIX = "renanime:collection:v2:";
 
 async function findMediaBatch(entries: PersonalEntry[]): Promise<Record<string, Media | null>> {
   const unique = entries.filter((entry, index, list) => list.findIndex((item) => item.animeId === entry.animeId) === index);
@@ -39,7 +40,7 @@ async function findMediaBatch(entries: PersonalEntry[]): Promise<Record<string, 
   const unresolved: PersonalEntry[] = [];
 
   for (const entry of unique) {
-    const cacheKey = "renanime:collection:" + entry.title.toLowerCase();
+    const cacheKey = CACHE_PREFIX + entry.title.toLowerCase();
     try {
       const cached = sessionStorage.getItem(cacheKey);
       if (cached) {
@@ -76,7 +77,7 @@ async function findMediaBatch(entries: PersonalEntry[]): Promise<Record<string, 
           const item = payload.data?.["a" + index]?.media?.[0] ?? null;
           result[entry.animeId] = item;
           if (item) {
-            try { sessionStorage.setItem("renanime:collection:" + entry.title.toLowerCase(), JSON.stringify(item)); } catch {}
+            try { sessionStorage.setItem(CACHE_PREFIX + entry.title.toLowerCase(), JSON.stringify(item)); } catch {}
           }
         });
       }
@@ -106,7 +107,7 @@ async function findJikanFallback(entries: PersonalEntry[]): Promise<Record<strin
         format: anime.type === "Movie" ? "MOVIE" : anime.type?.toUpperCase() ?? null,
         coverImage: { extraLarge: anime.images?.jpg?.large_image_url ?? null, large: anime.images?.jpg?.image_url ?? null },
       };
-      try { sessionStorage.setItem("renanime:collection:" + entry.title.toLowerCase(), JSON.stringify(result[entry.animeId])); } catch {}
+      try { sessionStorage.setItem(CACHE_PREFIX + entry.title.toLowerCase(), JSON.stringify(result[entry.animeId])); } catch {}
     } catch {}
   }
   return result;
@@ -237,7 +238,8 @@ export default function CollectionView({ entries }: Props) {
                 <div className="card-info">
                   <h3>{item?.title.romaji || item?.title.english || entry.title}</h3>
                   <div className="meta">
-                    <span>{item?.startDate?.year ? new Date(item.startDate.year, Math.max((item.startDate.month ?? 1) - 1, 0), item.startDate.day ?? 1).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }) : "Fecha desconocida"}</span>
+                    <span>{item?.startDate?.year ? item.startDate.month && item.startDate.day ? new Date(item.startDate.year, item.startDate.month - 1, item.startDate.day).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }) : String(item.startDate.year) : "Fecha desconocida"}</span>
+                    <span>{type === "MOVIE" ? "Film" : "Series"}</span>
                   </div>
                 </div>
               </a>
