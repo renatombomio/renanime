@@ -22,7 +22,7 @@ interface Media {
   id: number;
   title: { romaji?: string | null; english?: string | null };
   genres: string[];
-  startDate?: { year?: number | null } | null;
+  startDate?: { year?: number | null; month?: number | null; day?: number | null } | null;
   format?: string | null;
   coverImage?: { extraLarge?: string | null; large?: string | null };
 }
@@ -57,7 +57,7 @@ async function findMediaBatch(entries: PersonalEntry[]): Promise<Record<string, 
       const key = "s" + index;
       const alias = "a" + index;
       variables[key] = entry.title;
-      return `${alias}: Page(page: 1, perPage: 1) { media(search: $${key}, type: ANIME, sort: SEARCH_MATCH) { id title { romaji english } genres startDate { year } format coverImage { extraLarge large } } }`;
+      return `${alias}: Page(page: 1, perPage: 1) { media(search: $${key}, type: ANIME, sort: SEARCH_MATCH) { id title { romaji english } genres startDate { year month day } format coverImage { extraLarge large } } }`;
     }).join("\n");
 
     const definitions = chunk.map((_, index) => `$s${index}: String!`).join(", ");
@@ -102,7 +102,7 @@ async function findJikanFallback(entries: PersonalEntry[]): Promise<Record<strin
         id: anime.mal_id,
         title: { romaji: anime.title, english: anime.title_english },
         genres: anime.genres?.map((genre: { name: string }) => genre.name) ?? [],
-        startDate: { year: anime.year ?? null },
+        startDate: { year: anime.year ?? null, month: anime.aired?.prop?.from?.month ?? null, day: anime.aired?.prop?.from?.day ?? null },
         format: anime.type === "Movie" ? "MOVIE" : anime.type?.toUpperCase() ?? null,
         coverImage: { extraLarge: anime.images?.jpg?.large_image_url ?? null, large: anime.images?.jpg?.image_url ?? null },
       };
@@ -232,26 +232,12 @@ export default function CollectionView({ entries }: Props) {
                       <span className="placeholder-rule" />
                     </div>
                   )}
-                  <div className="card-top">
-                    <span className="format-badge">{type === "MOVIE" ? "FILM" : "SERIES"}</span>
-                    {entry.state.personalScore !== undefined && (
-                      <span className="score-badge">{entry.state.personalScore.toFixed(1)}</span>
-                    )}
-                  </div>
-                  <div className="card-overlay">
-                    <div className="card-overlay-title">{item?.title.romaji || item?.title.english || entry.title}</div>
-                    <div className="card-overlay-meta">
-                      {item?.startDate?.year || "—"}
-                      {entry.state.favorite && <span>★</span>}
-                      {entry.state.recommended && <span>+</span>}
-                    </div>
-                  </div>
+
                 </div>
                 <div className="card-info">
                   <h3>{item?.title.romaji || item?.title.english || entry.title}</h3>
                   <div className="meta">
-                    <span>{item?.startDate?.year || "—"}</span>
-                    <span>{type === "MOVIE" ? "Film" : "Series"}</span>
+                    <span>{item?.startDate?.year ? new Date(item.startDate.year, Math.max((item.startDate.month ?? 1) - 1, 0), item.startDate.day ?? 1).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }) : "Fecha desconocida"}</span>
                   </div>
                 </div>
               </a>
