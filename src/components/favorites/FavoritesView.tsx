@@ -12,7 +12,7 @@ interface FavoriteEntry {
 
 interface Media {
   title: { romaji?: string | null; english?: string | null };
-  startDate?: { year?: number | null } | null;
+  startDate?: { year?: number | null; month?: number | null; day?: number | null } | null;
   coverImage?: { extraLarge?: string | null; large?: string | null };
 }
 
@@ -32,7 +32,7 @@ export default function FavoritesView({ entries }: Props) {
       const variables: Record<string, string> = {};
       const fields = entries.map((entry, index) => {
         variables[`s${index}`] = entry.title;
-        return `a${index}: Page(page: 1, perPage: 1) { media(search: $s${index}, type: ANIME, sort: SEARCH_MATCH) { title { romaji english } startDate { year } coverImage { extraLarge large } } }`;
+        return `a${index}: Page(page: 1, perPage: 1) { media(search: $s${index}, type: ANIME, sort: SEARCH_MATCH) { title { romaji english } startDate { year month day } coverImage { extraLarge large } } }`;
       }).join("\n");
       const definitions = entries.map((_, index) => `$s${index}: String!`).join(", ");
       const query = `query Favorites(${definitions}) { ${fields} }`;
@@ -83,7 +83,17 @@ export default function FavoritesView({ entries }: Props) {
         {entries.map((entry, index) => {
           const item = media[entry.animeId];
           const title = item?.title.romaji || item?.title.english || entry.title;
-          const year = item?.startDate?.year;
+          const releaseDate = item?.startDate?.year
+            ? new Date(
+                item.startDate.year,
+                Math.max((item.startDate.month ?? 1) - 1, 0),
+                item.startDate.day ?? 1,
+              ).toLocaleDateString("es-ES", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })
+            : null;
 
           return (
             <article className="favorite-card" key={entry.animeId}>
@@ -107,7 +117,7 @@ export default function FavoritesView({ entries }: Props) {
 
                 <div className="favorite-caption">
                   <h3>{title}</h3>
-                  {year && <span>{year}</span>}
+                  {releaseDate && <span>{releaseDate}</span>}
                 </div>
               </a>
             </article>
