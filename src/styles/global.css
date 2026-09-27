@@ -457,7 +457,11 @@ section[id] {
 }
 
 .meta span:last-child {
-  color: var(--color-muted-500);
+  color: var(--color-paper-200);
+  font-family: var(--font-meta);
+  font-size: .5rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
 }
 
 .load-more {
