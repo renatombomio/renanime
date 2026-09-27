@@ -1,0 +1,76 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/layout/Navbar.astro";
+import Footer from "../../components/layout/Footer.astro";
+import Container from "../../components/ui/Container.astro";
+import SectionHeader from "../../components/ui/SectionHeader.astro";
+import FavoritesView from "../../components/favorites/FavoritesView";
+import { getFavoritesLibrary } from "../../data/library";
+
+const entries = getFavoritesLibrary();
+---
+
+<Layout title="Favoritos — Renanime's Gallery">
+  <Navbar />
+  <main class="favorites-page">
+    <Container>
+      <SectionHeader
+        eyebrow="Selección personal"
+        title="Favoritos"
+        description="Mis animes favoritos. Historias que me han conmovido, personajes que se quedan contigo y valores que, sin pedir permiso, terminan enseñándote algo."
+      />
+      <div class="favorites-page-content">
+        <FavoritesView entries={entries} client:load />
+      </div>
+    </Container>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .favorites-page {
+    min-height: 70vh;
+    padding-block: clamp(6rem, 11vw, 10rem) var(--section-space);
+  }
+
+  .favorites-page-content {
+    margin-top: clamp(3rem, 6vw, 5rem);
+  }
+
+  :global(.favorites-track) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    overflow: visible;
+    padding: 0;
+  }
+
+  :global(.favorite-card) {
+    width: 100%;
+  }
+
+  :global(.favorite-card a) {
+    width: 100%;
+  }
+
+  :global(.favorites-controls) {
+    display: none;
+  }
+
+  :global(.favorites-intro) {
+    justify-content: flex-end;
+    border-bottom: 0;
+    padding: 0;
+  }
+
+  @media (max-width: 700px) {
+    :global(.favorites-track) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    :global(.favorite-card) {
+      flex-basis: auto;
+    }
+  }
+</style>
