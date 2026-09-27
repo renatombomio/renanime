@@ -421,10 +421,10 @@ section[id] {
 
 .card-info {
   display: grid;
-  min-height: 5.25rem;
+  height: 5.75rem;
   align-content: start;
   gap: .45rem;
-  padding: .75rem .8rem .85rem;
+  padding: .7rem .75rem .75rem;
   background: var(--color-ink-900);
 }
 
@@ -446,10 +446,9 @@ section[id] {
   overflow: hidden;
   color: var(--color-muted-400);
   font-family: var(--font-body);
-  font-size: .58rem;
+  font-size: .56rem;
   line-height: 1.3;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .load-more {
@@ -527,16 +526,17 @@ section[id] {
   }
 
   .card-info {
-    min-height: 5rem;
-    padding: .65rem .7rem .75rem;
+    height: 5.35rem;
+    padding: .6rem .65rem .7rem;
   }
 
   .card-info h3 {
-    font-size: .7rem;
+    font-size: .69rem;
   }
 
   .meta {
-    font-size: .54rem;
+    font-size: .52rem;
+    line-height: 1.25;
   }
 
   .card-overlay {
