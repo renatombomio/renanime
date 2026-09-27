@@ -421,7 +421,7 @@ section[id] {
 
 .card-info {
   display: grid;
-  height: 5.75rem;
+  height: 5.9rem;
   align-content: start;
   gap: .45rem;
   padding: .7rem .75rem .75rem;
@@ -535,7 +535,7 @@ section[id] {
   }
 
   .card-info {
-    height: 5.35rem;
+    height: 5.65rem;
     padding: .6rem .65rem .7rem;
   }
 
