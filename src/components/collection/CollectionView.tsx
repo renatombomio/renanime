@@ -44,8 +44,17 @@ async function findMediaBatch(entries: PersonalEntry[]): Promise<Record<string, 
     try {
       const cached = sessionStorage.getItem(cacheKey);
       if (cached) {
-        result[entry.animeId] = JSON.parse(cached) as Media | null;
-        continue;
+        const parsed = JSON.parse(cached) as Media | null;
+        const hasMetadata = Boolean(
+          parsed?.format &&
+          parsed?.startDate?.year &&
+          parsed?.coverImage?.extraLarge || parsed?.coverImage?.large
+        );
+        if (hasMetadata) {
+          result[entry.animeId] = parsed;
+          continue;
+        }
+        sessionStorage.removeItem(cacheKey);
       }
     } catch {}
     unresolved.push(entry);
