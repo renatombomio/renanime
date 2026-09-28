@@ -31,67 +31,25 @@ const collectionEntries = getWatchedLibrary();
 </Layout>
 
 <style>
-  #main-content { padding-top: 88px; }
+  #main-content {
+    padding-top: 88px;
+  }
+
   .home-gallery-section {
     width: min(calc(100% - (var(--gutter) * 2)), var(--container-max));
     margin: 0 auto;
     padding: clamp(3rem, 6vw, 6rem) 0 var(--section-space);
   }
 
-  .home-gallery {
-    width: 100%;
-  }
-
-  .home-gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: .55rem;
-  }
-
-  .home-gallery-card {
-    display: block;
-    aspect-ratio: 2 / 3;
-    overflow: hidden;
-    background: var(--color-ink-900);
-  }
-
-  .home-gallery-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 700ms cubic-bezier(.2,.7,.2,1);
-  }
-
-  .home-gallery-card:hover img {
-    transform: scale(1.025);
-  }
-
-  .home-gallery-placeholder {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(145deg, var(--color-ink-800), var(--color-ink-950));
-  }
-
-  .home-gallery-sentinel {
-    height: 1px;
-  }
-
-  .home-gallery-loading {
-    height: 10rem;
-  }
-
   @media (max-width: 1120px) {
-    #main-content { padding-top: 74px; }
+    #main-content {
+      padding-top: 74px;
+    }
   }
 
   @media (max-width: 700px) {
     .home-gallery-section {
       padding-top: 2rem;
-    }
-
-    .home-gallery-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: .45rem;
     }
   }
 </style>
