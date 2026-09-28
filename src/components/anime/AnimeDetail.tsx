@@ -145,11 +145,15 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
   {relations.length>0&&<section className="anime-detail-related">
    <div className="anime-detail-related-header"><span className="anime-detail-label">Universo</span><h2>Relacionado</h2></div>
    <div className="anime-detail-related-grid">
-    {relations.slice(0,8).map(({relationType,node})=><a className="anime-detail-related-card" href={"/anime/search/?id="+node!.id} key={node!.id}>
-      <div className="anime-detail-related-poster">{node!.coverImage?.extraLarge||node!.coverImage?.large?<img src={node!.coverImage.extraLarge||node!.coverImage.large||""} alt=""/>:<div/>}</div>
-      <div className="anime-detail-related-copy"><strong>{node!.title?.romaji||node!.title?.english||"Sin título"}</strong><span>{relationType==="SEQUEL"?"Secuela":relationType==="PREQUEL"?"Precuela":relationType==="SIDE_STORY"?"Historia paralela":relationType==="SPIN_OFF"?"Spin-off":relationType==="ALTERNATIVE"?"Alternativa":"Relacionado"} · {node!.format==="MOVIE"?"Film":"Series"}</span></div>
-    </a>)}
+    {relations.slice(0,8).map((relation,index)=>{
+      const node=relation.node;
+      if(!node) return null;
+      const label=relation.relationType==="SEQUEL"?"Secuela":relation.relationType==="PREQUEL"?"Precuela":relation.relationType==="SIDE_STORY"?"Historia paralela":relation.relationType==="SPIN_OFF"?"Spin-off":relation.relationType==="ALTERNATIVE"?"Alternativa":"Relacionado";
+      return <a className="anime-detail-related-card" href={"/anime/search/?id="+node.id} key={node.id+"-"+index}>
+        <div className="anime-detail-related-poster">{node.coverImage?.extraLarge||node.coverImage?.large?<img src={node.coverImage.extraLarge||node.coverImage.large||""} alt=""/>:<div/>}</div>
+        <div className="anime-detail-related-copy"><strong>{node.title?.romaji||node.title?.english||"Sin título"}</strong><span>{label} · {node.format==="MOVIE"?"Film":"Series"}</span></div>
+      </a>;
+    })}
    </div>
-  </section>
- </div>;
+  </section>} </div>;
 }
