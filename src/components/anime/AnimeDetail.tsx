@@ -15,6 +15,7 @@ interface Media {
   coverImage?: { extraLarge?: string|null; large?: string|null };
   bannerImage?: string|null;
   trailer?: { id?: string|null; site?: string|null; thumbnail?: string|null }|null;
+  relations?: { edges?: { relationType?: string|null; node?: { id:number; type?:string|null; format?:string|null; title?: { romaji?:string|null; english?:string|null }; coverImage?: { extraLarge?:string|null; large?:string|null } } }[] }|null;
 }
 
 const ENDPOINT="https://graphql.anilist.co";
@@ -79,7 +80,7 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
     const cached=sessionStorage.getItem(CACHE_PREFIX+entry.animeId);
     if(cached) return JSON.parse(cached);
   } catch {}
-  const query=`query Detail($search:String!){Page(page:1,perPage:1){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail}}}}`;
+  const query=`query Detail($search:String!){Page(page:1,perPage:1){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} relations{edges{relationType node{id type format title{romaji english} coverImage{extraLarge large}}}}}}}`;
   try {
     const response=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables:{search:entry.title}})});
     if(!response.ok) return null;
@@ -108,6 +109,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
  const poster=media?.coverImage?.extraLarge||media?.coverImage?.large;
  const banner=media?.bannerImage||poster;
  const personal=entry.state;
+ const relations=(media?.relations?.edges??[]).filter(edge=>edge.node?.type==="ANIME"&&edge.node.id!==media?.id);
  return <div className="anime-detail">
   <section className="anime-detail-hero" style={banner?{backgroundImage:`linear-gradient(90deg,rgba(9,9,9,.98) 0%,rgba(9,9,9,.78) 43%,rgba(9,9,9,.35) 72%,rgba(9,9,9,.72) 100%),linear-gradient(0deg,rgba(9,9,9,.98),transparent 42%),url("${banner}")`}:undefined}>
    <div className="anime-detail-inner">
@@ -139,6 +141,15 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
   <section className="anime-detail-info">
    <div><span className="anime-detail-label">Información</span><strong>{media?.studios?.nodes?.map(s=>s.name).join(" · ")||"Estudio no disponible"}</strong></div>
    <div><span className="anime-detail-label">Mi estado</span><strong>{personal.status==="WATCHED"?"He visto este anime":personal.status==="PENDING"?"Quiero verlo":"Parte de mi archivo"}</strong></div>
+  </section>
+  {relations.length>0&&<section className="anime-detail-related">
+   <div className="anime-detail-related-header"><span className="anime-detail-label">Universo</span><h2>Relacionado</h2></div>
+   <div className="anime-detail-related-grid">
+    {relations.slice(0,8).map(({relationType,node})=><a className="anime-detail-related-card" href={"/anime/search/?id="+node!.id} key={node!.id}>
+      <div className="anime-detail-related-poster">{node!.coverImage?.extraLarge||node!.coverImage?.large?<img src={node!.coverImage.extraLarge||node!.coverImage.large||""} alt=""/>:<div/>}</div>
+      <div className="anime-detail-related-copy"><strong>{node!.title?.romaji||node!.title?.english||"Sin título"}</strong><span>{relationType==="SEQUEL"?"Secuela":relationType==="PREQUEL"?"Precuela":relationType==="SIDE_STORY"?"Historia paralela":relationType==="SPIN_OFF"?"Spin-off":relationType==="ALTERNATIVE"?"Alternativa":"Relacionado"} · {node!.format==="MOVIE"?"Film":"Series"}</span></div>
+    </a>)}
+   </div>
   </section>
  </div>;
 }
