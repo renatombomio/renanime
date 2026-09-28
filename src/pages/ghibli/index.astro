@@ -1,0 +1,19 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/layout/Navbar.astro";
+import Footer from "../../components/layout/Footer.astro";
+import SectionHeader from "../../components/ui/SectionHeader.astro";
+import GhibliView from "../../components/ghibli/GhibliView";
+import { getGhibliFilms } from "../../data/ghibli";
+const films=getGhibliFilms();
+---
+<Layout title="El secreto de Ren — Renanime's Gallery">
+<Navbar />
+<main class="ghibli-page"><div class="ghibli-header"><SectionHeader eyebrow="El secreto de Ren" title="Studio Ghibli" description="Una colección aparte. Las películas de Ghibli que he visto y las que todavía me esperan." /></div><section class="ghibli-content" aria-label="Colección Studio Ghibli"><GhibliView films={films} client:load /></section></main>
+<Footer />
+</Layout>
+<style>
+.ghibli-page{min-height:60vh;padding-block:clamp(6rem,11vw,10rem) var(--section-space)}
+.ghibli-header,.ghibli-content{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin-inline:auto}
+.ghibli-header{margin-bottom:clamp(3rem,6vw,5rem)}
+</style>
