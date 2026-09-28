@@ -120,7 +120,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
        {personal.favorite&&<span className="anime-detail-eyebrow">Favorito</span>}
        <h1>{title}</h1>
        <div className="anime-detail-meta"><span>{format(entry.format||media?.format)}</span><span>{date(media?.startDate)}</span>{media?.episodes&&<span>{media.episodes} episodios</span>}{media?.duration&&<span>{media.duration} min</span>}</div>
-       {media?.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map(g=><span>{g}</span>)}</div>}
+       {media?.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map((genre)=><span key={genre}>{genre}</span>)}</div>}
        <div className="anime-detail-synopsis-wrap">
         <p className="anime-detail-synopsis">{loading?"Cargando ficha…":translatedSynopsis||cleanSynopsis||"Todavía no hay una sinopsis disponible para este título."}</p>
         {media?.description&&<button type="button" className="anime-detail-translate" onClick={translateSynopsis} disabled={translating}>{translating?"Traduciendo…":translatedSynopsis?"Traducido al español":"Traducir al español"}</button>}
