@@ -1,0 +1,30 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/layout/Navbar.astro";
+import Footer from "../../components/layout/Footer.astro";
+import SearchView from "../../components/search/SearchView";
+---
+
+<Layout title="Buscar — Renanime's Gallery">
+  <Navbar />
+  <main class="search-page">
+    <div class="search-page-inner">
+      <div class="search-header">
+        <span>Explorar</span>
+        <h1>Buscar anime</h1>
+        <p>Encuentra una historia y entra en su ficha.</p>
+      </div>
+      <SearchView client:load />
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .search-page { min-height: 60vh; padding-block: clamp(6rem, 11vw, 10rem) var(--section-space); }
+  .search-page-inner { width: min(calc(100% - (var(--gutter) * 2)), var(--container-max)); margin-inline: auto; }
+  .search-header { display:grid; gap:.7rem; max-width:48rem; margin-bottom:clamp(2.5rem,5vw,4rem); }
+  .search-header span { color:var(--color-muted-400); font-family:var(--font-meta); font-size:.55rem; letter-spacing:.12em; text-transform:uppercase; }
+  .search-header h1 { margin:0; font-family:"Comico",var(--font-display); font-size:clamp(2.5rem,6vw,5rem); font-weight:400; line-height:1; }
+  .search-header p { margin:0; color:var(--color-muted-400); }
+</style>
