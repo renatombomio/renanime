@@ -74,7 +74,6 @@ export default function HomeGallery({ entries }: Props) {
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(false);
-  const sentinelRef = useRef<HTMLDivElement>(null);
 
   const page = entries.slice(0, visible);
   const hasMore = visible < entries.length;
@@ -94,19 +93,10 @@ export default function HomeGallery({ entries }: Props) {
     return () => { cancelled = true; };
   }, [visible]);
 
-  useEffect(() => {
-    if (!hasMore || !sentinelRef.current) return;
-    const observer = new IntersectionObserver(
-      (observerEntries) => {
-        if (observerEntries[0]?.isIntersecting && !loading) {
-          setVisible((current) => Math.min(current + PAGE_SIZE, entries.length));
-        }
-      },
-      { rootMargin: "700px 0px" },
-    );
-    observer.observe(sentinelRef.current);
-    return () => observer.disconnect();
-  }, [hasMore, loading, entries.length]);
+  const loadMore = () => {
+    if (loading || !hasMore) return;
+    setVisible((current) => Math.min(current + PAGE_SIZE, entries.length));
+  };
 
   return (
     <div className="home-gallery">
@@ -130,8 +120,17 @@ export default function HomeGallery({ entries }: Props) {
           );
         })}
       </div>
-      {hasMore && <div ref={sentinelRef} className="home-gallery-sentinel" aria-hidden="true" />}
       {loading && <div className="home-gallery-loading" aria-hidden="true" />}
+      {hasMore && (
+        <button
+          type="button"
+          className="home-gallery-load-more"
+          onClick={loadMore}
+          disabled={loading}
+        >
+          {loading ? "Cargando…" : "Cargar más"}
+        </button>
+      )}
     </div>
   );
 }
