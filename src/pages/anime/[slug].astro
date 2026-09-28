@@ -1,0 +1,24 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/layout/Navbar.astro";
+import Footer from "../../components/layout/Footer.astro";
+import AnimeDetail from "../../components/anime/AnimeDetail";
+import { getLibrary } from "../../data/library";
+
+export function getStaticPaths() {
+  return getLibrary().map((entry) => ({
+    params: { slug: entry.animeId },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+---
+
+<Layout title={`${entry.title} — Renanime's Gallery`} description={`Ficha de ${entry.title} en Renanime's Gallery.`}>
+  <Navbar />
+  <main id="main-content" class="anime-detail-page">
+    <AnimeDetail entry={entry} client:load />
+  </main>
+  <Footer />
+</Layout>
