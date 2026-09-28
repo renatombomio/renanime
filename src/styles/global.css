@@ -1151,3 +1151,38 @@ section[id] {
 @media(max-width:1100px){.pending-grid,.coming-grid,.ghibli-grid,.search-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:800px){.pending-grid,.coming-grid,.ghibli-grid,.search-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:2.5rem .7rem}}
 @media(max-width:560px){.pending-grid,.coming-grid,.ghibli-grid,.search-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:2.5rem .75rem}.pending-info,.coming-info,.ghibli-info,.search-info{min-height:5rem;padding:.65rem .7rem .75rem}.pending-info h3,.coming-info h3,.ghibli-info h3,.search-info h2{font-size:.7rem}.pending-info span,.coming-info span,.ghibli-info span,.search-info span{font-size:.54rem}.search-form{grid-template-columns:1fr}.search-form button{min-height:2.75rem}}
+
+.anime-detail-page{min-height:100vh}
+.anime-detail-hero{min-height:clamp(40rem,82vh,58rem);display:flex;align-items:flex-end;background-color:var(--color-ink-950);background-position:center;background-size:cover}
+.anime-detail-inner{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin-inline:auto;padding-block:clamp(7rem,11vw,10rem) clamp(3rem,6vw,5rem)}
+.anime-detail-back{display:inline-block;margin-bottom:clamp(2rem,4vw,4rem);color:var(--color-paper-200);font:var(--text-xs)/1 var(--font-mono);letter-spacing:.07em;text-transform:uppercase}
+.anime-detail-back:hover{color:var(--color-paper-50)}
+.anime-detail-layout{display:grid;grid-template-columns:minmax(13rem,22rem) minmax(0,44rem);gap:clamp(2rem,5vw,5rem);align-items:end}
+.anime-detail-poster{aspect-ratio:2/3;overflow:hidden;border:1px solid rgba(245,242,236,.16);border-radius:10px;background:var(--color-ink-800);box-shadow:0 28px 80px rgba(0,0,0,.38)}
+.anime-detail-poster img{width:100%;height:100%;object-fit:cover}
+.anime-detail-placeholder{display:grid;place-items:center;width:100%;height:100%;color:var(--color-muted-500);font:var(--text-xs)/1 var(--font-mono);letter-spacing:.12em}
+.anime-detail-copy{max-width:46rem;padding-bottom:.5rem}
+.anime-detail-eyebrow{color:var(--color-accent-soft);font:var(--text-xs)/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase}
+.anime-detail-copy h1{margin:.8rem 0 1.2rem;color:var(--color-paper-50);font-family:"Comico",var(--font-display);font-size:clamp(3rem,7vw,7rem);font-weight:400;letter-spacing:-.045em;line-height:.92}
+.anime-detail-meta,.anime-detail-genres,.anime-detail-state{display:flex;flex-wrap:wrap;gap:.45rem .8rem}
+.anime-detail-meta{color:var(--color-paper-200);font:var(--text-xs)/1.3 var(--font-mono);letter-spacing:.04em}
+.anime-detail-meta span+span::before{content:"·";margin-right:.8rem;color:var(--color-muted-500)}
+.anime-detail-genres{margin-top:1.2rem}
+.anime-detail-genres span{padding:.38rem .55rem;border:1px solid var(--color-border);color:var(--color-muted-400);font:var(--text-xs)/1 var(--font-mono)}
+.anime-detail-synopsis{max-width:42rem;margin:1.6rem 0 0;color:var(--color-paper-200);font-size:clamp(.95rem,1.3vw,1.08rem);line-height:1.75}
+.anime-detail-state{margin-top:1.5rem}
+.anime-detail-state span{color:var(--color-muted-400);font:var(--text-xs)/1 var(--font-mono);letter-spacing:.05em;text-transform:uppercase}
+.anime-detail-state span+span::before{content:"·";margin-right:.8rem;color:var(--color-muted-600)}
+.anime-detail-info{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin-inline:auto;display:grid;grid-template-columns:1fr 1fr;gap:1px;border-top:1px solid var(--color-border);background:var(--color-border)}
+.anime-detail-info>div{display:grid;gap:.6rem;padding:1.5rem;background:var(--color-ink-950)}
+.anime-detail-label{color:var(--color-muted-500);font:var(--text-xs)/1 var(--font-mono);letter-spacing:.1em;text-transform:uppercase}
+.anime-detail-info strong{color:var(--color-paper-200);font-size:.9rem;font-weight:400}
+@media(max-width:760px){
+ .anime-detail-hero{min-height:0;align-items:stretch}
+ .anime-detail-inner{padding-block:6rem 3rem}
+ .anime-detail-layout{grid-template-columns:minmax(0,15rem);gap:2rem}
+ .anime-detail-poster{width:min(15rem,62vw)}
+ .anime-detail-copy h1{font-size:clamp(2.7rem,13vw,5rem)}
+ .anime-detail-synopsis{font-size:.92rem;line-height:1.65}
+ .anime-detail-info{grid-template-columns:1fr}
+}
