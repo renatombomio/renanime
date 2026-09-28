@@ -1,0 +1,11 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/layout/Navbar.astro";
+import Footer from "../../components/layout/Footer.astro";
+import AnimeSearchDetail from "../../components/anime/AnimeSearchDetail";
+---
+<Layout title="Anime — Renanime's Gallery">
+<Navbar />
+<main id="main-content"><AnimeSearchDetail client:load /></main>
+<Footer />
+</Layout>
