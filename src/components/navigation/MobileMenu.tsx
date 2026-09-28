@@ -2,9 +2,9 @@ import { useState } from "react";
 
 const links = [
   { label: "Inicio", href: "/" },
-  { label: "Favoritos", href: "/#favorites" },
+  { label: "Favoritos", href: "/favorites/" },
   { label: "Colección", href: "/collection/" },
-  { label: "Géneros", href: "/#genres" },
+  { label: "Géneros", href: "/genres/" },
   { label: "Buscar", href: "/search/" },
   { label: "Pendientes", href: "/pending/" },
   { label: "Próximamente", href: "/coming-soon/" },
