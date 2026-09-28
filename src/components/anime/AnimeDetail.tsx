@@ -21,6 +21,19 @@ const ENDPOINT="https://graphql.anilist.co";
 const CACHE_PREFIX="renanime:detail:v1:";
 const TRANSLATION_PREFIX="renanime:translation:en-es:v1:";
 
+function cleanDescription(text:string){
+  return text
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]*>/g, "")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 function splitForTranslation(text:string){
   const chunks:string[]=[];
   let rest=text.trim();
@@ -39,12 +52,13 @@ function splitForTranslation(text:string){
 }
 
 async function translateToSpanish(text:string){
-  if(!text.trim()) return text;
+  const clean=cleanDescription(text);
+  if(!clean) return clean;
   try{
-    const cached=sessionStorage.getItem(TRANSLATION_PREFIX+btoa(unescape(encodeURIComponent(text))).slice(0,120));
+    const cached=sessionStorage.getItem(TRANSLATION_PREFIX+btoa(unescape(encodeURIComponent(clean))).slice(0,120));
     if(cached) return cached;
   }catch{}
-  const chunks=splitForTranslation(text);
+  const chunks=splitForTranslation(clean);
   const translated:string[]=[];
   for(const chunk of chunks){
     try{
@@ -56,7 +70,7 @@ async function translateToSpanish(text:string){
     }catch{ translated.push(chunk); }
   }
   const result=translated.join(" ");
-  try{sessionStorage.setItem(TRANSLATION_PREFIX+btoa(unescape(encodeURIComponent(text))).slice(0,120),result)}catch{}
+  try{sessionStorage.setItem(TRANSLATION_PREFIX+btoa(unescape(encodeURIComponent(clean))).slice(0,120),result)}catch{}
   return result;
 }
 
@@ -87,6 +101,7 @@ function status(value:string|null|undefined){return value==="FINISHED"?"Finaliza
 
 export default function AnimeDetail({entry}:{entry:LibraryEntry}){
  const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translatedSynopsis,setTranslatedSynopsis]=useState(""),[translating,setTranslating]=useState(false);
+ const cleanSynopsis=media?.description?cleanDescription(media.description):"";
  useEffect(()=>{let cancelled=false;findAnime(entry).then(value=>{if(!cancelled)setMedia(value)}).finally(()=>{if(!cancelled)setLoading(false)});return()=>{cancelled=true}},[entry.animeId]);
  const translateSynopsis=async()=>{if(!media?.description||translating)return;setTranslating(true);const value=await translateToSpanish(media.description);setTranslatedSynopsis(value);setTranslating(false)};
  const title=media?.title?.romaji||media?.title?.english||entry.title;
@@ -105,7 +120,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
        <div className="anime-detail-meta"><span>{format(entry.format||media?.format)}</span><span>{date(media?.startDate)}</span>{media?.episodes&&<span>{media.episodes} episodios</span>}{media?.duration&&<span>{media.duration} min</span>}</div>
        {media?.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map(g=><span>{g}</span>)}</div>}
        <div className="anime-detail-synopsis-wrap">
-        <p className="anime-detail-synopsis">{loading?"Cargando ficha…":translatedSynopsis||media?.description||"Todavía no hay una sinopsis disponible para este título."}</p>
+        <p className="anime-detail-synopsis">{loading?"Cargando ficha…":translatedSynopsis||cleanSynopsis||"Todavía no hay una sinopsis disponible para este título."}</p>
         {media?.description&&<button type="button" className="anime-detail-translate" onClick={translateSynopsis} disabled={translating}>{translating?"Traduciendo…":translatedSynopsis?"Traducido al español":"Traducir al español"}</button>}
        </div>
        {media?.trailer?.id&&media.trailer.site==="youtube"&&<section className="anime-detail-trailer">
