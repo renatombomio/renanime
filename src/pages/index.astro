@@ -33,24 +33,22 @@ const collectionEntries = getWatchedLibrary();
 <style>
   #main-content {
     margin: 0;
-    padding: 0;
-  }
-
-  :global(.hero) {
-    margin-top: -88px;
     padding-top: 88px;
   }
 
+  :global(.hero) {
+    margin: 0;
+    padding: 0;
+  }
+
   @media (max-width: 1120px) {
-    :global(.hero) {
-      margin-top: -74px;
+    #main-content {
       padding-top: 74px;
     }
   }
 
   @media (max-width: 520px) {
-    :global(.hero) {
-      margin-top: -68px;
+    #main-content {
       padding-top: 68px;
     }
   }
