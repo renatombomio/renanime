@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import type { LibraryEntry } from "../../types/personal";
+import { getLibrary } from "../../data/library";
+import { getPersonalFranchiseEntries } from "../../data/franchise";
 
 interface Media {
   id: number;
@@ -101,9 +103,20 @@ function format(value:string|null|undefined){return value==="MOVIE"?"Film":value
 function status(value:string|null|undefined){return value==="FINISHED"?"Finalizado":value==="RELEASING"?"En emisión":value==="NOT_YET_RELEASED"?"Próximamente":value==="HIATUS"?"En pausa":value==="CANCELLED"?"Cancelado":"";}
 
 export default function AnimeDetail({entry}:{entry:LibraryEntry}){
- const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translatedSynopsis,setTranslatedSynopsis]=useState(""),[translating,setTranslating]=useState(false);
+ const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translatedSynopsis,setTranslatedSynopsis]=useState(""),[translating,setTranslating]=useState(false),[franchiseMedia,setFranchiseMedia]=useState<Record<string,Media|null>>({});
  const cleanSynopsis=media?.description?cleanDescription(media.description):"";
- useEffect(()=>{let cancelled=false;findAnime(entry).then(value=>{if(!cancelled)setMedia(value)}).finally(()=>{if(!cancelled)setLoading(false)});return()=>{cancelled=true}},[entry.animeId]);
+ const franchiseEntries=getPersonalFranchiseEntries(entry,getLibrary());
+ useEffect(()=>{
+  let cancelled=false;
+  findAnime(entry).then(value=>{if(!cancelled)setMedia(value)}).finally(()=>{if(!cancelled)setLoading(false)});
+  if(franchiseEntries.length>1){
+   Promise.all(franchiseEntries.map(async(candidate)=>[candidate.animeId,await findAnime(candidate)] as const)).then(results=>{
+    if(cancelled)return;
+    setFranchiseMedia(Object.fromEntries(results));
+   });
+  }
+  return()=>{cancelled=true};
+ },[entry.animeId]);
  const translateSynopsis=async()=>{if(!media?.description||translating)return;setTranslating(true);const value=await translateToSpanish(media.description);setTranslatedSynopsis(value);setTranslating(false)};
  const title=media?.title?.romaji||media?.title?.english||entry.title;
  const poster=media?.coverImage?.extraLarge||media?.coverImage?.large;
@@ -142,6 +155,20 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
    <div><span className="anime-detail-label">Información</span><strong>{media?.studios?.nodes?.map(s=>s.name).join(" · ")||"Estudio no disponible"}</strong></div>
    <div><span className="anime-detail-label">Mi estado</span><strong>{personal.status==="WATCHED"?"He visto este anime":personal.status==="PENDING"?"Quiero verlo":"Parte de mi archivo"}</strong></div>
   </section>
+  {franchiseEntries.length>1&&<section className="anime-detail-franchise">
+   <div className="anime-detail-related-header"><span className="anime-detail-label">Mi colección</span><h2>Esta franquicia</h2></div>
+   <div className="anime-detail-franchise-grid">
+    {franchiseEntries.map((candidate,index)=>{
+      const item=franchiseMedia[candidate.animeId];
+      const image=item?.coverImage?.extraLarge||item?.coverImage?.large;
+      const candidateTitle=item?.title?.romaji||item?.title?.english||candidate.title;
+      return <a className={"anime-detail-franchise-card"+(candidate.animeId===entry.animeId?" is-current":"")} href={"/anime/"+candidate.animeId} key={candidate.animeId}>
+       <div className="anime-detail-franchise-poster">{image?<img src={image} alt=""/>:<div/>}{candidate.animeId===entry.animeId&&<span>Estás aquí</span>}</div>
+       <div className="anime-detail-franchise-copy"><strong>{candidateTitle}</strong><span>{candidate.format==="MOVIE"||item?.format==="MOVIE"?"Film":"Series"} · {candidate.state.status==="WATCHED"?"Vista":"Pendiente"}</span></div>
+      </a>;
+    })}
+   </div>
+  </section>}
   {relations.length>0&&<section className="anime-detail-related">
    <div className="anime-detail-related-header"><span className="anime-detail-label">Universo</span><h2>Relacionado</h2></div>
    <div className="anime-detail-related-grid">
