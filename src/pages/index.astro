@@ -3,7 +3,6 @@ import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/layout/Navbar.astro";
 import Hero from "../components/hero/Hero.astro";
 import HomeGallery from "../components/home/HomeGallery";
-import ShaderGradientBackground from "../components/background/ShaderGradientBackground";
 import { getWatchedLibrary } from "../data/library";
 
 const collectionEntries = getWatchedLibrary();
@@ -16,16 +15,11 @@ const collectionEntries = getWatchedLibrary();
   <Navbar />
 
   <main id="main-content">
-    <div class="site-shader-background" aria-hidden="true">
-      <ShaderGradientBackground client:load />
-    </div>
-    <div class="site-content-layer">
-      <Hero />
+    <Hero />
 
     <section class="home-gallery-section" aria-label="Mi colección de anime">
       <HomeGallery entries={collectionEntries} client:load />
     </section>
-    </div>
   </main>
 
 </Layout>
@@ -56,12 +50,12 @@ const collectionEntries = getWatchedLibrary();
   .home-gallery-section {
     width: min(calc(100% - (var(--gutter) * 2)), var(--container-max));
     margin: 0 auto;
-    padding: 0 0 var(--section-space);
+    padding: 1rem 0 var(--section-space);
   }
 
   @media (max-width: 700px) {
     .home-gallery-section {
-      padding-top: 0;
+      padding-top: 0.75rem;
     }
   }
 </style>
