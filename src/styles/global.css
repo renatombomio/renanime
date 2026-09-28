@@ -1233,3 +1233,16 @@ section[id] {
 .search-card .search-info h2 {
   font-family: var(--font-body) !important;
 }
+
+.anime-detail-related{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin:0 auto;padding:clamp(3rem,7vw,6rem) 0 var(--section-space)}
+.anime-detail-related-header{display:flex;align-items:end;justify-content:space-between;gap:1rem;margin-bottom:1.5rem;border-bottom:1px solid var(--color-border);padding-bottom:.8rem}
+.anime-detail-related-header h2{margin:0;color:var(--color-paper-50);font-family:var(--font-body);font-size:1.25rem;font-weight:500}
+.anime-detail-related-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1rem}
+.anime-detail-related-card{display:block;min-width:0;border:1px solid var(--color-border);background:var(--color-ink-900);border-radius:10px;overflow:hidden}
+.anime-detail-related-poster{aspect-ratio:2/3;background:var(--color-ink-800);overflow:hidden}
+.anime-detail-related-poster img{width:100%;height:100%;object-fit:cover;display:block}
+.anime-detail-related-copy{display:grid;gap:.35rem;padding:.65rem .7rem .75rem}
+.anime-detail-related-copy strong{display:-webkit-box;overflow:hidden;color:var(--color-paper-50);font-family:var(--font-body);font-size:.68rem;font-weight:500;line-height:1.25;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.anime-detail-related-copy span{color:var(--color-muted-400);font-family:var(--font-meta);font-size:.47rem;letter-spacing:.03em}
+@media(max-width:800px){.anime-detail-related-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem}}
+@media(max-width:520px){.anime-detail-related{padding-top:2.5rem}.anime-detail-related-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem}.anime-detail-related-copy{padding:.55rem .6rem .65rem}.anime-detail-related-copy strong{font-size:.62rem}}
