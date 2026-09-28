@@ -112,7 +112,7 @@ export default function HomeGallery({ entries }: Props) {
               key={entry.animeId}
             >
               {image ? (
-                <img src={image} alt="" loading={index < 6 ? "eager" : "lazy"} />
+                <img src={image} alt="" loading="eager" />
               ) : (
                 <div className="home-gallery-placeholder" aria-hidden="true" />
               )}
