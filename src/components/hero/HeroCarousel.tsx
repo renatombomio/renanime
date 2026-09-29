@@ -7,7 +7,13 @@ interface Props {
   }>;
 }
 
-export default function HeroCarousel({\n  slides: _slides,\n  kicker = "Renanime's",\n  title = "Gallery.",\n  copy = "Anime a través de mis ojos.\\nEste es mi regalo para ti.",\n  videoSrc = "/videos/hero.mp4",\n}: Props) {
+export default function HeroCarousel({
+  slides: _slides,
+  kicker = "Renanime's",
+  title = "Gallery.",
+  copy = "Anime a través de mis ojos.\nEste es mi regalo para ti.",
+  videoSrc = "/videos/hero.mp4",
+}: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -48,12 +54,22 @@ export default function HeroCarousel({\n  slides: _slides,\n  kicker = "Renanime
       <div className="hero-inner">
         <div className="hero-title">
           <p className="hero-kicker">
-            {kicker === "Renanime's" ? (\n              <>\n                <span className="hero-accent">Ren</span>anime's\n              </>\n            ) : (\n              kicker\n            )}
+            {kicker === "Renanime's" ? (
+              <>
+                <span className="hero-accent">Ren</span>anime's
+              </>
+            ) : (
+              kicker
+            )}
           </p>
           <h1>{title}</h1>
           <p className="hero-copy">
-            Anime a través de mis ojos.<br />
-            Este es mi regalo para ti.
+            {copy.split("\n").map((line, index) => (
+              <span key={line}>
+                {index > 0 && <br />}
+                {line}
+              </span>
+            ))}
           </p>
         </div>
       </div>
