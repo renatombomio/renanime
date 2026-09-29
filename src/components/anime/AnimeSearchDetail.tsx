@@ -111,8 +111,19 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     .anime-detail--ghibli .anime-detail-copy h1{color:#fff}
     .anime-detail--ghibli .anime-detail-meta{color:rgba(255,255,255,.78)}
     .anime-detail--ghibli .anime-detail-genres span{border-color:rgba(255,255,255,.25);color:#fff;background:rgba(25,54,47,.35)}
-    .anime-detail--ghibli .anime-detail-synopsis{color:rgba(255,255,255,.82)}
-    .anime-detail--ghibli .anime-detail-translate{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff}
+    .anime-detail--ghibli .anime-detail-synopsis-wrap{
+      max-width:42rem;
+      margin-top:1.35rem;
+      padding:1rem 1.15rem 1.1rem;
+      border:1px solid rgba(255,247,232,.22);
+      border-radius:14px;
+      background:rgba(25,54,47,.42);
+      box-shadow:0 12px 34px rgba(25,54,47,.14);
+      -webkit-backdrop-filter:blur(8px);
+      backdrop-filter:blur(8px);
+    }
+    .anime-detail--ghibli .anime-detail-synopsis{margin:0;color:#fff}
+    .anime-detail--ghibli .anime-detail-translate{border-color:rgba(255,247,232,.45);background:rgba(255,247,232,.12);color:#fff}
     .anime-detail--ghibli .anime-detail-translate:hover:not(:disabled){background:#fff;color:var(--gd-blue)}
     .anime-detail--ghibli .anime-detail-state span{color:var(--gd-lime)}
     .anime-detail--ghibli .anime-detail-info{border-top-color:rgba(25,54,47,.12);background:rgba(25,54,47,.12)}
@@ -128,8 +139,21 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     body:has(.anime-detail--ghibli) .site-footer .thanks{color:#59756b}
     body:has(.anime-detail--ghibli) .site-footer .footer-meta{color:#6b7d76}
     @media(max-width:760px){
-      .anime-detail--ghibli .anime-detail-inner{padding-top:1rem}
-      .anime-detail--ghibli .anime-detail-back{margin-bottom:1.35rem;font-size:.52rem;line-height:1}
+      .anime-detail--ghibli .anime-detail-inner{padding-top:5.25rem}
+      .anime-detail--ghibli .anime-detail-back{
+        display:flex!important;
+        visibility:visible!important;
+        position:relative;
+        z-index:30;
+        margin:0 0 1.35rem;
+        font-size:.52rem;
+        line-height:1;
+      }
+      .anime-detail--ghibli .anime-detail-synopsis-wrap{
+        margin-top:1rem;
+        padding:.85rem .9rem .95rem;
+        border-radius:12px;
+      }
     }
   `}</style>
   <section className="anime-detail-hero" style={banner?{backgroundImage:from==="ghibli"?`url("${banner}")`:`linear-gradient(90deg,rgba(9,9,9,.98),rgba(9,9,9,.72) 45%,rgba(9,9,9,.35) 75%,rgba(9,9,9,.8)),linear-gradient(0deg,rgba(9,9,9,.98),transparent 45%),url("${banner}")`}:undefined}>
