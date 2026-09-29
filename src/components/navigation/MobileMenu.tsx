@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const links = [
+interface Props { variant?: "default" | "ghibli"; }\n\nconst links = [
   { label: "Inicio", href: "/" },
   { label: "Favoritos", href: "/favorites/" },
   { label: "Colección", href: "/collection/" },
@@ -8,10 +8,10 @@ const links = [
   { label: "Buscar", href: "/search/" },
   { label: "Pendientes", href: "/pending/" },
   { label: "Próximamente", href: "/coming-soon/" },
-  { label: "Totoro", href: "/ghibli/" },
+  { label: "El secreto de Ren", href: "/ghibli/" },
 ];
 
-export default function MobileMenu() {
+export default function MobileMenu({ variant = "default" }: Props) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function MobileMenu() {
   }, [open]);
 
   return (
-    <div className="mobile-nav">
+    <div className={"mobile-nav" + (variant === "ghibli" ? " mobile-nav--ghibli" : "")}>
       <button
         className="mobile-toggle"
         type="button"
