@@ -54,7 +54,8 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
  const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translated,setTranslated]=useState(""),[translating,setTranslating]=useState(false);
  useEffect(()=>{
   const params=new URLSearchParams(location.search);
-  const id=Number(params.get("id"));
+  const idParam=params.get("id");
+  const id=idParam ? Number(idParam) : NaN;
   const film=params.get("film");
 
   if(film==="the-red-turtle" && !Number.isFinite(id)){
@@ -90,7 +91,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
  const requestedBack=params.get("back");
  const backHref=from==="ghibli"?"/ghibli/":from==="coming-soon"?"/coming-soon/":from==="anime"&&requestedBack?.startsWith("/anime/")?requestedBack:"/search/";
  const backLabel=from==="ghibli"?"Volver a El secreto de Ren":from==="coming-soon"?"Volver a próximamente":from==="anime"?"Volver al anime":"Volver a buscar";
- const title=media.title?.romaji||media.title?.english||"Sin título";
+ const title=from==="ghibli" ? (media.title?.english||media.title?.romaji||"Sin título") : (media.title?.romaji||media.title?.english||"Sin título");
  const image=media.coverImage?.extraLarge||media.coverImage?.large;
  const banner=media.bannerImage||image;
  const synopsis=media.description?cleanDescription(media.description):"";
@@ -101,9 +102,10 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     .anime-detail--ghibli{--gd-cream:#FFF7E8;--gd-paper:#F4E9D5;--gd-sky:#DCEFF1;--gd-blue:#18528A;--gd-teal:#0B798B;--gd-coral:#F45164;--gd-pink:#F0A9A5;--gd-lime:#91CC57;--gd-ink:#19362F;min-height:100vh;background:var(--gd-cream);color:var(--gd-ink)}
     .anime-detail--ghibli .anime-detail-hero{min-height:clamp(34rem,72vh,52rem);background-color:var(--gd-ink)!important;background-position:center;background-size:cover}
     .anime-detail--ghibli .anime-detail-inner{position:relative}
-    .anime-detail--ghibli .anime-detail-back{position:relative;z-index:10;display:inline-flex;align-items:center;gap:.45rem;padding:.48rem .7rem;margin-bottom:clamp(1.25rem,3vw,2.5rem);border:1px solid rgba(255,247,232,.55);border-radius:999px;background:rgba(255,247,232,.9);color:var(--gd-blue);box-shadow:0 8px 24px rgba(25,54,47,.12);backdrop-filter:blur(8px)}
+    .anime-detail--ghibli .anime-detail-back{position:relative;z-index:20;display:flex!important;align-items:center;gap:.45rem;padding:.48rem .7rem;margin-bottom:clamp(1.25rem,3vw,2.5rem);border:1px solid rgba(255,247,232,.55);border-radius:999px;background:rgba(255,247,232,.9);color:var(--gd-blue);box-shadow:0 8px 24px rgba(25,54,47,.12);backdrop-filter:blur(8px)}
     .anime-detail--ghibli .anime-detail-back:hover{background:#fff}
-    .anime-detail--ghibli .anime-detail-copy h1{text-shadow:0 2px 18px rgba(0,0,0,.12)}
+    .anime-detail--ghibli .anime-detail-copy h1{text-shadow:0 2px 18px rgba(0,0,0,.18)}
+    .anime-detail--ghibli .anime-detail-back{width:max-content}
     .anime-detail--ghibli .anime-detail-back{color:var(--gd-blue)}
     .anime-detail--ghibli .anime-detail-back:hover{color:var(--gd-coral)}
     .anime-detail--ghibli .anime-detail-copy h1{color:#fff}
@@ -126,8 +128,8 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     body:has(.anime-detail--ghibli) .site-footer .thanks{color:#59756b}
     body:has(.anime-detail--ghibli) .site-footer .footer-meta{color:#6b7d76}
     @media(max-width:760px){
-      .anime-detail--ghibli .anime-detail-inner{padding-top:1.1rem}
-      .anime-detail--ghibli .anime-detail-back{margin-bottom:1rem;font-size:.52rem}
+      .anime-detail--ghibli .anime-detail-inner{padding-top:1rem}
+      .anime-detail--ghibli .anime-detail-back{margin-bottom:1.35rem;font-size:.52rem;line-height:1}
     }
   `}</style>
   <section className="anime-detail-hero" style={banner?{backgroundImage:from==="ghibli"?`url("${banner}")`:`linear-gradient(90deg,rgba(9,9,9,.98),rgba(9,9,9,.72) 45%,rgba(9,9,9,.35) 75%,rgba(9,9,9,.8)),linear-gradient(0deg,rgba(9,9,9,.98),transparent 45%),url("${banner}")`}:undefined}>
