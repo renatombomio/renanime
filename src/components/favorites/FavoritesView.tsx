@@ -21,6 +21,8 @@ interface Props {
 export default function FavoritesView({ entries, recommendations }: Props) {
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(true);
+  const [visibleFavorites, setVisibleFavorites] = useState(10);
+  const [visibleRecommendations, setVisibleRecommendations] = useState(10);
   const favoriteTrackRef = useRef<HTMLDivElement>(null);
   const recommendationTrackRef = useRef<HTMLDivElement>(null);
 
@@ -117,8 +119,19 @@ export default function FavoritesView({ entries, recommendations }: Props) {
         </div>
 
         <div className="favorites-track" ref={favoriteTrackRef}>
-          {entries.map((entry, index) => renderCard(entry, index))}
+          {entries.slice(0, visibleFavorites).map((entry, index) => renderCard(entry, index))}
         </div>
+
+        {visibleFavorites < entries.length && (
+          <button
+            type="button"
+            className="favorites-load-more"
+            onClick={() => setVisibleFavorites((count) => count + 10)}
+          >
+            Cargar más
+            <span>{Math.min(visibleFavorites + 10, entries.length)} / {entries.length}</span>
+          </button>
+        )}
       </section>
 
       <section className="favorites-section favorites-section--recommendations" aria-labelledby="recommended-title">
@@ -138,11 +151,56 @@ export default function FavoritesView({ entries, recommendations }: Props) {
         </p>
 
         <div className="favorites-track favorites-track--recommendations" ref={recommendationTrackRef}>
-          {recommendations.map((entry, index) => renderCard(entry, index, true))}
+          {recommendations.slice(0, visibleRecommendations).map((entry, index) => renderCard(entry, index, true))}
         </div>
+
+        {visibleRecommendations < recommendations.length && (
+          <button
+            type="button"
+            className="favorites-load-more"
+            onClick={() => setVisibleRecommendations((count) => count + 10)}
+          >
+            Cargar más
+            <span>{Math.min(visibleRecommendations + 10, recommendations.length)} / {recommendations.length}</span>
+          </button>
+        )}
       </section>
 
       {loading && <span className="favorites-loading">Cargando archivo…</span>}
+
+      <style>{`
+        .favorites-load-more {
+          display: inline-flex;
+          align-items: center;
+          gap: .75rem;
+          margin-top: 2rem;
+          padding: .8rem 1.1rem;
+          border: 1px solid var(--line);
+          background: transparent;
+          color: inherit;
+          font: inherit;
+          cursor: pointer;
+          transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+        }
+        .favorites-load-more:hover {
+          background: var(--ink);
+          color: var(--paper);
+          border-color: var(--ink);
+        }
+        .favorites-load-more span {
+          font-family: var(--font-meta);
+          font-size: .58rem;
+          opacity: .55;
+          letter-spacing: .05em;
+        }
+        @media (max-width: 700px) {
+          .favorites-load-more {
+            width: 100%;
+            justify-content: center;
+            margin-top: 1.5rem;
+          }
+        }
+      `}</style>
     </div>
   );
 }
