@@ -22,7 +22,7 @@ const links = [
     <nav class="desktop-nav" aria-label="Navegación principal">
       <ul>
         {links.map((link) => (
-          <li><a href={link.href}>{link.label}</a></li>
+          <li><a href={link.href} aria-current={currentPath === (link.href.replace(/\\/$/, "") || "/") ? "page" : undefined}>{link.label}</a></li>
         ))}
       </ul>
     </nav>
@@ -55,7 +55,7 @@ const links = [
   .brand {
     flex: 0 0 auto;
     color: #f5f2ec;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: var(--font-heading);
     font-size: 23px;
     font-weight: 600;
     letter-spacing: 0.045em;
@@ -96,7 +96,7 @@ const links = [
     display: inline-block;
     padding: 10px 0;
     color: #8f8a82;
-    font-family: "SFMono-Regular", Consolas, monospace;
+    font-family: var(--font-meta);
     font-size: 11px;
     font-weight: 500;
     letter-spacing: 0.075em;
