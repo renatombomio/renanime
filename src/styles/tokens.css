@@ -32,6 +32,10 @@
   --gradient-hero: linear-gradient(180deg, rgba(9, 9, 9, 0.08) 0%, rgba(9, 9, 9, 0.86) 100%);
   --gradient-vignette: radial-gradient(circle at center, transparent 35%, rgba(9, 9, 9, 0.72) 100%);
   --gradient-surface: linear-gradient(135deg, rgba(245, 242, 236, 0.05), rgba(245, 242, 236, 0));
+  --gradient-grain:
+    radial-gradient(circle at 12% 18%, rgba(245, 242, 236, 0.025) 0 0.6px, transparent 0.8px),
+    radial-gradient(circle at 76% 34%, rgba(245, 242, 236, 0.02) 0 0.5px, transparent 0.75px),
+    radial-gradient(circle at 38% 82%, rgba(245, 242, 236, 0.018) 0 0.55px, transparent 0.8px);
 
   /* ─────────────────────────────────────────────
      Typography
