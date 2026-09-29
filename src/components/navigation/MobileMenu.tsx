@@ -48,8 +48,8 @@ export default function MobileMenu({ variant = "default" }: Props) {
 
       gsap.killTweensOf([panel, backdrop, top, bottom, ...items, secret].filter(Boolean));
 
-      gsap.set(panel, { autoAlpha: 1, y: 0 });
-      gsap.set(backdrop, { autoAlpha: 1 });
+      gsap.set(panel, { autoAlpha: 1, y: 0, pointerEvents: "auto" });
+      gsap.set(backdrop, { autoAlpha: 1, pointerEvents: "auto" });
       gsap.set(items, { autoAlpha: 0, y: 18 });
       gsap.set(secret, { autoAlpha: 0, y: 22, scale: 0.98 });
       gsap.set(top, { rotation: 0, y: -4, transformOrigin: "50% 50%" });
@@ -89,8 +89,8 @@ export default function MobileMenu({ variant = "default" }: Props) {
 
     const tl = gsap.timeline({
       onComplete: () => {
-        gsap.set(panel, { autoAlpha: 0, y: -10 });
-        gsap.set(backdrop, { autoAlpha: 0 });
+        gsap.set(panel, { autoAlpha: 0, y: -10, pointerEvents: "none" });
+        gsap.set(backdrop, { autoAlpha: 0, pointerEvents: "none" });
       }
     });
 
@@ -228,7 +228,6 @@ export default function MobileMenu({ variant = "default" }: Props) {
           background: rgba(0, 0, 0, 0.38);
           opacity: 0;
           visibility: hidden;
-          pointer-events: none;
           backdrop-filter: blur(2px);
         }
 
