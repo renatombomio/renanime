@@ -22,7 +22,7 @@ interface Media {
 }
 
 const ENDPOINT="https://graphql.anilist.co";
-const CACHE_PREFIX="renanime:detail:v1:";
+const CACHE_PREFIX="renanime:detail:v2:";
 const TRANSLATION_PREFIX="renanime:translation:en-es:v1:";
 
 function cleanDescription(text:string){
