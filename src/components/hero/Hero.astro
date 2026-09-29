@@ -8,6 +8,7 @@ interface Props {
   title?: string;
   copy?: string;
   videoSrc?: string;
+  variant?: "default" | "ghibli";
 }
 
 const {
@@ -15,6 +16,7 @@ const {
   title = "Gallery.",
   copy = "Anime a través de mis ojos.\nEste es mi regalo para ti.",
   videoSrc = "/videos/hero.mp4",
+  variant = "default",
 } = Astro.props;
 
 const slides: HeroSlide[] = (
@@ -44,7 +46,7 @@ const slides: HeroSlide[] = (
 ).filter((slide): slide is HeroSlide => slide !== null);
 ---
 
-<HeroCarousel client:load slides={slides} kicker={kicker} title={title} copy={copy} videoSrc={videoSrc} />
+<HeroCarousel client:load slides={slides} kicker={kicker} title={title} copy={copy} videoSrc={videoSrc} variant={variant} />
 
 <style>
   :global(.hero) {
@@ -179,34 +181,22 @@ const slides: HeroSlide[] = (
 
   @media (max-width: 720px) {
     :global(.hero) {
-      min-height: 0;
-      height: auto;
-      overflow: visible;
+      min-height: 68svh;
     }
 
     :global(.hero-media) {
-      position: relative;
-      inset: auto;
-      width: 100%;
-      height: auto;
-      overflow: visible;
+      position: absolute;
+      inset: 0;
     }
 
     :global(.hero-video) {
-      display: block;
-      width: 100%;
-      height: auto;
-      min-height: 0;
-      object-fit: fill;
+      object-fit: cover;
       object-position: center;
     }
 
     :global(.hero-inner) {
-      position: absolute;
-      inset: 0;
       width: 100%;
-      min-height: 0;
-      height: 100%;
+      min-height: 68svh;
       padding: 5rem var(--gutter) 2.5rem;
     }
 
@@ -233,6 +223,40 @@ const slides: HeroSlide[] = (
     :global(.hero-copy) {
       margin-top: 1.5rem;
       font-size: 0.95rem;
+    }
+  }
+
+  @media (max-width: 720px) {
+    :global(.hero--ghibli) {
+      min-height: 0;
+      height: auto;
+      overflow: visible;
+    }
+
+    :global(.hero--ghibli .hero-media) {
+      position: relative;
+      inset: auto;
+      width: 100%;
+      height: auto;
+      overflow: visible;
+    }
+
+    :global(.hero--ghibli .hero-video) {
+      display: block;
+      width: 100%;
+      height: auto;
+      min-height: 0;
+      object-fit: contain;
+      object-position: top center;
+    }
+
+    :global(.hero--ghibli .hero-inner) {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      min-height: 0;
+      height: 100%;
+      padding: 5rem var(--gutter) 2.5rem;
     }
   }
 </style>
