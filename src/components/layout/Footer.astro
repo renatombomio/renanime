@@ -2,7 +2,7 @@
 import Container from "../ui/Container.astro";
 
 const year = new Date().getFullYear();
-const isGhibli = Astro.url.pathname.startsWith("/ghibli") || Astro.url.searchParams.get("from") === "ghibli";
+const isGhibli = Astro.url.pathname.startsWith("/ghibli");
 ---
 
 <footer class:list={["site-footer", isGhibli && "site-footer--ghibli"]}>
