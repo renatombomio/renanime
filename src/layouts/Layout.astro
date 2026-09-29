@@ -9,7 +9,7 @@ const {
   description = "Galería personal de anime."
 } = Astro.props;
 
-const isGhibli = Astro.url.pathname.startsWith("/ghibli") || Astro.url.searchParams.get("from") === "ghibli";
+const isGhibli = Astro.url.pathname.startsWith("/ghibli");
 
 import "../styles/global.css";
 ---
