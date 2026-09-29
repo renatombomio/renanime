@@ -52,7 +52,7 @@ describe("getCollectionStatus", () => {
     },
     {
       animeId: "anilist-2",
-      state: { watched: false, pending: true, favorite: false, recommended: false },
+      state: { status: "PENDING", favorite: false, recommended: false },
     },
   ];
 
