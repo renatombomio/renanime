@@ -153,3 +153,26 @@
     transform: none;
   }
 }
+
+
+.texture-grain {
+  position: relative;
+}
+
+.texture-grain::after {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-content);
+  pointer-events: none;
+  content: "";
+  background-image: var(--gradient-grain);
+  background-size: 9px 9px, 13px 13px, 17px 17px;
+  opacity: 0.65;
+  mix-blend-mode: screen;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .texture-grain::after {
+    opacity: 0.45;
+  }
+}
