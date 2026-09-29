@@ -8,7 +8,7 @@ const links = [
   { label: "Buscar", href: "/search/" },
   { label: "Pendientes", href: "/pending/" },
   { label: "Próximamente", href: "/coming-soon/" },
-  { label: "El secreto de Ren", href: "/ghibli/" },
+  { label: "Totoro", href: "/ghibli/" },
 ];
 
 export default function MobileMenu() {
