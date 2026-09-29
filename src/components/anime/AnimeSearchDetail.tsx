@@ -18,7 +18,18 @@ interface Media{
 }
 
 function cleanDescription(text:string){
- return text.replace(/<br\s*\/?>/gi,"\n").replace(/<[^>]*>/g,"").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\n{3,}/g,"\n\n").trim();
+ return text
+  .replace(/<br\s*\/?>/gi,"\n")
+  .replace(/\\n/g,"\n")
+  .replace(/<[^>]*>/g,"")
+  .replace(/&amp;/g,"&")
+  .replace(/&lt;/g,"<")
+  .replace(/&gt;/g,">")
+  .replace(/&quot;/g,'"')
+  .replace(/&#39;/g,"'")
+  .replace(/\u00a0/g," ")
+  .replace(/\n{3,}/g,"\n\n")
+  .trim();
 }
 function date(value:Media["startDate"]){
  if(!value?.year)return "Fecha desconocida";
@@ -96,6 +107,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
  const image=media.coverImage?.extraLarge||media.coverImage?.large;
  const banner=media.bannerImage||image;
  const synopsis=media.description?cleanDescription(media.description):"";
+ const hasSynopsis=synopsis.replace(/[\s\\n]+/g,"").length>0;
  const translateSynopsis=async()=>{if(!media.description||translating)return;setTranslating(true);setTranslated(await translate(media.description));setTranslating(false)};
 
  return <div className={"anime-detail" + (from === "ghibli" ? " anime-detail--ghibli" : "")}>
@@ -142,8 +154,8 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     body:has(.anime-detail--ghibli) .site-footer .footer-meta{color:#6b7d76}
     .anime-detail-recommendations{margin-top:1.8rem;width:100%}
     .anime-detail-recommendations-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:.7rem}
-    .anime-detail-recommendations-track{display:flex;gap:.7rem;overflow-x:auto;padding:.15rem 0 .65rem;scroll-snap-type:x mandatory;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
-    .anime-detail-recommendation{flex:0 0 clamp(108px,30vw,132px);scroll-snap-align:start;color:inherit;text-decoration:none}
+    .anime-detail-recommendations-track{display:flex;gap:.7rem;overflow-x:auto;padding:.15rem 0 .65rem;scroll-snap-type:x mandatory;scrollbar-width:thin;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+    .anime-detail-recommendation{flex:0 0 clamp(116px,30vw,138px);scroll-snap-align:start;color:inherit;text-decoration:none}
     .anime-detail-recommendation-poster{aspect-ratio:2/3;overflow:hidden;background:#171717;border-radius:8px}
     .anime-detail-recommendation-poster img{display:block;width:100%;height:100%;object-fit:cover;transition:transform 320ms cubic-bezier(.22,1,.36,1)}
     .anime-detail-recommendation:hover .anime-detail-recommendation-poster img{transform:scale(1.035)}
@@ -152,7 +164,12 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     .anime-detail--ghibli .anime-detail-recommendation-poster{border-radius:12px;background:var(--gd-ink)}
     .anime-detail--ghibli .anime-detail-recommendation-title{color:#fff}
     .anime-detail--ghibli .anime-detail-recommendation-meta{color:rgba(255,255,255,.68)}
-    @media(max-width:760px){.anime-detail-recommendations{margin-top:1.35rem}.anime-detail-recommendation{flex-basis:112px}}
+    @media(max-width:760px){
+      .anime-detail-recommendations{margin-top:1.35rem}
+      .anime-detail-recommendations-head{margin-bottom:.85rem}
+      .anime-detail-recommendation{flex-basis:116px}
+      .anime-detail-recommendation-title{font-size:.68rem}
+    }
     @media(max-width:760px){
       .anime-detail--ghibli .anime-detail-inner{padding-top:5.25rem}
       .anime-detail--ghibli .anime-detail-back{
@@ -181,10 +198,33 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
       <div className="anime-detail-meta"><span>{media.format==="MOVIE"?"Film":"Series"}</span><span>{date(media.startDate)}</span>{media.episodes&&<span>{media.episodes} episodios</span>}{media.duration&&<span>{media.duration} min</span>}</div>
       {media.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map(genre=><span key={genre}>{genre}</span>)}</div>}
       <div className="anime-detail-synopsis-wrap">
-       <p className="anime-detail-synopsis">{translated||synopsis||"Todavía no hay una sinopsis disponible."}</p>
-       {media.description&&<button type="button" className="anime-detail-translate" onClick={translateSynopsis} disabled={translating}>{translating?"Traduciendo…":translated?"Traducido al español":"Traducir al español"}</button>}
+       <p className="anime-detail-synopsis">{translated||synopsis||(hasSynopsis?"":"Todavía no hay una sinopsis disponible.")}</p>
+       {hasSynopsis&&media.description&&<button type="button" className="anime-detail-translate" onClick={translateSynopsis} disabled={translating}>{translating?"Traduciendo…":translated?"Traducido al español":"Traducir al español"}</button>}
       </div>
-      {media.trailer?.id&&media.trailer.site==="youtube"&&<section className="anime-detail-trailer"><span className="anime-detail-label">Tráiler</span><div className="anime-detail-video"><iframe src={"https://www.youtube.com/embed/"+media.trailer.id+"?rel=0"} title={"Tráiler de "+title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div></section>}\n      {media.recommendations?.nodes?.length ? <section className="anime-detail-recommendations" aria-label="Recomendaciones"><div className="anime-detail-recommendations-head"><span className="anime-detail-label">Si te gusta este anime, te puede gustar…</span></div><div className="anime-detail-recommendations-track">{media.recommendations.nodes.filter((node)=>node.media).slice(0,8).map((node)=>{ const item=node.media!; const recTitle=item.title?.romaji||item.title?.english||"Sin título"; const recImage=item.coverImage?.extraLarge||item.coverImage?.large; return <a className="anime-detail-recommendation" href={"/anime/search?id="+item.id} key={item.id}><div className="anime-detail-recommendation-poster">{recImage&&<img src={recImage} alt={recTitle} loading="lazy"/>}</div><span className="anime-detail-recommendation-title">{recTitle}</span><span className="anime-detail-recommendation-meta">{item.format==="MOVIE"?"Film":"Series"}{item.startDate?.year?" · "+item.startDate.year:""}</span></a>})}</div></section> : null}
+      {media.trailer?.id&&media.trailer.site==="youtube"&&<section className="anime-detail-trailer"><span className="anime-detail-label">Tráiler</span><div className="anime-detail-video"><iframe src={"https://www.youtube.com/embed/"+media.trailer.id+"?rel=0"} title={"Tráiler de "+title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div></section>}\n      {media.recommendations?.nodes?.length ? (() => {
+       const seen = new Set<number>();
+       const items = media.recommendations.nodes
+         .map((node) => node.media)
+         .filter((item): item is NonNullable<typeof item> => Boolean(item))
+         .filter((item) => item.id !== media.id && !seen.has(item.id) && seen.add(item.id))
+         .slice(0, 8);
+       return items.length ? <section className="anime-detail-recommendations" aria-label="Recomendaciones">
+        <div className="anime-detail-recommendations-head">
+         <span className="anime-detail-label">Si te gusta este anime, te puede gustar…</span>
+        </div>
+        <div className="anime-detail-recommendations-track">
+         {items.map((item) => {
+          const recTitle=item.title?.romaji||item.title?.english||"Sin título";
+          const recImage=item.coverImage?.extraLarge||item.coverImage?.large;
+          return <a className="anime-detail-recommendation" href={"/anime/search?id="+item.id} key={item.id}>
+           <div className="anime-detail-recommendation-poster">{recImage&&<img src={recImage} alt={recTitle} loading="lazy" />}</div>
+           <span className="anime-detail-recommendation-title">{recTitle}</span>
+           <span className="anime-detail-recommendation-meta">{item.format==="MOVIE"?"Film":"Series"}{item.startDate?.year?" · "+item.startDate.year:""}</span>
+          </a>;
+         })}
+        </div>
+       </section> : null;
+      })() : null}
       <div className="anime-detail-state">{status(media.status)&&<span>{status(media.status)}</span>}</div>
      </div>
     </div>
