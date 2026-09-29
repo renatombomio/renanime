@@ -5,7 +5,7 @@ import Footer from "../../components/layout/Footer.astro";
 import AnimeSearchDetail from "../../components/anime/AnimeSearchDetail";
 ---
 <Layout title="Anime — Renanime's Gallery">
-<Navbar />
+<Navbar variant={Astro.url.searchParams.get("from") === "ghibli" ? "ghibli" : "default"} />
 <main id="main-content"><AnimeSearchDetail client:load /></main>
 <Footer />
 </Layout>
