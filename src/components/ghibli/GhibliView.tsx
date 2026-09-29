@@ -84,10 +84,13 @@ export default function GhibliView({ films }: { films: Film[] }) {
             const image = item?.coverImage?.extraLarge || item?.coverImage?.large;
             const fallbackImage = film.id === "the-red-turtle" ? "https://www.ghibli.jp/images/red-turtle.jpg" : null;
             const posterImage = image || fallbackImage;
+            const href = item
+              ? "/ghibli/anime?id=" + item.id
+              : "/ghibli/anime?film=" + encodeURIComponent(film.id);
 
             return (
               <article className={"ghibli-card" + (film.watched ? " is-watched" : "")} key={film.id}>
-                <a href={item ? "/ghibli/anime?id=" + item.id : "#"} aria-label={"Abrir " + film.title}>
+                <a href={href} aria-label={"Abrir " + film.title}>
                   <div className="ghibli-poster">
                     {posterImage ? (
                       <img src={posterImage} alt="" loading={index < 6 ? "eager" : "lazy"} decoding="async" />
