@@ -46,7 +46,11 @@ async function translate(text:string){
  return out.join(" ");
 }
 
-interface Props { variant?: "default" | "ghibli"; }\n\nexport default function AnimeSearchDetail({ variant = "default" }: Props){
+interface Props {
+ variant?: "default" | "ghibli";
+}
+
+export default function AnimeSearchDetail({ variant = "default" }: Props){
  const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translated,setTranslated]=useState(""),[translating,setTranslating]=useState(false);
  useEffect(()=>{
   const id=Number(new URLSearchParams(location.search).get("id"));
