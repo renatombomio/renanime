@@ -3,28 +3,31 @@ import HeroCarousel, { type HeroSlide } from "./HeroCarousel";
 import { heroSlides } from "../../data/hero";
 import { anilistProvider } from "../../lib/api/anilist";
 
-const slides: HeroSlide[] = [];
+const slides: HeroSlide[] = (
+  await Promise.all(
+    heroSlides.map(async (config) => {
+      try {
+        const anime = await anilistProvider.getById(config.anilistId);
 
-for (const config of heroSlides) {
-  try {
-    const anime = await anilistProvider.getById(config.anilistId);
+        if (!anime) return null;
 
-    if (anime) {
-      slides.push({
-        id: config.id,
-        title: anime.metadata.title,
-        year: anime.metadata.year,
-        format: anime.metadata.format,
-        banner: anime.metadata.images.banner,
-        cover: anime.metadata.images.cover,
-        eyebrow: config.eyebrow,
-        note: config.note,
-      });
-    }
-  } catch {
-    // The hero stays usable if AniList is temporarily unavailable.
-  }
-}
+        return {
+          id: config.id,
+          title: anime.metadata.title,
+          year: anime.metadata.year,
+          format: anime.metadata.format,
+          banner: anime.metadata.images.banner,
+          cover: anime.metadata.images.cover,
+          eyebrow: config.eyebrow,
+          note: config.note,
+        };
+      } catch {
+        // One unavailable title should not block the rest of the hero.
+        return null;
+      }
+    }),
+  )
+).filter((slide): slide is HeroSlide => slide !== null);
 ---
 
 <HeroCarousel client:load slides={slides} />
