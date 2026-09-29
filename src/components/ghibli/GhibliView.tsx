@@ -60,7 +60,7 @@ export default function GhibliView({ films }: { films: Film[] }) {
         .ghibli-view .ghibli-placeholder{position:relative;background:linear-gradient(145deg,#f4c1bd 0%,#e6eff0 100%);color:var(--gp-blue)}
         .ghibli-view .ghibli-placeholder:after{position:absolute;inset:12%;border:1px solid rgba(24,82,138,.18);border-radius:50%;content:"";transform:rotate(-12deg)}
         @media(max-width:560px){
-          .ghibli-view .ghibli-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem .45rem;margin-top:1rem}
+          .ghibli-view .ghibli-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem .7rem;margin-top:1rem}
           .ghibli-view .ghibli-card{border-radius:13px}
           .ghibli-view .ghibli-card:before{width:2px}
           .ghibli-view .ghibli-info{min-height:4.8rem;padding:.55rem .48rem .62rem}
