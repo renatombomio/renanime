@@ -9,7 +9,7 @@ const films=getGhibliFilms();
 ---
 <Layout title="El secreto de Ren — Renanime's Gallery">
 <Navbar />
-<main class="ghibli-page"><div class="ghibli-header"><SectionHeader eyebrow="El secreto de Ren" title="Studio Ghibli" description="Una colección aparte. Las películas de Ghibli que he visto y las que todavía me esperan." /></div><section class="ghibli-content" aria-label="Colección Studio Ghibli"><GhibliView films={films} client:load /></section></main>
+<main id="main-content" class="ghibli-page"><div class="ghibli-header"><SectionHeader eyebrow="El secreto de Ren" title="Studio Ghibli" description="Una colección aparte. Las películas de Ghibli que he visto y las que todavía me esperan." /></div><section class="ghibli-content" aria-label="Colección Studio Ghibli"><GhibliView films={films} client:load /></section></main>
 <Footer />
 </Layout>
 <style>
