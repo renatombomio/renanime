@@ -10,6 +10,6 @@ const { eyebrow, title, description, id } = Astro.props;
 <style>
   .section-header { display:grid; gap:var(--space-4); max-width:48rem; }
   .eyebrow { color:var(--color-muted-400); font:var(--text-xs)/1 var(--font-mono); letter-spacing:.12em; text-transform:uppercase; }
-  h2 { margin:0; color:var(--color-paper-50); font-family:"Comico",var(--font-display); font-size:clamp(2.5rem,6vw,5rem); font-weight:400; letter-spacing:-.02em; line-height:var(--leading-tight); }
+  h2 { margin:0; color:var(--color-paper-50); font-family:var(--font-heading); font-size:clamp(2.5rem,6vw,5rem); font-weight:400; letter-spacing:-.02em; line-height:var(--leading-tight); }
   p { max-width:42rem; margin:0; color:var(--color-muted-400); font-family:var(--font-body); font-size:var(--text-base); line-height:var(--leading-body); }
 </style>
