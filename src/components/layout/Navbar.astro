@@ -136,7 +136,24 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     transform: scaleX(1);
   }
 
-  .site-header--ghibli {\n    background: rgba(255, 255, 255, 0.94);\n    border-bottom-color: rgba(25, 54, 47, 0.12);\n    backdrop-filter: blur(10px);\n  }\n\n  .site-header--ghibli .brand { color: var(--ghibli-ink, #19362f); }\n  .site-header--ghibli .brand-accent { color: var(--ghibli-blue, #18528a); }\n  .site-header--ghibli .brand:hover,\n  .site-header--ghibli .brand:focus-visible { color: var(--ghibli-blue, #18528a); }\n  .site-header--ghibli .brand:hover .brand-accent,\n  .site-header--ghibli .brand:focus-visible .brand-accent { color: var(--ghibli-coral, #f45164); }\n  .site-header--ghibli .desktop-nav a { color: #527066; }\n  .site-header--ghibli .desktop-nav a:hover,\n  .site-header--ghibli .desktop-nav a:focus-visible { color: var(--ghibli-blue, #18528a); }\n  .site-header--ghibli .desktop-nav a::after { background: var(--ghibli-coral, #f45164); }\n\n  .mobile-menu {
+  .site-header--ghibli {
+    background: rgba(255, 255, 255, 0.94);
+    border-bottom-color: rgba(25, 54, 47, 0.12);
+    backdrop-filter: blur(10px);
+  }
+
+  .site-header--ghibli .brand { color: var(--ghibli-ink, #19362f); }
+  .site-header--ghibli .brand-accent { color: var(--ghibli-blue, #18528a); }
+  .site-header--ghibli .brand:hover,
+  .site-header--ghibli .brand:focus-visible { color: var(--ghibli-blue, #18528a); }
+  .site-header--ghibli .brand:hover .brand-accent,
+  .site-header--ghibli .brand:focus-visible .brand-accent { color: var(--ghibli-coral, #f45164); }
+  .site-header--ghibli .desktop-nav a { color: #527066; }
+  .site-header--ghibli .desktop-nav a:hover,
+  .site-header--ghibli .desktop-nav a:focus-visible { color: var(--ghibli-blue, #18528a); }
+  .site-header--ghibli .desktop-nav a::after { background: var(--ghibli-coral, #f45164); }
+
+  .mobile-menu {
     display: none;
     margin-left: auto;
   }
