@@ -73,7 +73,7 @@ export default function FavoritesView({ entries }: Props) {
       <div className="favorites-intro">
         <span className="favorites-note">Una selección personal</span>
 
-        <div className="favorites-controls" aria-label="Navegar favoritos">
+        <div className="favorites-controls" role="group" aria-label="Navegar favoritos">
           <button type="button" onClick={() => scroll("prev")} aria-label="Favoritos anteriores">←</button>
           <button type="button" onClick={() => scroll("next")} aria-label="Siguientes favoritos">→</button>
         </div>
