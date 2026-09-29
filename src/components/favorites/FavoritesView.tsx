@@ -18,6 +18,8 @@ interface Props {
   recommendations: FavoriteEntry[];
 }
 
+const ANILIST_BATCH_SIZE = 20;
+
 export default function FavoritesView({ entries, recommendations }: Props) {
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(true);
@@ -29,35 +31,61 @@ export default function FavoritesView({ entries, recommendations }: Props) {
   useEffect(() => {
     let cancelled = false;
 
+    async function loadBatch(batch: FavoriteEntry[], offset: number) {
+      const variables: Record<string, string> = {};
+      const fields = batch.map((entry, index) => {
+        const key = "a" + index;
+        const variable = "s" + index;
+        variables[variable] = entry.title;
+
+        return key + ": Page(page: 1, perPage: 1) { media(search: $" + variable + ", type: ANIME, sort: SEARCH_MATCH) { title { romaji english } startDate { year month day } coverImage { extraLarge large } } }";
+      }).join("\n");
+
+      const definitions = batch.map((_, index) => "$s" + index + ": String!").join(", ");
+      const query = "query Favorites(" + definitions + ") { " + fields + " }";
+
+      const response = await fetch("https://graphql.anilist.co", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ query, variables }),
+      });
+
+      if (!response.ok) {
+        throw new Error("AniList request failed with " + response.status);
+      }
+
+      const payload = await response.json();
+      const result: Record<string, Media | null> = {};
+
+      batch.forEach((entry, index) => {
+        result[entry.animeId] = payload.data?.["a" + index]?.media?.[0] ?? null;
+      });
+
+      if (!cancelled) {
+        setMedia((current) => ({ ...current, ...result }));
+      }
+
+      return offset + batch.length;
+    }
+
     async function load() {
       const allEntries = [...entries, ...recommendations];
+
       if (!allEntries.length) {
         setLoading(false);
         return;
       }
 
-      const variables: Record<string, string> = {};
-      const fields = allEntries.map((entry, index) => {
-        variables["s" + index] = entry.title;
-        return "a" + index + ": Page(page: 1, perPage: 1) { media(search: $s" + index + ", type: ANIME, sort: SEARCH_MATCH) { title { romaji english } startDate { year month day } coverImage { extraLarge large } } }";
-      }).join("\n");
-      const definitions = allEntries.map((_, index) => "$s" + index + ": String!").join(", ");
-      const query = "query Favorites(" + definitions + ") { " + fields + " }";
-
       try {
-        const response = await fetch("https://graphql.anilist.co", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify({ query, variables }),
-        });
-        if (!response.ok) return;
+        for (let offset = 0; offset < allEntries.length; offset += ANILIST_BATCH_SIZE) {
+          if (cancelled) break;
 
-        const payload = await response.json();
-        const result: Record<string, Media | null> = {};
-        allEntries.forEach((entry, index) => {
-          result[entry.animeId] = payload.data?.["a" + index]?.media?.[0] ?? null;
-        });
-        if (!cancelled) setMedia(result);
+          const batch = allEntries.slice(offset, offset + ANILIST_BATCH_SIZE);
+          await loadBatch(batch, offset);
+        }
       } catch {
         // Personal titles remain visible if metadata is unavailable.
       } finally {
@@ -66,7 +94,10 @@ export default function FavoritesView({ entries, recommendations }: Props) {
     }
 
     load();
-    return () => { cancelled = true; };
+
+    return () => {
+      cancelled = true;
+    };
   }, [entries, recommendations]);
 
   const scroll = (ref: React.RefObject<HTMLDivElement | null>, direction: "prev" | "next") => {
@@ -86,7 +117,11 @@ export default function FavoritesView({ entries, recommendations }: Props) {
         <a href={"/anime/" + entry.animeId} aria-label={"Ver " + title}>
           <div className="favorite-media">
             {item?.coverImage?.extraLarge || item?.coverImage?.large ? (
-              <img src={item.coverImage.extraLarge || item.coverImage.large || ""} alt={title} loading={index < 2 ? "eager" : "lazy"} />
+              <img
+                src={item.coverImage.extraLarge || item.coverImage.large || ""}
+                alt={title}
+                loading={index < 2 ? "eager" : "lazy"}
+              />
             ) : (
               <div className="favorite-placeholder">
                 <span>{String(index + 1).padStart(2, "0")}</span>
