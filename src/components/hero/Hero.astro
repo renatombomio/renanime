@@ -179,22 +179,32 @@ const slides: HeroSlide[] = (
 
   @media (max-width: 720px) {
     :global(.hero) {
-      min-height: calc(100svh - 68px);
+      min-height: 0;
+      height: auto;
     }
 
     :global(.hero-media) {
-      position: absolute;
-      inset: 0;
+      position: relative;
+      inset: auto;
+      width: 100%;
+      height: auto;
+      overflow: hidden;
     }
 
     :global(.hero-video) {
+      display: block;
+      width: 100%;
+      height: auto;
       object-fit: contain;
       object-position: center;
     }
 
     :global(.hero-inner) {
+      position: absolute;
+      inset: 0;
       width: 100%;
-      min-height: calc(100svh - 68px);
+      min-height: 0;
+      height: 100%;
       padding: 5rem var(--gutter) 2.5rem;
     }
 
