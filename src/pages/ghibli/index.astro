@@ -1,6 +1,5 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import Footer from "../../components/layout/Footer.astro";
 import GhibliView from "../../components/ghibli/GhibliView";
 import { getGhibliFilms } from "../../data/ghibli";
 import "../../styles/ghibli-tokens.css";
@@ -12,7 +11,7 @@ const films = getGhibliFilms();
   <div class="ghibli-shell">
     <header class="ghibli-nav">
       <a href="/" class="ghibli-back" aria-label="Volver a Renanime">Renanime</a>
-      <a href="#archivo" class="ghibli-totoro" aria-label="Archivo Ghibli">◉</a>
+      <a href="#archivo" class="ghibli-totoro" aria-label="Abrir el archivo"><svg viewBox="0 0 64 52" aria-hidden="true"><path d="M12 42c1-14 7-26 20-29 13 3 19 15 20 29H12Z"/><circle cx="25" cy="26" r="3"/><circle cx="39" cy="26" r="3"/><path d="M17 15 9 9M47 15l8-6M32 12V4"/></svg></a>
     </header>
 
     <main id="main-content" class="ghibli-page">
@@ -39,7 +38,7 @@ const films = getGhibliFilms();
       </section>
     </main>
 
-    <Footer />
+    <footer class="ghibli-footer"><span>Renanime</span><span>Hecho de recuerdos, viento y películas.</span></footer>
   </div>
 </Layout>
 
@@ -48,7 +47,7 @@ const films = getGhibliFilms();
 .ghibli-nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;height:76px;padding:0 clamp(1.25rem,4vw,4rem);background:linear-gradient(180deg,rgba(255,247,232,.92),rgba(255,247,232,0));backdrop-filter:blur(6px)}
 .ghibli-back{color:var(--ghibli-ink);font:600 .9rem/1 var(--ghibli-body);letter-spacing:.08em}.ghibli-back:hover{color:var(--ghibli-coral)}
 .ghibli-totoro{display:grid;place-items:center;width:3rem;height:3rem;border:2px solid var(--ghibli-blue);border-radius:50%;background:var(--ghibli-sky);color:var(--ghibli-blue);font-size:1.15rem;box-shadow:0 8px 24px var(--ghibli-shadow);transition:transform .3s var(--ghibli-ease),background .3s var(--ghibli-ease)}
-.ghibli-totoro:hover{background:var(--ghibli-pink);transform:translateY(-2px) rotate(-6deg)}
+.ghibli-totoro svg{width:1.65rem;fill:var(--ghibli-blue);stroke:var(--ghibli-blue);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.ghibli-totoro:hover{background:var(--ghibli-pink);transform:translateY(-2px) rotate(-6deg)}
 .ghibli-hero{position:relative;min-height:92svh;display:flex;align-items:center;overflow:hidden;padding:8rem var(--gutter) 5rem;background:radial-gradient(circle at 78% 22%,rgba(240,169,165,.65),transparent 23%),linear-gradient(180deg,var(--ghibli-sky) 0%,#EAF3E2 52%,var(--ghibli-cream) 100%)}
 .ghibli-hero:after{position:absolute;inset:auto 0 0;height:42%;background:linear-gradient(180deg,transparent,var(--ghibli-cream));content:"";pointer-events:none}
 .ghibli-sun{position:absolute;top:15%;right:11%;width:clamp(8rem,18vw,17rem);aspect-ratio:1;border-radius:50%;background:var(--ghibli-pink);opacity:.78;box-shadow:0 0 90px rgba(244,81,100,.2)}
@@ -58,7 +57,7 @@ const films = getGhibliFilms();
 .ghibli-hero h1{margin:0;color:var(--ghibli-blue);font:400 clamp(4rem,10vw,9rem)/.84 var(--ghibli-display);letter-spacing:-.055em}.ghibli-hero h1 em{color:var(--ghibli-teal);font-style:italic}
 .ghibli-hero-copy>p:last-child{max-width:34rem;margin:2rem auto 0;color:var(--ghibli-moss);font-size:1rem;line-height:1.7}
 .ghibli-scroll{position:absolute;z-index:3;bottom:2rem;left:50%;transform:translateX(-50%);color:var(--ghibli-moss);font:600 .6rem/1 var(--ghibli-meta);letter-spacing:.14em;text-transform:uppercase}.ghibli-scroll span{color:var(--ghibli-coral);font-size:1rem}
-.ghibli-content{width:min(calc(100% - (var(--gutter)*2)),1200px);margin-inline:auto;padding:var(--ghibli-section) 0}
+.ghibli-footer{display:flex;justify-content:space-between;gap:1rem;padding:2rem clamp(1.25rem,4vw,4rem);border-top:1px solid rgba(25,54,47,.12);color:var(--ghibli-moss);font:500 .58rem/1.4 var(--ghibli-meta);letter-spacing:.05em}.ghibli-content{width:min(calc(100% - (var(--gutter)*2)),1200px);margin-inline:auto;padding:var(--ghibli-section) 0}
 .ghibli-section-heading{display:flex;align-items:end;justify-content:space-between;gap:2rem;margin-bottom:3rem}.ghibli-section-heading h2{margin:0;color:var(--ghibli-blue);font:400 clamp(2.5rem,5vw,5rem)/.95 var(--ghibli-display);letter-spacing:-.04em}
 @media(max-width:600px){.ghibli-nav{height:64px}.ghibli-hero{min-height:82svh;padding-top:7rem}.ghibli-hero h1{font-size:clamp(3.4rem,17vw,5.5rem)}.ghibli-sun{right:-5%;top:14%}.ghibli-section-heading{display:block}.ghibli-section-heading h2{font-size:3rem}}
 @media(prefers-reduced-motion:reduce){.ghibli-totoro{transition:none}}
