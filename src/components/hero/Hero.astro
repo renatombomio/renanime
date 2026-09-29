@@ -15,7 +15,9 @@ const {
   title = "Gallery.",
   copy = "Anime a través de mis ojos.\nEste es mi regalo para ti.",
   videoSrc = "/videos/hero.mp4",
-} = Astro.props;\n\nconst slides: HeroSlide[] = (
+} = Astro.props;
+
+const slides: HeroSlide[] = (
   await Promise.all(
     heroSlides.map(async (config) => {
       try {
