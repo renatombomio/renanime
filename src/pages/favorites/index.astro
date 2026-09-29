@@ -5,9 +5,10 @@ import Footer from "../../components/layout/Footer.astro";
 import Container from "../../components/ui/Container.astro";
 import SectionHeader from "../../components/ui/SectionHeader.astro";
 import FavoritesView from "../../components/favorites/FavoritesView";
-import { getFavoritesLibrary } from "../../data/library";
+import { getFavoritesLibrary, getRecommendedLibrary } from "../../data/library";
 
 const entries = getFavoritesLibrary();
+const recommendations = getRecommendedLibrary().filter((entry) => !entry.state.favorite);
 ---
 
 <Layout title="Favoritos — Renanime's Gallery">
@@ -20,7 +21,7 @@ const entries = getFavoritesLibrary();
         description="Mis animes favoritos. Historias que me han conmovido, personajes que se quedan contigo y valores que, sin pedir permiso, terminan enseñándote algo."
       />
       <div class="favorites-page-content">
-        <FavoritesView entries={entries} client:load />
+        <FavoritesView entries={entries} recommendations={recommendations} client:load />
       </div>
     </Container>
   </main>
@@ -58,9 +59,32 @@ const entries = getFavoritesLibrary();
   }
 
   :global(.favorites-intro) {
-    justify-content: flex-end;
-    border-bottom: 0;
-    padding: 0;
+    justify-content: space-between;
+    align-items: end;
+    border-bottom: 1px solid var(--line);
+    padding: 0 0 1rem;
+  }
+
+  :global(.favorites-intro h2) {
+    margin: .35rem 0 0;
+    font-size: clamp(1.5rem, 3vw, 2.4rem);
+    letter-spacing: -.04em;
+  }
+
+  :global(.favorites-recommendation-copy) {
+    max-width: 34rem;
+    margin: 1rem 0 1.5rem;
+    color: var(--muted);
+    font-size: .9rem;
+    line-height: 1.6;
+  }
+
+  :global(.favorites-section + .favorites-section) {
+    margin-top: clamp(5rem, 9vw, 8rem);
+  }
+
+  :global(.favorite-card--recommendation .favorite-media) {
+    aspect-ratio: 2 / 3;
   }
 
   @media (max-width: 700px) {
