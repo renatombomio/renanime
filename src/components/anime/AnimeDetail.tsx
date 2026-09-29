@@ -93,6 +93,47 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
   } catch { return null; }
 }
 
+async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, Media|null>> {
+  const result: Record<string, Media|null> = {};
+  const unresolved: LibraryEntry[] = [];
+
+  for (const entry of entries) {
+    try {
+      const cached = sessionStorage.getItem(CACHE_PREFIX + entry.animeId);
+      if (cached) {
+        result[entry.animeId] = JSON.parse(cached);
+        continue;
+      }
+    } catch {}
+    unresolved.push(entry);
+  }
+
+  if (!unresolved.length) return result;
+
+  const variables: Record<string,string> = {};
+  const fields = unresolved.map((entry,index) => {
+    const key = "s" + index;
+    const alias = "a" + index;
+    variables[key] = entry.title;
+    return `${alias}: Page(page:1,perPage:1){media(search:$${key},type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail}}}`;
+  }).join("\n");
+  const definitions = unresolved.map((_,index) => "$s" + index + ":String!").join(",");
+  const query = `query FranchiseBatch(${definitions}){${fields}}`;
+
+  try {
+    const response = await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables})});
+    if(!response.ok) return result;
+    const payload = await response.json();
+    unresolved.forEach((entry,index) => {
+      const media = payload.data?.["a"+index]?.media?.[0] ?? null;
+      result[entry.animeId] = media;
+      try{sessionStorage.setItem(CACHE_PREFIX+entry.animeId,JSON.stringify(media));}catch{}
+    });
+  } catch {}
+
+  return result;
+}
+
 function date(value:Media["startDate"]){
   if(!value?.year) return "Fecha desconocida";
   if(!value.month||!value.day) return String(value.year);
@@ -110,9 +151,9 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
   let cancelled=false;
   findAnime(entry).then(value=>{if(!cancelled)setMedia(value)}).finally(()=>{if(!cancelled)setLoading(false)});
   if(franchiseEntries.length>1){
-   Promise.all(franchiseEntries.map(async(candidate)=>[candidate.animeId,await findAnime(candidate)] as const)).then(results=>{
+   findAnimeBatch(franchiseEntries).then(results=>{
     if(cancelled)return;
-    setFranchiseMedia(Object.fromEntries(results));
+    setFranchiseMedia(results);
    });
   }
   return()=>{cancelled=true};
