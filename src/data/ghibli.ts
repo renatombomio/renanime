@@ -16,7 +16,7 @@ export interface GhibliStoryEntry {
 }
 
 export const ghibliFilms: GhibliFilm[] = [
-  { id: "nausica-of-the-valley-of-the-wind", title: "Nausicaä of the Valley of the Wind", year: 1984, watched: false },
+  { id: "nausica-of-the-valley-of-the-wind", title: "Nausicaä of the Valley of the Wind", searchTitle: "Nausicaa of the Valley of the Wind", year: 1984, watched: false },
   { id: "castle-in-the-sky", title: "Castle in the Sky", year: 1986, watched: false },
   { id: "my-neighbor-totoro", title: "My Neighbor Totoro", year: 1988, watched: true },
   { id: "grave-of-the-fireflies", title: "Grave of the Fireflies", year: 1988, watched: false },
@@ -38,7 +38,7 @@ export const ghibliFilms: GhibliFilm[] = [
   { id: "the-wind-rises", title: "The Wind Rises", year: 2013, watched: false },
   { id: "the-tale-of-the-princess-kaguya", title: "The Tale of the Princess Kaguya", year: 2013, watched: false },
   { id: "when-marnie-was-there", title: "When Marnie Was There", year: 2014, watched: false },
-  { id: "the-red-turtle", title: "The Red Turtle", year: 2016, watched: false },
+  { id: "the-red-turtle", title: "The Red Turtle", searchTitle: "Red Turtle", year: 2016, watched: false },
   { id: "the-boy-and-the-heron", title: "The Boy and the Heron", year: 2023, watched: true },
 ];
 
