@@ -79,7 +79,7 @@ export default function GhibliView({ films }: { films: Film[] }) {
 
             return (
               <article className={"ghibli-card" + (film.watched ? " is-watched" : "")} key={film.id}>
-                <a href={item ? "/anime/search?id=" + item.id + "&from=ghibli" : "#"} aria-label={"Abrir " + film.title}>
+                <a href={item ? "/ghibli/anime?id=" + item.id : "#"} aria-label={"Abrir " + film.title}>
                   <div className="ghibli-poster">
                     {image ? (
                       <img src={image} alt="" loading={index < 6 ? "eager" : "lazy"} decoding="async" />
