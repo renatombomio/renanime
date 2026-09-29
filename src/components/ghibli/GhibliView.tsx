@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { gsap } from "gsap";
 
 interface Film { id: string; title: string; year: number; watched: boolean; searchTitle?: string; }
 interface Media { id: number; title?: { romaji?: string | null; english?: string | null }; coverImage?: { extraLarge?: string | null; large?: string | null }; }
@@ -35,6 +36,61 @@ export default function GhibliView({ films }: { films: Film[] }) {
 
     return () => { cancelled = true; };
   }, [films]);
+
+  useEffect(() => {
+    if (loading) return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const cards = Array.from(document.querySelectorAll<HTMLElement>(".ghibli-view .ghibli-card"));
+    if (!cards.length || reduceMotion) return;
+
+    gsap.set(cards, { autoAlpha: 0, y: 20, scale: 0.985 });
+    gsap.to(cards, {
+      autoAlpha: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.6,
+      ease: "power3.out",
+      stagger: { each: 0.07, from: "start" },
+      overwrite: true,
+    });
+
+    const cleanups = cards.map((card, index) => {
+      const link = card.querySelector<HTMLElement>("a");
+      const poster = card.querySelector<HTMLElement>(".ghibli-poster");
+      if (!link || !poster) return () => {};
+
+      const enter = () => {
+        gsap.to(card, { y: -5, scale: 1.012, duration: 0.34, ease: "power2.out", overwrite: true });
+        gsap.to(poster, { scale: 1.025, duration: 0.55, ease: "power2.out", overwrite: true });
+      };
+      const leave = () => {
+        gsap.to(card, { y: 0, scale: 1, duration: 0.45, ease: "power3.out", overwrite: true });
+        gsap.to(poster, { scale: 1, duration: 0.55, ease: "power2.out", overwrite: true });
+      };
+      const down = () => gsap.to(card, { scale: 0.985, duration: 0.12, ease: "power2.out", overwrite: true });
+
+      link.addEventListener("pointerenter", enter);
+      link.addEventListener("pointerleave", leave);
+      link.addEventListener("pointerdown", down);
+      link.addEventListener("pointerup", leave);
+      link.addEventListener("pointercancel", leave);
+
+      if (index % 4 === 1) {
+        gsap.to(card, { y: -1.5, duration: 5.5 + (index % 3) * 0.6, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 1 + index * 0.04 });
+      }
+
+      return () => {
+        link.removeEventListener("pointerenter", enter);
+        link.removeEventListener("pointerleave", leave);
+        link.removeEventListener("pointerdown", down);
+        link.removeEventListener("pointerup", leave);
+        link.removeEventListener("pointercancel", leave);
+        gsap.killTweensOf([card, poster]);
+      };
+    });
+
+    return () => cleanups.forEach((cleanup) => cleanup());
+  }, [loading]);
 
   const watched = films.filter((film) => film.watched).length;
 
