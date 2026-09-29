@@ -88,7 +88,7 @@ export default function MobileMenu({ variant = "default" }: Props) {
         .mobile-nav.is-open .mobile-toggle span:last-child { transform: translateY(0) rotate(-45deg); }
 
         .mobile-backdrop {
-          position: fixed; inset: 0; z-index: 0; width: 100%; height: 100%;
+          position: fixed; top: 68px; right: 0; bottom: 0; left: 0; z-index: 0; width: 100%; height: auto;
           border: 0; padding: 0; background: rgba(0,0,0,.42);
           opacity: 0; visibility: hidden; pointer-events: none;
           backdrop-filter: blur(3px);
@@ -102,7 +102,7 @@ export default function MobileMenu({ variant = "default" }: Props) {
         .mobile-panel {
           position: fixed; top: 68px; right: 0; left: 0; z-index: 2;
           min-height: calc(100dvh - 68px); max-height: calc(100dvh - 68px);
-          padding: 18px 24px 40px; overflow-y: auto; overscroll-behavior: contain;
+          padding: 12px 24px 40px; overflow-y: auto; overscroll-behavior: contain;
           background: #090909; color: #f5f2ec; opacity: 0; visibility: hidden;
           pointer-events: none; transform: translateY(-18px);
           transition: opacity 360ms ease, transform 480ms cubic-bezier(.22,1,.36,1), visibility 0s linear 480ms;
@@ -117,7 +117,7 @@ export default function MobileMenu({ variant = "default" }: Props) {
 
         .mobile-link {
           display: flex; align-items: center; justify-content: space-between;
-          min-height: 58px; padding: 15px 0;
+          min-height: 54px; padding: 13px 0;
           border-bottom: 1px solid rgba(245,242,236,.1);
           color: #b9b2a7; font-family: var(--font-meta); font-size: 12px;
           font-weight: 500; letter-spacing: .08em; line-height: 1.2;
@@ -132,17 +132,58 @@ export default function MobileMenu({ variant = "default" }: Props) {
         }
         .mobile-link:active { color: #f5f2ec; }
         .mobile-link--secret {
-          margin-top: 20px; padding: 19px 18px; border: 1px solid rgba(164,138,104,.42);
-          border-radius: 14px; background: rgba(164,138,104,.08); color: #f5f2ec;
+          position: relative;
+          margin-top: 22px;
+          min-height: 58px;
+          padding: 15px 2px 16px;
+          border: 0;
+          border-top: 1px solid rgba(164,138,104,.28);
+          border-bottom: 1px solid rgba(164,138,104,.28);
+          border-radius: 0;
+          background: transparent;
+          color: #f5f2ec;
+          font-family: var(--font-heading);
+          font-size: 15px;
+          font-weight: 500;
+          letter-spacing: .015em;
+          text-transform: none;
+          overflow: hidden;
         }
-        .mobile-link--secret i { color: #c2ae91; font-family: Georgia,serif; font-size: 18px; font-style: normal; }
+        .mobile-link--secret::before {
+          position: absolute;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          height: 2px;
+          background: linear-gradient(90deg, transparent, #a48a68 22%, #c2ae91 78%, transparent);
+          content: "";
+          transform: scaleX(.45);
+          transform-origin: center;
+          transition: transform 420ms cubic-bezier(.22,1,.36,1);
+        }
+        .mobile-link--secret:active::before {
+          transform: scaleX(1);
+        }
+        .mobile-link--secret i {
+          color: #c2ae91;
+          font-family: Georgia,serif;
+          font-size: 17px;
+          font-style: normal;
+          margin-left: 8px;
+        }
 
         .mobile-nav--ghibli .mobile-toggle { color: #19362f; }
         .mobile-nav--ghibli .mobile-panel { background: #fffdf8; color: #19362f; }
         .mobile-nav--ghibli .mobile-link { color: #527066; border-bottom-color: rgba(25,54,47,.12); }
         .mobile-nav--ghibli .mobile-link:active { color: #18528a; }
         .mobile-nav--ghibli .mobile-link--secret {
-          border-color: rgba(24,82,138,.24); background: rgba(240,169,165,.13); color: #19362f;
+          border-top-color: rgba(24,82,138,.24);
+          border-bottom-color: rgba(24,82,138,.24);
+          background: transparent;
+          color: #19362f;
+        }
+        .mobile-nav--ghibli .mobile-link--secret::before {
+          background: linear-gradient(90deg, transparent, #18528a 22%, #f45164 78%, transparent);
         }
         .mobile-nav--ghibli .mobile-link--secret i { color: #f45164; }
 
