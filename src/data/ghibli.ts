@@ -1,6 +1,7 @@
 export interface GhibliFilm {
   id: string;
   title: string;
+  searchTitle?: string;
   year: number;
   watched: boolean;
 }
