@@ -51,17 +51,16 @@ export default function GhibliStory({ entries }: { entries: GhibliStoryEntry[] }
       <style>{`
         .ghs{--pink:#F0A9A5;--coral:#F45164;--blue:#18528A;--teal:#0B798B;--lime:#91CC57;--red:#B12A31;--cream:#FFF7E8;--paper:#F4E9D5;--sky:#DCEFF1;--moss:#486B3C;--ink:#19362F;--serif:Georgia,"Times New Roman",serif;--sans:"Helvetica Neue",Helvetica,Arial,sans-serif;--mono:"SFMono-Regular",Consolas,monospace;max-width:1320px;margin:0 auto;padding:clamp(3rem,7vw,8rem) clamp(1rem,4vw,4rem) 8rem;color:var(--ink);font-family:var(--sans)}
         .ghs-loading{padding:7rem 1rem;text-align:center;color:#486B3C;font:600 .65rem/1 var(--ghibli-meta);letter-spacing:.14em;text-transform:uppercase}
-        .ghs-intro{display:grid;grid-template-columns:1.15fr .85fr;min-height:560px;margin-bottom:clamp(4rem,9vw,9rem);background:#fff;border-radius:40px;overflow:hidden;box-shadow:0 30px 80px rgba(25,54,47,.12)}
-        .ghs-intro-copy{display:flex;flex-direction:column;justify-content:center;padding:clamp(2rem,6vw,7rem)}
-        .ghs-kicker{margin:0 0 1.5rem;color:var(--coral);font:600 .62rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase}
-        .ghs-intro h2{margin:0;max-width:760px;font:400 clamp(3.4rem,6.5vw,7.5rem)/.84 var(--serif);letter-spacing:-.06em}
-        .ghs-intro h2 em{color:var(--blue);font-style:italic}
-        .ghs-intro-copy>p:last-child{max-width:570px;margin:2rem 0 0;color:#48675D;font-size:1.05rem;line-height:1.75}
+        .ghs-intro{display:grid;grid-template-columns:1fr .72fr;min-height:330px;margin-bottom:clamp(3rem,6vw,5.5rem);background:#fff;border-radius:32px;overflow:hidden;box-shadow:0 22px 60px rgba(25,54,47,.1)}
+        .ghs-intro-copy{display:flex;flex-direction:column;justify-content:center;padding:clamp(2rem,4vw,4.5rem)}
+        .ghs-kicker{margin:0 0 1.1rem;color:var(--coral);font:600 .58rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase}
+        .ghs-intro-copy>p:last-child{max-width:690px;margin:0;color:#48675D;font:400 clamp(1.05rem,1.6vw,1.3rem)/1.65 var(--sans)}
+        .ghs-intro-copy strong{color:var(--red);font-weight:600}
         .ghs-intro-copy strong{color:var(--red)}
-        .ghs-intro-art{position:relative;min-height:560px;background:var(--teal);overflow:hidden}
+        .ghs-intro-art{position:relative;min-height:330px;background:var(--teal);overflow:hidden}
         .ghs-intro-art:before{position:absolute;width:430px;height:430px;left:-150px;bottom:-160px;border-radius:50%;background:var(--lime);content:""}
         .ghs-intro-art:after{position:absolute;width:290px;height:290px;right:-90px;top:-80px;border-radius:50%;background:var(--coral);content:""}
-        .ghs-sun{position:absolute;z-index:2;width:180px;height:180px;right:20%;top:20%;border-radius:50%;background:var(--pink);box-shadow:0 0 0 30px rgba(240,169,165,.13),0 0 0 70px rgba(240,169,165,.06)}
+        .ghs-sun{position:absolute;z-index:2;width:130px;height:130px;right:20%;top:18%;border-radius:50%;background:var(--pink);box-shadow:0 0 0 30px rgba(240,169,165,.13),0 0 0 70px rgba(240,169,165,.06)}
         .ghs-leaf{position:absolute;z-index:3;width:180px;height:78px;border-radius:100% 0 100% 0;background:var(--lime);transform:rotate(-28deg)}
         .ghs-leaf:after{position:absolute;left:10%;right:10%;top:50%;height:1px;background:rgba(25,54,47,.3);content:""}
         .ghs-leaf-a{left:16%;bottom:25%}.ghs-leaf-b{right:8%;bottom:12%;background:var(--pink);transform:rotate(38deg)}
@@ -97,12 +96,13 @@ export default function GhibliStory({ entries }: { entries: GhibliStoryEntry[] }
         .ghs-end em{color:var(--coral);font-style:italic}
         @media(max-width:800px){
           .ghs{padding:2.25rem 1rem 5rem}
-          .ghs-intro{display:block;min-height:0;border-radius:24px;margin-bottom:3.5rem}
-          .ghs-intro-art{height:240px;min-height:0}.ghs-intro-copy{padding:2rem 1.35rem 2.4rem}
-          .ghs-intro h2{font-size:clamp(2.8rem,13vw,4.2rem)}
-          .ghs-intro-copy>p:last-child{font-size:.92rem;line-height:1.65}
-          .ghs-sun{width:95px;height:95px;right:19%;top:18%}.ghs-leaf{width:105px;height:45px}
-          .ghs-index{left:1rem;bottom:1rem}.ghs-intro-note{right:1rem;bottom:1rem}
+          .ghs-intro{display:block;min-height:0;border-radius:22px;margin-bottom:2.75rem}
+          .ghs-intro-art{height:145px;min-height:0}
+          .ghs-intro-copy{padding:1.45rem 1.25rem 1.65rem}
+          .ghs-intro-copy>p:last-child{font-size:.92rem;line-height:1.55}
+          .ghs-kicker{margin-bottom:.8rem}
+          .ghs-sun{width:70px;height:70px;right:19%;top:18%}.ghs-leaf{width:90px;height:38px}
+          .ghs-index{left:1rem;bottom:.75rem}.ghs-intro-note{right:1rem;bottom:.75rem}
           .ghs-entry,.ghs-entry:nth-child(even){display:block;min-height:0;margin-bottom:3rem}
           .ghs-entry:nth-child(even) .ghs-image-wrap,.ghs-entry:nth-child(even) .ghs-copy{grid-column:auto;grid-row:auto}
           .ghs-image-wrap{height:112vw;max-height:560px;border-radius:22px}
@@ -120,10 +120,10 @@ export default function GhibliStory({ entries }: { entries: GhibliStoryEntry[] }
       <header className="ghs-intro">
         <div className="ghs-intro-copy">
           <p className="ghs-kicker">01 / Mi historia con Ghibli</p>
-          <h2>Bienvenidos a<br /><em>mi inicio en el anime.</em></h2>
           <p>
-            Antes de ser una colección, Ghibli fue una puerta. <strong>El viaje de Chihiro</strong>
-            fue la primera película de anime que vi y, sin saberlo, el comienzo de un viaje que todavía continúa.
+            <strong>El viaje de Chihiro</strong> fue la primera película de anime que vi.
+            Desde entonces, Ghibli se convirtió en una forma de mirar el anime: naturaleza,
+            imaginación, música y pequeñas historias que se quedan contigo.
           </p>
         </div>
         <div className="ghs-intro-art" aria-hidden="true">
