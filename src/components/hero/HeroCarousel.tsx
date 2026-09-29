@@ -7,7 +7,7 @@ interface Props {
   }>;
 }
 
-export default function HeroCarousel({ slides: _slides }: Props) {
+export default function HeroCarousel({\n  slides: _slides,\n  kicker = "Renanime's",\n  title = "Gallery.",\n  copy = "Anime a través de mis ojos.\\nEste es mi regalo para ti.",\n  videoSrc = "/videos/hero.mp4",\n}: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -41,16 +41,16 @@ export default function HeroCarousel({ slides: _slides }: Props) {
           playsInline
           preload="metadata"
         >
-          <source src="/videos/hero.mp4" type="video/mp4" />
+          <source src={videoSrc} type="video/mp4" />
         </video>
       </div>
 
       <div className="hero-inner">
         <div className="hero-title">
           <p className="hero-kicker">
-            <span className="hero-accent">Ren</span>anime's
+            {kicker === "Renanime's" ? (\n              <>\n                <span className="hero-accent">Ren</span>anime's\n              </>\n            ) : (\n              kicker\n            )}
           </p>
-          <h1>Gallery.</h1>
+          <h1>{title}</h1>
           <p className="hero-copy">
             Anime a través de mis ojos.<br />
             Este es mi regalo para ti.
