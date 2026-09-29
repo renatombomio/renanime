@@ -171,7 +171,7 @@ export default function GenresView({ entries }: Props) {
           </div>
 
           {resultsLoading ? (
-            <div className="genre-results-loading">Cargando títulos…</div>
+            <div className="genre-results-loading" role="status" aria-live="polite">Cargando títulos…</div>
           ) : (
             <div className="genre-results-grid">
               {selectedGenre.entries.map((entry, index) => {
