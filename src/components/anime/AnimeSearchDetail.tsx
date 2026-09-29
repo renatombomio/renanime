@@ -20,7 +20,7 @@ interface Media{
 function cleanDescription(text:string){
  return text
   .replace(/<br\s*\/?>/gi,"\n")
-  .replace(/\\n/g,"\n")
+  .replace(/\\+n/g,"\n")
   .replace(/<[^>]*>/g,"")
   .replace(/&amp;/g,"&")
   .replace(/&lt;/g,"<")
