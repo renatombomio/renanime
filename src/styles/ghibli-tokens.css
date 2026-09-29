@@ -1,0 +1,25 @@
+/* Renanime — Ghibli-only visual system: Warm Nature Editorial */
+:root {
+  --ghibli-pink: #F0A9A5;
+  --ghibli-coral: #F45164;
+  --ghibli-blue: #18528A;
+  --ghibli-teal: #0B798B;
+  --ghibli-lime: #91CC57;
+  --ghibli-red: #B12A31;
+
+  --ghibli-cream: #FFF7E8;
+  --ghibli-paper: #F4E9D5;
+  --ghibli-sky: #DCEFF1;
+  --ghibli-moss: #486B3C;
+  --ghibli-ink: #19362F;
+  --ghibli-shadow: rgba(25, 54, 47, .18);
+
+  --ghibli-display: Georgia, "Times New Roman", serif;
+  --ghibli-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --ghibli-meta: "SFMono-Regular", Consolas, monospace;
+
+  --ghibli-radius: 24px;
+  --ghibli-radius-small: 14px;
+  --ghibli-section: clamp(5rem, 11vw, 10rem);
+  --ghibli-ease: cubic-bezier(.22, 1, .36, 1);
+}
