@@ -26,12 +26,23 @@ const films = getGhibliFilms();
       <section id="archivo" class="ghibli-content" aria-labelledby="archive-title">
         <GhibliStory entries={ghibliStory} client:load />
 
-        <div class="ghibli-section-heading">
-          <div>
-            <p>Mi archivo</p>
-            <h2 id="archive-title">Un mundo por descubrir.</h2>
+        <header class="ghibli-archive-intro">
+          <div class="ghibli-archive-copy">
+            <div class="ghibli-archive-kicker">
+              <span>Mi archivo</span>
+              <i aria-hidden="true"></i>
+              <span>24 películas</span>
+            </div>
+            <h2 id="archive-title">Un mundo <em>por descubrir.</em></h2>
+            <p>No es una lista para completar. Es el mapa de las películas que todavía me quedan por vivir.</p>
           </div>
-        </div>
+          <div class="ghibli-archive-art" aria-hidden="true">
+            <span class="archive-sun"></span>
+            <span class="archive-leaf archive-leaf-one"></span>
+            <span class="archive-leaf archive-leaf-two"></span>
+            <span class="archive-seed">24</span>
+          </div>
+        </header>
         <GhibliView films={films} client:load />
       </section>
     </main>
@@ -342,6 +353,119 @@ const films = getGhibliFilms();
 @media(prefers-reduced-motion:reduce){
   .ghibli-page .ghibli-story-visual img{transition:none}
   .ghibli-page .ghibli-story-entry:hover .ghibli-story-visual img{transform:none}
+}
+.ghibli-page .ghibli-archive-intro{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 260px;
+  min-height:250px;
+  margin:0 0 1.5rem;
+  overflow:hidden;
+  border-top:1px solid rgba(25,54,47,.16);
+  border-bottom:1px solid rgba(25,54,47,.16);
+  background:var(--ghibli-cream);
+}
+.ghibli-page .ghibli-archive-copy{
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:2.5rem 0;
+}
+.ghibli-page .ghibli-archive-kicker{
+  display:flex;
+  align-items:center;
+  gap:.7rem;
+  margin-bottom:1rem;
+  color:var(--ghibli-moss);
+  font:600 .56rem/1 var(--ghibli-meta);
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+.ghibli-page .ghibli-archive-kicker i{
+  width:34px;
+  height:1px;
+  background:var(--ghibli-coral);
+}
+.ghibli-page .ghibli-archive-copy h2{
+  max-width:780px;
+  margin:0;
+  color:var(--ghibli-ink);
+  font:400 clamp(3.4rem,6vw,6.4rem)/.88 var(--ghibli-display);
+  letter-spacing:-.055em;
+}
+.ghibli-page .ghibli-archive-copy h2 em{
+  color:var(--ghibli-blue);
+  font-style:italic;
+}
+.ghibli-page .ghibli-archive-copy>p{
+  max-width:570px;
+  margin:1.2rem 0 0;
+  color:#59756b;
+  font-size:.92rem;
+  line-height:1.6;
+}
+.ghibli-page .ghibli-archive-art{
+  position:relative;
+  min-height:250px;
+  background:var(--ghibli-sky);
+  clip-path:polygon(18% 0,100% 0,100% 100%,0 100%);
+}
+.ghibli-page .archive-sun{
+  position:absolute;
+  width:118px;
+  height:118px;
+  right:25px;
+  top:42px;
+  border-radius:50%;
+  background:var(--ghibli-pink);
+  box-shadow:0 0 0 20px rgba(240,169,165,.18);
+}
+.ghibli-page .archive-leaf{
+  position:absolute;
+  width:100px;
+  height:43px;
+  border-radius:100% 0 100% 0;
+  background:var(--ghibli-lime);
+}
+.ghibli-page .archive-leaf-one{left:35px;bottom:40px;transform:rotate(-24deg)}
+.ghibli-page .archive-leaf-two{right:82px;bottom:22px;transform:rotate(38deg);background:var(--ghibli-teal)}
+.ghibli-page .archive-seed{
+  position:absolute;
+  right:45px;
+  bottom:48px;
+  display:grid;
+  place-items:center;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:var(--ghibli-coral);
+  color:#fff;
+  font:600 .55rem/1 var(--ghibli-meta);
+}
+@media(max-width:700px){
+  .ghibli-page .ghibli-archive-intro{
+    display:block;
+    min-height:0;
+    margin-bottom:1rem;
+    border-top:0;
+  }
+  .ghibli-page .ghibli-archive-copy{padding:1.5rem 0 1.2rem}
+  .ghibli-page .ghibli-archive-kicker{margin-bottom:.8rem;font-size:.48rem}
+  .ghibli-page .ghibli-archive-kicker i{width:22px}
+  .ghibli-page .ghibli-archive-copy h2{font-size:clamp(2.7rem,12vw,4rem)}
+  .ghibli-page .ghibli-archive-copy>p{margin-top:.9rem;font-size:.78rem;line-height:1.5}
+  .ghibli-page .ghibli-archive-art{
+    min-height:105px;
+    height:105px;
+    clip-path:none;
+  }
+  .ghibli-page .archive-sun{width:70px;height:70px;right:22%;top:17px}
+  .ghibli-page .archive-leaf{width:72px;height:30px}
+  .ghibli-page .archive-leaf-one{left:12%;bottom:18px}
+  .ghibli-page .archive-leaf-two{right:13%;bottom:8px}
+  .ghibli-page .archive-seed{right:46%;bottom:20px;width:30px;height:30px;font-size:.42rem}
 }
 .ghibli-page .ghibli-meta{display:flex;justify-content:space-between;gap:1rem;padding:0 0 1rem;border:0;border-bottom:1px solid rgba(25,54,47,.16);color:var(--ghibli-moss);font:600 .62rem/1 var(--ghibli-meta);letter-spacing:.08em;text-transform:uppercase}.ghibli-page .ghibli-meta strong{color:var(--ghibli-coral);font-size:.8rem}
 .ghibli-page .ghibli-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2.25rem .9rem}
