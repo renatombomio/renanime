@@ -39,6 +39,52 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
   </div>
 </header>
 
+<div class="ghibli-transition" aria-hidden="true">
+  <div class="ghibli-transition-wash"></div>
+  <div class="ghibli-transition-wind wind-one"></div>
+  <div class="ghibli-transition-wind wind-two"></div>
+  <div class="ghibli-transition-leaves">
+    <span class="leaf leaf-01"></span><span class="leaf leaf-02"></span><span class="leaf leaf-03"></span>
+    <span class="leaf leaf-04"></span><span class="leaf leaf-05"></span><span class="leaf leaf-06"></span>
+    <span class="leaf leaf-07"></span><span class="leaf leaf-08"></span><span class="leaf leaf-09"></span>
+    <span class="leaf leaf-10"></span><span class="leaf leaf-11"></span><span class="leaf leaf-12"></span>
+    <span class="leaf leaf-13"></span><span class="leaf leaf-14"></span><span class="leaf leaf-15"></span>
+    <span class="leaf leaf-16"></span><span class="leaf leaf-17"></span><span class="leaf leaf-18"></span>
+  </div>
+  <span class="ghibli-transition-caption">El secreto de Ren</span>
+</div>
+
+<script is:inline>
+  (() => {
+    const targetPath = "/ghibli/";
+    const overlay = document.querySelector(".ghibli-transition");
+    if (!overlay) return;
+
+    const currentPath = window.location.pathname.replace(/\/$/, "") || "/";
+    const hasTransition = sessionStorage.getItem("renanime-ghibli-transition") === "1";
+
+    if (currentPath === "/ghibli" && hasTransition) {
+      sessionStorage.removeItem("renanime-ghibli-transition");
+      overlay.classList.add("ghibli-transition--reveal");
+    }
+
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const link = target.closest('a[href="/ghibli/"]');
+      if (!link || currentPath === "/ghibli") return;
+
+      event.preventDefault();
+      sessionStorage.setItem("renanime-ghibli-transition", "1");
+      overlay.classList.add("ghibli-transition--cover");
+
+      window.setTimeout(() => {
+        window.location.href = targetPath;
+      }, 900);
+    });
+  })();
+</script>
+
 <style>
   .site-header {
     position: fixed;
@@ -152,6 +198,183 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
   .site-header--ghibli .desktop-nav a:hover,
   .site-header--ghibli .desktop-nav a:focus-visible { color: var(--ghibli-blue, #18528a); }
   .site-header--ghibli .desktop-nav a::after { background: var(--ghibli-coral, #f45164); }
+
+  .ghibli-transition {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    overflow: hidden;
+    pointer-events: none;
+    background: #DCEFF1;
+  }
+
+  .ghibli-transition--cover,
+  .ghibli-transition--reveal {
+    display: block;
+  }
+
+  .ghibli-transition-wash {
+    position: absolute;
+    inset: -12%;
+    background:
+      radial-gradient(circle at 18% 72%, rgba(145,204,87,.95), transparent 24%),
+      radial-gradient(circle at 78% 18%, rgba(240,169,165,.8), transparent 22%),
+      linear-gradient(120deg, #0B798B 0%, #18528A 48%, #DCEFF1 100%);
+    transform: translateX(-115%);
+  }
+
+  .ghibli-transition--cover .ghibli-transition-wash {
+    animation: ghibli-wash-in .72s cubic-bezier(.22,1,.36,1) forwards;
+  }
+
+  .ghibli-transition--reveal .ghibli-transition-wash {
+    transform: translateX(0);
+    animation: ghibli-wash-out .82s cubic-bezier(.76,0,.24,1) .12s forwards;
+  }
+
+  .ghibli-transition-leaves {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .leaf {
+    position: absolute;
+    width: clamp(20px, 2.8vw, 44px);
+    aspect-ratio: 1.7;
+    border-radius: 100% 0 100% 0;
+    background: #91CC57;
+    opacity: 0;
+    box-shadow: inset -2px -2px 0 rgba(25,54,47,.08);
+    transform-origin: 50% 50%;
+  }
+
+  .leaf::after {
+    position: absolute;
+    left: 12%;
+    top: 51%;
+    width: 78%;
+    height: 1px;
+    background: rgba(25,54,47,.28);
+    content: "";
+    transform: rotate(-13deg);
+  }
+
+  .leaf:nth-child(3n) { background: #F0A9A5; }
+  .leaf:nth-child(4n) { background: #F45164; }
+  .leaf:nth-child(5n) { background: #91CC57; }
+
+  .leaf-01 { left:-5%; top:12%; --rot:28deg; --y:8vh; --d:0s; --s:1.15; }
+  .leaf-02 { left:7%; top:70%; --rot:-32deg; --y:-7vh; --d:.08s; --s:.72; }
+  .leaf-03 { left:18%; top:28%; --rot:44deg; --y:13vh; --d:.16s; --s:.88; }
+  .leaf-04 { left:29%; top:82%; --rot:-18deg; --y:-15vh; --d:.04s; --s:1.3; }
+  .leaf-05 { left:39%; top:8%; --rot:62deg; --y:11vh; --d:.2s; --s:.66; }
+  .leaf-06 { left:47%; top:58%; --rot:-45deg; --y:-12vh; --d:.12s; --s:1.05; }
+  .leaf-07 { left:55%; top:24%; --rot:22deg; --y:17vh; --d:.25s; --s:.82; }
+  .leaf-08 { left:64%; top:76%; --rot:-62deg; --y:-9vh; --d:.1s; --s:1.18; }
+  .leaf-09 { left:73%; top:14%; --rot:35deg; --y:14vh; --d:.3s; --s:.72; }
+  .leaf-10 { left:82%; top:49%; --rot:-26deg; --y:-16vh; --d:.18s; --s:1.28; }
+  .leaf-11 { left:91%; top:84%; --rot:52deg; --y:-6vh; --d:.34s; --s:.84; }
+  .leaf-12 { left:96%; top:30%; --rot:-48deg; --y:12vh; --d:.22s; --s:.66; }
+  .leaf-13 { left:13%; top:46%; --rot:70deg; --y:-11vh; --d:.28s; --s:.56; }
+  .leaf-14 { left:34%; top:36%; --rot:-70deg; --y:16vh; --d:.36s; --s:.92; }
+  .leaf-15 { left:61%; top:91%; --rot:18deg; --y:-13vh; --d:.3s; --s:.74; }
+  .leaf-16 { left:77%; top:66%; --rot:-34deg; --y:10vh; --d:.4s; --s:.6; }
+  .leaf-17 { left:4%; top:91%; --rot:48deg; --y:-18vh; --d:.26s; --s:1.02; }
+  .leaf-18 { left:87%; top:7%; --rot:-58deg; --y:15vh; --d:.42s; --s:.9; }
+
+  .ghibli-transition--cover .leaf {
+    animation: ghibli-leaf-cover .82s cubic-bezier(.22,1,.36,1) var(--d) both;
+  }
+
+  .ghibli-transition--reveal .leaf {
+    animation: ghibli-leaf-reveal .78s cubic-bezier(.76,0,.24,1) var(--d) both;
+  }
+
+  .ghibli-transition-wind {
+    position: absolute;
+    left: -20%;
+    width: 140%;
+    height: 1px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.7);
+    opacity: 0;
+    filter: blur(1px);
+    transform: rotate(-8deg);
+  }
+
+  .wind-one { top:38%; }
+  .wind-two { top:67%; }
+
+  .ghibli-transition--cover .wind-one {
+    animation: ghibli-wind 1s ease-out .05s both;
+  }
+
+  .ghibli-transition--cover .wind-two {
+    animation: ghibli-wind 1s ease-out .18s both;
+  }
+
+  .ghibli-transition-caption {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    color: #fff;
+    font: 400 clamp(1.8rem, 4vw, 4rem)/1 var(--ghibli-display, Georgia, serif);
+    letter-spacing: -.04em;
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+
+  .ghibli-transition--cover .ghibli-transition-caption {
+    animation: ghibli-caption-in .45s ease .25s both;
+  }
+
+  @keyframes ghibli-wash-in {
+    from { transform: translateX(-115%); }
+    to { transform: translateX(0); }
+  }
+
+  @keyframes ghibli-wash-out {
+    from { transform: translateX(0); }
+    to { transform: translateX(115%); }
+  }
+
+  @keyframes ghibli-leaf-cover {
+    0% { opacity:0; transform:translate(-18vw, -4vh) rotate(calc(var(--rot) - 25deg)) scale(var(--s)); }
+    25% { opacity:.95; }
+    100% { opacity:.9; transform:translate(42vw, var(--y)) rotate(calc(var(--rot) + 180deg)) scale(var(--s)); }
+  }
+
+  @keyframes ghibli-leaf-reveal {
+    0% { opacity:.9; transform:translate(0,0) rotate(var(--rot)) scale(var(--s)); }
+    70% { opacity:.85; }
+    100% { opacity:0; transform:translate(48vw, var(--y)) rotate(calc(var(--rot) + 170deg)) scale(var(--s)); }
+  }
+
+  @keyframes ghibli-wind {
+    0% { opacity:0; transform:translateX(-15%) rotate(-8deg) scaleX(.2); }
+    25% { opacity:.55; }
+    100% { opacity:0; transform:translateX(15%) rotate(-8deg) scaleX(1); }
+  }
+
+  @keyframes ghibli-caption-in {
+    from { opacity:0; transform:translate(-50%, 20px); }
+    to { opacity:1; transform:translate(-50%, 0); }
+  }
+
+  @media(prefers-reduced-motion:reduce){
+    .ghibli-transition--cover .ghibli-transition-wash,
+    .ghibli-transition--reveal .ghibli-transition-wash,
+    .ghibli-transition--cover .leaf,
+    .ghibli-transition--reveal .leaf,
+    .ghibli-transition--cover .wind-one,
+    .ghibli-transition--cover .wind-two,
+    .ghibli-transition--cover .ghibli-transition-caption {
+      animation-duration:.01ms !important;
+      animation-delay:0ms !important;
+    }
+  }
 
   .mobile-menu {
     display: none;
