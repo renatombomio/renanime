@@ -36,13 +36,52 @@ const films = getGhibliFilms();
       </section>
     </main>
 
-    <footer class="ghibli-footer"><span>Renanime</span><span>Hecho de recuerdos, viento y películas.</span></footer>
+    <footer class="ghibli-footer">
+      <div class="ghibli-footer-mark">
+        <span>Ren</span>anime
+      </div>
+      <p>Hecho de recuerdos, viento y películas.</p>
+      <div class="ghibli-footer-line" aria-hidden="true"></div>
+      <small>El secreto de Ren · Mi viaje con Ghibli</small>
+    </footer>
   </div>
 </Layout>
 
 <style>
 .ghibli-page{min-height:100vh;background:var(--ghibli-cream);color:var(--ghibli-ink);font-family:var(--ghibli-body);padding-top:88px}
 @media(max-width:1120px){.ghibli-page{padding-top:74px}}
+.ghibli-footer{
+  margin-top:clamp(3rem,6vw,6rem);
+  padding:clamp(3rem,6vw,5rem) var(--gutter) 2rem;
+  background:#fff;
+  color:var(--ghibli-ink);
+  text-align:center;
+}
+.ghibli-footer-mark{
+  font-family:var(--font-heading);
+  font-size:1.35rem;
+  font-weight:600;
+  letter-spacing:.03em;
+}
+.ghibli-footer-mark span{color:var(--ghibli-blue)}
+.ghibli-footer p{
+  margin:.75rem 0 0;
+  color:#59756b;
+  font-family:var(--ghibli-display);
+  font-size:1rem;
+}
+.ghibli-footer-line{
+  width:min(240px,60%);
+  height:1px;
+  margin:2rem auto 1rem;
+  background:rgba(25,54,47,.14);
+}
+.ghibli-footer small{
+  color:#7b8c85;
+  font:500 .5rem/1 var(--ghibli-meta);
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
 @media(max-width:600px){.ghibli-page{padding-top:68px}.ghibli-section-heading{display:block}.ghibli-section-heading h2{font-size:3rem}}
 
 
@@ -305,19 +344,31 @@ const films = getGhibliFilms();
   .ghibli-page .ghibli-story-entry:hover .ghibli-story-visual img{transform:none}
 }
 .ghibli-page .ghibli-meta{display:flex;justify-content:space-between;gap:1rem;padding:0 0 1rem;border:0;border-bottom:1px solid rgba(25,54,47,.16);color:var(--ghibli-moss);font:600 .62rem/1 var(--ghibli-meta);letter-spacing:.08em;text-transform:uppercase}.ghibli-page .ghibli-meta strong{color:var(--ghibli-coral);font-size:.8rem}
-.ghibli-page .ghibli-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(2rem,5vw,5rem) 1.15rem}
+.ghibli-page .ghibli-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2.25rem .9rem}
 .ghibli-page .ghibli-card{overflow:hidden;border:0;border-radius:var(--ghibli-radius);background:#fff;box-shadow:0 12px 35px rgba(25,54,47,.08);border:1px solid rgba(25,54,47,.08);transition:transform .45s var(--ghibli-ease)}
 .ghibli-page .ghibli-card:hover{border-color:rgba(25,54,47,.12);transform:translateY(-8px);box-shadow:0 20px 45px rgba(25,54,47,.12)}
 .ghibli-page .ghibli-card a{display:block;color:var(--ghibli-ink)}
-.ghibli-page .ghibli-poster{position:relative;aspect-ratio:2/3;overflow:hidden;border-radius:var(--ghibli-radius);background:var(--ghibli-sky);box-shadow:0 18px 45px var(--ghibli-shadow)}
+.ghibli-page .ghibli-poster{position:relative;aspect-ratio:4/5;overflow:hidden;border-radius:var(--ghibli-radius);background:var(--ghibli-sky);box-shadow:0 18px 45px var(--ghibli-shadow)}
 .ghibli-page .ghibli-poster:after{position:absolute;inset:0;background:linear-gradient(180deg,transparent 62%,rgba(25,54,47,.2));content:"";pointer-events:none}
 .ghibli-page .ghibli-poster img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ghibli-ease)}.ghibli-page .ghibli-card:hover .ghibli-poster img{transform:scale(1.045)}
 .ghibli-page .ghibli-year{position:absolute;left:.8rem;bottom:.8rem;z-index:2;padding:.4rem .55rem;border-radius:999px;background:rgba(255,247,232,.88);color:var(--ghibli-blue);font:600 .52rem/1 var(--ghibli-meta);letter-spacing:.08em}
 .ghibli-page .ghibli-badge{position:absolute;right:.8rem;top:.8rem;z-index:2;padding:.4rem .55rem;border:0;border-radius:999px;background:var(--ghibli-lime);color:var(--ghibli-ink);font:600 .5rem/1 var(--ghibli-meta);letter-spacing:.08em;text-transform:uppercase}
-.ghibli-page .ghibli-info{display:grid;min-height:6.4rem;gap:.5rem;padding:1rem 1rem 1.15rem;background:#fff}.ghibli-page .ghibli-info h3{margin:0;color:var(--ghibli-blue);font:400 1.05rem/1.08 var(--ghibli-display);letter-spacing:-.025em}.ghibli-page .ghibli-info span{color:var(--ghibli-moss);font:500 .58rem/1.4 var(--ghibli-body)}
+.ghibli-page .ghibli-info{display:grid;min-height:5.4rem;gap:.35rem;padding:.8rem .8rem .9rem;background:#fff}.ghibli-page .ghibli-info h3{margin:0;color:var(--ghibli-blue);font:400 .92rem/1.08 var(--ghibli-display);letter-spacing:-.025em}.ghibli-page .ghibli-info span{color:var(--ghibli-moss);font:500 .58rem/1.4 var(--ghibli-body)}
 .ghibli-page .ghibli-placeholder{display:flex;height:100%;align-items:flex-end;padding:1rem;background:linear-gradient(145deg,var(--ghibli-pink),var(--ghibli-sky));color:var(--ghibli-blue)}.ghibli-page .ghibli-placeholder strong{font:400 1rem/1.1 var(--ghibli-display)}
 .ghibli-page .ghibli-loading{padding:5rem 0;color:var(--ghibli-moss);font:600 .65rem/1 var(--ghibli-meta);letter-spacing:.12em;text-transform:uppercase;text-align:center}
-@media(max-width:900px){.ghibli-page .ghibli-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:600px){.ghibli-page .ghibli-meta{flex-wrap:wrap}.ghibli-page .ghibli-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:2.75rem .85rem}.ghibli-page .ghibli-info{min-height:6rem;padding-top:.75rem}.ghibli-page .ghibli-info h3{font-size:.92rem}.ghibli-page .ghibli-info span{font-size:.52rem}}
+@media(max-width:1100px){.ghibli-page .ghibli-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:900px){.ghibli-page .ghibli-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem .75rem}}
+@media(max-width:600px){
+  .ghibli-page .ghibli-meta{flex-wrap:wrap}
+  .ghibli-page .ghibli-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem .55rem}
+  .ghibli-page .ghibli-card{border-radius:15px}
+  .ghibli-page .ghibli-poster{border-radius:15px}
+  .ghibli-page .ghibli-info{min-height:4.7rem;padding:.55rem .55rem .65rem;gap:.25rem}
+  .ghibli-page .ghibli-info h3{font-size:.72rem;line-height:1.08}
+  .ghibli-page .ghibli-info span{font-size:.44rem;line-height:1.3}
+  .ghibli-page .ghibli-year,.ghibli-page .ghibli-badge{padding:.3rem .38rem;font-size:.4rem}
+  .ghibli-footer{padding-top:3rem}
+  .ghibli-footer p{font-size:.9rem}
+}
 @media(prefers-reduced-motion:reduce){.ghibli-page .ghibli-card,.ghibli-page .ghibli-poster img{transition:none}.ghibli-page .ghibli-card:hover{transform:none}.ghibli-page .ghibli-card:hover .ghibli-poster img{transform:none}}
 </style>
