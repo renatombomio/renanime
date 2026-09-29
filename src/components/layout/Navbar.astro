@@ -214,6 +214,10 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     display: block;
   }
 
+  .ghibli-transition--reveal {
+    animation: ghibli-overlay-out .95s ease .05s forwards;
+  }
+
   .ghibli-transition-wash {
     position: absolute;
     inset: -12%;
@@ -328,6 +332,11 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
 
   .ghibli-transition--cover .ghibli-transition-caption {
     animation: ghibli-caption-in .45s ease .25s both;
+  }
+
+  @keyframes ghibli-overlay-out {
+    from { opacity: 1; }
+    to { opacity: 0; visibility: hidden; }
   }
 
   @keyframes ghibli-wash-in {
