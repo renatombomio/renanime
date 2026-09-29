@@ -49,7 +49,7 @@ export function getCollectionStatus(
 ): SearchResult["collectionStatus"] {
   const state = states.find((entry) => entry.animeId === animeId)?.state;
 
-  if (state?.watched) return "WATCHED";
-  if (state?.pending) return "PENDING";
+  if (state?.status === "WATCHED") return "WATCHED";
+  if (state?.status === "PENDING") return "PENDING";
   return "NOT_IN_COLLECTION";
 }
