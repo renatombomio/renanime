@@ -43,6 +43,15 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
   .mobile-menu {
     display: none;
     margin-left: auto;
+    flex: 0 0 auto;
+  }
+
+  .mobile-menu :global(.mobile-nav) {
+    display: block;
+  }
+
+  .mobile-menu :global(.mobile-toggle) {
+    display: grid;
   }
 
   @media (max-width: 1120px) {
@@ -59,9 +68,25 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     }
 
     .mobile-menu {
-      display: flex;
+      display: flex !important;
       align-items: center;
+      justify-content: flex-end;
       margin-left: auto;
+      flex: 0 0 auto;
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .mobile-menu :global(.mobile-nav) {
+      display: block !important;
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .mobile-menu :global(.mobile-toggle) {
+      display: grid !important;
+      visibility: visible;
+      opacity: 1;
     }
   }
 
