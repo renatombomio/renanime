@@ -53,7 +53,29 @@ interface Props {
 export default function AnimeSearchDetail({ variant = "default" }: Props){
  const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translated,setTranslated]=useState(""),[translating,setTranslating]=useState(false);
  useEffect(()=>{
-  const id=Number(new URLSearchParams(location.search).get("id"));
+  const params=new URLSearchParams(location.search);
+  const id=Number(params.get("id"));
+  const film=params.get("film");
+
+  if(film==="the-red-turtle" && !Number.isFinite(id)){
+   setMedia({
+    id:0,
+    title:{english:"The Red Turtle",romaji:"The Red Turtle"},
+    description:"A man is shipwrecked on a deserted island and discovers a mysterious red turtle.",
+    genres:["Drama","Fantasy","Adventure"],
+    startDate:{year:2016,month:9,day:17},
+    format:"MOVIE",
+    status:"FINISHED",
+    episodes:1,
+    duration:81,
+    studios:{nodes:[{name:"Studio Ghibli"}]},
+    coverImage:{extraLarge:"https://www.ghibli.jp/images/red-turtle.jpg",large:"https://www.ghibli.jp/images/red-turtle.jpg"},
+    bannerImage:"https://www.ghibli.jp/images/red-turtle.jpg",
+   });
+   setLoading(false);
+   return;
+  }
+
   if(!Number.isFinite(id)){setLoading(false);return}
   fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({
    query:"query Detail($id:Int!){Media(id:$id,type:ANIME){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail}}}",
@@ -78,6 +100,10 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
   <style>{`
     .anime-detail--ghibli{--gd-cream:#FFF7E8;--gd-paper:#F4E9D5;--gd-sky:#DCEFF1;--gd-blue:#18528A;--gd-teal:#0B798B;--gd-coral:#F45164;--gd-pink:#F0A9A5;--gd-lime:#91CC57;--gd-ink:#19362F;min-height:100vh;background:var(--gd-cream);color:var(--gd-ink)}
     .anime-detail--ghibli .anime-detail-hero{min-height:clamp(34rem,72vh,52rem);background-color:var(--gd-ink)!important;background-position:center;background-size:cover}
+    .anime-detail--ghibli .anime-detail-inner{position:relative}
+    .anime-detail--ghibli .anime-detail-back{position:relative;z-index:10;display:inline-flex;align-items:center;gap:.45rem;padding:.48rem .7rem;margin-bottom:clamp(1.25rem,3vw,2.5rem);border:1px solid rgba(255,247,232,.55);border-radius:999px;background:rgba(255,247,232,.9);color:var(--gd-blue);box-shadow:0 8px 24px rgba(25,54,47,.12);backdrop-filter:blur(8px)}
+    .anime-detail--ghibli .anime-detail-back:hover{background:#fff}
+    .anime-detail--ghibli .anime-detail-copy h1{text-shadow:0 2px 18px rgba(0,0,0,.12)}
     .anime-detail--ghibli .anime-detail-back{color:var(--gd-blue)}
     .anime-detail--ghibli .anime-detail-back:hover{color:var(--gd-coral)}
     .anime-detail--ghibli .anime-detail-copy h1{color:#fff}
@@ -94,13 +120,17 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     .anime-detail--ghibli .anime-detail-trailer>.anime-detail-label{color:#59756b}
     .anime-detail--ghibli .anime-detail-video{border-color:rgba(25,54,47,.12);background:#19362F}
     body:has(.anime-detail--ghibli){background:var(--gd-cream);color:var(--gd-ink)}
-    body:has(.anime-detail--ghibli) .site-footer{background:var(--gd-cream);color:var(--gd-ink)}
+    body:has(.anime-detail--ghibli) .site-footer{background:#fff;color:var(--gd-ink)}
     body:has(.anime-detail--ghibli) .site-footer .footer-line{background:rgba(25,54,47,.14)}
     body:has(.anime-detail--ghibli) .site-footer .closing{color:var(--gd-ink)}
     body:has(.anime-detail--ghibli) .site-footer .thanks{color:#59756b}
     body:has(.anime-detail--ghibli) .site-footer .footer-meta{color:#6b7d76}
+    @media(max-width:760px){
+      .anime-detail--ghibli .anime-detail-inner{padding-top:1.1rem}
+      .anime-detail--ghibli .anime-detail-back{margin-bottom:1rem;font-size:.52rem}
+    }
   `}</style>
-  <section className="anime-detail-hero" style={banner?{backgroundImage:`linear-gradient(90deg,rgba(9,9,9,.98),rgba(9,9,9,.72) 45%,rgba(9,9,9,.35) 75%,rgba(9,9,9,.8)),linear-gradient(0deg,rgba(9,9,9,.98),transparent 45%),url("${banner}")`}:undefined}>
+  <section className="anime-detail-hero" style={banner?{backgroundImage:from==="ghibli"?`url("${banner}")`:`linear-gradient(90deg,rgba(9,9,9,.98),rgba(9,9,9,.72) 45%,rgba(9,9,9,.35) 75%,rgba(9,9,9,.8)),linear-gradient(0deg,rgba(9,9,9,.98),transparent 45%),url("${banner}")`}:undefined}>
    <div className="anime-detail-inner">
     <a className="anime-detail-back" href={backHref}>← {backLabel}</a>
     <div className="anime-detail-layout">
