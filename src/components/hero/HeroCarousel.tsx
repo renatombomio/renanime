@@ -13,6 +13,7 @@ export default function HeroCarousel({
   title = "Gallery.",
   copy = "Anime a través de mis ojos.\nEste es mi regalo para ti.",
   videoSrc = "/videos/hero.mp4",
+  variant = "default",
 }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -37,7 +38,7 @@ export default function HeroCarousel({
   }, []);
 
   return (
-    <section className="hero" aria-label="Renanime's Gallery">
+    <section className={variant === "ghibli" ? "hero hero--ghibli" : "hero"} aria-label="Renanime's Gallery">
       <div className="hero-media" aria-hidden="true">
         <video
           className="hero-video"
