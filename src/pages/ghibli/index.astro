@@ -352,116 +352,67 @@ const films = getGhibliFilms();
 }
 .ghibli-page .ghibli-archive-intro{
   position:relative;
-  width:100%;
-  min-height:clamp(310px,38vw,470px);
-  margin:0 0 1.25rem;
+  width:min(1120px,calc(100% - clamp(2rem,8vw,6rem)));
+  min-height:clamp(320px,34vw,430px);
+  margin:0 auto 1.25rem;
   overflow:hidden;
   border-radius:28px;
-  background:#19362F;
-  isolation:isolate;
+  background:var(--ghibli-cream);
+  border:1px solid rgba(25,54,47,.1);
+  box-shadow:0 18px 55px rgba(25,54,47,.08);
 }
-.ghibli-page .ghibli-archive-bg{
-  position:absolute;
-  z-index:0;
-  overflow:hidden;
-  background-position:center;
-  background-size:cover;
-  filter:saturate(.92);
-}
+.ghibli-page .ghibli-archive-bg{position:absolute;z-index:0;overflow:hidden;background-position:center;background-size:cover}
 .ghibli-page .ghibli-archive-bg--chihiro{
-  inset:0 47% 0 0;
-  background-image:url("https://www.ghibli.jp/images/chihiro.jpg");
-  background-position:center 34%;
+  inset:0 0 0 0;background-image:url("https://www.ghibli.jp/images/chihiro.jpg");background-position:center 38%;
 }
 .ghibli-page .ghibli-archive-bg--totoro{
-  inset:0 23.5% 0 53%;
-  background-image:url("https://www.ghibli.jp/images/totoro.jpg");
-  background-position:center 52%;
+  inset:12% auto 12% 53%;width:24%;border:7px solid var(--ghibli-cream);border-radius:22px;
+  background-image:url("https://www.ghibli.jp/images/totoro.jpg");background-position:center;
+  box-shadow:0 18px 35px rgba(25,54,47,.22);transform:rotate(3deg);
 }
 .ghibli-page .ghibli-archive-bg--heron{
-  inset:0 0 0 76.5%;
-  background-image:url("https://www.ghibli.jp/gallery/kimitachi027.jpg");
-  background-position:center;
+  inset:10% 5% 10% auto;width:24%;border:7px solid var(--ghibli-cream);border-radius:22px;
+  background-image:url("https://www.ghibli.jp/gallery/kimitachi027.jpg");background-position:center;
+  box-shadow:0 18px 35px rgba(25,54,47,.22);transform:rotate(-4deg);
 }
 .ghibli-page .ghibli-archive-shade{
-  position:absolute;
-  z-index:1;
-  inset:0;
-  background:
-    linear-gradient(90deg,rgba(9,25,28,.12) 0%,rgba(9,25,28,.2) 28%,rgba(9,25,28,.72) 56%,rgba(9,25,28,.9) 100%),
-    linear-gradient(180deg,rgba(9,25,28,.05),rgba(9,25,28,.58));
+  position:absolute;z-index:1;inset:0;
+  background:linear-gradient(90deg,rgba(9,25,28,.05) 0%,rgba(9,25,28,.08) 42%,rgba(9,25,28,.72) 67%,rgba(9,25,28,.9) 100%);
 }
 .ghibli-page .ghibli-archive-copy{
-  position:relative;
-  z-index:3;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  width:min(72%,760px);
-  min-height:clamp(310px,38vw,470px);
-  margin-left:auto;
-  padding:clamp(2rem,5vw,5rem);
+  position:absolute;z-index:3;inset:0 0 0 auto;width:49%;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(2rem,4vw,4rem);
 }
 .ghibli-page .ghibli-archive-kicker{
-  display:flex;
-  align-items:center;
-  gap:.7rem;
-  margin:0 0 1.2rem;
-  color:var(--ghibli-pink);
-  font:600 .58rem/1 var(--ghibli-meta);
-  letter-spacing:.14em;
-  text-transform:uppercase;
+  display:flex;align-items:center;gap:.7rem;margin:0 0 1rem;color:var(--ghibli-pink);
+  font:600 .58rem/1 var(--ghibli-meta);letter-spacing:.14em;text-transform:uppercase;
 }
-.ghibli-page .ghibli-archive-kicker i{width:38px;height:1px;background:var(--ghibli-coral)}
+.ghibli-page .ghibli-archive-kicker i{width:34px;height:1px;background:var(--ghibli-coral)}
 .ghibli-page .ghibli-archive-copy h2{
-  margin:0;
-  color:#fff;
-  font:400 clamp(4rem,7.5vw,8rem)/.78 var(--ghibli-display);
-  letter-spacing:-.065em;
+  margin:0;color:#fff;font:400 clamp(3.4rem,5.4vw,6.2rem)/.82 var(--ghibli-display);letter-spacing:-.06em;
 }
-.ghibli-page .ghibli-archive-copy h2 em{
-  color:var(--ghibli-pink);
-  font-style:italic;
-}
+.ghibli-page .ghibli-archive-copy h2 em{color:var(--ghibli-pink);font-style:italic}
 .ghibli-page .ghibli-archive-copy>p{
-  max-width:440px;
-  margin:1.5rem 0 0;
-  color:rgba(255,255,255,.84);
-  font-size:.92rem;
-  line-height:1.55;
+  max-width:360px;margin:1.25rem 0 0;color:rgba(255,255,255,.86);font-size:.88rem;line-height:1.55;
 }
-@media(max-width:700px){
-  .ghibli-page .ghibli-archive-intro{
-    min-height:360px;
-    border-radius:21px;
+@media(max-width:800px){
+  .ghibli-page .ghibli-archive-intro{width:calc(100% - 2rem);min-height:330px;border-radius:22px}
+  .ghibli-page .ghibli-archive-bg--chihiro{inset:0 0 42% 0;background-position:center 36%}
+  .ghibli-page .ghibli-archive-bg--totoro{
+    inset:auto 3% 5% auto;width:28%;height:44%;border-width:5px;border-radius:15px;transform:rotate(4deg)
   }
-  .ghibli-page .ghibli-archive-bg--chihiro{inset:0 42% 0 0;background-position:center 34%}
-  .ghibli-page .ghibli-archive-bg--totoro{inset:0 19% 0 43%;background-position:center}
-  .ghibli-page .ghibli-archive-bg--heron{inset:0 0 0 81%;background-position:center}
+  .ghibli-page .ghibli-archive-bg--heron{
+    inset:auto 25% 7% auto;width:25%;height:39%;border-width:5px;border-radius:15px;transform:rotate(-5deg)
+  }
   .ghibli-page .ghibli-archive-shade{
-    background:linear-gradient(90deg,rgba(9,25,28,.2),rgba(9,25,28,.72) 42%,rgba(9,25,28,.95) 100%);
+    background:linear-gradient(180deg,rgba(9,25,28,.02) 0%,rgba(9,25,28,.08) 34%,rgba(9,25,28,.88) 61%,rgba(9,25,28,.96) 100%)
   }
-  .ghibli-page .ghibli-archive-copy{
-    width:72%;
-    min-height:360px;
-    padding:1.5rem 1.25rem;
-  }
-  .ghibli-page .ghibli-archive-kicker{
-    margin-bottom:1rem;
-    font-size:.46rem;
-    gap:.5rem;
-  }
-  .ghibli-page .ghibli-archive-kicker i{width:20px}
-  .ghibli-page .ghibli-archive-copy h2{
-    font-size:clamp(3.4rem,15vw,5rem);
-    line-height:.78;
-  }
-  .ghibli-page .ghibli-archive-copy>p{
-    max-width:235px;
-    margin-top:1.1rem;
-    font-size:.7rem;
-    line-height:1.45;
-  }
+  .ghibli-page .ghibli-archive-copy{inset:auto 0 0;width:100%;min-height:58%;padding:1.15rem 1.25rem 1.35rem}
+  .ghibli-page .ghibli-archive-kicker{margin-bottom:.7rem;font-size:.44rem;gap:.45rem}
+  .ghibli-page .ghibli-archive-kicker i{width:18px}
+  .ghibli-page .ghibli-archive-copy h2{font-size:clamp(2.65rem,11vw,4rem);line-height:.82}
+  .ghibli-page .ghibli-archive-copy>p{max-width:270px;margin-top:.8rem;font-size:.68rem;line-height:1.45}
 }
 .ghibli-page .ghibli-meta{width:100%;display:flex;justify-content:space-between;gap:1rem;padding:0 0 1rem;border:0;border-bottom:1px solid rgba(25,54,47,.16);color:var(--ghibli-moss);font:600 .62rem/1 var(--ghibli-meta);letter-spacing:.08em;text-transform:uppercase}.ghibli-page .ghibli-meta strong{color:var(--ghibli-coral);font-size:.8rem}
 .ghibli-page .ghibli-grid{display:grid;width:100%;grid-template-columns:repeat(5,minmax(0,1fr));gap:1.8rem .9rem}
