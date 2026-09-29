@@ -1,4 +1,3 @@
-@import url("https://api.fontshare.com/v2/css?f[]=comico@400&display=swap");
 @import "tailwindcss";
 @import "./tokens.css";
 @import "./utilities.css";
@@ -1208,31 +1207,6 @@ section[id] {
 .anime-detail-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 @media(max-width:1120px){.anime-detail-page{padding-top:74px}}
 @media(max-width:760px){.anime-detail-page{padding-top:68px}}
-
-/* Comico is reserved for Hero/editorial headings. Never use it for catalog cards. */
-.anime-card h3,
-.collection-card h3,
-.favorite-card h3,
-.genre-card .genre-name,
-.genre-anime-card strong,
-.pending-card h3,
-.coming-card h3,
-.ghibli-card h3,
-.search-card h2 {
-  font-family: Arial, Helvetica, sans-serif !important;
-}
-/* Card titles are always set in the body font; Comico is reserved for editorial headings. */
-.anime-card h3,
-.collection-card .card-info h3,
-.favorite-card .favorite-caption h3,
-.genre-name,
-.genre-results-title,
-.pending-card .pending-info h3,
-.coming-card .coming-info h3,
-.ghibli-card .ghibli-info h3,
-.search-card .search-info h2 {
-  font-family: var(--font-body) !important;
-}
 
 .anime-detail-related{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin:0 auto;padding:clamp(3rem,7vw,6rem) 0 var(--section-space)}
 .anime-detail-related-header{display:flex;align-items:end;justify-content:space-between;gap:1rem;margin-bottom:1.5rem;border-bottom:1px solid var(--color-border);padding-bottom:.8rem}
