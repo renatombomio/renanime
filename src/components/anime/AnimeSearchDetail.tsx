@@ -46,7 +46,7 @@ async function translate(text:string){
  return out.join(" ");
 }
 
-export default function AnimeSearchDetail(){
+interface Props { variant?: "default" | "ghibli"; }\n\nexport default function AnimeSearchDetail({ variant = "default" }: Props){
  const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translated,setTranslated]=useState(""),[translating,setTranslating]=useState(false);
  useEffect(()=>{
   const id=Number(new URLSearchParams(location.search).get("id"));
@@ -60,7 +60,7 @@ export default function AnimeSearchDetail(){
  if(!media)return <div className="anime-search-detail-state">No se ha encontrado este anime.</div>;
 
  const params=new URLSearchParams(location.search);
- const from=params.get("from");
+ const from=variant === "ghibli" ? "ghibli" : params.get("from");
  const requestedBack=params.get("back");
  const backHref=from==="ghibli"?"/ghibli/":from==="coming-soon"?"/coming-soon/":from==="anime"&&requestedBack?.startsWith("/anime/")?requestedBack:"/search/";
  const backLabel=from==="ghibli"?"Volver a El secreto de Ren":from==="coming-soon"?"Volver a próximamente":from==="anime"?"Volver al anime":"Volver a buscar";
