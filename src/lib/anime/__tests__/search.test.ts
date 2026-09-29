@@ -48,7 +48,7 @@ describe("getCollectionStatus", () => {
   const states: PersonalAnimeEntry[] = [
     {
       animeId: "anilist-1",
-      state: { watched: true, pending: false, favorite: true, recommended: false },
+      state: { status: "WATCHED", favorite: true, recommended: false },
     },
     {
       animeId: "anilist-2",
