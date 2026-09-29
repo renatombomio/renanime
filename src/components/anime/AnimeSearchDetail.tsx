@@ -99,7 +99,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
 
  return <div className={"anime-detail" + (from === "ghibli" ? " anime-detail--ghibli" : "")}>
   <style>{`
-    .anime-detail--ghibli{--gd-cream:#FFF7E8;--gd-paper:#F4E9D5;--gd-sky:#DCEFF1;--gd-blue:#18528A;--gd-teal:#0B798B;--gd-coral:#F45164;--gd-pink:#F0A9A5;--gd-lime:#91CC57;--gd-ink:#19362F;min-height:100vh;background:var(--gd-cream);color:var(--gd-ink)}
+    .anime-detail--ghibli{--gd-cream:#FFF7E8;--gd-paper:#F4E9D5;--gd-sky:#DCEFF1;--gd-blue:#18528A;--gd-teal:#0B798B;--gd-coral:#F45164;--gd-pink:#F0A9A5;--gd-lime:#91CC57;--gd-ink:#19362F;min-height:100vh;background:var(--gd-sky);color:var(--gd-ink)}
     .anime-detail--ghibli .anime-detail-hero{min-height:clamp(34rem,72vh,52rem);background-color:var(--gd-ink)!important;background-position:center;background-size:cover}
     .anime-detail--ghibli .anime-detail-inner{position:relative}
     .anime-detail--ghibli .anime-detail-back{position:relative;z-index:20;display:flex!important;align-items:center;gap:.45rem;padding:.48rem .7rem;margin-bottom:clamp(1.25rem,3vw,2.5rem);border:1px solid rgba(255,247,232,.55);border-radius:999px;background:rgba(255,247,232,.9);color:var(--gd-blue);box-shadow:0 8px 24px rgba(25,54,47,.12);backdrop-filter:blur(8px)}
@@ -132,7 +132,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     .anime-detail--ghibli .anime-detail-label{color:#59756b}
     .anime-detail--ghibli .anime-detail-trailer>.anime-detail-label{color:#59756b}
     .anime-detail--ghibli .anime-detail-video{border-color:rgba(25,54,47,.12);background:#19362F}
-    body:has(.anime-detail--ghibli){background:var(--gd-cream);color:var(--gd-ink)}
+    body:has(.anime-detail--ghibli){background:var(--gd-sky);color:var(--gd-ink)}
     body:has(.anime-detail--ghibli) .site-footer{background:#fff;color:var(--gd-ink)}
     body:has(.anime-detail--ghibli) .site-footer .footer-line{background:rgba(25,54,47,.14)}
     body:has(.anime-detail--ghibli) .site-footer .closing{color:var(--gd-ink)}
