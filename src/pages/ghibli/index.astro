@@ -1,19 +1,65 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import Navbar from "../../components/layout/Navbar.astro";
 import Footer from "../../components/layout/Footer.astro";
-import SectionHeader from "../../components/ui/SectionHeader.astro";
 import GhibliView from "../../components/ghibli/GhibliView";
 import { getGhibliFilms } from "../../data/ghibli";
-const films=getGhibliFilms();
+import "../../styles/ghibli-tokens.css";
+
+const films = getGhibliFilms();
 ---
+
 <Layout title="El secreto de Ren — Renanime's Gallery">
-<Navbar />
-<main id="main-content" class="ghibli-page"><div class="ghibli-header"><SectionHeader eyebrow="El secreto de Ren" title="Studio Ghibli" description="Una colección aparte. Las películas de Ghibli que he visto y las que todavía me esperan." /></div><section class="ghibli-content" aria-label="Colección Studio Ghibli"><GhibliView films={films} client:load /></section></main>
-<Footer />
+  <div class="ghibli-shell">
+    <header class="ghibli-nav">
+      <a href="/" class="ghibli-back" aria-label="Volver a Renanime">Renanime</a>
+      <a href="#archivo" class="ghibli-totoro" aria-label="Archivo Ghibli">◉</a>
+    </header>
+
+    <main id="main-content" class="ghibli-page">
+      <section class="ghibli-hero" aria-labelledby="ghibli-title">
+        <div class="ghibli-sun" aria-hidden="true"></div>
+        <div class="ghibli-leaf leaf-one" aria-hidden="true">✦</div>
+        <div class="ghibli-leaf leaf-two" aria-hidden="true">✦</div>
+        <div class="ghibli-hero-copy">
+          <p class="ghibli-eyebrow">El secreto de Ren</p>
+          <h1 id="ghibli-title">Historias que<br /><em>respiran.</em></h1>
+          <p>Una pequeña habitación para las películas que viven entre el bosque, el viento y la memoria.</p>
+        </div>
+        <div class="ghibli-scroll" aria-hidden="true">desliza · <span>↓</span></div>
+      </section>
+
+      <section id="archivo" class="ghibli-content" aria-labelledby="archive-title">
+        <div class="ghibli-section-heading">
+          <div>
+            <p>Mi archivo</p>
+            <h2 id="archive-title">Un mundo por descubrir.</h2>
+          </div>
+        </div>
+        <GhibliView films={films} client:load />
+      </section>
+    </main>
+
+    <Footer />
+  </div>
 </Layout>
+
 <style>
-.ghibli-page{min-height:60vh;padding-block:clamp(6rem,11vw,10rem) var(--section-space)}
-.ghibli-header,.ghibli-content{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin-inline:auto}
-.ghibli-header{margin-bottom:clamp(3rem,6vw,5rem)}
+.ghibli-page{min-height:100vh;background:var(--ghibli-cream);color:var(--ghibli-ink);font-family:var(--ghibli-body)}
+.ghibli-nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;height:76px;padding:0 clamp(1.25rem,4vw,4rem);background:linear-gradient(180deg,rgba(255,247,232,.92),rgba(255,247,232,0));backdrop-filter:blur(6px)}
+.ghibli-back{color:var(--ghibli-ink);font:600 .9rem/1 var(--ghibli-body);letter-spacing:.08em}.ghibli-back:hover{color:var(--ghibli-coral)}
+.ghibli-totoro{display:grid;place-items:center;width:3rem;height:3rem;border:2px solid var(--ghibli-blue);border-radius:50%;background:var(--ghibli-sky);color:var(--ghibli-blue);font-size:1.15rem;box-shadow:0 8px 24px var(--ghibli-shadow);transition:transform .3s var(--ghibli-ease),background .3s var(--ghibli-ease)}
+.ghibli-totoro:hover{background:var(--ghibli-pink);transform:translateY(-2px) rotate(-6deg)}
+.ghibli-hero{position:relative;min-height:92svh;display:flex;align-items:center;overflow:hidden;padding:8rem var(--gutter) 5rem;background:radial-gradient(circle at 78% 22%,rgba(240,169,165,.65),transparent 23%),linear-gradient(180deg,var(--ghibli-sky) 0%,#EAF3E2 52%,var(--ghibli-cream) 100%)}
+.ghibli-hero:after{position:absolute;inset:auto 0 0;height:42%;background:linear-gradient(180deg,transparent,var(--ghibli-cream));content:"";pointer-events:none}
+.ghibli-sun{position:absolute;top:15%;right:11%;width:clamp(8rem,18vw,17rem);aspect-ratio:1;border-radius:50%;background:var(--ghibli-pink);opacity:.78;box-shadow:0 0 90px rgba(244,81,100,.2)}
+.ghibli-leaf{position:absolute;color:var(--ghibli-lime);font-size:clamp(2rem,4vw,4rem);opacity:.75;transform:rotate(18deg)}.leaf-one{left:10%;top:28%}.leaf-two{right:27%;bottom:20%;color:var(--ghibli-teal);transform:rotate(-22deg)}
+.ghibli-hero-copy{position:relative;z-index:2;width:min(760px,100%);margin-inline:auto;text-align:center}
+.ghibli-eyebrow,.ghibli-section-heading p{margin:0 0 1rem;color:var(--ghibli-red);font:600 .68rem/1 var(--ghibli-meta);letter-spacing:.18em;text-transform:uppercase}
+.ghibli-hero h1{margin:0;color:var(--ghibli-blue);font:400 clamp(4rem,10vw,9rem)/.84 var(--ghibli-display);letter-spacing:-.055em}.ghibli-hero h1 em{color:var(--ghibli-teal);font-style:italic}
+.ghibli-hero-copy>p:last-child{max-width:34rem;margin:2rem auto 0;color:var(--ghibli-moss);font-size:1rem;line-height:1.7}
+.ghibli-scroll{position:absolute;z-index:3;bottom:2rem;left:50%;transform:translateX(-50%);color:var(--ghibli-moss);font:600 .6rem/1 var(--ghibli-meta);letter-spacing:.14em;text-transform:uppercase}.ghibli-scroll span{color:var(--ghibli-coral);font-size:1rem}
+.ghibli-content{width:min(calc(100% - (var(--gutter)*2)),1200px);margin-inline:auto;padding:var(--ghibli-section) 0}
+.ghibli-section-heading{display:flex;align-items:end;justify-content:space-between;gap:2rem;margin-bottom:3rem}.ghibli-section-heading h2{margin:0;color:var(--ghibli-blue);font:400 clamp(2.5rem,5vw,5rem)/.95 var(--ghibli-display);letter-spacing:-.04em}
+@media(max-width:600px){.ghibli-nav{height:64px}.ghibli-hero{min-height:82svh;padding-top:7rem}.ghibli-hero h1{font-size:clamp(3.4rem,17vw,5.5rem)}.ghibli-sun{right:-5%;top:14%}.ghibli-section-heading{display:block}.ghibli-section-heading h2{font-size:3rem}}
+@media(prefers-reduced-motion:reduce){.ghibli-totoro{transition:none}}
 </style>
