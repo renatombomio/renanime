@@ -41,34 +41,97 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
 
 <div class="ghibli-transition" aria-hidden="true">
   <div class="ghibli-transition-wash"></div>
-  <div class="ghibli-transition-wind wind-one"></div>
-  <div class="ghibli-transition-wind wind-two"></div>
   <div class="ghibli-transition-leaves">
-    <span class="leaf leaf-01"></span><span class="leaf leaf-02"></span><span class="leaf leaf-03"></span>
-    <span class="leaf leaf-04"></span><span class="leaf leaf-05"></span><span class="leaf leaf-06"></span>
-    <span class="leaf leaf-07"></span><span class="leaf leaf-08"></span><span class="leaf leaf-09"></span>
-    <span class="leaf leaf-10"></span><span class="leaf leaf-11"></span><span class="leaf leaf-12"></span>
-    <span class="leaf leaf-13"></span><span class="leaf leaf-14"></span><span class="leaf leaf-15"></span>
-    <span class="leaf leaf-16"></span><span class="leaf leaf-17"></span><span class="leaf leaf-18"></span>
-    <span class="leaf leaf-19"></span><span class="leaf leaf-20"></span><span class="leaf leaf-21"></span><span class="leaf leaf-22"></span><span class="leaf leaf-23"></span><span class="leaf leaf-24"></span><span class="leaf leaf-25"></span><span class="leaf leaf-26"></span><span class="leaf leaf-27"></span><span class="leaf leaf-28"></span><span class="leaf leaf-29"></span><span class="leaf leaf-30"></span><span class="leaf leaf-31"></span><span class="leaf leaf-32"></span><span class="leaf leaf-33"></span><span class="leaf leaf-34"></span><span class="leaf leaf-35"></span><span class="leaf leaf-36"></span>
+    {Array.from({ length: 90 }, (_, i) => <span class="leaf" data-leaf-index={i} />)}
   </div>
   <span class="ghibli-transition-caption">El secreto de Ren</span>
 </div>
 
-<script is:inline>
-  (() => {
-    const targetPath = "/ghibli/";
-    const overlay = document.querySelector(".ghibli-transition");
-    if (!overlay) return;
+<script>
+  import { gsap } from "gsap";
 
+  const overlay = document.querySelector(".ghibli-transition");
+  if (overlay) {
+    const leaves = Array.from(overlay.querySelectorAll(".leaf"));
+    const wash = overlay.querySelector(".ghibli-transition-wash");
+    const caption = overlay.querySelector(".ghibli-transition-caption");
     const currentPath = window.location.pathname.replace(/\/$/, "") || "/";
-    const hasTransition = sessionStorage.getItem("renanime-ghibli-transition") === "1";
+    const entering = sessionStorage.getItem("renanime-ghibli-transition") === "1";
 
-    if (currentPath === "/ghibli" && hasTransition) {
+    const seed = (i) => ({
+      x: (i * 37.7) % 116 - 8,
+      y: (i * 61.3) % 116 - 8,
+      scale: 0.55 + ((i * 17) % 100) / 100 * 0.95,
+      rotation: (i * 47) % 360,
+      drift: 55 + ((i * 29) % 100),
+      direction: i % 7 % 2 ? 1 : -1
+    });
+
+    const setupLeaves = (reverse = false) => {
+      leaves.forEach((leaf, i) => {
+        const p = seed(i);
+        gsap.set(leaf, {
+          left: `${p.x}%`,
+          top: `${p.y}%`,
+          x: reverse ? "-60vw" : "-28vw",
+          y: `${(i % 5 - 2) * 8}vh`,
+          rotation: p.rotation - 80,
+          scale: p.scale,
+          autoAlpha: reverse ? 0.95 : 0
+        });
+      });
+    };
+
+    const cover = () => {
+      gsap.killTweensOf([overlay, wash, caption, ...leaves]);
+      gsap.set(overlay, { autoAlpha: 1, visibility: "visible" });
+      setupLeaves(false);
+      gsap.set(wash, { xPercent: -110 });
+
+      const tl = gsap.timeline();
+      tl.to(wash, { xPercent: 0, duration: 1.4, ease: "power3.out" }, 0)
+        .to(leaves, {
+          autoAlpha: 1,
+          x: (i) => `+=${seed(i).drift}vw`,
+          y: (i) => `+=${seed(i).direction * (18 + (i % 6) * 4)}vh`,
+          rotation: (i) => `+=${180 + (i % 5) * 55}`,
+          duration: 2.5,
+          ease: "power2.inOut",
+          stagger: { each: 0.015, from: "random" }
+        }, 0)
+        .to(caption, { autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out" }, 0.7)
+        .to(caption, { autoAlpha: 0, duration: 0.35 }, 1.8)
+        .to(wash, { xPercent: 110, duration: 1.25, ease: "power3.inOut" }, 2.0);
+    };
+
+    const reveal = () => {
+      gsap.killTweensOf([overlay, wash, caption, ...leaves]);
+      gsap.set(overlay, { autoAlpha: 1, visibility: "visible" });
+      setupLeaves(true);
+      gsap.set(wash, { xPercent: 0 });
+
+      return gsap.timeline({
+        onComplete: () => {
+          gsap.set(overlay, { autoAlpha: 0, visibility: "hidden" });
+          document.documentElement.classList.remove("ghibli-transition-pending");
+        }
+      })
+      .to(leaves, {
+        autoAlpha: 0,
+        x: (i) => `+=${70 + (i % 8) * 10}vw`,
+        y: (i) => `+=${seed(i).direction * (20 + (i % 5) * 5)}vh`,
+        rotation: (i) => `+=${220 + (i % 6) * 40}`,
+        duration: 2.5,
+        ease: "power3.inOut",
+        stagger: { each: 0.012, from: "random" }
+      }, 0)
+      .to(wash, { xPercent: 110, duration: 1.5, ease: "power3.inOut" }, 0.25);
+    };
+
+    if (currentPath === "/ghibli" && entering) {
       sessionStorage.removeItem("renanime-ghibli-transition");
       document.documentElement.classList.add("ghibli-transition-pending");
-      overlay.classList.add("ghibli-transition--reveal");
-      window.setTimeout(() => document.documentElement.classList.remove("ghibli-transition-pending"), 1200);
+      reveal();
     }
 
     document.addEventListener("click", (event) => {
@@ -79,13 +142,10 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
 
       event.preventDefault();
       sessionStorage.setItem("renanime-ghibli-transition", "1");
-      overlay.classList.add("ghibli-transition--cover");
-
-      window.setTimeout(() => {
-        window.location.href = targetPath;
-      }, 1900);
+      cover();
+      window.setTimeout(() => { window.location.href = "/ghibli/"; }, 2750);
     });
-  })();
+  }
 </script>
 
 <style>
