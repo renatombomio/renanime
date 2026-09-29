@@ -9,6 +9,8 @@ const {
   description = "Galería personal de anime."
 } = Astro.props;
 
+const isGhibli = Astro.url.pathname.startsWith("/ghibli") || Astro.url.searchParams.get("from") === "ghibli";
+
 import "../styles/global.css";
 ---
 
@@ -18,18 +20,32 @@ import "../styles/global.css";
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#090909" />
+    <meta name="theme-color" content={isGhibli ? "#FFF7E8" : "#090909"} />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
 
-  <body class="texture-grain">
+  <body class:list={["texture-grain", isGhibli && "theme-ghibli"]}>
     <a class="skip-link" href="#main-content">Saltar al contenido</a>
     <slot />
   </body>
 </html>
 
 <style>
+  :global(body.theme-ghibli) {
+    background: #FFF7E8;
+    color: #19362F;
+  }
+
+  :global(body.theme-ghibli .site-footer) {
+    background: #fff;
+  }
+
+  :global(body.theme-ghibli .site-header) {
+    background: rgba(255,255,255,.94);
+    border-bottom-color: rgba(25,54,47,.12);
+  }
+
   .skip-link {
     position: fixed;
     top: 0.75rem;
