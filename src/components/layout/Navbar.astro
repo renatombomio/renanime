@@ -82,7 +82,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
 
       window.setTimeout(() => {
         window.location.href = targetPath;
-      }, 900);
+      }, 1900);
     });
   })();
 </script>
@@ -225,7 +225,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
   }
 
   .ghibli-transition--reveal {
-    animation: ghibli-overlay-out 1.05s cubic-bezier(.76,0,.24,1) .05s forwards;
+    animation: ghibli-overlay-out 2.4s cubic-bezier(.76,0,.24,1) .2s forwards;
   }
 
   .ghibli-transition-wash {
@@ -238,12 +238,12 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
   }
 
   .ghibli-transition--cover .ghibli-transition-wash {
-    animation: ghibli-wash-in .78s cubic-bezier(.22,1,.36,1) forwards;
+    animation: ghibli-wash-in 2.1s cubic-bezier(.22,1,.36,1) forwards;
   }
 
   .ghibli-transition--reveal .ghibli-transition-wash {
     transform: translateX(0);
-    animation: ghibli-wash-out .92s cubic-bezier(.76,0,.24,1) .08s forwards;
+    animation: ghibli-wash-out 2.2s cubic-bezier(.76,0,.24,1) .15s forwards;
   }
 
   .ghibli-transition-leaves {
@@ -300,11 +300,11 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
   .leaf-18 { left:88%; top:5%; --rot:-56deg; --y:17vh; --d:.4s; --s:.96; }
 
   .ghibli-transition--cover .leaf {
-    animation: ghibli-leaf-cover 1.05s cubic-bezier(.22,1,.36,1) var(--d) both;
+    animation: ghibli-leaf-cover 2.7s cubic-bezier(.22,1,.36,1) var(--d) both;
   }
 
   .ghibli-transition--reveal .leaf {
-    animation: ghibli-leaf-reveal .9s cubic-bezier(.76,0,.24,1) var(--d) both;
+    animation: ghibli-leaf-reveal 2.35s cubic-bezier(.76,0,.24,1) var(--d) both;
   }
 
   .ghibli-transition-wind {
@@ -323,11 +323,11 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
   .wind-two { top:69%; }
 
   .ghibli-transition--cover .wind-one {
-    animation: ghibli-wind 1.15s ease-out .05s both;
+    animation: ghibli-wind 2.5s ease-out .15s both;
   }
 
   .ghibli-transition--cover .wind-two {
-    animation: ghibli-wind 1.15s ease-out .2s both;
+    animation: ghibli-wind 2.5s ease-out .4s both;
   }
 
   .ghibli-transition-caption {
@@ -342,7 +342,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
   }
 
   .ghibli-transition--cover .ghibli-transition-caption {
-    animation: ghibli-caption-in .5s ease .28s both;
+    animation: ghibli-caption-in 1.2s ease .8s both;
   }
 
   @keyframes ghibli-overlay-out {
