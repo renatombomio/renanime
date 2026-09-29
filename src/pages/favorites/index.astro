@@ -71,20 +71,6 @@ const recommendations = getRecommendedLibrary().filter((entry) => !entry.state.f
     background: #171717;
   }
 
-  :global(.favorite-media::after) {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: linear-gradient(
-      180deg,
-      rgba(0,0,0,0) 42%,
-      rgba(0,0,0,.12) 56%,
-      rgba(0,0,0,.72) 82%,
-      rgba(0,0,0,.92) 100%
-    );
-  }
-
   :global(.favorite-media img) {
     display: block;
     width: 100%;
