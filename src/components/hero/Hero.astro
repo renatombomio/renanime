@@ -3,7 +3,7 @@ import HeroCarousel, { type HeroSlide } from "./HeroCarousel";
 import { heroSlides } from "../../data/hero";
 import { anilistProvider } from "../../lib/api/anilist";
 
-const slides: HeroSlide[] = (
+interface Props {\n  kicker?: string;\n  title?: string;\n  copy?: string;\n  videoSrc?: string;\n}\n\nconst {\n  kicker = "Renanime's",\n  title = "Gallery.",\n  copy = "Anime a través de mis ojos.\\nEste es mi regalo para ti.",\n  videoSrc = "/videos/hero.mp4",\n} = Astro.props;\n\nconst slides: HeroSlide[] = (
   await Promise.all(
     heroSlides.map(async (config) => {
       try {
@@ -30,7 +30,7 @@ const slides: HeroSlide[] = (
 ).filter((slide): slide is HeroSlide => slide !== null);
 ---
 
-<HeroCarousel client:load slides={slides} />
+<HeroCarousel client:load slides={slides} kicker={kicker} title={title} copy={copy} videoSrc={videoSrc} />
 
 <style>
   :global(.hero) {
