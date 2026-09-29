@@ -122,10 +122,13 @@ export default function GhibliStory({ entries }: { entries: GhibliStoryEntry[] }
             imaginación, música y pequeñas historias que se quedan contigo.
           </p>
         </div>
-        <div className="ghs-intro-art" aria-hidden="true">
-          <span className="ghs-sun" />
-          <span className="ghs-leaf ghs-leaf-a" />
-          <span className="ghs-leaf ghs-leaf-b" />
+        <div className="ghs-intro-art">
+          <img
+            src="https://www.ghibli.jp/gallery/chihiro001.jpg"
+            alt="Escena de Spirited Away"
+            loading="eager"
+            decoding="async"
+          />
           <span className="ghs-index"><b>01</b> / 07</span>
           <span className="ghs-intro-note">2001 — ahora</span>
         </div>
