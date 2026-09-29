@@ -1,6 +1,10 @@
 ---
 import MobileMenu from "../navigation/MobileMenu";
 
+interface Props { variant?: "default" | "ghibli"; }
+
+const { variant = "default" } = Astro.props;
+
 const links = [
   { label: "Inicio", href: "/" },
   { label: "Favoritos", href: "/favorites/" },
@@ -9,13 +13,13 @@ const links = [
   { label: "Buscar", href: "/search/" },
   { label: "Pendientes", href: "/pending/" },
   { label: "Próximamente", href: "/coming-soon/" },
-  { label: "Totoro", href: "/ghibli/" }
+  { label: "El secreto de Ren", href: "/ghibli/" }
  ];
 
 const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
 
-<header class="site-header">
+<header class:list={["site-header", variant === "ghibli" && "site-header--ghibli"]}>
   <div class="header-inner">
     <a class="brand" href="/" aria-label="Inicio de Renanime">
       <span class="brand-accent">Ren</span>anime
@@ -132,7 +136,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     transform: scaleX(1);
   }
 
-  .mobile-menu {
+  .site-header--ghibli {\n    background: rgba(255, 255, 255, 0.94);\n    border-bottom-color: rgba(25, 54, 47, 0.12);\n    backdrop-filter: blur(10px);\n  }\n\n  .site-header--ghibli .brand { color: var(--ghibli-ink, #19362f); }\n  .site-header--ghibli .brand-accent { color: var(--ghibli-blue, #18528a); }\n  .site-header--ghibli .brand:hover,\n  .site-header--ghibli .brand:focus-visible { color: var(--ghibli-blue, #18528a); }\n  .site-header--ghibli .brand:hover .brand-accent,\n  .site-header--ghibli .brand:focus-visible .brand-accent { color: var(--ghibli-coral, #f45164); }\n  .site-header--ghibli .desktop-nav a { color: #527066; }\n  .site-header--ghibli .desktop-nav a:hover,\n  .site-header--ghibli .desktop-nav a:focus-visible { color: var(--ghibli-blue, #18528a); }\n  .site-header--ghibli .desktop-nav a::after { background: var(--ghibli-coral, #f45164); }\n\n  .mobile-menu {
     display: none;
     margin-left: auto;
   }
