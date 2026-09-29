@@ -14,6 +14,7 @@ interface Media{
  coverImage?:{extraLarge?:string|null;large?:string|null};
  bannerImage?:string|null;
  trailer?:{id?:string|null;site?:string|null;thumbnail?:string|null}|null;
+ recommendations?:{nodes?:{media?:{id:number;title?:{romaji?:string|null;english?:string|null};coverImage?:{extraLarge?:string|null;large?:string|null};format?:string|null;startDate?:{year?:number|null}|null}|null}[]};
 }
 
 function cleanDescription(text:string){
@@ -79,7 +80,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
 
   if(!Number.isFinite(id)){setLoading(false);return}
   fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({
-   query:"query Detail($id:Int!){Media(id:$id,type:ANIME){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail}}}",
+   query:"query Detail($id:Int!){Media(id:$id,type:ANIME){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} recommendations(sort:RATING_DESC){nodes{media{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}}}}",
    variables:{id}
   })}).then(r=>r.ok?r.json():Promise.reject()).then(p=>setMedia(p.data?.Media??null)).catch(()=>{}).finally(()=>setLoading(false));
  },[]);
@@ -139,6 +140,19 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     body:has(.anime-detail--ghibli) .site-footer .closing{color:var(--gd-ink)}
     body:has(.anime-detail--ghibli) .site-footer .thanks{color:#59756b}
     body:has(.anime-detail--ghibli) .site-footer .footer-meta{color:#6b7d76}
+    .anime-detail-recommendations{margin-top:1.8rem;width:100%}
+    .anime-detail-recommendations-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:.7rem}
+    .anime-detail-recommendations-track{display:flex;gap:.7rem;overflow-x:auto;padding:.15rem 0 .65rem;scroll-snap-type:x mandatory;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+    .anime-detail-recommendation{flex:0 0 clamp(108px,30vw,132px);scroll-snap-align:start;color:inherit;text-decoration:none}
+    .anime-detail-recommendation-poster{aspect-ratio:2/3;overflow:hidden;background:#171717;border-radius:8px}
+    .anime-detail-recommendation-poster img{display:block;width:100%;height:100%;object-fit:cover;transition:transform 320ms cubic-bezier(.22,1,.36,1)}
+    .anime-detail-recommendation:hover .anime-detail-recommendation-poster img{transform:scale(1.035)}
+    .anime-detail-recommendation-title{display:block;margin-top:.48rem;font-size:.72rem;line-height:1.25;font-weight:500}
+    .anime-detail-recommendation-meta{display:block;margin-top:.22rem;font-family:var(--font-meta);font-size:.5rem;letter-spacing:.06em;text-transform:uppercase;opacity:.58}
+    .anime-detail--ghibli .anime-detail-recommendation-poster{border-radius:12px;background:var(--gd-ink)}
+    .anime-detail--ghibli .anime-detail-recommendation-title{color:#fff}
+    .anime-detail--ghibli .anime-detail-recommendation-meta{color:rgba(255,255,255,.68)}
+    @media(max-width:760px){.anime-detail-recommendations{margin-top:1.35rem}.anime-detail-recommendation{flex-basis:112px}}
     @media(max-width:760px){
       .anime-detail--ghibli .anime-detail-inner{padding-top:5.25rem}
       .anime-detail--ghibli .anime-detail-back{
@@ -170,7 +184,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
        <p className="anime-detail-synopsis">{translated||synopsis||"Todavía no hay una sinopsis disponible."}</p>
        {media.description&&<button type="button" className="anime-detail-translate" onClick={translateSynopsis} disabled={translating}>{translating?"Traduciendo…":translated?"Traducido al español":"Traducir al español"}</button>}
       </div>
-      {media.trailer?.id&&media.trailer.site==="youtube"&&<section className="anime-detail-trailer"><span className="anime-detail-label">Tráiler</span><div className="anime-detail-video"><iframe src={"https://www.youtube.com/embed/"+media.trailer.id+"?rel=0"} title={"Tráiler de "+title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div></section>}
+      {media.trailer?.id&&media.trailer.site==="youtube"&&<section className="anime-detail-trailer"><span className="anime-detail-label">Tráiler</span><div className="anime-detail-video"><iframe src={"https://www.youtube.com/embed/"+media.trailer.id+"?rel=0"} title={"Tráiler de "+title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div></section>}\n      {media.recommendations?.nodes?.length ? <section className="anime-detail-recommendations" aria-label="Recomendaciones"><div className="anime-detail-recommendations-head"><span className="anime-detail-label">Si te gusta este anime, te puede gustar…</span></div><div className="anime-detail-recommendations-track">{media.recommendations.nodes.filter((node)=>node.media).slice(0,8).map((node)=>{ const item=node.media!; const recTitle=item.title?.romaji||item.title?.english||"Sin título"; const recImage=item.coverImage?.extraLarge||item.coverImage?.large; return <a className="anime-detail-recommendation" href={"/anime/search?id="+item.id} key={item.id}><div className="anime-detail-recommendation-poster">{recImage&&<img src={recImage} alt={recTitle} loading="lazy"/>}</div><span className="anime-detail-recommendation-title">{recTitle}</span><span className="anime-detail-recommendation-meta">{item.format==="MOVIE"?"Film":"Series"}{item.startDate?.year?" · "+item.startDate.year:""}</span></a>})}</div></section> : null}
       <div className="anime-detail-state">{status(media.status)&&<span>{status(media.status)}</span>}</div>
      </div>
     </div>
