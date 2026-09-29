@@ -34,7 +34,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     </nav>
 
     <div class="mobile-menu">
-      <MobileMenu client:load />
+      <MobileMenu variant={variant} client:load />
     </div>
   </div>
 </header>
