@@ -70,7 +70,32 @@ export default function AnimeSearchDetail(){
  const synopsis=media.description?cleanDescription(media.description):"";
  const translateSynopsis=async()=>{if(!media.description||translating)return;setTranslating(true);setTranslated(await translate(media.description));setTranslating(false)};
 
- return <div className="anime-detail">
+ return <div className={"anime-detail" + (from === "ghibli" ? " anime-detail--ghibli" : "")}>
+  <style>{`
+    .anime-detail--ghibli{--gd-cream:#FFF7E8;--gd-paper:#F4E9D5;--gd-sky:#DCEFF1;--gd-blue:#18528A;--gd-teal:#0B798B;--gd-coral:#F45164;--gd-pink:#F0A9A5;--gd-lime:#91CC57;--gd-ink:#19362F;min-height:100vh;background:var(--gd-cream);color:var(--gd-ink)}
+    .anime-detail--ghibli .anime-detail-hero{min-height:clamp(34rem,72vh,52rem);background-color:var(--gd-ink)!important;background-position:center;background-size:cover}
+    .anime-detail--ghibli .anime-detail-back{color:var(--gd-blue)}
+    .anime-detail--ghibli .anime-detail-back:hover{color:var(--gd-coral)}
+    .anime-detail--ghibli .anime-detail-copy h1{color:#fff}
+    .anime-detail--ghibli .anime-detail-meta{color:rgba(255,255,255,.78)}
+    .anime-detail--ghibli .anime-detail-genres span{border-color:rgba(255,255,255,.25);color:#fff;background:rgba(25,54,47,.35)}
+    .anime-detail--ghibli .anime-detail-synopsis{color:rgba(255,255,255,.82)}
+    .anime-detail--ghibli .anime-detail-translate{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff}
+    .anime-detail--ghibli .anime-detail-translate:hover:not(:disabled){background:#fff;color:var(--gd-blue)}
+    .anime-detail--ghibli .anime-detail-state span{color:var(--gd-lime)}
+    .anime-detail--ghibli .anime-detail-info{border-top-color:rgba(25,54,47,.12);background:rgba(25,54,47,.12)}
+    .anime-detail--ghibli .anime-detail-info>div{background:#fff;color:var(--gd-ink)}
+    .anime-detail--ghibli .anime-detail-info strong{color:var(--gd-ink)}
+    .anime-detail--ghibli .anime-detail-label{color:#59756b}
+    .anime-detail--ghibli .anime-detail-trailer>.anime-detail-label{color:#59756b}
+    .anime-detail--ghibli .anime-detail-video{border-color:rgba(25,54,47,.12);background:#19362F}
+    body:has(.anime-detail--ghibli){background:var(--gd-cream);color:var(--gd-ink)}
+    body:has(.anime-detail--ghibli) .site-footer{background:var(--gd-cream);color:var(--gd-ink)}
+    body:has(.anime-detail--ghibli) .site-footer .footer-line{background:rgba(25,54,47,.14)}
+    body:has(.anime-detail--ghibli) .site-footer .closing{color:var(--gd-ink)}
+    body:has(.anime-detail--ghibli) .site-footer .thanks{color:#59756b}
+    body:has(.anime-detail--ghibli) .site-footer .footer-meta{color:#6b7d76}
+  `}</style>
   <section className="anime-detail-hero" style={banner?{backgroundImage:`linear-gradient(90deg,rgba(9,9,9,.98),rgba(9,9,9,.72) 45%,rgba(9,9,9,.35) 75%,rgba(9,9,9,.8)),linear-gradient(0deg,rgba(9,9,9,.98),transparent 45%),url("${banner}")`}:undefined}>
    <div className="anime-detail-inner">
     <a className="anime-detail-back" href={backHref}>← {backLabel}</a>
