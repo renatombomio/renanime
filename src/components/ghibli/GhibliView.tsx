@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 
 interface Film { id: string; title: string; year: number; watched: boolean; searchTitle?: string; }
@@ -7,6 +7,7 @@ interface Media { id: number; title?: { romaji?: string | null; english?: string
 export default function GhibliView({ films }: { films: Film[] }) {
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(true);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -38,55 +39,70 @@ export default function GhibliView({ films }: { films: Film[] }) {
   }, [films]);
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || !gridRef.current) return;
+    const grid = gridRef.current;
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>(".ghibli-card"));
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const cards = Array.from(document.querySelectorAll<HTMLElement>(".ghibli-view .ghibli-card"));
     if (!cards.length || reduceMotion) return;
 
-    gsap.set(cards, { autoAlpha: 0, y: 20, scale: 0.985 });
-    gsap.to(cards, {
-      autoAlpha: 1,
-      y: 0,
-      scale: 1,
-      duration: 0.6,
-      ease: "power3.out",
-      stagger: { each: 0.07, from: "start" },
-      overwrite: true,
-    });
+    const cleanups: Array<() => void> = [];
 
-    const cleanups = cards.map((card, index) => {
-      const link = card.querySelector<HTMLElement>("a");
-      const poster = card.querySelector<HTMLElement>(".ghibli-poster");
-      if (!link || !poster) return () => {};
+    cards.forEach((card, index) => {
+      gsap.set(card, { autoAlpha: 0, y: 22, scale: 0.985 });
 
-      const enter = () => {
-        gsap.to(card, { y: -5, scale: 1.012, duration: 0.34, ease: "power2.out", overwrite: true });
-        gsap.to(poster, { scale: 1.025, duration: 0.55, ease: "power2.out", overwrite: true });
+      const reveal = () => {
+        gsap.to(card, {
+          autoAlpha: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.58,
+          delay: index * 0.055,
+          ease: "power3.out",
+          overwrite: true,
+        });
       };
-      const leave = () => {
-        gsap.to(card, { y: 0, scale: 1, duration: 0.45, ease: "power3.out", overwrite: true });
-        gsap.to(poster, { scale: 1, duration: 0.55, ease: "power2.out", overwrite: true });
-      };
-      const down = () => gsap.to(card, { scale: 0.985, duration: 0.12, ease: "power2.out", overwrite: true });
 
-      link.addEventListener("pointerenter", enter);
-      link.addEventListener("pointerleave", leave);
-      link.addEventListener("pointerdown", down);
-      link.addEventListener("pointerup", leave);
-      link.addEventListener("pointercancel", leave);
-
-      if (index % 4 === 1) {
-        gsap.to(card, { y: -1.5, duration: 5.5 + (index % 3) * 0.6, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 1 + index * 0.04 });
+      if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver((entries) => {
+          if (!entries[0]?.isIntersecting) return;
+          observer.disconnect();
+          reveal();
+        }, { threshold: 0.05, rootMargin: "0px 0px -6% 0px" });
+        observer.observe(card);
+        cleanups.push(() => observer.disconnect());
+      } else {
+        reveal();
       }
 
-      return () => {
+      const link = card.querySelector<HTMLElement>("a");
+      const poster = card.querySelector<HTMLElement>(".ghibli-poster");
+      if (!link || !poster) return;
+
+      const press = () => gsap.to(card, { scale: 0.985, duration: 0.12, ease: "power2.out", overwrite: true });
+      const release = () => gsap.to(card, { y: 0, scale: 1, duration: 0.38, ease: "power3.out", overwrite: true });
+      const enter = () => {
+        gsap.to(card, { y: -5, scale: 1.012, duration: 0.32, ease: "power2.out", overwrite: true });
+        gsap.to(poster, { scale: 1.025, duration: 0.5, ease: "power2.out", overwrite: true });
+      };
+      const leave = () => {
+        gsap.to(card, { y: 0, scale: 1, duration: 0.42, ease: "power3.out", overwrite: true });
+        gsap.to(poster, { scale: 1, duration: 0.5, ease: "power2.out", overwrite: true });
+      };
+
+      link.addEventListener("pointerdown", press);
+      link.addEventListener("pointerup", release);
+      link.addEventListener("pointercancel", release);
+      link.addEventListener("pointerenter", enter);
+      link.addEventListener("pointerleave", leave);
+
+      cleanups.push(() => {
+        link.removeEventListener("pointerdown", press);
+        link.removeEventListener("pointerup", release);
+        link.removeEventListener("pointercancel", release);
         link.removeEventListener("pointerenter", enter);
         link.removeEventListener("pointerleave", leave);
-        link.removeEventListener("pointerdown", down);
-        link.removeEventListener("pointerup", leave);
-        link.removeEventListener("pointercancel", leave);
         gsap.killTweensOf([card, poster]);
-      };
+      });
     });
 
     return () => cleanups.forEach((cleanup) => cleanup());
@@ -134,7 +150,7 @@ export default function GhibliView({ films }: { films: Film[] }) {
       {loading ? (
         <div className="ghibli-loading" role="status" aria-live="polite">Abriendo el archivo…</div>
       ) : (
-        <div className="ghibli-grid">
+        <div ref={gridRef} className="ghibli-grid">
           {films.map((film, index) => {
             const item = media[film.id];
             const image = item?.coverImage?.extraLarge || item?.coverImage?.large;
