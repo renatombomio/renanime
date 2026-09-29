@@ -4,10 +4,7 @@ interface FavoriteEntry {
   animeId: string;
   title: string;
   format?: "SERIES" | "MOVIE";
-  state: {
-    favorite: boolean;
-    recommended: boolean;
-  };
+  state: { favorite: boolean; recommended: boolean };
 }
 
 interface Media {
@@ -18,24 +15,32 @@ interface Media {
 
 interface Props {
   entries: FavoriteEntry[];
+  recommendations: FavoriteEntry[];
 }
 
-export default function FavoritesView({ entries }: Props) {
+export default function FavoritesView({ entries, recommendations }: Props) {
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(true);
-  const trackRef = useRef<HTMLDivElement>(null);
+  const favoriteTrackRef = useRef<HTMLDivElement>(null);
+  const recommendationTrackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
+      const allEntries = [...entries, ...recommendations];
+      if (!allEntries.length) {
+        setLoading(false);
+        return;
+      }
+
       const variables: Record<string, string> = {};
-      const fields = entries.map((entry, index) => {
-        variables[`s${index}`] = entry.title;
-        return `a${index}: Page(page: 1, perPage: 1) { media(search: $s${index}, type: ANIME, sort: SEARCH_MATCH) { title { romaji english } startDate { year month day } coverImage { extraLarge large } } }`;
+      const fields = allEntries.map((entry, index) => {
+        variables["s" + index] = entry.title;
+        return "a" + index + ": Page(page: 1, perPage: 1) { media(search: $s" + index + ", type: ANIME, sort: SEARCH_MATCH) { title { romaji english } startDate { year month day } coverImage { extraLarge large } } }";
       }).join("\n");
-      const definitions = entries.map((_, index) => `$s${index}: String!`).join(", ");
-      const query = `query Favorites(${definitions}) { ${fields} }`;
+      const definitions = allEntries.map((_, index) => "$s" + index + ": String!").join(", ");
+      const query = "query Favorites(" + definitions + ") { " + fields + " }";
 
       try {
         const response = await fetch("https://graphql.anilist.co", {
@@ -44,10 +49,11 @@ export default function FavoritesView({ entries }: Props) {
           body: JSON.stringify({ query, variables }),
         });
         if (!response.ok) return;
+
         const payload = await response.json();
         const result: Record<string, Media | null> = {};
-        entries.forEach((entry, index) => {
-          result[entry.animeId] = payload.data?.[`a${index}`]?.media?.[0] ?? null;
+        allEntries.forEach((entry, index) => {
+          result[entry.animeId] = payload.data?.["a" + index]?.media?.[0] ?? null;
         });
         if (!cancelled) setMedia(result);
       } catch {
@@ -59,71 +65,82 @@ export default function FavoritesView({ entries }: Props) {
 
     load();
     return () => { cancelled = true; };
-  }, [entries]);
+  }, [entries, recommendations]);
 
-  const scroll = (direction: "prev" | "next") => {
-    trackRef.current?.scrollBy({
-      left: direction === "next" ? trackRef.current.clientWidth * 0.72 : -trackRef.current.clientWidth * 0.72,
+  const scroll = (ref: React.RefObject<HTMLDivElement | null>, direction: "prev" | "next") => {
+    ref.current?.scrollBy({
+      left: direction === "next" ? ref.current.clientWidth * 0.72 : -ref.current.clientWidth * 0.72,
       behavior: "smooth",
     });
   };
 
+  const renderCard = (entry: FavoriteEntry, index: number, compact = false) => {
+    const item = media[entry.animeId];
+    const title = item?.title.romaji || item?.title.english || entry.title;
+    const year = item?.startDate?.year;
+
+    return (
+      <article className={"favorite-card" + (compact ? " favorite-card--recommendation" : "")} key={entry.animeId}>
+        <a href={"/anime/" + entry.animeId} aria-label={"Ver " + title}>
+          <div className="favorite-media">
+            {item?.coverImage?.extraLarge || item?.coverImage?.large ? (
+              <img src={item.coverImage.extraLarge || item.coverImage.large || ""} alt={title} loading={index < 2 ? "eager" : "lazy"} />
+            ) : (
+              <div className="favorite-placeholder">
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <strong>{entry.title}</strong>
+              </div>
+            )}
+          </div>
+
+          <div className="favorite-caption">
+            <h3>{title}</h3>
+            {year && <span>{year}</span>}
+          </div>
+        </a>
+      </article>
+    );
+  };
+
   return (
     <div className="favorites-view">
-      <div className="favorites-intro">
-        <span className="favorites-note">Una selección personal</span>
-
-        <div className="favorites-controls" role="group" aria-label="Navegar favoritos">
-          <button type="button" onClick={() => scroll("prev")} aria-label="Favoritos anteriores">←</button>
-          <button type="button" onClick={() => scroll("next")} aria-label="Siguientes favoritos">→</button>
+      <section className="favorites-section" aria-labelledby="absolute-favorites-title">
+        <div className="favorites-intro">
+          <div>
+            <span className="favorites-note">Favoritos absolutos</span>
+            <h2 id="absolute-favorites-title">Los que siempre vuelven.</h2>
+          </div>
+          <div className="favorites-controls" role="group" aria-label="Navegar favoritos">
+            <button type="button" onClick={() => scroll(favoriteTrackRef, "prev")} aria-label="Favoritos anteriores">←</button>
+            <button type="button" onClick={() => scroll(favoriteTrackRef, "next")} aria-label="Siguientes favoritos">→</button>
+          </div>
         </div>
-      </div>
 
-      <div className="favorites-track" ref={trackRef}>
-        {entries.map((entry, index) => {
-          const item = media[entry.animeId];
-          const title = item?.title.romaji || item?.title.english || entry.title;
-          const releaseDate = item?.startDate?.year
-            ? new Date(
-                item.startDate.year,
-                Math.max((item.startDate.month ?? 1) - 1, 0),
-                item.startDate.day ?? 1,
-              ).toLocaleDateString("es-ES", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })
-            : null;
+        <div className="favorites-track" ref={favoriteTrackRef}>
+          {entries.map((entry, index) => renderCard(entry, index))}
+        </div>
+      </section>
 
-          return (
-            <article className="favorite-card" key={entry.animeId}>
-              <a href={`/anime/${entry.animeId}`} aria-label={`Ver ${title}`}>
-                <div className="favorite-media">
-                  {item?.coverImage?.extraLarge || item?.coverImage?.large ? (
-                    <img
-                      src={item.coverImage.extraLarge || item.coverImage.large || ""}
-                      alt={title}
-                      loading={index < 2 ? "eager" : "lazy"}
-                    />
-                  ) : (
-                    <div className="favorite-placeholder">
-                      <span>{String(index + 1).padStart(2, "0")}</span>
-                      <strong>{entry.title}</strong>
-                    </div>
-                  )}
+      <section className="favorites-section favorites-section--recommendations" aria-labelledby="recommended-title">
+        <div className="favorites-intro">
+          <div>
+            <span className="favorites-note">Mi selección para ti</span>
+            <h2 id="recommended-title">Recomendados.</h2>
+          </div>
+          <div className="favorites-controls" role="group" aria-label="Navegar recomendaciones">
+            <button type="button" onClick={() => scroll(recommendationTrackRef, "prev")} aria-label="Recomendaciones anteriores">←</button>
+            <button type="button" onClick={() => scroll(recommendationTrackRef, "next")} aria-label="Siguientes recomendaciones">→</button>
+          </div>
+        </div>
 
+        <p className="favorites-recommendation-copy">
+          Historias que forman parte de mi recorrido y que quiero que descubras.
+        </p>
 
-                </div>
-
-                <div className="favorite-caption">
-                  <h3>{title}</h3>
-                  {releaseDate && <span>{releaseDate}</span>}
-                </div>
-              </a>
-            </article>
-          );
-        })}
-      </div>
+        <div className="favorites-track favorites-track--recommendations" ref={recommendationTrackRef}>
+          {recommendations.map((entry, index) => renderCard(entry, index, true))}
+        </div>
+      </section>
 
       {loading && <span className="favorites-loading">Cargando archivo…</span>}
     </div>
