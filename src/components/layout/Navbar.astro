@@ -10,7 +10,9 @@ const links = [
   { label: "Pendientes", href: "/pending/" },
   { label: "Próximamente", href: "/coming-soon/" },
   { label: "El secreto de Ren", href: "/ghibli/" }
-];
+ ];
+
+const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
 ---
 
 <header class="site-header">
