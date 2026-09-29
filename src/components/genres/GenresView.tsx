@@ -148,6 +148,7 @@ export default function GenresView({ entries }: Props) {
                 type="button"
                 className="genre-card"
                 key={genre.name}
+                aria-pressed={selected === genre.name}
                 onClick={() => setSelected(genre.name)}
               >
                 <span className="genre-name">{genre.name}</span>
