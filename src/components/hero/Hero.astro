@@ -187,7 +187,7 @@ const slides: HeroSlide[] = (
       position: relative;
       inset: auto;
       width: 100%;
-      height: auto;
+      height: calc(100svh - 68px);
       overflow: hidden;
     }
 
@@ -195,8 +195,9 @@ const slides: HeroSlide[] = (
       display: block;
       width: 100%;
       height: auto;
-      object-fit: contain;
-      object-position: center;
+      min-height: 100%;
+      object-fit: cover;
+      object-position: top center;
     }
 
     :global(.hero-inner) {
