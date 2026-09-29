@@ -2,9 +2,10 @@
 import Container from "../ui/Container.astro";
 
 const year = new Date().getFullYear();
+const isGhibli = Astro.url.pathname.startsWith("/ghibli") || Astro.url.searchParams.get("from") === "ghibli";
 ---
 
-<footer class="site-footer">
+<footer class:list={["site-footer", isGhibli && "site-footer--ghibli"]}>
   <div class="footer-line"></div>
 
   <Container class="footer-inner">
@@ -26,6 +27,27 @@ const year = new Date().getFullYear();
 <style>
   .site-footer {
     background: #000;
+  }
+
+  .site-footer--ghibli {
+    background: #fff;
+    color: #19362f;
+  }
+
+  .site-footer--ghibli .footer-line {
+    background: rgba(25, 54, 47, .12);
+  }
+
+  .site-footer--ghibli :global(.closing) {
+    color: #19362f;
+  }
+
+  .site-footer--ghibli :global(.thanks) {
+    color: #59756b;
+  }
+
+  .site-footer--ghibli :global(.footer-meta) {
+    color: #6b7d76;
   }
 
   .footer-line {
