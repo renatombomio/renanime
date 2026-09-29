@@ -192,6 +192,7 @@ export default function CollectionView({ entries }: Props) {
               key={item}
               type="button"
               className={filter === item ? "is-active" : ""}
+              aria-pressed={filter === item}
               onClick={() => setFilter(item)}
             >
               {item === "ALL" ? "Collection" : item === "SERIES" ? "Series" : "Movies"}
