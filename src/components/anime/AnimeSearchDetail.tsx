@@ -59,6 +59,10 @@ export default function AnimeSearchDetail(){
  if(loading)return <div className="anime-search-detail-state">Cargando ficha…</div>;
  if(!media)return <div className="anime-search-detail-state">No se ha encontrado este anime.</div>;
 
+ const params=new URLSearchParams(location.search);
+ const from=params.get("from");
+ const backHref=from==="ghibli"?"/ghibli/":from==="coming-soon"?"/coming-soon/":from==="anime"?"/":"/search/";
+ const backLabel=from==="ghibli"?"Volver a El secreto de Ren":from==="coming-soon"?"Volver a próximamente":from==="anime"?"Volver al anime":"Volver a buscar";
  const title=media.title?.romaji||media.title?.english||"Sin título";
  const image=media.coverImage?.extraLarge||media.coverImage?.large;
  const banner=media.bannerImage||image;
@@ -68,7 +72,7 @@ export default function AnimeSearchDetail(){
  return <div className="anime-detail">
   <section className="anime-detail-hero" style={banner?{backgroundImage:`linear-gradient(90deg,rgba(9,9,9,.98),rgba(9,9,9,.72) 45%,rgba(9,9,9,.35) 75%,rgba(9,9,9,.8)),linear-gradient(0deg,rgba(9,9,9,.98),transparent 45%),url("${banner}")`}:undefined}>
    <div className="anime-detail-inner">
-    <a className="anime-detail-back" href="/search/">← Volver a buscar</a>
+    <a className="anime-detail-back" href={backHref}>← {backLabel}</a>
     <div className="anime-detail-layout">
      <div className="anime-detail-poster">{image?<img src={image} alt={title}/>:<div className="anime-detail-placeholder">RENANIME</div>}</div>
      <div className="anime-detail-copy">
