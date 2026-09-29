@@ -1250,3 +1250,41 @@ section[id] {
 .mobile-nav--ghibli .mobile-panel a { border-bottom-color: rgba(25,54,47,.09); color: #35584d; }
 .mobile-nav--ghibli .mobile-panel a:hover,
 .mobile-nav--ghibli .mobile-panel a:focus-visible { color: #18528a; }
+
+
+/* Anime detail: readable text panel over the hero image. */
+.anime-detail:not(.anime-detail--ghibli) .anime-detail-synopsis-wrap {
+  max-width: 42rem;
+  margin-top: 1.35rem;
+  padding: 1rem 1.15rem 1.1rem;
+  border: 1px solid rgba(245,242,236,.18);
+  border-radius: 14px;
+  background: rgba(9,9,9,.42);
+  box-shadow: 0 12px 34px rgba(0,0,0,.16);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.anime-detail:not(.anime-detail--ghibli) .anime-detail-synopsis {
+  margin: 0;
+  color: var(--color-paper-50);
+}
+
+.anime-detail:not(.anime-detail--ghibli) .anime-detail-translate {
+  border-color: rgba(245,242,236,.28);
+  background: rgba(245,242,236,.06);
+  color: var(--color-paper-200);
+}
+
+.anime-detail:not(.anime-detail--ghibli) .anime-detail-translate:hover:not(:disabled) {
+  background: rgba(245,242,236,.12);
+  color: var(--color-paper-50);
+}
+
+@media (max-width: 760px) {
+  .anime-detail:not(.anime-detail--ghibli) .anime-detail-synopsis-wrap {
+    margin-top: 1rem;
+    padding: .85rem .9rem .95rem;
+    border-radius: 12px;
+  }
+}
