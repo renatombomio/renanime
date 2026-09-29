@@ -19,15 +19,10 @@ const {title,image,href="#",type,year,genres=[],score=null,status,badge}=Astro.p
   </a>
 </article>
 <style>
-.anime-card{min-width:0}.card-link{position:relative;display:block;overflow:hidden;background:var(--color-ink-900)}
-.poster-wrap{position:relative;overflow:hidden;background:var(--color-ink-800)}
-.poster-wrap::after{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,transparent 42%,rgba(9,9,9,.1) 55%,rgba(9,9,9,.9) 100%);content:"";pointer-events:none}
-.badges{position:absolute;top:.75rem;left:.75rem;right:.75rem;z-index:2;display:flex;flex-wrap:wrap;gap:.4rem}
-.card-content{position:absolute;right:0;bottom:0;left:0;z-index:3;display:grid;gap:.45rem;padding:2.8rem .75rem .75rem;background:linear-gradient(180deg,transparent 0%,rgba(9,9,9,.28) 30%,rgba(9,9,9,.9) 100%);pointer-events:none}
-.title-row{display:flex;align-items:baseline;justify-content:space-between;gap:.75rem}
-h3{min-width:0;margin:0;color:var(--color-paper-50);font-family:var(--font-body);font-size:var(--text-lg);font-weight:500;letter-spacing:-.025em;line-height:1.15;text-shadow:0 1px 10px rgba(0,0,0,.42)}
-.card-content :global(.anime-meta),.card-content :global(.meta){color:rgba(245,242,236,.76)}
+.anime-card{min-width:0}.card-link{display:block}.poster-wrap{position:relative;overflow:hidden;background:var(--color-ink-800)}
+.badges{position:absolute;top:.75rem;left:.75rem;right:.75rem;display:flex;flex-wrap:wrap;gap:.4rem}
+.card-content{display:grid;gap:.55rem;padding-top:.9rem}.title-row{display:flex;align-items:baseline;justify-content:space-between;gap:.75rem}
+h3{min-width:0;margin:0;color:var(--color-paper-50);font-family:var(--font-body);font-size:var(--text-lg);font-weight:500;letter-spacing:-.025em;line-height:1.15}
 .card-link:hover h3{color:var(--color-accent-soft)}.card-link:focus-visible{outline:none}.card-link:focus-visible .poster-wrap{outline:1px solid var(--color-paper-50);outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.card-link:hover h3{color:var(--color-paper-50)}}
-@media(max-width:560px){.card-content{padding:2.3rem .62rem .62rem}h3{font-size:.72rem}}
 </style>
