@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 
-interface Props { variant?: "default" | "ghibli"; }\n\nconst links = [
+interface Props { variant?: "default" | "ghibli"; }
+
+const links = [
   { label: "Inicio", href: "/" },
   { label: "Favoritos", href: "/favorites/" },
   { label: "Colección", href: "/collection/" },
