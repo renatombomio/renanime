@@ -154,13 +154,13 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     body:has(.anime-detail--ghibli) .site-footer .footer-meta{color:#6b7d76}
     .anime-detail-recommendations{margin-top:1.8rem;width:100%}
     .anime-detail-recommendations-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:.7rem}
-    .anime-detail-recommendations-track{display:flex;gap:.7rem;overflow-x:auto;padding:.15rem 0 .65rem;scroll-snap-type:x mandatory;scrollbar-width:thin;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+    .anime-detail-recommendations-track{display:flex;gap:.7rem;min-height:10rem;overflow-x:auto;padding:.15rem 0 .65rem;scroll-snap-type:x mandatory;scrollbar-width:thin;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
     .anime-detail-recommendation{flex:0 0 clamp(116px,30vw,138px);scroll-snap-align:start;color:inherit;text-decoration:none}
     .anime-detail-recommendation-poster{aspect-ratio:2/3;overflow:hidden;background:#171717;border-radius:8px}
     .anime-detail-recommendation-poster img{display:block;width:100%;height:100%;object-fit:cover;transition:transform 320ms cubic-bezier(.22,1,.36,1)}
     .anime-detail-recommendation:hover .anime-detail-recommendation-poster img{transform:scale(1.035)}
     .anime-detail-recommendation-title{display:block;margin-top:.48rem;font-size:.72rem;line-height:1.25;font-weight:500}
-    .anime-detail-recommendation-meta{display:block;margin-top:.22rem;font-family:var(--font-meta);font-size:.5rem;letter-spacing:.06em;text-transform:uppercase;opacity:.58}
+    .anime-detail-recommendations-empty{display:flex;align-items:center;min-height:10rem;padding:1rem;color:inherit;opacity:.58;font-family:var(--font-meta);font-size:.5rem;letter-spacing:.08em;text-transform:uppercase}.anime-detail-recommendation-meta{display:block;margin-top:.22rem;font-family:var(--font-meta);font-size:.5rem;letter-spacing:.06em;text-transform:uppercase;opacity:.58}
     .anime-detail--ghibli .anime-detail-recommendation-poster{border-radius:12px;background:var(--gd-ink)}
     .anime-detail--ghibli .anime-detail-recommendation-title{color:#fff}
     .anime-detail--ghibli .anime-detail-recommendation-meta{color:rgba(255,255,255,.68)}
@@ -201,30 +201,30 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
        <p className="anime-detail-synopsis">{translated||synopsis||(hasSynopsis?"":"Todavía no hay una sinopsis disponible.")}</p>
        {hasSynopsis&&media.description&&<button type="button" className="anime-detail-translate" onClick={translateSynopsis} disabled={translating}>{translating?"Traduciendo…":translated?"Traducido al español":"Traducir al español"}</button>}
       </div>
-      {media.trailer?.id&&media.trailer.site==="youtube"&&<section className="anime-detail-trailer"><span className="anime-detail-label">Tráiler</span><div className="anime-detail-video"><iframe src={"https://www.youtube.com/embed/"+media.trailer.id+"?rel=0"} title={"Tráiler de "+title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div></section>}\n      {media.recommendations?.nodes?.length ? (() => {
+      {media.trailer?.id&&media.trailer.site==="youtube"&&<section className="anime-detail-trailer"><span className="anime-detail-label">Tráiler</span><div className="anime-detail-video"><iframe src={"https://www.youtube.com/embed/"+media.trailer.id+"?rel=0"} title={"Tráiler de "+title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div></section>}\n      {(() => {
        const seen = new Set<number>();
-       const items = media.recommendations.nodes
-         .map((node) => node.media)
-         .filter((item): item is NonNullable<typeof item> => Boolean(item))
-         .filter((item) => item.id !== media.id && !seen.has(item.id) && seen.add(item.id))
-         .slice(0, 8);
-       return items.length ? <section className="anime-detail-recommendations" aria-label="Recomendaciones">
+       const items = (media.recommendations?.nodes ?? [])
+        .map((node) => node.media)
+        .filter((item): item is NonNullable<typeof item> => Boolean(item))
+        .filter((item) => item.id !== media.id && !seen.has(item.id) && seen.add(item.id))
+        .slice(0, 8);
+       return <section className="anime-detail-recommendations" aria-label="Recomendaciones">
         <div className="anime-detail-recommendations-head">
          <span className="anime-detail-label">Si te gusta este anime, te puede gustar…</span>
         </div>
         <div className="anime-detail-recommendations-track">
-         {items.map((item) => {
+         {items.length ? items.map((item) => {
           const recTitle=item.title?.romaji||item.title?.english||"Sin título";
           const recImage=item.coverImage?.extraLarge||item.coverImage?.large;
-          return <a className="anime-detail-recommendation" href={"/anime/search?id="+item.id} key={item.id}>
+          return <a className="anime-detail-recommendation" href={"/anime/search?id="+item.id+"&from="+(from==="ghibli"?"ghibli":"anime")} key={item.id}>
            <div className="anime-detail-recommendation-poster">{recImage&&<img src={recImage} alt={recTitle} loading="lazy" />}</div>
            <span className="anime-detail-recommendation-title">{recTitle}</span>
            <span className="anime-detail-recommendation-meta">{item.format==="MOVIE"?"Film":"Series"}{item.startDate?.year?" · "+item.startDate.year:""}</span>
           </a>;
-         })}
+         }) : <div className="anime-detail-recommendations-empty">Explorando nuevas historias…</div>}
         </div>
-       </section> : null;
-      })() : null}
+       </section>;
+      })()}
       <div className="anime-detail-state">{status(media.status)&&<span>{status(media.status)}</span>}</div>
      </div>
     </div>
