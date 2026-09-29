@@ -126,8 +126,8 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     .anime-detail--ghibli .anime-detail-translate{border-color:rgba(255,247,232,.45);background:rgba(255,247,232,.12);color:#fff}
     .anime-detail--ghibli .anime-detail-translate:hover:not(:disabled){background:#fff;color:var(--gd-blue)}
     .anime-detail--ghibli .anime-detail-state span{color:var(--gd-lime)}
-    .anime-detail--ghibli .anime-detail-info{border-top:0;background:var(--gd-blue);padding:0;width:100%}
-    .anime-detail--ghibli .anime-detail-info>div{background:var(--gd-blue);color:#fff;width:100%;border-top:1px solid rgba(255,255,255,.18)}
+    .anime-detail--ghibli .anime-detail-info{border-top:0;background:var(--gd-teal);padding:0;width:100%}
+    .anime-detail--ghibli .anime-detail-info>div{background:var(--gd-teal);color:#fff;width:100%;border-top:1px solid rgba(255,255,255,.2)}
     .anime-detail--ghibli .anime-detail-info>div:first-child{border-top:0}
     .anime-detail--ghibli .anime-detail-info strong{color:#fff}
     .anime-detail--ghibli .anime-detail-label{color:rgba(255,255,255,.68)}
