@@ -10,4 +10,110 @@ const {columns=4,gap="default"}=Astro.props;
 @media(max-width:1000px){.anime-grid.columns-4,.anime-grid.columns-5{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:700px){.anime-grid,.anime-grid.columns-2,.anime-grid.columns-3,.anime-grid.columns-4,.anime-grid.columns-5{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:420px){.anime-grid,.anime-grid.columns-2,.anime-grid.columns-3,.anime-grid.columns-4,.anime-grid.columns-5{grid-template-columns:1fr}}
+
+
+<script>
+  import { gsap } from "gsap";
+
+  const grids = Array.from(document.querySelectorAll(".anime-grid"));
+
+  grids.forEach((grid) => {
+    const cards = Array.from(grid.querySelectorAll(".anime-card"));
+    if (!cards.length) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
+
+    gsap.set(cards, { autoAlpha: 0, y: 18, scale: 0.985 });
+
+    const reveal = () => {
+      gsap.to(cards, {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.55,
+        ease: "power3.out",
+        stagger: { each: 0.065, from: "start" },
+        overwrite: true
+      });
+    };
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver((entries, instance) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        instance.disconnect();
+        reveal();
+      }, { threshold: 0.08, rootMargin: "0px 0px -8% 0px" });
+
+      observer.observe(grid);
+    } else {
+      reveal();
+    }
+
+    cards.forEach((card, index) => {
+      const poster = card.querySelector(".poster-wrap");
+      const link = card.querySelector(".card-link");
+      if (!poster || !link) return;
+
+      const hoverIn = () => {
+        gsap.to(card, {
+          y: -4,
+          scale: 1.012,
+          duration: 0.32,
+          ease: "power2.out",
+          overwrite: true
+        });
+        gsap.to(poster, {
+          scale: 1.025,
+          duration: 0.55,
+          ease: "power2.out",
+          overwrite: true
+        });
+      };
+
+      const hoverOut = () => {
+        gsap.to(card, {
+          y: 0,
+          scale: 1,
+          duration: 0.42,
+          ease: "power3.out",
+          overwrite: true
+        });
+        gsap.to(poster, {
+          scale: 1,
+          duration: 0.55,
+          ease: "power3.out",
+          overwrite: true
+        });
+      };
+
+      link.addEventListener("pointerenter", hoverIn);
+      link.addEventListener("pointerleave", hoverOut);
+
+      link.addEventListener("pointerdown", () => {
+        gsap.to(card, {
+          scale: 0.985,
+          duration: 0.12,
+          ease: "power2.out",
+          overwrite: true
+        });
+      });
+
+      link.addEventListener("pointerup", hoverOut);
+      link.addEventListener("pointercancel", hoverOut);
+
+      // A barely perceptible offset keeps dense grids from feeling mechanically static.
+      if (index % 5 === 2) {
+        gsap.to(card, {
+          y: -1.5,
+          duration: 4.8 + (index % 3) * 0.7,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: 1.2 + index * 0.05
+        });
+      }
+    });
+  });
+</script>
 </style>
