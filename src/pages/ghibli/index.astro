@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import GhibliView from "../../components/ghibli/GhibliView";
 import Navbar from "../../components/layout/Navbar.astro";
+import Hero from "../../components/hero/Hero.astro";
 import { getGhibliFilms } from "../../data/ghibli";
 import "../../styles/ghibli-tokens.css";
 
@@ -13,17 +14,12 @@ const films = getGhibliFilms();
     <Navbar variant="ghibli" />
 
     <main id="main-content" class="ghibli-page">
-      <section class="ghibli-hero" aria-labelledby="ghibli-title">
-        <div class="ghibli-sun" aria-hidden="true"></div>
-        <div class="ghibli-leaf leaf-one" aria-hidden="true">✦</div>
-        <div class="ghibli-leaf leaf-two" aria-hidden="true">✦</div>
-        <div class="ghibli-hero-copy">
-          <p class="ghibli-eyebrow">El secreto de Ren</p>
-          <h1 id="ghibli-title">Historias que<br /><em>respiran.</em></h1>
-          <p>Una pequeña habitación para las películas que viven entre el bosque, el viento y la memoria.</p>
-        </div>
-        <div class="ghibli-scroll" aria-hidden="true">desliza · <span>↓</span></div>
-      </section>
+      <Hero
+        kicker="Bienvenidos a"
+        title="Ghibli."
+        copy="Mi rincón favorito del anime. Aquí escapo para conectar con la naturaleza, la música, la comida, lo simple, la VIDA."
+        videoSrc="/videos/hero2.mp4"
+      />
 
       <section id="archivo" class="ghibli-content" aria-labelledby="archive-title">
         <div class="ghibli-section-heading">
@@ -41,8 +37,9 @@ const films = getGhibliFilms();
 </Layout>
 
 <style>
-.ghibli-page{min-height:100vh;background:var(--ghibli-cream);color:var(--ghibli-ink);font-family:var(--ghibli-body)}
-@media(max-width:600px){.ghibli-hero{min-height:82svh;padding-top:7rem}.ghibli-hero h1{font-size:clamp(3.4rem,17vw,5.5rem)}.ghibli-sun{right:-5%;top:14%}.ghibli-section-heading{display:block}.ghibli-section-heading h2{font-size:3rem}}
+.ghibli-page{min-height:100vh;background:var(--ghibli-cream);color:var(--ghibli-ink);font-family:var(--ghibli-body);padding-top:88px}
+@media(max-width:1120px){.ghibli-page{padding-top:74px}}
+@media(max-width:600px){.ghibli-page{padding-top:68px}.ghibli-section-heading{display:block}.ghibli-section-heading h2{font-size:3rem}}
 
 .ghibli-page .ghibli-meta{display:flex;justify-content:space-between;gap:1rem;padding:0 0 1rem;border:0;border-bottom:1px solid rgba(25,54,47,.16);color:var(--ghibli-moss);font:600 .62rem/1 var(--ghibli-meta);letter-spacing:.08em;text-transform:uppercase}.ghibli-page .ghibli-meta strong{color:var(--ghibli-coral);font-size:.8rem}
 .ghibli-page .ghibli-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(2rem,5vw,5rem) 1.15rem}
