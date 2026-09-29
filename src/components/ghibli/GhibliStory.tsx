@@ -86,10 +86,11 @@ export default function GhibliStory({ entries }: { entries: GhibliStoryEntry[] }
         .ghs-creator-label b{color:var(--blue);font:600 .58rem/1.2 var(--mono);letter-spacing:.05em;text-transform:uppercase;text-align:right}
         .ghs-creator p{margin:.75rem 0 0;color:#49675d;font-size:.86rem;line-height:1.65}
         .ghs-entry:nth-child(1) .ghs-num{color:var(--coral)}.ghs-entry:nth-child(2) .ghs-num{color:var(--blue)}.ghs-entry:nth-child(3) .ghs-num{color:var(--moss)}.ghs-entry:nth-child(4) .ghs-num{color:var(--coral)}.ghs-entry:nth-child(5) .ghs-num{color:var(--teal)}.ghs-entry:nth-child(6) .ghs-num{color:var(--red)}
-        .ghs-end{margin-top:1rem;padding:clamp(5rem,9vw,9rem) 1rem;text-align:center;background:linear-gradient(135deg,var(--paper),#fff);border-radius:40px}
-        .ghs-end span{color:var(--coral);font:600 .6rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase}
-        .ghs-end p{margin:1rem 0 0;color:var(--blue);font:400 clamp(2.7rem,5vw,5.8rem)/.88 var(--serif);letter-spacing:-.05em}
+        .ghs-end{margin:clamp(1rem,3vw,2.5rem) 0 0;padding:clamp(2.5rem,5vw,4rem) 1rem;text-align:center}
+        .ghs-end span{color:var(--coral);font:600 .58rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase}
+        .ghs-end p{margin:.85rem 0 0;color:var(--blue);font:400 clamp(2rem,4vw,4.2rem)/.92 var(--serif);letter-spacing:-.045em}
         .ghs-end em{color:var(--coral);font-style:italic}
+        .ghs-end small{display:block;margin:1.25rem 0 0;color:#71847d;font:600 .5rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase}
         @media(max-width:800px){
           .ghs{padding:2.25rem 1rem 5rem}
           .ghs-intro{display:block;min-height:0;border-radius:22px;margin-bottom:2.75rem}
@@ -169,8 +170,9 @@ export default function GhibliStory({ entries }: { entries: GhibliStoryEntry[] }
       </div>
 
       <footer className="ghs-end">
-        <span>Hasta aquí, por ahora.</span>
-        <p>La colección sigue abierta.<br /><em>La historia también.</em></p>
+        <span>El viaje continúa</span>
+        <p>Algunas ya son recuerdos.<br /><em>Otras todavía me esperan.</em></p>
+        <small>24 películas · 7 vistas · 17 por descubrir</small>
       </footer>
     </section>
   );
