@@ -50,6 +50,7 @@ const slides: HeroSlide[] = (
   :global(.hero) {
     position: relative;
     overflow: hidden;
+    aspect-ratio: 16 / 9;
     background: var(--color-ink-950);
   }
 
@@ -74,7 +75,7 @@ const slides: HeroSlide[] = (
     z-index: 3;
     display: flex;
     width: min(calc(100% - (var(--gutter) * 2)), var(--container-max));
-    min-height: min(68vh, 52rem);
+    height: 100%;
     margin-inline: auto;
     padding-block: clamp(4rem, 7vw, 6rem) clamp(2rem, 4vw, 3rem);
     flex-direction: column;
@@ -171,7 +172,8 @@ const slides: HeroSlide[] = (
 
   @media (max-width: 720px) {
     :global(.hero) {
-      min-height: 68svh;
+      aspect-ratio: 16 / 9;
+      min-height: 0;
     }
 
     :global(.hero-media) {
@@ -186,7 +188,7 @@ const slides: HeroSlide[] = (
 
     :global(.hero-inner) {
       width: 100%;
-      min-height: 68svh;
+      height: 100%;
       padding: 5rem var(--gutter) 2.5rem;
     }
 
