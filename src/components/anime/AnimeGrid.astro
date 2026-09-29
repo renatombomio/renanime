@@ -16,104 +16,78 @@ const {columns=4,gap="default"}=Astro.props;
 <script>
   import { gsap } from "gsap";
 
-  const grids = Array.from(document.querySelectorAll(".anime-grid"));
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const grids = Array.from(document.querySelectorAll<HTMLElement>(".anime-grid"));
 
   grids.forEach((grid) => {
-    const cards = Array.from(grid.querySelectorAll(".anime-card"));
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>(".anime-card"));
     if (!cards.length) return;
 
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduceMotion) return;
-
-    gsap.set(cards, { autoAlpha: 0, y: 18, scale: 0.985 });
-
-    const reveal = () => {
-      gsap.to(cards, {
-        autoAlpha: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.55,
-        ease: "power3.out",
-        stagger: { each: 0.065, from: "start" },
-        overwrite: true
-      });
-    };
-
-    if ("IntersectionObserver" in window) {
-      const observer = new IntersectionObserver((entries, instance) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return;
-        instance.disconnect();
-        reveal();
-      }, { threshold: 0.08, rootMargin: "0px 0px -8% 0px" });
-
-      observer.observe(grid);
-    } else {
-      reveal();
+    if (reduceMotion) {
+      gsap.set(cards, { clearProps: "all" });
+      return;
     }
 
     cards.forEach((card, index) => {
-      const poster = card.querySelector(".poster-wrap");
-      const link = card.querySelector(".card-link");
-      if (!poster || !link) return;
+      gsap.set(card, { autoAlpha: 0, y: 22, scale: 0.985 });
 
-      const hoverIn = () => {
+      const reveal = () => {
         gsap.to(card, {
-          y: -4,
-          scale: 1.012,
-          duration: 0.32,
-          ease: "power2.out",
-          overwrite: true
-        });
-        gsap.to(poster, {
-          scale: 1.025,
-          duration: 0.55,
-          ease: "power2.out",
-          overwrite: true
-        });
-      };
-
-      const hoverOut = () => {
-        gsap.to(card, {
+          autoAlpha: 1,
           y: 0,
           scale: 1,
-          duration: 0.42,
-          ease: "power3.out",
-          overwrite: true
-        });
-        gsap.to(poster, {
-          scale: 1,
           duration: 0.55,
+          delay: index * 0.055,
           ease: "power3.out",
-          overwrite: true
+          overwrite: true,
         });
       };
 
-      link.addEventListener("pointerenter", hoverIn);
-      link.addEventListener("pointerleave", hoverOut);
+      if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver((entries) => {
+          if (!entries[0]?.isIntersecting) return;
+          observer.disconnect();
+          reveal();
+        }, { threshold: 0.05, rootMargin: "0px 0px -6% 0px" });
+        observer.observe(card);
+      } else {
+        reveal();
+      }
 
-      link.addEventListener("pointerdown", () => {
-        gsap.to(card, {
-          scale: 0.985,
-          duration: 0.12,
-          ease: "power2.out",
-          overwrite: true
-        });
+      const link = card.querySelector<HTMLElement>(".card-link");
+      const poster = card.querySelector<HTMLElement>(".poster-wrap");
+      if (!link || !poster) return;
+
+      const press = () => gsap.to(card, {
+        scale: 0.985,
+        duration: 0.12,
+        ease: "power2.out",
+        overwrite: true,
       });
 
-      link.addEventListener("pointerup", hoverOut);
-      link.addEventListener("pointercancel", hoverOut);
+      const release = () => gsap.to(card, {
+        scale: 1,
+        y: 0,
+        duration: 0.38,
+        ease: "power3.out",
+        overwrite: true,
+      });
 
-      // A barely perceptible offset keeps dense grids from feeling mechanically static.
-      if (index % 5 === 2) {
-        gsap.to(card, {
-          y: -1.5,
-          duration: 4.8 + (index % 3) * 0.7,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-          delay: 1.2 + index * 0.05
-        });
-      }
+      const enter = () => {
+        gsap.to(card, { y: -4, scale: 1.012, duration: 0.3, ease: "power2.out", overwrite: true });
+        gsap.to(poster, { scale: 1.025, duration: 0.5, ease: "power2.out", overwrite: true });
+      };
+
+      const leave = () => {
+        gsap.to(card, { y: 0, scale: 1, duration: 0.38, ease: "power3.out", overwrite: true });
+        gsap.to(poster, { scale: 1, duration: 0.5, ease: "power2.out", overwrite: true });
+      };
+
+      link.addEventListener("pointerdown", press);
+      link.addEventListener("pointerup", release);
+      link.addEventListener("pointercancel", release);
+      link.addEventListener("pointerenter", enter);
+      link.addEventListener("pointerleave", leave);
     });
   });
 </script>
