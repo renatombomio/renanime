@@ -7,65 +7,86 @@ interface DateParts {
   day?: number | null;
 }
 
-interface RelatedMedia {
+interface AnimeMedia {
   id: number;
   idMal?: number | null;
-  title?: { romaji?: string | null; english?: string | null };
+  type?: string | null;
+  title?: {
+    romaji?: string | null;
+    english?: string | null;
+  };
   startDate?: DateParts | null;
-  coverImage?: { extraLarge?: string | null; large?: string | null };
+  coverImage?: {
+    extraLarge?: string | null;
+    large?: string | null;
+  };
   format?: string | null;
   status?: string | null;
-}
-
-interface CandidateMedia extends RelatedMedia {
   relations?: {
     edges?: Array<{
       relationType?: string | null;
-      node?: RelatedMedia | null;
+      node?: AnimeMedia | null;
     }> | null;
   } | null;
 }
 
-interface ComingItem extends RelatedMedia {
+interface SearchResult {
+  source: AnimeMedia | null;
+  sourceTitle: string;
+}
+
+interface ComingItem extends AnimeMedia {
   kind: "RELEASE";
   sourceTitle: string;
-  relationType?: string | null;
+  relationType: string;
 }
 
 interface Props {
   entries: LibraryEntry[];
 }
 
-const CACHE_PREFIX = "renanime:coming-soon:v6:";
+const CACHE_PREFIX = "renanime:coming-soon:v7:";
 const CACHE_TTL = 24 * 60 * 60 * 1000;
-const SEARCH_BATCH_SIZE = 8;
-const SEARCH_DELAY_MS = 900;
+const SEARCH_BATCH_SIZE = 6;
+const BATCH_DELAY_MS = 1900;
+const SEARCH_RESULTS = 5;
+const RELATIONS_PER_PAGE = 12;
+const RELATION_DEPTH = 3;
 
-interface SearchMedia extends RelatedMedia {
-  relations?: {
-    edges?: Array<{
-      relationType?: string | null;
-      node?: RelatedMedia | null;
-    }> | null;
-  } | null;
+const TRAVERSABLE_RELATIONS = new Set([
+  "SEQUEL",
+  "SIDE_STORY",
+  "SPIN_OFF",
+  "OTHER",
+  "SOURCE",
+  "ADAPTATION",
+  "PARENT",
+]);
+
+function titleOf(media: AnimeMedia | undefined, fallback = "Sin título") {
+  return media?.title?.romaji || media?.title?.english || fallback;
 }
 
-interface SearchResult {
-  source: SearchMedia | null;
-  sourceTitle: string;
+function normalizeTitle(title: string) {
+  return title
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
 }
 
-function titleVariants(media: RelatedMedia | undefined) {
-  return [
-    media?.title?.romaji,
-    media?.title?.english,
-  ].filter((value): value is string => Boolean(value));
-}
-
-function titleSimilarity(query: string, media: RelatedMedia) {
+function titleSimilarity(query: string, media: AnimeMedia) {
   const queryTokens = new Set(normalizeTitle(query).split(" ").filter(Boolean));
   const candidateTokens = new Set(
-    titleVariants(media).flatMap((title) => normalizeTitle(title).split(" ").filter(Boolean)),
+    [
+      media.title?.romaji,
+      media.title?.english,
+    ]
+      .filter((value): value is string => Boolean(value))
+      .flatMap((title) => normalizeTitle(title).split(" ").filter(Boolean)),
   );
 
   if (!queryTokens.size || !candidateTokens.size) return 0;
@@ -86,27 +107,39 @@ function dateValue(date: DateParts | null | undefined) {
 function dateLabel(date: DateParts | null | undefined) {
   if (!date?.year) return "Fecha por confirmar";
   if (!date.month) return String(date.year);
-  return new Date(date.year, date.month - 1, date.day ?? 1).toLocaleDateString("es-ES", {
+
+  return new Date(
+    date.year,
+    date.month - 1,
+    date.day ?? 1,
+  ).toLocaleDateString("es-ES", {
     day: "numeric",
     month: "long",
     year: "numeric",
   });
 }
 
-function isUpcomingMedia(media: RelatedMedia) {
+function isFuture(media: AnimeMedia) {
   if (media.status === "NOT_YET_RELEASED") return true;
 
-  const today = Number(new Date().toISOString().slice(0, 10).replace(/-/g, ""));
-  return dateValue(media.startDate) >= today;
+  const today = Number(
+    new Date().toISOString().slice(0, 10).replace(/-/g, ""),
+  );
+
+  return Boolean(media.startDate?.year) && dateValue(media.startDate) >= today;
 }
 
 function wait(ms: number) {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
-function readCache(key: string): SearchResult | undefined {
+function cacheKey(title: string) {
+  return CACHE_PREFIX + normalizeTitle(title);
+}
+
+function readCache(title: string): SearchResult | undefined {
   try {
-    const raw = localStorage.getItem(CACHE_PREFIX + normalizeTitle(key));
+    const raw = localStorage.getItem(cacheKey(title));
     if (!raw) return undefined;
 
     const parsed = JSON.parse(raw) as {
@@ -115,7 +148,7 @@ function readCache(key: string): SearchResult | undefined {
     };
 
     if (!parsed || Date.now() - parsed.savedAt > CACHE_TTL) {
-      localStorage.removeItem(CACHE_PREFIX + normalizeTitle(key));
+      localStorage.removeItem(cacheKey(title));
       return undefined;
     }
 
@@ -125,87 +158,93 @@ function readCache(key: string): SearchResult | undefined {
   }
 }
 
-function writeCache(key: string, data: SearchResult) {
+function writeCache(title: string, data: SearchResult) {
   try {
     localStorage.setItem(
-      CACHE_PREFIX + normalizeTitle(key),
-      JSON.stringify({ savedAt: Date.now(), data }),
+      cacheKey(title),
+      JSON.stringify({
+        savedAt: Date.now(),
+        data,
+      }),
     );
   } catch {}
 }
 
-async function searchWatchedBatch(
+function mediaFields(depth: number): string {
+  const fields = [
+    "id",
+    "idMal",
+    "type",
+    "title { romaji english }",
+    "startDate { year month day }",
+    "coverImage { extraLarge large }",
+    "format",
+    "status",
+  ];
+
+  if (depth > 0) {
+    fields.push(
+      [
+        "relations(page: 1, perPage: " + RELATIONS_PER_PAGE + ") {",
+        "  edges {",
+        "    relationType",
+        "    node {",
+        mediaFields(depth - 1)
+          .split("\n")
+          .map((line) => "      " + line)
+          .join("\n"),
+        "    }",
+        "  }",
+        "}",
+      ].join("\n"),
+    );
+  }
+
+  return fields.join("\n");
+}
+
+function buildSearchQuery(entries: LibraryEntry[]) {
+  const variableDefinitions = entries
+    .map((_, index) => "$s" + index + ": String!")
+    .join("\n  ");
+
+  const pages = entries
+    .map(
+      (_, index) =>
+        [
+          "a" + index + ": Page(page: 1, perPage: " + SEARCH_RESULTS + ") {",
+          "  media(search: $s" + index + ", type: ANIME) {",
+          mediaFields(RELATION_DEPTH)
+            .split("\n")
+            .map((line) => "    " + line)
+            .join("\n"),
+          "  }",
+          "}",
+        ].join("\n"),
+    )
+    .join("\n");
+
+  return [
+    "query CollectionUpcoming(",
+    "  " + variableDefinitions,
+    ") {",
+    pages,
+    "}",
+  ].join("\n");
+}
+
+async function searchBatch(
   entries: LibraryEntry[],
 ): Promise<{ results: SearchResult[]; limited: boolean }> {
   if (!entries.length) return { results: [], limited: false };
 
   const variables: Record<string, string> = {};
-  const aliases = entries.map((entry, index) => {
-    const variable = "s" + index;
-    variables[variable] = entry.title;
-    return { alias: "a" + index, variable, entry };
+
+  entries.forEach((entry, index) => {
+    variables["s" + index] = entry.title;
   });
 
-  const mediaFields = `
-    id
-    idMal
-    title {
-      romaji
-      english
-    }
-    startDate {
-      year
-      month
-      day
-    }
-    coverImage {
-      extraLarge
-      large
-    }
-    format
-    status
-    relations(page: 1, perPage: 25) {
-      edges {
-        relationType
-        node {
-          id
-          idMal
-          title {
-            romaji
-            english
-          }
-          startDate {
-            year
-            month
-            day
-          }
-          coverImage {
-            extraLarge
-            large
-          }
-          format
-          status
-        }
-      }
-    }
-  `;
-
-  const query = `
-    query CollectionUpcoming(
-      ${aliases.map(({ variable }) => "$" + variable + ": String!").join("\n      ")}
-    ) {
-      ${aliases
-        .map(
-          ({ alias, variable }) => `
-      ${alias}: Page(page: 1, perPage: 5) {
-        media(search: $${variable}, type: ANIME) {
-          ${mediaFields}
-        }
-      }`,
-        )
-        .join("\n")}
-    }
-  `;
+  const query = buildSearchQuery(entries);
 
   try {
     const response = await fetch("https://graphql.anilist.co", {
@@ -214,62 +253,148 @@ async function searchWatchedBatch(
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify({ query, variables }),
+      body: JSON.stringify({
+        query,
+        variables,
+      }),
     });
 
     const payload = await response.json().catch(() => null);
 
     if (response.status === 429) {
-      console.warn("[Renanime] AniList rate limit reached while resolving collection.");
+      console.warn("[Renanime] AniList rate limit reached.", {
+        retryAfter: response.headers.get("Retry-After"),
+      });
       return { results: [], limited: true };
     }
 
     if (!response.ok || payload?.errors) {
-      console.warn("[Renanime] AniList collection query failed:", {
+      console.warn("[Renanime] AniList query failed:", {
         status: response.status,
         errors: payload?.errors ?? null,
       });
       return { results: [], limited: false };
     }
 
-    const results: SearchResult[] = [];
+    return {
+      results: entries.map((entry, index) => {
+        const media = (payload.data?.["a" + index]?.media ?? []) as AnimeMedia[];
 
-    aliases.forEach(({ alias, entry }) => {
-      const media = (payload.data?.[alias]?.media ?? []) as SearchMedia[];
-
-      const source =
-        [...media]
-          .sort(
+        const source =
+          [...media].sort(
             (a, b) =>
-              titleSimilarity(entry.title, b) - titleSimilarity(entry.title, a),
+              titleSimilarity(entry.title, b) -
+              titleSimilarity(entry.title, a),
           )[0] ?? null;
 
-      results.push({
-        source,
-        sourceTitle: entry.title,
-      });
-    });
-
-    return { results, limited: false };
+        return {
+          source,
+          sourceTitle: entry.title,
+        };
+      }),
+      limited: false,
+    };
   } catch (error) {
-    console.warn("[Renanime] AniList collection request failed:", error);
+    console.warn("[Renanime] AniList request failed:", error);
     return { results: [], limited: false };
   }
 }
 
-async function fetchUpcoming(entries: LibraryEntry[]) {
-  const watchedEntries = entries.filter((entry) => entry.state.status === "WATCHED");
+function collectUpcoming(
+  source: AnimeMedia,
+  sourceTitle: string,
+  watchedIds: Set<number>,
+  watchedTitles: Set<string>,
+  result: ComingItem[],
+  seen: Set<number>,
+) {
+  const queue: Array<{
+    media: AnimeMedia;
+    depth: number;
+    path: string[];
+  }> = [
+    {
+      media: source,
+      depth: 0,
+      path: [],
+    },
+  ];
+
+  const visited = new Set<number>([source.id]);
+
+  while (queue.length) {
+    const current = queue.shift();
+    if (!current || current.depth >= RELATION_DEPTH) continue;
+
+    current.media.relations?.edges?.forEach((edge) => {
+      const node = edge.node;
+      const relationType = edge.relationType ?? "";
+
+      if (!node || !TRAVERSABLE_RELATIONS.has(relationType)) return;
+      if (visited.has(node.id)) return;
+
+      visited.add(node.id);
+
+      const nextPath = [...current.path, relationType];
+
+      if (
+        node.type === "ANIME" &&
+        (node.format === "TV" || node.format === "MOVIE") &&
+        isFuture(node) &&
+        !watchedIds.has(node.id) &&
+        !watchedTitles.has(normalizeTitle(titleOf(node))) &&
+        !seen.has(node.id)
+      ) {
+        seen.add(node.id);
+        result.push({
+          ...node,
+          kind: "RELEASE",
+          sourceTitle,
+          relationType,
+        });
+      }
+
+      if (current.depth + 1 < RELATION_DEPTH) {
+        queue.push({
+          media: node,
+          depth: current.depth + 1,
+          path: nextPath,
+        });
+      }
+    });
+  }
+}
+
+async function fetchUpcoming(
+  entries: LibraryEntry[],
+  onProgress?: (completed: number, total: number) => void,
+) {
+  const watchedEntries = entries.filter(
+    (entry) => entry.state.status === "WATCHED",
+  );
+
+  const watchedIds = new Set<number>();
+  const watchedTitles = new Set(
+    watchedEntries.map((entry) => normalizeTitle(entry.title)),
+  );
+
   const result: ComingItem[] = [];
   const seen = new Set<number>();
   let limited = false;
+  let completed = 0;
 
-  for (let index = 0; index < watchedEntries.length; index += SEARCH_BATCH_SIZE) {
+  for (
+    let index = 0;
+    index < watchedEntries.length;
+    index += SEARCH_BATCH_SIZE
+  ) {
     const batch = watchedEntries.slice(index, index + SEARCH_BATCH_SIZE);
     const resolved: SearchResult[] = [];
     const missing: LibraryEntry[] = [];
 
     batch.forEach((entry) => {
       const cached = readCache(entry.title);
+
       if (cached) {
         resolved.push(cached);
       } else {
@@ -278,51 +403,46 @@ async function fetchUpcoming(entries: LibraryEntry[]) {
     });
 
     if (missing.length) {
-      const fetched = await searchWatchedBatch(missing);
+      const fetched = await searchBatch(missing);
 
       if (fetched.limited) {
         limited = true;
         break;
       }
 
-      fetched.results.forEach((item, itemIndex) => {
-        const entry = missing[itemIndex];
-        if (entry) writeCache(entry.title, item);
+      fetched.results.forEach((item) => {
+        writeCache(item.sourceTitle, item);
         resolved.push(item);
       });
 
       if (index + SEARCH_BATCH_SIZE < watchedEntries.length) {
-        await wait(SEARCH_DELAY_MS);
+        await wait(BATCH_DELAY_MS);
       }
     }
 
     resolved.forEach(({ source, sourceTitle }) => {
       if (!source) return;
 
-      source.relations?.edges?.forEach((edge) => {
-        const node = edge.node;
-        if (!node || !isUpcomingMedia(node)) return;
+      watchedIds.add(source.id);
 
-        const relationType = edge.relationType ?? "";
-
-        if (!["SEQUEL", "SIDE_STORY", "SPIN_OFF", "OTHER"].includes(relationType)) {
-          return;
-        }
-
-        if (seen.has(node.id)) return;
-
-        seen.add(node.id);
-        result.push({
-          ...node,
-          kind: "RELEASE",
-          sourceTitle,
-          relationType,
-        });
-      });
+      collectUpcoming(
+        source,
+        sourceTitle,
+        watchedIds,
+        watchedTitles,
+        result,
+        seen,
+      );
     });
+
+    completed += batch.length;
+    onProgress?.(completed, watchedEntries.length);
   }
 
-  return { candidates: result, limited };
+  return {
+    candidates: result,
+    limited,
+  };
 }
 
 export default function ComingSoonView({ entries }: Props) {
