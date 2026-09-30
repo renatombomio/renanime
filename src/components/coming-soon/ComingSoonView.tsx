@@ -1,15 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import type { LibraryEntry } from "../../types/personal";
 
 interface DateParts {
   year?: number | null;
   month?: number | null;
   day?: number | null;
-}
-
-interface AiringEpisode {
-  airingAt: number;
-  episode: number;
 }
 
 interface RelatedMedia {
@@ -59,15 +54,6 @@ function normalizeTitle(title: string) {
     .replace(/[^a-z0-9]+/g, " ")
     .trim()
     .replace(/\\s+/g, " ");
-}
-
-function titleMatches(entryTitle: string, node: RelatedMedia) {
-  const wanted = normalizeTitle(entryTitle);
-  if (!wanted) return false;
-
-  return [node.title?.romaji, node.title?.english]
-    .filter((value): value is string => Boolean(value))
-    .some((value) => normalizeTitle(value) === wanted);
 }
 
 function dateValue(date: DateParts | null | undefined) {
@@ -347,10 +333,7 @@ export default function ComingSoonView({ entries }: Props) {
           <div className="coming-grid">
             {items.map((item, index) => {
               const title = titleOf(item);
-              const isEpisode = item.kind === "EPISODE";
-              const label = isEpisode
-                ? `Episodio ${item.episode ?? "nuevo"} · ${episodeDateLabel(item.airingAt)}`
-                : `${dateLabel(item.startDate)} · ${item.format === "MOVIE" ? "Film" : "Series"}`;
+              const label = `${dateLabel(item.startDate)} · ${item.format === "MOVIE" ? "Film" : "Series"}`;
 
               return (
                 <a
@@ -370,13 +353,13 @@ export default function ComingSoonView({ entries }: Props) {
                         <span>Renanime</span>
                       </div>
                     )}
-                    <span className="coming-badge">{isEpisode ? "PRÓXIMO EP." : "PRÓXIMO"}</span>
+                    <span className="coming-badge">PRÓXIMO</span>
                   </div>
 
                   <div className="coming-info">
                     <h3>{title}</h3>
                     <span>{label}</span>
-                    <small>{isEpisode ? item.sourceTitle : `Relacionado con ${item.sourceTitle}`}</small>
+                    <small>Continuación de ${item.sourceTitle}</small>
                   </div>
                 </a>
               );
