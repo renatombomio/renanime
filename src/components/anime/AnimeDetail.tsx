@@ -210,7 +210,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
        {(() => {
         const seen = new Set<number>();
         const items = (media?.recommendations?.nodes ?? [])
-          .map((node) => node.media)
+          .map((node) => node.mediaRecommendation)
           .filter((item): item is NonNullable<typeof item> => Boolean(item))
           .filter((item) => item.id !== media?.id && !seen.has(item.id) && seen.add(item.id))
           .slice(0, 8);
