@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { getFranchiseId } from "../../data/franchise";
 
 interface LibraryEntry {
   animeId: string;
@@ -49,14 +50,43 @@ interface Props {
 
 const CACHE_PREFIX = "renanime:coming-soon:v2:";
 const CACHE_TTL = 6 * 60 * 60 * 1000;
-const BATCH_SIZE = 3;
-const MAX_RETRIES = 3;
+const BATCH_SIZE = 10;
+const MAX_RETRIES = 1;
 const ALLOWED_RELATIONS = new Set([
   "SEQUEL",
-  "PREQUEL",
   "SIDE_STORY",
   "SPIN_OFF",
   "ALTERNATIVE",
+]);
+
+const ACTIVE_RADAR_TITLES = new Set([
+  "One Punch Man",
+  "Mob Psycho 100",
+  "Noragami",
+  "Re:Zero kara Hajimeru Isekai Seikatsu",
+  "Tate no Yuusha no Nariagari",
+  "Enen no Shouboutai",
+  "Tensei shitara Slime Datta Ken",
+  "Yakusoku no Neverland",
+  "Mahoutsukai no Yome",
+  "Dorohedoro",
+  "Tower of God",
+  "Mushoku Tensei: Jobless Reincarnation",
+  "SK8 the Infinity",
+  "Fumetsu no Anata e",
+  "Sono Bisque Doll wa Koi wo Suru",
+  "Youkoso Jitsuryoku Shijou Shugi no Kyoushitsu e",
+  "Jigokuraku",
+  "Made in Abyss",
+  "Kaiju No. 8",
+  "Wind Breaker",
+  "Sousou no Frieren",
+  "Sakamoto Days",
+  "Solo Leveling",
+  "Yomi no Tsugai",
+  "Hikaru ga Shinda Natsu",
+  "Gachiakuta",
+  "The Eminence in Shadow",
 ]);
 
 function titleOf(media: RelatedMedia | undefined, fallback = "Sin título") {
@@ -203,11 +233,19 @@ async function fetchBatch(entries: LibraryEntry[]): Promise<{ ok: boolean; data:
 export default function ComingSoonView({ entries }: Props) {
   const [sources, setSources] = useState<SourceMedia[]>([]);
   const [loading, setLoading] = useState(true);
+  const [apiLimited, setApiLimited] = useState(false);
 
-  const uniqueEntries = useMemo(
-    () => entries.filter((entry, index, all) => all.findIndex((item) => item.title.toLowerCase() === entry.title.toLowerCase()) === index),
-    [entries],
-  );
+  const uniqueEntries = useMemo(() => {
+    const seen = new Set<string>();
+
+    return entries.filter((entry) => {
+      const key = entry.title.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+
+      return Boolean(getFranchiseId(entry)) || ACTIVE_RADAR_TITLES.has(entry.title);
+    });
+  }, [entries]);
 
   useEffect(() => {
     let cancelled = false;
@@ -230,22 +268,20 @@ export default function ComingSoonView({ entries }: Props) {
         const batch = missing.slice(offset, offset + BATCH_SIZE);
         const result = await fetchBatch(batch);
 
-        // No cacheamos fallos: un 429 temporal no debe ocultar un título durante 6 horas.
-        if (result.ok) {
-          batch.forEach((entry, index) => {
-            writeCache(entry.title, result.data[index] ?? null);
-          });
-
-          if (!cancelled) {
-            setSources((current) => [
-              ...current,
-              ...result.data.filter((item): item is SourceMedia => Boolean(item)),
-            ]);
-          }
+        if (!result.ok) {
+          if (!cancelled) setApiLimited(true);
+          break;
         }
 
-        if (offset + BATCH_SIZE < missing.length) {
-          await wait(350);
+        batch.forEach((entry, index) => {
+          writeCache(entry.title, result.data[index] ?? null);
+        });
+
+        if (!cancelled) {
+          setSources((current) => [
+            ...current,
+            ...result.data.filter((item): item is SourceMedia => Boolean(item)),
+          ]);
         }
       }
 
