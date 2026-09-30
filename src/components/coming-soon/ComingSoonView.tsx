@@ -146,7 +146,7 @@ async function searchWatchedBatch(
     return { alias: "a" + index, variable, entry };
   });
 
-  const mediaFields = \`
+  const mediaFields = `
     id
     idMal
     title {
@@ -188,24 +188,24 @@ async function searchWatchedBatch(
         }
       }
     }
-  \`;
+  `;
 
-  const query = \`
+  const query = `
     query CollectionUpcoming(
-      \${aliases.map(({ variable }) => "$" + variable + ": String!").join("\\n      ")}
+      ${aliases.map(({ variable }) => "$" + variable + ": String!").join("\\n      ")}
     ) {
-      \${aliases
+      ${aliases
         .map(
-          ({ alias, variable }) => \`
-      \${alias}: Page(page: 1, perPage: 5) {
-        media(search: $\${variable}, type: ANIME) {
-          \${mediaFields}
+          ({ alias, variable }) => `
+      ${alias}: Page(page: 1, perPage: 5) {
+        media(search: $${variable}, type: ANIME) {
+          ${mediaFields}
         }
-      }\`,
+      }`,
         )
-        .join("\\n")}
+        .join("\n")}
     }
-  \`;
+  `;
 
   try {
     const response = await fetch("https://graphql.anilist.co", {
