@@ -116,32 +116,38 @@ function writeCache(title: string, data: SourceMedia | null) {
 async function fetchBatch(
   entries: LibraryEntry[],
 ): Promise<{ ok: boolean; data: Array<SourceMedia | null>; limited?: boolean }> {
-  const variables: Record<string, string> = {};
+  const variables: Record<string, number> = {};
+
   const fields = entries.map((entry, index) => {
-    const key = "s" + index;
+    const key = "id" + index;
     const alias = "a" + index;
-    variables[key] = entry.title;
+    const id = Number.parseInt(entry.animeId, 10);
+
+    if (!Number.isInteger(id)) {
+      throw new Error(`AniList ID inválido para "${entry.title}": ${entry.animeId}`);
+    }
+
+    variables[key] = id;
+
     return `
-      ${alias}: Page(page: 1, perPage: 1) {
-        media(search: $${key}, type: ANIME, sort: SEARCH_MATCH) {
-          id
-          title { romaji english }
-          startDate { year month day }
-          coverImage { extraLarge large }
-          format
-          status
-          nextAiringEpisode { airingAt episode }
-          relations(page: 1, perPage: 20) {
-            edges {
-              relationType
-              node {
-                id
-                title { romaji english }
-                startDate { year month day }
-                coverImage { extraLarge large }
-                format
-                status
-              }
+      ${alias}: Media(id: $${key}, type: ANIME) {
+        id
+        title { romaji english }
+        startDate { year month day }
+        coverImage { extraLarge large }
+        format
+        status
+        nextAiringEpisode { airingAt episode }
+        relations(page: 1, perPage: 20) {
+          edges {
+            relationType
+            node {
+              id
+              title { romaji english }
+              startDate { year month day }
+              coverImage { extraLarge large }
+              format
+              status
             }
           }
         }
@@ -149,25 +155,32 @@ async function fetchBatch(
     `;
   }).join("\n");
 
-  const definitions = entries.map((_, index) => "$s" + index + ": String!").join(", ");
+  const definitions = entries.map((_, index) => "$id" + index + ": Int!").join(", ");
   const query = `query CollectionUpcoming(${definitions}) { ${fields} }`;
 
   try {
-    const response = await fetch("https://graphql.anilist.co/", {
+    const response = await fetch("https://graphql.anilist.co", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
       body: JSON.stringify({ query, variables }),
     });
+
+    const payload = await response.json().catch(() => null);
 
     if (response.status === 429) {
       console.warn("[Renanime] AniList rate limit reached. Stopping the queue.");
       return { ok: false, data: [], limited: true };
     }
 
-    const payload = await response.json().catch(() => null);
-
     if (!response.ok) {
-      console.warn("[Renanime] AniList request rejected:", response.status, payload?.errors ?? payload);
+      console.warn(
+        "[Renanime] AniList request rejected:",
+        response.status,
+        payload?.errors ?? payload,
+      );
       return { ok: false, data: [] };
     }
 
@@ -179,7 +192,7 @@ async function fetchBatch(
     return {
       ok: true,
       data: entries.map(
-        (_, index) => (payload.data?.["a" + index]?.media?.[0] as SourceMedia | undefined) ?? null,
+        (_, index) => (payload.data?.["a" + index] as SourceMedia | null | undefined) ?? null,
       ),
     };
   } catch (error) {
