@@ -38,8 +38,8 @@ interface Props {
 
 const CACHE_PREFIX = "renanime:coming-soon:v5:";
 const CACHE_TTL = 6 * 60 * 60 * 1000;
-const UPCOMING_PAGE_SIZE = 20;
-const MAX_UPCOMING_PAGES = 10;
+const UPCOMING_PAGE_SIZE = 50;
+const MAX_UPCOMING_PAGES = 6;
 
 function titleOf(media: RelatedMedia | undefined, fallback = "Sin título") {
   return media?.title?.romaji || media?.title?.english || fallback;
@@ -48,12 +48,12 @@ function titleOf(media: RelatedMedia | undefined, fallback = "Sin título") {
 function normalizeTitle(title: string) {
   return title
     .normalize("NFKD")
-    .replace(/[\\u0300-\\u036f]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/&/g, " and ")
     .replace(/[^a-z0-9]+/g, " ")
     .trim()
-    .replace(/\\s+/g, " ");
+    .replace(/\s+/g, " ");
 }
 
 function dateValue(date: DateParts | null | undefined) {
@@ -117,16 +117,21 @@ async function fetchUpcomingPage(page: number): Promise<{
   limited?: boolean;
 }> {
   const query = `
-    query UpcomingCollection($page: Int!, $perPage: Int!) {
+    query UpcomingCollection(
+      $page: Int!
+      $perPage: Int!
+      $startDate: FuzzyDateInt!
+      $sort: [MediaSort]
+    ) {
       Page(page: $page, perPage: $perPage) {
         pageInfo {
           hasNextPage
         }
         media(
           type: ANIME
-          status: NOT_YET_RELEASED
           format_in: [TV, MOVIE]
-          sort: START_DATE
+          startDate_greater: $startDate
+          sort: $sort
         ) {
           id
           idMal
@@ -174,6 +179,8 @@ async function fetchUpcomingPage(page: number): Promise<{
         variables: {
           page,
           perPage: UPCOMING_PAGE_SIZE,
+          startDate: Number(new Date().toISOString().slice(0, 10).replace(/-/g, "")),
+          sort: ["START_DATE"],
         },
       }),
     });
@@ -258,12 +265,23 @@ async function fetchUpcoming(entries: LibraryEntry[]) {
 
       if (!matchedEntry) return;
 
-      // Desde el punto de vista de la nueva obra, PREQUEL significa
-      // que la obra relacionada es anterior: por tanto, es una continuación.
-      const isNewSeason = relationType === "PREQUEL";
-      const isMovieContinuation = candidate.format === "MOVIE" && relationType === "PARENT";
+      // La relación se expresa desde la nueva obra hacia la obra que ya vimos.
+      // PREQUEL es la señal más clara para una nueva temporada; para películas
+      // AniList puede usar varias relaciones legítimas, así que aceptamos las
+      // relaciones de continuación/derivación y descartamos las puramente
+      // alternativas o de personajes.
+      const validContinuationRelations = new Set([
+        "PREQUEL",
+        "SEQUEL",
+        "SIDE_STORY",
+        "PARENT",
+        "ADAPTATION",
+        "OTHER",
+        "COMPILATION",
+        "CONTAINS",
+      ]);
 
-      if (!isNewSeason && !isMovieContinuation) return;
+      if (!validContinuationRelations.has(relationType)) return;
       if (ownedTitles.has(normalizeTitle(titleOf(candidate)))) return;
       if (seen.has(candidate.id)) return;
 
