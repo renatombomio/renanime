@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import type { PersonalAnimeEntry } from "../../types/personal";
 import { getPersonalLibrary, subscribeToPersonalLibrary } from "../../data/personal-library";
-import PersonalLibraryActions from "./PersonalLibraryActions";
 
 type Mode = "WATCHED" | "PENDING";
 interface Props { mode: Mode; }
@@ -72,7 +71,7 @@ export default function PersonalLibraryView({mode}:Props){
             <div className="personal-library-poster">{image?<img src={image} alt="" loading="lazy"/>:<div className="personal-library-placeholder"/>}</div>
             <div className="personal-library-info"><h2>{title}</h2><span>{formatDate(item?.startDate)} · {item?.format==="MOVIE"?"Film":"Series"}</span></div>
           </a>
-          <PersonalLibraryActions animeId={Number(entry.animeId)}/>
+          
         </article>;
       })}
     </div>:<div className="personal-library-empty">
