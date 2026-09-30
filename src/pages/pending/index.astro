@@ -3,20 +3,17 @@ import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/layout/Navbar.astro";
 import Footer from "../../components/layout/Footer.astro";
 import SectionHeader from "../../components/ui/SectionHeader.astro";
-import PendingView from "../../components/pending/PendingView";
-import { getPendingLibrary } from "../../data/library";
-
-const entries = getPendingLibrary();
+import PersonalLibraryView from "../../components/personal-library/PersonalLibraryView";
 ---
 
 <Layout title="Pendientes — Renanime's Gallery">
   <Navbar />
   <main id="main-content" class="pending-page">
     <div class="pending-header">
-      <SectionHeader eyebrow="La lista pendiente" title="Pendientes" description="Historias que todavía están esperando su momento." />
+      <SectionHeader eyebrow="Mi biblioteca" title="Mi lista" description="Las historias que quieres ver algún día. Añade anime desde Buscar y pásalo a tu colección cuando lo hayas visto." />
     </div>
     <section class="pending-content" aria-label="Anime pendiente">
-      <PendingView entries={entries} client:load />
+      <PersonalLibraryView mode="PENDING" client:load />
     </section>
   </main>
   <Footer />
