@@ -137,6 +137,27 @@ export default function SoundtrackPlayer() {
   }, []);
 
   useEffect(() => {
+    const handleRouteChange = () => {
+      const nextKey = getPlaylistKey();
+      if (nextKey === playlistKey) return;
+
+      const wasPlaying = !audioRef.current?.paused && enabled;
+      setPlaylistKey(nextKey);
+      setTrackIndex(0);
+      setPosition(0);
+
+      if (wasPlaying) {
+        window.requestAnimationFrame(() => {
+          setEnabled(true);
+        });
+      }
+    };
+
+    document.addEventListener("astro:after-swap", handleRouteChange);
+    return () => document.removeEventListener("astro:after-swap", handleRouteChange);
+  }, [playlistKey, enabled]);
+
+  useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !track) return;
 
