@@ -5,10 +5,10 @@ interface Props { variant?: "default" | "ghibli"; }
 const links = [
   { label: "Inicio", href: "/" },
   { label: "Favoritos", href: "/favorites/" },
-  { label: "Colección", href: "/collection/" },
+  { label: "Mi colección", href: "/collection/" },
   { label: "Géneros", href: "/genres/" },
   { label: "Buscar", href: "/search/" },
-  { label: "Pendientes", href: "/pending/" },
+  { label: "Mi lista", href: "/pending/" },
   { label: "El secreto de Ren", href: "/ghibli/" },
 ];
 
