@@ -22,10 +22,12 @@ type SavedState = {
 const PLAYLISTS: Record<PlaylistKey, Track[]> = {
   hero: [
     { title: "Dandadan — Main Theme", src: "/audio/hero/dandadan-main-theme.mp3" },
-    { title: "Naruto — Main Theme", src: "/audio/hero/naruto-main-theme.mp3" },
     { title: "Kimi no Na Wa — Main Theme", src: "/audio/hero/kiminonawa-main-theme.mp3" },
     { title: "Kiznaiver — Theme", src: "/audio/hero/kiznaiver-theme-main.mp3" },
     { title: "Mashle — Main Theme", src: "/audio/hero/mashle-main-theme.mp3" },
+    { title: "Naruto — Main Theme", src: "/audio/hero/naruto-main-theme.mp3" },
+    { title: "Noragami — Main Theme", src: "/audio/hero/Noragami-main-theme.mp3" },
+    { title: "Wolf's Rain — Main Theme", src: "/audio/hero/WolfsRain-main-theme.mp3" },
   ],
   ghibli: [
     { title: "Arrietty — Main Theme", src: "/audio/ghibli/arrietys-main-theme.mp3" },
