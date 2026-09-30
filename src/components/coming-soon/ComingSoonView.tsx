@@ -131,9 +131,9 @@ async function fetchBatch(entries: LibraryEntry[]): Promise<{ ok: boolean; data:
     const key = "s" + index;
     const alias = "a" + index;
     variables[key] = entry.title;
-    return \`
-      \${alias}: Page(page: 1, perPage: 1) {
-        media(search: \$\${key}, type: ANIME, sort: SEARCH_MATCH) {
+    return `
+      ${alias}: Page(page: 1, perPage: 1) {
+        media(search: $${key}, type: ANIME, sort: SEARCH_MATCH) {
           id
           title { romaji english }
           startDate { year month day }
@@ -156,11 +156,11 @@ async function fetchBatch(entries: LibraryEntry[]): Promise<{ ok: boolean; data:
           }
         }
       }
-    \`;
-  }).join("\\n");
+    `;
+  }).join("\n");
 
-  const definitions = entries.map((_, index) => "\$s" + index + ": String!").join(", ");
-  const query = \`query CollectionUpcoming(\${definitions}) { \${fields} }\`;
+  const definitions = entries.map((_, index) => "$s" + index + ": String!").join(", ");
+  const query = `query CollectionUpcoming(${definitions}) { ${fields} }`;
 
   for (let attempt = 0; attempt < MAX_RETRIES; attempt += 1) {
     try {
