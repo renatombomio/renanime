@@ -449,12 +449,17 @@ export default function ComingSoonView({ entries }: Props) {
   const [items, setItems] = useState<ComingItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [apiLimited, setApiLimited] = useState(false);
+  const [progress, setProgress] = useState({ completed: 0, total: 0 });
 
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
-      const result = await fetchUpcoming(entries);
+      const result = await fetchUpcoming(entries, (completed, total) => {
+        if (!cancelled) {
+          setProgress({ completed, total });
+        }
+      });
 
       if (!cancelled) {
         setItems(
@@ -476,7 +481,16 @@ export default function ComingSoonView({ entries }: Props) {
 
 
   if (loading && !items.length) {
-    return <div className="coming-loading">Buscando nuevas temporadas y películas de mi colección…</div>;
+    return (
+      <div className="coming-loading">
+        <span>Buscando nuevas temporadas y películas de mi colección…</span>
+        {progress.total ? (
+          <small>
+            {progress.completed} / {progress.total} animes analizados
+          </small>
+        ) : null}
+      </div>
+    );
   }
 
   return (
@@ -549,7 +563,7 @@ export default function ComingSoonView({ entries }: Props) {
 
       <style>{`
         .coming-view { width: 100%; }
-        .coming-loading, .coming-empty {
+.coming-loading, .coming-empty {
           padding: 4rem 1rem;
           border: 1px solid var(--color-border);
           color: var(--color-muted-400);
@@ -557,6 +571,14 @@ export default function ComingSoonView({ entries }: Props) {
           font-family: var(--font-meta);
           font-size: .68rem;
           letter-spacing: .08em;
+          text-transform: uppercase;
+        }
+        .coming-loading { display: grid; gap: .65rem; }
+        .coming-loading small {
+          color: var(--color-muted-500);
+          font-family: var(--font-meta);
+          font-size: .52rem;
+          letter-spacing: .06em;
           text-transform: uppercase;
         }
         .coming-empty { display: grid; gap: .7rem; }
