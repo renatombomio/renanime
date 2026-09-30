@@ -1,0 +1,53 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/layout/Navbar.astro";
+import Footer from "../../components/layout/Footer.astro";
+import SectionHeader from "../../components/ui/SectionHeader.astro";
+import HomeGallery from "../../components/home/HomeGallery";
+import { getWatchedLibrary } from "../../data/library";
+
+const collectionEntries = getWatchedLibrary();
+---
+
+<Layout title="Colección de Ren — Renanime's Gallery">
+  <Navbar />
+
+  <main id="main-content" class="ren-collection-page">
+    <div class="ren-collection-header">
+      <SectionHeader
+        eyebrow="Archivo de Ren"
+        title="Colección de Ren"
+        description="La colección de anime que Ren ha visto. Este es el archivo editorial de Renanime's Gallery; no es la biblioteca personal del visitante."
+      />
+    </div>
+
+    <section class="ren-collection-content" aria-label="Colección de Ren">
+      <HomeGallery entries={collectionEntries} client:load />
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .ren-collection-page {
+    min-height: 70vh;
+    padding-block: clamp(6rem, 11vw, 10rem) var(--section-space);
+  }
+
+  .ren-collection-header,
+  .ren-collection-content {
+    width: min(calc(100% - (var(--gutter) * 2)), var(--container-max));
+    margin-inline: auto;
+  }
+
+  .ren-collection-header {
+    margin-bottom: clamp(3rem, 6vw, 5rem);
+  }
+
+  @media (max-width: 700px) {
+    .ren-collection-page {
+      padding-top: 5rem;
+    }
+  }
+</style>
