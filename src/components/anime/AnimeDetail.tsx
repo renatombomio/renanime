@@ -81,14 +81,22 @@ async function translateToSpanish(text:string){
 }
 
 async function fetchGenreRecommendations(genres:string[],excludeId:number){
-  const selected=genres.filter(Boolean).slice(0,3);
+  const selected=[...new Set(genres.filter(Boolean))].slice(0,3);
   if(!selected.length)return [];
-  const query=`query RelatedByGenre($genres:[String]){Page(page:1,perPage:20){media(type:ANIME,genre_in:$genres,sort:[POPULARITY_DESC,SCORE_DESC]){id title{romaji english} coverImage{extraLarge large} format startDate{year}}}}`;
+  const query=`query RelatedByGenre(\$genre:String!){Page(page:1,perPage:12){media(type:ANIME,genre:\$genre,sort:POPULARITY_DESC){id title{romaji english} coverImage{extraLarge large} format startDate{year}}}}`;
   try{
-    const response=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables:{genres:selected}})});
-    if(!response.ok)return [];
-    const payload=await response.json();
-    return (payload.data?.Page?.media??[]).filter((item:any)=>item?.id!==excludeId);
+    const responses=await Promise.all(selected.map(async genre=>{
+      const response=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables:{genre}})});
+      if(!response.ok)return [];
+      const payload=await response.json();
+      return payload.data?.Page?.media??[];
+    }));
+    const seen=new Set<number>([excludeId]);
+    const merged:any[]=[];
+    responses.flat().forEach((item:any)=>{
+      if(item?.id&&!seen.has(item.id)){seen.add(item.id);merged.push(item);}
+    });
+    return merged.slice(0,12);
   }catch{return []}
 }
 
@@ -97,22 +105,15 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
     const cached=sessionStorage.getItem(CACHE_PREFIX+entry.animeId);
     if(cached) return JSON.parse(cached);
   } catch {}
-  const query=`query Detail($search:String!){Page(page:1,perPage:1){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} recommendations(sort:RATING_DESC){nodes{media{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}} relations{edges{relationType node{id type format title{romaji english} coverImage{extraLarge large}}}}}}}`;
+  const query=`query Detail($search:String!){Page(page:1,perPage:1){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} relations{edges{relationType node{id type format title{romaji english} coverImage{extraLarge large}}}}}}}`;
   try {
     const response=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables:{search:entry.title}})});
     if(!response.ok) return null;
     const payload=await response.json();
     const media=payload.data?.Page?.media?.[0]??null;
     if(!media)return null;
-    const current=media.recommendations?.nodes?.map((node:any)=>node.media).filter(Boolean)??[];
-    const seen=new Set<number>([media.id]);
-    const merged:any[]=[];
-    current.forEach((item:any)=>{if(item?.id&&!seen.has(item.id)){seen.add(item.id);merged.push(item)}});
-    if(merged.length<8){
-      const fallback=await fetchGenreRecommendations(media.genres??[],media.id);
-      fallback.forEach((item:any)=>{if(merged.length<8&&!seen.has(item.id)){seen.add(item.id);merged.push(item)}});
-    }
-    media.recommendations={nodes:merged.map((item:any)=>({media:item}))};
+    const related=await fetchGenreRecommendations(media.genres??[],media.id);
+    media.recommendations={nodes:related.slice(0,8).map((item:any)=>({media:item}))};
     try{sessionStorage.setItem(CACHE_PREFIX+entry.animeId,JSON.stringify(media));}catch{}
     return media;
   } catch { return null; }
