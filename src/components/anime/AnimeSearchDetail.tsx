@@ -98,7 +98,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
   const film=params.get("film");
 
   if(film==="the-red-turtle" && !Number.isFinite(id)){
-   setMedia({
+   const localMedia:Media={
     id:0,
     title:{english:"The Red Turtle",romaji:"The Red Turtle"},
     description:"A man is shipwrecked on a deserted island and discovers a mysterious red turtle.",
@@ -111,6 +111,10 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     studios:{nodes:[{name:"Studio Ghibli"}]},
     coverImage:{extraLarge:"https://www.ghibli.jp/images/red-turtle.jpg",large:"https://www.ghibli.jp/images/red-turtle.jpg"},
     bannerImage:"https://www.ghibli.jp/images/red-turtle.jpg",
+   };
+   setMedia(localMedia);
+   fetchGenreRecommendations(localMedia.genres??[],localMedia.id).then(items=>{
+    setMedia({...localMedia,recommendations:{nodes:items.slice(0,8).map((item:any)=>({media:item}))}});
    });
    setLoading(false);
    return;
