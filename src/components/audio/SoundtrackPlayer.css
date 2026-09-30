@@ -1,0 +1,221 @@
+/* Renanime audiovisual layer — intentionally independent from Hero styles. */
+
+.soundtrack-player {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 60;
+  width: min(360px, calc(100vw - 2rem));
+  color: var(--color-paper-50, #f5f2ec);
+  pointer-events: none;
+}
+
+.soundtrack-player__inner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .75rem;
+  padding: .65rem .7rem .65rem .65rem;
+  border: 1px solid rgba(245, 242, 236, .14);
+  border-radius: 999px;
+  background: rgba(9, 9, 9, .76);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, .28);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  pointer-events: auto;
+}
+
+.soundtrack-player__toggle,
+.soundtrack-player__controls button {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.soundtrack-player__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  min-width: 86px;
+  padding: .38rem .55rem;
+  border-radius: 999px;
+  background: rgba(245, 242, 236, .07);
+  color: var(--color-paper-100, #ebe7df);
+  font-family: var(--font-meta, monospace);
+  font-size: .48rem;
+  letter-spacing: .11em;
+  line-height: 1;
+  text-transform: uppercase;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.soundtrack-player__toggle:hover,
+.soundtrack-player__toggle:focus-visible {
+  background: rgba(245, 242, 236, .14);
+  color: #fff;
+}
+
+.soundtrack-player__glyph {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  color: var(--color-accent, #a48a68);
+  font-size: .8rem;
+}
+
+.soundtrack-player__bars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 12px;
+}
+
+.soundtrack-player__bars i {
+  display: block;
+  width: 2px;
+  height: 5px;
+  border-radius: 2px;
+  background: currentColor;
+  transform-origin: center;
+  animation: soundtrack-bar 900ms ease-in-out infinite alternate;
+}
+
+.soundtrack-player__bars i:nth-child(2) { animation-delay: -180ms; }
+.soundtrack-player__bars i:nth-child(3) { animation-delay: -420ms; }
+.soundtrack-player__bars i:nth-child(4) { animation-delay: -650ms; }
+
+.soundtrack-player__track {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .18rem;
+}
+
+.soundtrack-player__track-label {
+  color: var(--color-muted-500, #6f6b64);
+  font-family: var(--font-meta, monospace);
+  font-size: .42rem;
+  letter-spacing: .14em;
+  line-height: 1;
+}
+
+.soundtrack-player__track-title {
+  overflow: hidden;
+  color: var(--color-paper-200, #d8d2c8);
+  font-family: var(--font-body, Arial, sans-serif);
+  font-size: .68rem;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.soundtrack-player__controls {
+  display: flex;
+  gap: .2rem;
+}
+
+.soundtrack-player__controls button {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-muted-400, #8f8a82);
+  font-size: .7rem;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.soundtrack-player__controls button:hover,
+.soundtrack-player__controls button:focus-visible {
+  background: rgba(245, 242, 236, .08);
+  color: var(--color-paper-50, #f5f2ec);
+}
+
+body.theme-ghibli .soundtrack-player {
+  color: #19362f;
+}
+
+body.theme-ghibli .soundtrack-player__inner {
+  border-color: rgba(25, 54, 47, .12);
+  background: rgba(255, 255, 255, .84);
+  box-shadow: 0 14px 40px rgba(25, 54, 47, .14);
+}
+
+body.theme-ghibli .soundtrack-player__toggle {
+  background: rgba(24, 82, 138, .07);
+  color: #19362f;
+}
+
+body.theme-ghibli .soundtrack-player__toggle:hover,
+body.theme-ghibli .soundtrack-player__toggle:focus-visible {
+  background: rgba(24, 82, 138, .12);
+  color: #18528a;
+}
+
+body.theme-ghibli .soundtrack-player__glyph {
+  color: #f45164;
+}
+
+body.theme-ghibli .soundtrack-player__track-label {
+  color: #6a8279;
+}
+
+body.theme-ghibli .soundtrack-player__track-title {
+  color: #19362f;
+}
+
+body.theme-ghibli .soundtrack-player__controls button {
+  color: #527066;
+}
+
+body.theme-ghibli .soundtrack-player__controls button:hover,
+body.theme-ghibli .soundtrack-player__controls button:focus-visible {
+  background: rgba(25, 54, 47, .07);
+  color: #18528a;
+}
+
+@keyframes soundtrack-bar {
+  from { transform: scaleY(.45); }
+  to { transform: scaleY(1.6); }
+}
+
+@media (max-width: 640px) {
+  .soundtrack-player {
+    right: .75rem;
+    bottom: .75rem;
+    width: calc(100vw - 1.5rem);
+  }
+
+  .soundtrack-player__inner {
+    gap: .5rem;
+    padding: .55rem .55rem .55rem .5rem;
+  }
+
+  .soundtrack-player__toggle {
+    min-width: 78px;
+    padding-inline: .45rem;
+  }
+
+  .soundtrack-player__track-title {
+    font-size: .62rem;
+  }
+
+  .soundtrack-player__controls {
+    gap: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .soundtrack-player__bars i {
+    animation: none;
+  }
+
+  .soundtrack-player__toggle,
+  .soundtrack-player__controls button {
+    transition: none;
+  }
+}
