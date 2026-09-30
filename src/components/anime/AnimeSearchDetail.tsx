@@ -1,4 +1,5 @@
 import {useEffect,useState} from "react";
+import PersonalLibraryActions from "../personal-library/PersonalLibraryActions";
 
 interface Media{
  id:number;
@@ -217,6 +218,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
      <div className="anime-detail-copy">
       <h1>{title}</h1>
       <div className="anime-detail-meta"><span>{media.format==="MOVIE"?"Film":"Series"}</span><span>{date(media.startDate)}</span>{media.episodes&&<span>{media.episodes} episodios</span>}{media.duration&&<span>{media.duration} min</span>}</div>
+      {media.id > 0 && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>}
       {media.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map(genre=><span key={genre}>{genre}</span>)}</div>}
       <div className="anime-detail-synopsis-wrap">
        <p className="anime-detail-synopsis">{translated||synopsis||(hasSynopsis?"":"Todavía no hay una sinopsis disponible.")}</p>
