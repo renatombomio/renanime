@@ -14,7 +14,7 @@ interface Media{
  coverImage?:{extraLarge?:string|null;large?:string|null};
  bannerImage?:string|null;
  trailer?:{id?:string|null;site?:string|null;thumbnail?:string|null}|null;
- recommendations?:{nodes?:{media?:{id:number;title?:{romaji?:string|null;english?:string|null};coverImage?:{extraLarge?:string|null;large?:string|null};format?:string|null;startDate?:{year?:number|null}|null}|null}[]};
+ recommendations?:{nodes?:{mediaRecommendation?:{id:number;title?:{romaji?:string|null;english?:string|null};coverImage?:{extraLarge?:string|null;large?:string|null};format?:string|null;startDate?:{year?:number|null}|null}|null}[]};
 }
 
 function cleanDescription(text:string){
@@ -69,16 +69,13 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     bannerImage:"https://www.ghibli.jp/images/red-turtle.jpg",
    };
    setMedia(localMedia);
-   fetchGenreRecommendations(localMedia.genres??[],localMedia.id).then(items=>{
-    setMedia({...localMedia,recommendations:{nodes:items.slice(0,8).map((item:any)=>({media:item}))}});
-   });
    setLoading(false);
    return;
   }
 
   if(!Number.isFinite(id)){setLoading(false);return}
   fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({
-   query:"query Detail($id:Int!){Media(id:$id,type:ANIME){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail}}}",
+   query:"query Detail($id:Int!){Media(id:$id,type:ANIME){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}}}}",
    variables:{id}
   })}).then(r=>r.ok?r.json():Promise.reject()).then(async p=>{
    const found=p.data?.Media??null;
@@ -199,7 +196,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
        {(() => {
        const seen = new Set<number>();
        const items = (media.recommendations?.nodes ?? [])
-        .map((node) => node.media)
+        .map((node) => node.mediaRecommendation)
         .filter((item): item is NonNullable<typeof item> => Boolean(item))
         .filter((item) => item.id !== media.id && !seen.has(item.id) && seen.add(item.id))
         .slice(0, 8);
