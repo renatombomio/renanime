@@ -17,6 +17,36 @@ interface Media{
  recommendations?:{nodes?:{mediaRecommendation?:{id:number;title?:{romaji?:string|null;english?:string|null};coverImage?:{extraLarge?:string|null;large?:string|null};format?:string|null;startDate?:{year?:number|null}|null}|null}[]};
 }
 
+const ENDPOINT="https://graphql.anilist.co";
+
+async function fetchAniListRecommendations(mediaId:number){
+  const query=`query Recommendations($mediaId:Int!){
+    Page(page:1,perPage:12){
+      recommendations(mediaId:$mediaId,sort:RATING_DESC){
+        nodes{
+          mediaRecommendation{
+            id
+            title{romaji english}
+            coverImage{extraLarge large}
+            format
+            startDate{year}
+          }
+        }
+      }
+    }
+  }`;
+  try{
+    const response=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables:{mediaId}})});
+    if(!response.ok)return [];
+    const payload=await response.json();
+    return (payload.data?.Page?.recommendations?.nodes??[])
+      .map((node:any)=>node.mediaRecommendation)
+      .filter(Boolean)
+      .filter((item:any)=>item.id!==mediaId)
+      .slice(0,8);
+  }catch{return []}
+}
+
 function cleanDescription(text:string){
  return text
   .replace(/<br\s*\/?>/gi,"\n")
@@ -80,8 +110,8 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
   })}).then(r=>r.ok?r.json():Promise.reject()).then(async p=>{
    const found=p.data?.Media??null;
    if(!found)return;
-   const related=(found.recommendations?.nodes??[]).map((node:any)=>node.mediaRecommendation).filter(Boolean).filter((item:any)=>item.id!==found.id);
-   setMedia({...found,recommendations:{nodes:related.slice(0,8).map((item:any)=>({mediaRecommendation:item}))}});
+   const related=await fetchAniListRecommendations(found.id);
+   setMedia({...found,recommendations:{nodes:related.map((item:any)=>({mediaRecommendation:item}))}});
   }).catch(()=>{}).finally(()=>setLoading(false));
  },[]);
  if(loading)return <div className="anime-search-detail-state">Cargando ficha…</div>;
@@ -141,7 +171,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     body:has(.anime-detail--ghibli) .site-footer .closing{color:var(--gd-ink)}
     body:has(.anime-detail--ghibli) .site-footer .thanks{color:#59756b}
     body:has(.anime-detail--ghibli) .site-footer .footer-meta{color:#6b7d76}
-    .anime-detail-recommendations{margin-top:1.8rem;width:100%}
+    .anime-detail-recommendations{grid-column:1 / -1;margin-top:1.8rem;width:100%;min-width:0}
     .anime-detail-recommendations-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:.7rem}
     .anime-detail-recommendations-track{display:flex;gap:.7rem;min-height:0;overflow-x:auto;padding:.15rem 0 .65rem;scroll-snap-type:x mandatory;scrollbar-width:thin;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
     .anime-detail-recommendation{flex:0 0 clamp(116px,30vw,138px);scroll-snap-align:start;color:inherit;text-decoration:none}
