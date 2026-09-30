@@ -40,49 +40,15 @@ function status(value:string|null|undefined){
  return value==="FINISHED"?"Finalizado":value==="RELEASING"?"En emisión":value==="NOT_YET_RELEASED"?"Próximamente":value==="HIATUS"?"En pausa":value==="CANCELLED"?"Cancelado":"";
 }
 async function fetchGenreRecommendations(genres:string[],excludeId:number){
- const selected=genres.slice(0,2);
- if(!selected.length)return [];
- const mediaFields=`id title{romaji english} coverImage{extraLarge large} format startDate{year}`;
- const variables:Record<string,string>={};
- const fields=selected.map((genre,index)=>{
-  const variable="g"+index;
-  variables[variable]=genre;
-  return `g${index}:Page(page:1,perPage:12){media(type:ANIME,genre:${variable},sort:POPULARITY_DESC){${mediaFields}}}`;
- }).join(" ");
- const definitions=selected.map((_,index)=>"$g"+index+":String!").join(",");
- const query=`query RelatedByGenre(${definitions}){${fields}}`;
- try{
-  const response=await fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables})});
-  if(!response.ok)return [];
-  const payload=await response.json();
-  const seen=new Set<number>();
-  const result:any[]=[];
-  selected.forEach((_,index)=>{
-   const items=payload.data?.["g"+index]?.media??[];
-   items.forEach((item:any)=>{
-    if(item.id!==excludeId&&!seen.has(item.id)){seen.add(item.id);result.push(item);}
-   });
-  });
-  return result;
- }catch{return []}
-}
-async function translate(text:string){
- const clean=cleanDescription(text);
- const chunks:string[]=[];let rest=clean;
- while(rest){
-  if(new TextEncoder().encode(rest).length<=450){chunks.push(rest);break;}
-  let cut=450;while(cut>100&&new TextEncoder().encode(rest.slice(0,cut)).length>450)cut-=10;
-  const window=rest.slice(0,cut);const boundary=Math.max(window.lastIndexOf(". "),window.lastIndexOf("! "),window.lastIndexOf("? "),window.lastIndexOf(" "));
-  const size=boundary>120?boundary:cut;chunks.push(rest.slice(0,size).trim());rest=rest.slice(size).trim();
- }
- const out:string[]=[];
- for(const chunk of chunks){
+  const selected=genres.filter(Boolean).slice(0,3);
+  if(!selected.length)return [];
+  const query=`query RelatedByGenre(\$genres:[String!]!){Page(page:1,perPage:20){media(type:ANIME,genre_in:\$genres,sort:[POPULARITY_DESC,SCORE_DESC]){id title{romaji english} coverImage{extraLarge large} format startDate{year}}}}`;
   try{
-   const response=await fetch("https://api.mymemory.translated.net/get?"+new URLSearchParams({q:chunk,langpair:"en|es",mt:"1"}));
-   const payload=await response.json();out.push(payload.responseData?.translatedText||chunk);
-  }catch{out.push(chunk)}
- }
- return out.join(" ");
+    const response=await fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables:{genres:selected}})});
+    if(!response.ok)return [];
+    const payload=await response.json();
+    return (payload.data?.Page?.media??[]).filter((item:any)=>item?.id!==excludeId);
+  }catch{return []}
 }
 
 interface Props {
@@ -131,7 +97,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
    const seen=new Set<number>([found.id]);
    const merged:any[]=[];
    current.forEach((item:any)=>{if(item?.id&&!seen.has(item.id)){seen.add(item.id);merged.push(item)}});
-   if(merged.length<5){
+   if(merged.length<8){
     const fallback=await fetchGenreRecommendations(found.genres??[],found.id);
     fallback.forEach((item:any)=>{if(merged.length<8&&!seen.has(item.id)){seen.add(item.id);merged.push(item)}});
    }
@@ -203,7 +169,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     .anime-detail-recommendation-poster img{display:block;width:100%;height:100%;object-fit:cover;transition:transform 320ms cubic-bezier(.22,1,.36,1)}
     .anime-detail-recommendation:hover .anime-detail-recommendation-poster img{transform:scale(1.035)}
     .anime-detail-recommendation-title{display:block;margin-top:.48rem;font-size:.72rem;line-height:1.25;font-weight:500}
-    .anime-detail-recommendations-empty{display:flex;align-items:center;min-height:0;padding:1rem;color:inherit;opacity:.58;font-family:var(--font-meta);font-size:.5rem;letter-spacing:.08em;text-transform:uppercase}.anime-detail-recommendation-meta{display:block;margin-top:.22rem;font-family:var(--font-meta);font-size:.5rem;letter-spacing:.06em;text-transform:uppercase;opacity:.58}
+    .anime-detail-recommendation-meta{display:block;margin-top:.22rem;font-family:var(--font-meta);font-size:.5rem;letter-spacing:.06em;text-transform:uppercase;opacity:.58}
     .anime-detail--ghibli .anime-detail-recommendation-poster{border-radius:12px;background:var(--gd-ink)}
     .anime-detail--ghibli .anime-detail-recommendation-title{color:#fff}
     .anime-detail--ghibli .anime-detail-recommendation-meta{color:rgba(255,255,255,.68)}
@@ -265,7 +231,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
            <span className="anime-detail-recommendation-title">{recTitle}</span>
            <span className="anime-detail-recommendation-meta">{item.format==="MOVIE"?"Film":"Series"}{item.startDate?.year?" · "+item.startDate.year:""}</span>
           </a>;
-         }) : <div className="anime-detail-recommendations-empty">Explorando nuevas historias…</div>}
+         }) : }
         </div>
        </section>;
       })()}
