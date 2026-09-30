@@ -39,37 +39,7 @@ function date(value:Media["startDate"]){
 function status(value:string|null|undefined){
  return value==="FINISHED"?"Finalizado":value==="RELEASING"?"En emisión":value==="NOT_YET_RELEASED"?"Próximamente":value==="HIATUS"?"En pausa":value==="CANCELLED"?"Cancelado":"";
 }
-async function fetchGenreRecommendations(genres:string[],excludeId:number){
-  const selected=[...new Set(genres.filter(Boolean))];
-  if(!selected.length)return [];
-  const query=`query RelatedByGenre(\$genre:String!){Page(page:1,perPage:30){media(type:ANIME,genre:\$genre,sort:POPULARITY_DESC){id title{romaji english} genres coverImage{extraLarge large} format startDate{year}}}}`;
-  try{
-    const responses=await Promise.all(selected.slice(0,3).map(async genre=>{
-      const response=await fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables:{genre}})});
-      if(!response.ok)return [];
-      const payload=await response.json();
-      return payload.data?.Page?.media??[];
-    }));
-    const seen=new Set<number>([excludeId]);
-    const candidates:any[]=[];
-    responses.flat().forEach((item:any)=>{
-      if(!item?.id||seen.has(item.id))return;
-      seen.add(item.id);
-      const itemGenres=new Set<string>(item.genres??[]);
-      const shared=selected.filter(genre=>itemGenres.has(genre)).length;
-      const minimumShared=selected.length>=2?2:1;
-      if(shared<minimumShared)return;
-      const union=new Set([...selected,...(item.genres??[])]);
-      const jaccard=shared/union.size;
-      const score=(shared*10)+(jaccard*8);
-      candidates.push({...item,__score:score});
-    });
-    return candidates
-      .sort((a:any,b:any)=>b.__score-a.__score)
-      .slice(0,8)
-      .map(({__score,...item}:any)=>item);
-  }catch{return []}
-}
+
 
 interface Props {
  variant?: "default" | "ghibli";
@@ -113,8 +83,8 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
   })}).then(r=>r.ok?r.json():Promise.reject()).then(async p=>{
    const found=p.data?.Media??null;
    if(!found)return;
-   const related=await fetchGenreRecommendations(found.genres??[],found.id);
-   setMedia({...found,recommendations:{nodes:related.slice(0,8).map((item:any)=>({media:item}))}});
+   const related=(found.recommendations?.nodes??[]).map((node:any)=>node.mediaRecommendation).filter(Boolean).filter((item:any)=>item.id!==found.id);
+   setMedia({...found,recommendations:{nodes:related.slice(0,8).map((item:any)=>({mediaRecommendation:item}))}});
   }).catch(()=>{}).finally(()=>setLoading(false));
  },[]);
  if(loading)return <div className="anime-search-detail-state">Cargando ficha…</div>;
