@@ -12,6 +12,7 @@ const {
 const isGhibli = Astro.url.pathname.startsWith("/ghibli");
 
 import "../styles/global.css";
+import SoundtrackPlayer from "../components/audio/SoundtrackPlayer";
 ---
 
 <!doctype html>
@@ -28,6 +29,7 @@ import "../styles/global.css";
   <body class:list={["texture-grain", isGhibli && "theme-ghibli"]}>
     <a class="skip-link" href="#main-content">Saltar al contenido</a>
     <slot />
+    <SoundtrackPlayer client:load />
   </body>
 </html>
 
