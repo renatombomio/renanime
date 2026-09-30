@@ -1,10 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { getFranchiseId, getFranchiseRootTitle } from "../../data/franchise";
-
-interface LibraryEntry {
-  animeId: string;
-  title: string;
-}
+import type { LibraryEntry } from "../../types/personal";
 
 interface DateParts {
   year?: number | null;
@@ -48,7 +43,7 @@ interface Props {
   entries: LibraryEntry[];
 }
 
-const CACHE_PREFIX = "renanime:coming-soon:v2:";
+const CACHE_PREFIX = "renanime:coming-soon:v3:";
 const CACHE_TTL = 6 * 60 * 60 * 1000;
 const BATCH_SIZE = 3;
 const BATCH_DELAY_MS = 2600;
@@ -57,36 +52,6 @@ const ALLOWED_RELATIONS = new Set([
   "SIDE_STORY",
   "SPIN_OFF",
   "ALTERNATIVE",
-]);
-
-const ACTIVE_RADAR_TITLES = new Set([
-  "One Punch Man",
-  "Mob Psycho 100",
-  "Noragami",
-  "Re:Zero kara Hajimeru Isekai Seikatsu",
-  "Tate no Yuusha no Nariagari",
-  "Enen no Shouboutai",
-  "Tensei shitara Slime Datta Ken",
-  "Yakusoku no Neverland",
-  "Mahoutsukai no Yome",
-  "Dorohedoro",
-  "Tower of God",
-  "Mushoku Tensei: Jobless Reincarnation",
-  "SK8 the Infinity",
-  "Fumetsu no Anata e",
-  "Sono Bisque Doll wa Koi wo Suru",
-  "Youkoso Jitsuryoku Shijou Shugi no Kyoushitsu e",
-  "Jigokuraku",
-  "Made in Abyss",
-  "Kaiju No. 8",
-  "Wind Breaker",
-  "Sousou no Frieren",
-  "Sakamoto Days",
-  "Solo Leveling",
-  "Yomi no Tsugai",
-  "Hikaru ga Shinda Natsu",
-  "Gachiakuta",
-  "The Eminence in Shadow",
 ]);
 
 function titleOf(media: RelatedMedia | undefined, fallback = "Sin título") {
@@ -235,19 +200,21 @@ export default function ComingSoonView({ entries }: Props) {
   const [loading, setLoading] = useState(true);
   const [apiLimited, setApiLimited] = useState(false);
 
+  const ownedTitles = useMemo(
+    () => new Set(uniqueEntries.map((entry) => entry.title.trim().toLowerCase())),
+    [uniqueEntries],
+  );
+
   const uniqueEntries = useMemo(() => {
     const seen = new Set<string>();
 
     return entries.filter((entry) => {
-      const key = entry.title.toLowerCase();
+      if (entry.state.status !== "WATCHED") return false;
+
+      const key = entry.title.trim().toLowerCase();
       if (seen.has(key)) return false;
       seen.add(key);
-
-      const franchiseId = getFranchiseId(entry);
-      const isFranchiseAnchor =
-        Boolean(franchiseId) && getFranchiseRootTitle(franchiseId!) === entry.title;
-
-      return isFranchiseAnchor || ACTIVE_RADAR_TITLES.has(entry.title);
+      return true;
     });
   }, [entries]);
 
@@ -303,7 +270,7 @@ export default function ComingSoonView({ entries }: Props) {
   }, [uniqueEntries]);
 
   const items = useMemo<ComingItem[]>(() => {
-    const ownedIds = new Set(sources.map((source) => source.id));
+    const ownedSourceIds = new Set(sources.map((source) => source.id));
     const seen = new Set<number>();
     const result: ComingItem[] = [];
 
@@ -322,8 +289,15 @@ export default function ComingSoonView({ entries }: Props) {
 
       source.relations?.edges?.forEach((edge) => {
         const node = edge.node;
-        if (!node || !ALLOWED_RELATIONS.has(edge.relationType ?? "")) return;
-        if (ownedIds.has(node.id) || seen.has(node.id)) return;
+        if (!node) return;
+
+        const relationType = edge.relationType ?? "";
+        const nodeTitle = titleOf(node).trim().toLowerCase();
+        const isNewSeason = relationType === "SEQUEL";
+        const isRelatedMovie = node.format === "MOVIE";
+
+        if (!isNewSeason && !isRelatedMovie) return;
+        if (ownedSourceIds.has(node.id) || ownedTitles.has(nodeTitle) || seen.has(node.id)) return;
         if (!isUpcomingMedia(node)) return;
 
         seen.add(node.id);
@@ -331,17 +305,17 @@ export default function ComingSoonView({ entries }: Props) {
           ...node,
           kind: "RELEASE",
           sourceTitle,
-          relationType: edge.relationType,
+          relationType,
         });
       });
     });
 
     return result.sort((a, b) => {
-      const aDate = a.kind === "EPISODE" ? (a.airingAt ?? Infinity) : dateValue(a.startDate) === Infinity ? Infinity : dateValue(a.startDate);
-      const bDate = b.kind === "EPISODE" ? (b.airingAt ?? Infinity) : dateValue(b.startDate) === Infinity ? Infinity : dateValue(b.startDate);
+      const aDate = a.kind === "EPISODE" ? (a.airingAt ?? Infinity) : dateValue(a.startDate);
+      const bDate = b.kind === "EPISODE" ? (b.airingAt ?? Infinity) : dateValue(b.startDate);
       return aDate - bDate;
     });
-  }, [sources]);
+  }, [sources, ownedTitles]);
 
   if (loading && !items.length) {
     return <div className="coming-loading">Buscando lo próximo de mi colección…</div>;
@@ -355,7 +329,7 @@ export default function ComingSoonView({ entries }: Props) {
             {items.length} {items.length === 1 ? "próximo lanzamiento" : "próximos lanzamientos"}
           </div>
 
-          {loading ? <div className="coming-progress">Cargando más de tu colección…</div> : null}
+          {loading ? <div className="coming-progress">Revisando más animes de tu colección…</div> : null}
           {apiLimited ? (
             <div className="coming-api-note">
               AniList está limitando temporalmente las consultas. Mostrando lo que ya se pudo cargar.
@@ -407,13 +381,13 @@ export default function ComingSoonView({ entries }: Props) {
           <span>
             {apiLimited
               ? "No hemos podido terminar la consulta. Volveremos a intentarlo en una próxima carga."
-              : "Cuando alguno de los animes de mi colección tenga algo nuevo en camino, aparecerá aquí."}
+              : "Cuando alguno de los animes que ya he visto tenga una nueva temporada o película en camino, aparecerá aquí."}
           </span>
         </div>
       )}
 
       <div className="coming-sources" aria-label="Fuentes externas">
-        <span>Radar externo</span>
+        <span>Fuentes externas</span>
         <a href="https://anichart.net/Winter-2027" target="_blank" rel="noreferrer">AniChart · Winter 2027</a>
         <a href="https://myanimelist.net/news" target="_blank" rel="noreferrer">MyAnimeList · News</a>
       </div>
