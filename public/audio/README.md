@@ -11,7 +11,7 @@ Place personal soundtrack files in these directories:
 - `naruto-main-theme.mp3`
 - `kiminonawa-main-theme.mp3`
 - `kiznaiver-theme-main.mp3`
-- `mashle-theme-main.mp3`
+- `mashle-main-theme.mp3`
 
 ## Ghibli
 
