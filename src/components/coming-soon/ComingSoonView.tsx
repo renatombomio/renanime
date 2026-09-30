@@ -193,11 +193,6 @@ export default function ComingSoonView({ entries }: Props) {
   const [loading, setLoading] = useState(true);
   const [apiLimited, setApiLimited] = useState(false);
 
-  const ownedTitles = useMemo(
-    () => new Set(uniqueEntries.map((entry) => entry.title.trim().toLowerCase())),
-    [uniqueEntries],
-  );
-
   const uniqueEntries = useMemo(() => {
     const seen = new Set<string>();
 
@@ -210,6 +205,11 @@ export default function ComingSoonView({ entries }: Props) {
       return true;
     });
   }, [entries]);
+
+  const ownedTitles = useMemo(
+    () => new Set(uniqueEntries.map((entry) => entry.title.trim().toLowerCase())),
+    [uniqueEntries],
+  );
 
   useEffect(() => {
     let cancelled = false;
