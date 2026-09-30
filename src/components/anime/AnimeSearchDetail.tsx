@@ -39,6 +39,33 @@ function date(value:Media["startDate"]){
 function status(value:string|null|undefined){
  return value==="FINISHED"?"Finalizado":value==="RELEASING"?"En emisión":value==="NOT_YET_RELEASED"?"Próximamente":value==="HIATUS"?"En pausa":value==="CANCELLED"?"Cancelado":"";
 }
+async function fetchGenreRecommendations(genres:string[],excludeId:number){
+ const selected=genres.slice(0,2);
+ if(!selected.length)return [];
+ const mediaFields=`id title{romaji english} coverImage{extraLarge large} format startDate{year}`;
+ const variables:Record<string,string>={};
+ const fields=selected.map((genre,index)=>{
+  const variable="g"+index;
+  variables[variable]=genre;
+  return `g${index}:Page(page:1,perPage:12){media(type:ANIME,genre:${variable},sort:POPULARITY_DESC){${mediaFields}}}`;
+ }).join(" ");
+ const definitions=selected.map((_,index)=>"$g"+index+":String!").join(",");
+ const query=`query RelatedByGenre(${definitions}){${fields}}`;
+ try{
+  const response=await fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables})});
+  if(!response.ok)return [];
+  const payload=await response.json();
+  const seen=new Set<number>();
+  const result:any[]=[];
+  selected.forEach((_,index)=>{
+   const items=payload.data?.["g"+index]?.media??[];
+   items.forEach((item:any)=>{
+    if(item.id!==excludeId&&!seen.has(item.id)){seen.add(item.id);result.push(item);}
+   });
+  });
+  return result;
+ }catch{return []}
+}
 async function translate(text:string){
  const clean=cleanDescription(text);
  const chunks:string[]=[];let rest=clean;
@@ -93,7 +120,19 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
   fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({
    query:"query Detail($id:Int!){Media(id:$id,type:ANIME){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} recommendations(sort:RATING_DESC){nodes{media{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}}}}",
    variables:{id}
-  })}).then(r=>r.ok?r.json():Promise.reject()).then(p=>setMedia(p.data?.Media??null)).catch(()=>{}).finally(()=>setLoading(false));
+  })}).then(r=>r.ok?r.json():Promise.reject()).then(async p=>{
+   const found=p.data?.Media??null;
+   if(!found)return;
+   const current=found.recommendations?.nodes?.map((node:any)=>node.media).filter(Boolean)??[];
+   const seen=new Set<number>([found.id]);
+   const merged:any[]=[];
+   current.forEach((item:any)=>{if(item?.id&&!seen.has(item.id)){seen.add(item.id);merged.push(item)}});
+   if(merged.length<5){
+    const fallback=await fetchGenreRecommendations(found.genres??[],found.id);
+    fallback.forEach((item:any)=>{if(merged.length<8&&!seen.has(item.id)){seen.add(item.id);merged.push(item)}});
+   }
+   setMedia({...found,recommendations:{nodes:merged.map((item:any)=>({media:item}))}});
+  }).catch(()=>{}).finally(()=>setLoading(false));
  },[]);
  if(loading)return <div className="anime-search-detail-state">Cargando ficha…</div>;
  if(!media)return <div className="anime-search-detail-state">No se ha encontrado este anime.</div>;
