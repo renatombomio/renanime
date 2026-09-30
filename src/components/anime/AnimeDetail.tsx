@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { LibraryEntry } from "../../types/personal";
 import { getLibrary } from "../../data/library";
 import { getPersonalFranchiseEntries } from "../../data/franchise";
+import PersonalLibraryActions from "../personal-library/PersonalLibraryActions";
 
 interface Media {
   id: number;
@@ -257,6 +258,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
        {personal.favorite&&<span className="anime-detail-eyebrow">Favorito</span>}
        <h1>{title}</h1>
        <div className="anime-detail-meta"><span>{format(entry.format||media?.format)}</span><span>{date(media?.startDate)}</span>{media?.episodes&&<span>{media.episodes} episodios</span>}{media?.duration&&<span>{media.duration} min</span>}</div>
+       {media?.id && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>}
        {media?.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map((genre)=><span key={genre}>{genre}</span>)}</div>}
        <div className="anime-detail-synopsis-wrap">
         <p className="anime-detail-synopsis">{loading?"Cargando ficha…":translatedSynopsis||cleanSynopsis||"Todavía no hay una sinopsis disponible para este título."}</p>
