@@ -43,7 +43,7 @@ interface Props {
   entries: LibraryEntry[];
 }
 
-const CACHE_PREFIX = "renanime:coming-soon:v3:";
+const CACHE_PREFIX = "renanime:coming-soon:v4:";
 const CACHE_TTL = 6 * 60 * 60 * 1000;
 const BATCH_SIZE = 3;
 const BATCH_DELAY_MS = 2600;
@@ -116,21 +116,15 @@ function writeCache(title: string, data: SourceMedia | null) {
 async function fetchBatch(
   entries: LibraryEntry[],
 ): Promise<{ ok: boolean; data: Array<SourceMedia | null>; limited?: boolean }> {
-  const variables: Record<string, number> = {};
+  const variables: Record<string, string> = {};
 
   const fields = entries.map((entry, index) => {
-    const key = "id" + index;
+    const key = "s" + index;
     const alias = "a" + index;
-    const id = Number.parseInt(entry.animeId, 10);
-
-    if (!Number.isInteger(id)) {
-      throw new Error(`AniList ID inválido para "${entry.title}": ${entry.animeId}`);
-    }
-
-    variables[key] = id;
+    variables[key] = entry.title;
 
     return `
-      ${alias}: Media(id: $${key}, type: ANIME) {
+      ${alias}: Media(search: $${key}, type: ANIME) {
         id
         title { romaji english }
         startDate { year month day }
@@ -155,7 +149,7 @@ async function fetchBatch(
     `;
   }).join("\n");
 
-  const definitions = entries.map((_, index) => "$id" + index + ": Int!").join(", ");
+  const definitions = entries.map((_, index) => "$s" + index + ": String!").join(", ");
   const query = `query CollectionUpcoming(${definitions}) { ${fields} }`;
 
   try {
