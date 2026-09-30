@@ -22,7 +22,7 @@ interface Media {
 }
 
 const ENDPOINT="https://graphql.anilist.co";
-const CACHE_PREFIX="renanime:detail:v5:";
+const CACHE_PREFIX="renanime:detail:v6:";
 const TRANSLATION_PREFIX="renanime:translation:en-es:v1:";
 
 function cleanDescription(text:string){
@@ -139,8 +139,12 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
     try {
       const cached = sessionStorage.getItem(CACHE_PREFIX + entry.animeId);
       if (cached) {
-        result[entry.animeId] = JSON.parse(cached);
-        continue;
+        const parsed = JSON.parse(cached) as Media|null;
+        if (parsed) {
+          result[entry.animeId] = parsed;
+          continue;
+        }
+        sessionStorage.removeItem(CACHE_PREFIX + entry.animeId);
       }
     } catch {}
     unresolved.push(entry);
@@ -148,26 +152,51 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
 
   if (!unresolved.length) return result;
 
-  const variables: Record<string,string> = {};
-  const fields = unresolved.map((entry,index) => {
-    const key = "s" + index;
-    const alias = "a" + index;
-    variables[key] = entry.title;
-    return `${alias}: Page(page:1,perPage:1){media(search:$${key},type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail}}}`;
-  }).join("\n");
-  const definitions = unresolved.map((_,index) => "$s" + index + ":String!").join(",");
-  const query = `query FranchiseBatch(${definitions}){${fields}}`;
+  // AniList can reject very large aliased Page queries with HTTP 400.
+  // Resolve franchise entries in small batches so one large franchise
+  // cannot make every poster disappear.
+  const BATCH_SIZE = 5;
 
-  try {
-    const response = await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables})});
-    if(!response.ok) return result;
-    const payload = await response.json();
-    unresolved.forEach((entry,index) => {
-      const media = payload.data?.["a"+index]?.media?.[0] ?? null;
-      result[entry.animeId] = media;
-      try{sessionStorage.setItem(CACHE_PREFIX+entry.animeId,JSON.stringify(media));}catch{}
-    });
-  } catch {}
+  for (let offset = 0; offset < unresolved.length; offset += BATCH_SIZE) {
+    const batch = unresolved.slice(offset, offset + BATCH_SIZE);
+    const variables: Record<string, string> = {};
+
+    const fields = batch.map((entry, index) => {
+      const key = "s" + index;
+      const alias = "a" + index;
+      variables[key] = entry.title;
+
+      return `${alias}: Page(page:1,perPage:1){media(search:$${key},type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail}}}`;
+    }).join("\n");
+
+    const definitions = batch.map((_, index) => "$s" + index + ":String!").join(",");
+    const query = `query FranchiseBatch(${definitions}){${fields}}`;
+
+    try {
+      const response = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: {"Content-Type":"application/json",Accept:"application/json"},
+        body: JSON.stringify({query,variables}),
+      });
+
+      if (!response.ok) continue;
+
+      const payload = await response.json();
+
+      batch.forEach((entry, index) => {
+        const media = payload.data?.["a" + index]?.media?.[0] ?? null;
+        result[entry.animeId] = media;
+
+        // Never persist a failed lookup as null: a temporary API failure
+        // must not permanently hide a franchise poster for this session.
+        if (media) {
+          try {
+            sessionStorage.setItem(CACHE_PREFIX + entry.animeId, JSON.stringify(media));
+          } catch {}
+        }
+      });
+    } catch {}
+  }
 
   return result;
 }
