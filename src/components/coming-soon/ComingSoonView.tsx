@@ -47,10 +47,17 @@ interface Props {
   entries: LibraryEntry[];
 }
 
-const CACHE_PREFIX = "renanime:coming-soon:v1:";
+const CACHE_PREFIX = "renanime:coming-soon:v2:";
 const CACHE_TTL = 6 * 60 * 60 * 1000;
-const BATCH_SIZE = 6;
-const ALLOWED_RELATIONS = new Set(["SEQUEL", "SIDE_STORY", "SPIN_OFF", "OTHER"]);
+const BATCH_SIZE = 3;
+const MAX_RETRIES = 3;
+const ALLOWED_RELATIONS = new Set([
+  "SEQUEL",
+  "PREQUEL",
+  "SIDE_STORY",
+  "SPIN_OFF",
+  "ALTERNATIVE",
+]);
 
 function titleOf(media: RelatedMedia | undefined, fallback = "Sin título") {
   return media?.title?.romaji || media?.title?.english || fallback;
@@ -82,7 +89,16 @@ function episodeDateLabel(timestamp?: number) {
 
 function isFuture(date: DateParts | null | undefined) {
   if (!date?.year) return false;
-  return dateValue(date) >= Number(new Date().toISOString().slice(0, 10).replace(/-/g, ""));
+  const today = Number(new Date().toISOString().slice(0, 10).replace(/-/g, ""));
+  return dateValue(date) >= today;
+}
+
+function isUpcomingMedia(media: RelatedMedia) {
+  return media.status === "NOT_YET_RELEASED" || isFuture(media.startDate);
+}
+
+function wait(ms: number) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
 function readCache(title: string): SourceMedia | null | undefined {
@@ -109,15 +125,15 @@ function writeCache(title: string, data: SourceMedia | null) {
   } catch {}
 }
 
-async function fetchBatch(entries: LibraryEntry[]): Promise<Array<SourceMedia | null>> {
+async function fetchBatch(entries: LibraryEntry[]): Promise<{ ok: boolean; data: Array<SourceMedia | null> }> {
   const variables: Record<string, string> = {};
   const fields = entries.map((entry, index) => {
     const key = "s" + index;
     const alias = "a" + index;
     variables[key] = entry.title;
-    return `
-      ${alias}: Page(page: 1, perPage: 1) {
-        media(search: $${key}, type: ANIME, sort: SEARCH_MATCH) {
+    return \`
+      \${alias}: Page(page: 1, perPage: 1) {
+        media(search: \$\${key}, type: ANIME, sort: SEARCH_MATCH) {
           id
           title { romaji english }
           startDate { year month day }
@@ -125,7 +141,7 @@ async function fetchBatch(entries: LibraryEntry[]): Promise<Array<SourceMedia | 
           format
           status
           nextAiringEpisode { airingAt episode }
-          relations(page: 1, perPage: 12) {
+          relations(page: 1, perPage: 20) {
             edges {
               relationType
               node {
@@ -140,29 +156,48 @@ async function fetchBatch(entries: LibraryEntry[]): Promise<Array<SourceMedia | 
           }
         }
       }
-    `;
-  }).join("\n");
+    \`;
+  }).join("\\n");
 
-  const definitions = entries.map((_, index) => "$s" + index + ": String!").join(", ");
-  const query = `query CollectionUpcoming(${definitions}) { ${fields} }`;
+  const definitions = entries.map((_, index) => "\$s" + index + ": String!").join(", ");
+  const query = \`query CollectionUpcoming(\${definitions}) { \${fields} }\`;
 
-  try {
-    const response = await fetch("https://graphql.anilist.co", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ query, variables }),
-    });
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt += 1) {
+    try {
+      const response = await fetch("https://graphql.anilist.co", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ query, variables }),
+      });
 
-    if (!response.ok) return [];
-    const payload = await response.json();
-    if (payload.errors) return [];
+      if (response.status === 429) {
+        if (attempt < MAX_RETRIES - 1) {
+          await wait(1200 * 2 ** attempt);
+          continue;
+        }
+        return { ok: false, data: [] };
+      }
 
-    return entries.map(
-      (_, index) => (payload.data?.["a" + index]?.media?.[0] as SourceMedia | undefined) ?? null,
-    );
-  } catch {
-    return [];
+      if (!response.ok) return { ok: false, data: [] };
+
+      const payload = await response.json();
+      if (payload.errors) return { ok: false, data: [] };
+
+      return {
+        ok: true,
+        data: entries.map(
+          (_, index) => (payload.data?.["a" + index]?.media?.[0] as SourceMedia | undefined) ?? null,
+        ),
+      };
+    } catch {
+      if (attempt < MAX_RETRIES - 1) {
+        await wait(700 * 2 ** attempt);
+        continue;
+      }
+    }
   }
+
+  return { ok: false, data: [] };
 }
 
 export default function ComingSoonView({ entries }: Props) {
@@ -190,14 +225,27 @@ export default function ComingSoonView({ entries }: Props) {
       if (cached.length && !cancelled) setSources(cached);
 
       for (let offset = 0; offset < missing.length; offset += BATCH_SIZE) {
+        if (cancelled) break;
+
         const batch = missing.slice(offset, offset + BATCH_SIZE);
         const result = await fetchBatch(batch);
-        batch.forEach((entry, index) => writeCache(entry.title, result[index] ?? null));
-        if (!cancelled) {
-          setSources((current) => [
-            ...current,
-            ...result.filter((item): item is SourceMedia => Boolean(item)),
-          ]);
+
+        // No cacheamos fallos: un 429 temporal no debe ocultar un título durante 6 horas.
+        if (result.ok) {
+          batch.forEach((entry, index) => {
+            writeCache(entry.title, result.data[index] ?? null);
+          });
+
+          if (!cancelled) {
+            setSources((current) => [
+              ...current,
+              ...result.data.filter((item): item is SourceMedia => Boolean(item)),
+            ]);
+          }
+        }
+
+        if (offset + BATCH_SIZE < missing.length) {
+          await wait(350);
         }
       }
 
@@ -232,7 +280,7 @@ export default function ComingSoonView({ entries }: Props) {
         const node = edge.node;
         if (!node || !ALLOWED_RELATIONS.has(edge.relationType ?? "")) return;
         if (ownedIds.has(node.id) || seen.has(node.id)) return;
-        if (!isFuture(node.startDate)) return;
+        if (!isUpcomingMedia(node)) return;
 
         seen.add(node.id);
         result.push({
@@ -308,6 +356,12 @@ export default function ComingSoonView({ entries }: Props) {
           <span>Cuando alguno de los animes de mi colección tenga algo nuevo en camino, aparecerá aquí.</span>
         </div>
       )}
+
+      <div className="coming-sources" aria-label="Fuentes externas">
+        <span>Radar externo</span>
+        <a href="https://anichart.net/Winter-2027" target="_blank" rel="noreferrer">AniChart · Winter 2027</a>
+        <a href="https://myanimelist.net/news" target="_blank" rel="noreferrer">MyAnimeList · News</a>
+      </div>
 
       <style>{`
         .coming-view { width: 100%; }
@@ -394,6 +448,23 @@ export default function ComingSoonView({ entries }: Props) {
           font-size: .48rem;
           line-height: 1.35;
         }
+        .coming-sources {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: .75rem 1rem;
+          margin-top: 3.5rem;
+          padding-top: 1rem;
+          border-top: 1px solid var(--color-border);
+          color: var(--color-muted-500);
+          font-family: var(--font-meta);
+          font-size: .52rem;
+          letter-spacing: .06em;
+          text-transform: uppercase;
+        }
+        .coming-sources span { color: var(--color-muted-400); }
+        .coming-sources a { color: var(--color-paper-200); }
+        .coming-sources a:hover { color: var(--color-paper-50); }
         @media (max-width: 1100px) {
           .coming-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
         }
@@ -406,7 +477,7 @@ export default function ComingSoonView({ entries }: Props) {
           .coming-info h3 { font-size: .72rem; }
           .coming-info span { font-size: .46rem; }
           .coming-info small { font-size: .43rem; }
-          .coming-badge { top: .5rem; left: .5rem; padding: .28rem .35rem; font-size: .42rem; }
+          .coming-badge { top: .5rem; left: .5rem; padding: .28rem .35rem; font-size: .42rem; }\n          .coming-sources { margin-top: 2.5rem; font-size: .46rem; }
         }
       `}</style>
     </div>
