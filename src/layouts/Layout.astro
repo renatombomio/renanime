@@ -12,6 +12,7 @@ const {
 const isGhibli = Astro.url.pathname.startsWith("/ghibli");
 
 import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
 import SoundtrackPlayer from "../components/audio/SoundtrackPlayer";
 ---
 
@@ -23,13 +24,14 @@ import SoundtrackPlayer from "../components/audio/SoundtrackPlayer";
     <meta name="description" content={description} />
     <meta name="theme-color" content={isGhibli ? "#FFF7E8" : "#090909"} />
     <meta name="generator" content={Astro.generator} />
+    <ClientRouter />
     <title>{title}</title>
   </head>
 
   <body class:list={["texture-grain", isGhibli && "theme-ghibli"]}>
     <a class="skip-link" href="#main-content">Saltar al contenido</a>
     <slot />
-    <SoundtrackPlayer client:load />
+    <SoundtrackPlayer client:load transition:persist />
   </body>
 </html>
 
