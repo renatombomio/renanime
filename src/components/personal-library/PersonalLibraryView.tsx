@@ -76,15 +76,16 @@ export default function PersonalLibraryView({mode}:Props){
         </article>;
       })}
     </div>:<div className="personal-library-empty">
-      <strong>{mode==="WATCHED"?"Tu colección está vacía.":"Tu lista está vacía."}</strong>
-      <span>{mode==="WATCHED"?"Cuando marques un anime como visto, aparecerá aquí.":"Añade animes desde Buscar y aparecerán aquí."}</span>
+      <strong>{mode==="WATCHED"?"¿Qué, todavía no has visto anime?":"Esto está igual de vacío que tu corazón."}</strong>
+      <span>{mode==="WATCHED"?"¿No sabes lo que te estás perdiendo? Venga, anímate, que me hace falta más gente friki por aquí. 😂":"Venga va, dame cariño y mete algún anime en la lista. Gracias. No leo lloros. 🫶"}</span>
+      <a className="personal-library-empty-cta" href="/search/">{mode==="WATCHED"?"Explorar anime →":"Buscar algo que ver →"}</a>
     </div>}
     <style>{`
       .personal-library-view{width:100%}.personal-library-count{margin-bottom:1.5rem;color:var(--color-muted-400);font-family:var(--font-meta);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase}
       .personal-library-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(3rem,5vw,5rem) clamp(.85rem,1.8vw,1.75rem)}.personal-library-card{min-width:0}
       .personal-library-link{display:block;color:inherit}.personal-library-poster{aspect-ratio:2/3;overflow:hidden;background:var(--color-ink-800)}.personal-library-poster img{display:block;width:100%;height:100%;object-fit:cover;transition:transform 650ms cubic-bezier(.2,.7,.2,1)}.personal-library-link:hover .personal-library-poster img{transform:scale(1.035)}
       .personal-library-placeholder{width:100%;height:100%;background:linear-gradient(145deg,var(--color-ink-700),var(--color-ink-950))}.personal-library-info{display:grid;gap:.35rem;padding-top:.7rem}.personal-library-info h2{margin:0;color:var(--color-paper-50);font-family:var(--font-body);font-size:.82rem;font-weight:500;line-height:1.2}.personal-library-info span{color:var(--color-muted-400);font-family:var(--font-meta);font-size:.52rem;letter-spacing:.04em;text-transform:uppercase}
-      .personal-library-status,.personal-library-empty{padding:4rem 1rem;border:1px solid var(--color-border);color:var(--color-muted-400);text-align:center}.personal-library-empty{display:grid;gap:.6rem}.personal-library-empty strong{color:var(--color-paper-50);font-family:var(--font-body);font-size:1.1rem;font-weight:500}
+      .personal-library-status,.personal-library-empty{padding:4rem 1rem;border:1px solid var(--color-border);color:var(--color-muted-400);text-align:center}.personal-library-empty{display:grid;justify-items:center;gap:.7rem}.personal-library-empty strong{color:var(--color-paper-50);font-family:var(--font-body);font-size:1.1rem;font-weight:500}.personal-library-empty span{max-width:34rem;line-height:1.55}.personal-library-empty-cta{display:inline-flex;margin-top:.8rem;padding:.7rem 1rem;border:1px solid var(--color-border-strong);color:var(--color-paper-50);font-family:var(--font-meta);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;transition:background 180ms ease,color 180ms ease}.personal-library-empty-cta:hover{background:var(--color-paper-50);color:var(--color-ink-950)}
       @media(max-width:1100px){.personal-library-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:800px){.personal-library-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:560px){.personal-library-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:2.25rem .65rem}.personal-library-info h2{font-size:.72rem}.personal-library-info span{font-size:.46rem}}
     `}</style>
   </div>;
