@@ -86,8 +86,8 @@ async function translateToSpanish(text:string){
 
 async function fetchAniListRecommendations(mediaId:number){
   const query=`query Recommendations($mediaId:Int!){
-    Page(page:1,perPage:12){
-      recommendations(mediaId:$mediaId,sort:RATING_DESC){
+    Media(id:$mediaId,type:ANIME){
+      recommendations(sort:RATING_DESC,page:1,perPage:12){
         nodes{
           mediaRecommendation{
             id
@@ -104,7 +104,7 @@ async function fetchAniListRecommendations(mediaId:number){
     const response=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables:{mediaId}})});
     if(!response.ok)return [];
     const payload=await response.json();
-    return (payload.data?.Page?.recommendations?.nodes??[])
+    return (payload.data?.Media?.recommendations?.nodes??[])
       .map((node:any)=>node.mediaRecommendation)
       .filter(Boolean)
       .filter((item:any)=>item.id!==mediaId)
