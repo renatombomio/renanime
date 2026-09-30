@@ -50,8 +50,8 @@ interface Props {
 
 const CACHE_PREFIX = "renanime:coming-soon:v2:";
 const CACHE_TTL = 6 * 60 * 60 * 1000;
-const BATCH_SIZE = 10;
-const MAX_RETRIES = 1;
+const BATCH_SIZE = 3;
+const BATCH_DELAY_MS = 2600;
 const ALLOWED_RELATIONS = new Set([
   "SEQUEL",
   "SIDE_STORY",
@@ -155,7 +155,9 @@ function writeCache(title: string, data: SourceMedia | null) {
   } catch {}
 }
 
-async function fetchBatch(entries: LibraryEntry[]): Promise<{ ok: boolean; data: Array<SourceMedia | null> }> {
+async function fetchBatch(
+  entries: LibraryEntry[],
+): Promise<{ ok: boolean; data: Array<SourceMedia | null>; limited?: boolean }> {
   const variables: Record<string, string> = {};
   const fields = entries.map((entry, index) => {
     const key = "s" + index;
@@ -192,42 +194,40 @@ async function fetchBatch(entries: LibraryEntry[]): Promise<{ ok: boolean; data:
   const definitions = entries.map((_, index) => "$s" + index + ": String!").join(", ");
   const query = `query CollectionUpcoming(${definitions}) { ${fields} }`;
 
-  for (let attempt = 0; attempt < MAX_RETRIES; attempt += 1) {
-    try {
-      const response = await fetch("https://graphql.anilist.co", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ query, variables }),
-      });
+  try {
+    const response = await fetch("https://graphql.anilist.co", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ query, variables }),
+    });
 
-      if (response.status === 429) {
-        if (attempt < MAX_RETRIES - 1) {
-          await wait(1200 * 2 ** attempt);
-          continue;
-        }
-        return { ok: false, data: [] };
-      }
-
-      if (!response.ok) return { ok: false, data: [] };
-
-      const payload = await response.json();
-      if (payload.errors) return { ok: false, data: [] };
-
-      return {
-        ok: true,
-        data: entries.map(
-          (_, index) => (payload.data?.["a" + index]?.media?.[0] as SourceMedia | undefined) ?? null,
-        ),
-      };
-    } catch {
-      if (attempt < MAX_RETRIES - 1) {
-        await wait(700 * 2 ** attempt);
-        continue;
-      }
+    if (response.status === 429) {
+      console.warn("[Renanime] AniList rate limit reached. Stopping the queue.");
+      return { ok: false, data: [], limited: true };
     }
-  }
 
-  return { ok: false, data: [] };
+    const payload = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      console.warn("[Renanime] AniList request rejected:", response.status, payload?.errors ?? payload);
+      return { ok: false, data: [] };
+    }
+
+    if (payload?.errors) {
+      console.warn("[Renanime] AniList GraphQL errors:", payload.errors);
+      return { ok: false, data: [] };
+    }
+
+    return {
+      ok: true,
+      data: entries.map(
+        (_, index) => (payload.data?.["a" + index]?.media?.[0] as SourceMedia | undefined) ?? null,
+      ),
+    };
+  } catch (error) {
+    console.warn("[Renanime] AniList request failed:", error);
+    return { ok: false, data: [] };
+  }
 }
 
 export default function ComingSoonView({ entries }: Props) {
@@ -269,11 +269,15 @@ export default function ComingSoonView({ entries }: Props) {
       for (let offset = 0; offset < missing.length; offset += BATCH_SIZE) {
         if (cancelled) break;
 
+        // Cargamos pequeños grupos y dejamos respirar a AniList entre peticiones.
+        // Así la página empieza a mostrar resultados enseguida sin disparar una ráfaga.
+        if (offset > 0) await wait(BATCH_DELAY_MS);
+
         const batch = missing.slice(offset, offset + BATCH_SIZE);
         const result = await fetchBatch(batch);
 
         if (!result.ok) {
-          if (!cancelled) setApiLimited(true);
+          if (!cancelled && result.limited) setApiLimited(true);
           break;
         }
 
@@ -351,6 +355,13 @@ export default function ComingSoonView({ entries }: Props) {
             {items.length} {items.length === 1 ? "próximo lanzamiento" : "próximos lanzamientos"}
           </div>
 
+          {loading ? <div className="coming-progress">Cargando más de tu colección…</div> : null}
+          {apiLimited ? (
+            <div className="coming-api-note">
+              AniList está limitando temporalmente las consultas. Mostrando lo que ya se pudo cargar.
+            </div>
+          ) : null}
+
           <div className="coming-grid">
             {items.map((item, index) => {
               const title = titleOf(item);
@@ -392,8 +403,12 @@ export default function ComingSoonView({ entries }: Props) {
         </>
       ) : (
         <div className="coming-empty">
-          <strong>De momento, nada pendiente.</strong>
-          <span>Cuando alguno de los animes de mi colección tenga algo nuevo en camino, aparecerá aquí.</span>
+          <strong>{apiLimited ? "AniList está temporalmente limitado." : "De momento, nada pendiente."}</strong>
+          <span>
+            {apiLimited
+              ? "No hemos podido terminar la consulta. Volveremos a intentarlo en una próxima carga."
+              : "Cuando alguno de los animes de mi colección tenga algo nuevo en camino, aparecerá aquí."}
+          </span>
         </div>
       )}
 
@@ -426,13 +441,23 @@ export default function ComingSoonView({ entries }: Props) {
         }
         .coming-empty span { letter-spacing: .03em; text-transform: none; }
         .coming-count {
-          margin-bottom: 1.5rem;
+          margin-bottom: .55rem;
           color: var(--color-muted-400);
           font-family: var(--font-meta);
           font-size: .6rem;
           letter-spacing: .09em;
           text-transform: uppercase;
         }
+        .coming-progress,
+        .coming-api-note {
+          margin-bottom: 1.25rem;
+          color: var(--color-muted-500);
+          font-family: var(--font-meta);
+          font-size: .5rem;
+          letter-spacing: .06em;
+          text-transform: uppercase;
+        }
+        .coming-api-note { color: var(--color-muted-400); }
         .coming-grid {
           display: grid;
           grid-template-columns: repeat(5, minmax(0, 1fr));
