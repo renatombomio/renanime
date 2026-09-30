@@ -4,10 +4,13 @@ import Navbar from "../../components/layout/Navbar.astro";
 import Footer from "../../components/layout/Footer.astro";
 import SectionHeader from "../../components/ui/SectionHeader.astro";
 import ComingSoonView from "../../components/coming-soon/ComingSoonView";
+import { getLibrary } from "../../data/library";
+
+const entries = getLibrary();
 ---
 <Layout title="Próximamente — Renanime's Gallery">
 <Navbar />
-<main id="main-content" class="coming-page"><div class="coming-header"><SectionHeader eyebrow="Lo que viene" title="Próximamente" description="Nuevas historias que están por llegar." /></div><section class="coming-content" aria-label="Próximos estrenos"><ComingSoonView client:load /></section></main>
+<main id="main-content" class="coming-page"><div class="coming-header"><SectionHeader eyebrow="Lo que viene" title="Próximamente" description="Lo que viene de los animes que ya forman parte de mi colección." /></div><section class="coming-content" aria-label="Próximos estrenos"><ComingSoonView entries={entries} client:load /></section></main>
 <Footer />
 </Layout>
 <style>
