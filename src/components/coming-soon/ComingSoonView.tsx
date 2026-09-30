@@ -36,24 +36,46 @@ interface Props {
   entries: LibraryEntry[];
 }
 
-const CACHE_PREFIX = "renanime:coming-soon:v5:";
-const CACHE_TTL = 6 * 60 * 60 * 1000;
-const UPCOMING_PAGE_SIZE = 50;
-const MAX_UPCOMING_PAGES = 6;
+const CACHE_PREFIX = "renanime:coming-soon:v6:";
+const CACHE_TTL = 24 * 60 * 60 * 1000;
+const SEARCH_BATCH_SIZE = 8;
+const SEARCH_DELAY_MS = 900;
 
-function titleOf(media: RelatedMedia | undefined, fallback = "Sin título") {
-  return media?.title?.romaji || media?.title?.english || fallback;
+interface SearchMedia extends RelatedMedia {
+  relations?: {
+    edges?: Array<{
+      relationType?: string | null;
+      node?: RelatedMedia | null;
+    }> | null;
+  } | null;
 }
 
-function normalizeTitle(title: string) {
-  return title
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/&/g, " and ")
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim()
-    .replace(/\s+/g, " ");
+interface SearchResult {
+  source: SearchMedia | null;
+  sourceTitle: string;
+}
+
+function titleVariants(media: RelatedMedia | undefined) {
+  return [
+    media?.title?.romaji,
+    media?.title?.english,
+  ].filter((value): value is string => Boolean(value));
+}
+
+function titleSimilarity(query: string, media: RelatedMedia) {
+  const queryTokens = new Set(normalizeTitle(query).split(" ").filter(Boolean));
+  const candidateTokens = new Set(
+    titleVariants(media).flatMap((title) => normalizeTitle(title).split(" ").filter(Boolean)),
+  );
+
+  if (!queryTokens.size || !candidateTokens.size) return 0;
+
+  let overlap = 0;
+  queryTokens.forEach((token) => {
+    if (candidateTokens.has(token)) overlap += 1;
+  });
+
+  return overlap / Math.max(queryTokens.size, candidateTokens.size);
 }
 
 function dateValue(date: DateParts | null | undefined) {
@@ -73,25 +95,27 @@ function dateLabel(date: DateParts | null | undefined) {
 
 function isUpcomingMedia(media: RelatedMedia) {
   if (media.status === "NOT_YET_RELEASED") return true;
-  return dateValue(media.startDate) >= Number(new Date().toISOString().slice(0, 10).replace(/-/g, ""));
+
+  const today = Number(new Date().toISOString().slice(0, 10).replace(/-/g, ""));
+  return dateValue(media.startDate) >= today;
 }
 
 function wait(ms: number) {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
-function readCache(): CandidateMedia[] | undefined {
+function readCache(key: string): SearchResult | undefined {
   try {
-    const raw = localStorage.getItem(CACHE_PREFIX + "upcoming");
+    const raw = localStorage.getItem(CACHE_PREFIX + normalizeTitle(key));
     if (!raw) return undefined;
 
     const parsed = JSON.parse(raw) as {
       savedAt: number;
-      data: CandidateMedia[];
+      data: SearchResult;
     };
 
     if (!parsed || Date.now() - parsed.savedAt > CACHE_TTL) {
-      localStorage.removeItem(CACHE_PREFIX + "upcoming");
+      localStorage.removeItem(CACHE_PREFIX + normalizeTitle(key));
       return undefined;
     }
 
@@ -101,38 +125,49 @@ function readCache(): CandidateMedia[] | undefined {
   }
 }
 
-function writeCache(data: CandidateMedia[]) {
+function writeCache(key: string, data: SearchResult) {
   try {
     localStorage.setItem(
-      CACHE_PREFIX + "upcoming",
+      CACHE_PREFIX + normalizeTitle(key),
       JSON.stringify({ savedAt: Date.now(), data }),
     );
   } catch {}
 }
 
-async function fetchUpcomingPage(page: number): Promise<{
-  ok: boolean;
-  data: CandidateMedia[];
-  hasNextPage: boolean;
-  limited?: boolean;
-}> {
-  const query = `
-    query UpcomingCollection(
-      $page: Int!
-      $perPage: Int!
-      $startDate: FuzzyDateInt!
-      $sort: [MediaSort]
-    ) {
-      Page(page: $page, perPage: $perPage) {
-        pageInfo {
-          hasNextPage
-        }
-        media(
-          type: ANIME
-          format_in: [TV, MOVIE]
-          startDate_greater: $startDate
-          sort: $sort
-        ) {
+async function searchWatchedBatch(
+  entries: LibraryEntry[],
+): Promise<{ results: SearchResult[]; limited: boolean }> {
+  if (!entries.length) return { results: [], limited: false };
+
+  const variables: Record<string, string> = {};
+  const aliases = entries.map((entry, index) => {
+    const variable = "s" + index;
+    variables[variable] = entry.title;
+    return { alias: "a" + index, variable, entry };
+  });
+
+  const mediaFields = \`
+    id
+    idMal
+    title {
+      romaji
+      english
+    }
+    startDate {
+      year
+      month
+      day
+    }
+    coverImage {
+      extraLarge
+      large
+    }
+    format
+    status
+    relations(page: 1, perPage: 30) {
+      edges {
+        relationType
+        node {
           id
           idMal
           title {
@@ -150,22 +185,27 @@ async function fetchUpcomingPage(page: number): Promise<{
           }
           format
           status
-          relations(page: 1, perPage: 10) {
-            edges {
-              relationType
-              node {
-                id
-                title {
-                  romaji
-                  english
-                }
-              }
-            }
-          }
         }
       }
     }
-  `;
+  \`;
+
+  const query = \`
+    query CollectionUpcoming(
+      \${aliases.map(({ variable }) => "$" + variable + ": String!").join("\\n      ")}
+    ) {
+      \${aliases
+        .map(
+          ({ alias, variable }) => \`
+      \${alias}: Page(page: 1, perPage: 5) {
+        media(search: $\${variable}, type: ANIME) {
+          \${mediaFields}
+        }
+      }\`,
+        )
+        .join("\\n")}
+    }
+  \`;
 
   try {
     const response = await fetch("https://graphql.anilist.co", {
@@ -174,130 +214,116 @@ async function fetchUpcomingPage(page: number): Promise<{
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify({
-        query,
-        variables: {
-          page,
-          perPage: UPCOMING_PAGE_SIZE,
-          startDate: Number(new Date().toISOString().slice(0, 10).replace(/-/g, "")),
-          sort: ["START_DATE"],
-        },
-      }),
+      body: JSON.stringify({ query, variables }),
     });
 
     const payload = await response.json().catch(() => null);
 
     if (response.status === 429) {
-      console.warn("[Renanime] AniList rate limit reached.");
-      return { ok: false, data: [], hasNextPage: false, limited: true };
+      console.warn("[Renanime] AniList rate limit reached while resolving collection.");
+      return { results: [], limited: true };
     }
 
     if (!response.ok || payload?.errors) {
-      console.warn("[Renanime] AniList upcoming query failed:", {
+      console.warn("[Renanime] AniList collection query failed:", {
         status: response.status,
         errors: payload?.errors ?? null,
       });
-      return { ok: false, data: [], hasNextPage: false };
+      return { results: [], limited: false };
     }
 
-    return {
-      ok: true,
-      data: (payload.data?.Page?.media ?? []) as CandidateMedia[],
-      hasNextPage: Boolean(payload.data?.Page?.pageInfo?.hasNextPage),
-    };
+    const results: SearchResult[] = [];
+
+    aliases.forEach(({ alias, entry }) => {
+      const media = (payload.data?.[alias]?.media ?? []) as SearchMedia[];
+
+      const source =
+        [...media]
+          .sort(
+            (a, b) =>
+              titleSimilarity(entry.title, b) - titleSimilarity(entry.title, a),
+          )[0] ?? null;
+
+      results.push({
+        source,
+        sourceTitle: entry.title,
+      });
+    });
+
+    return { results, limited: false };
   } catch (error) {
-    console.warn("[Renanime] AniList upcoming request failed:", error);
-    return { ok: false, data: [], hasNextPage: false };
+    console.warn("[Renanime] AniList collection request failed:", error);
+    return { results: [], limited: false };
   }
 }
 
 async function fetchUpcoming(entries: LibraryEntry[]) {
   const watchedEntries = entries.filter((entry) => entry.state.status === "WATCHED");
-  const cached = readCache();
-  const candidates: CandidateMedia[] = cached ? [...cached] : [];
-  const seenCandidates = new Set(candidates.map((candidate) => candidate.id));
-
-  if (!cached) {
-    for (let page = 1; page <= MAX_UPCOMING_PAGES; page += 1) {
-      const result = await fetchUpcomingPage(page);
-
-      if (!result.ok) {
-        return {
-          candidates,
-          limited: result.limited ?? false,
-        };
-      }
-
-      result.data.forEach((candidate) => {
-        if (!seenCandidates.has(candidate.id)) {
-          seenCandidates.add(candidate.id);
-          candidates.push(candidate);
-        }
-      });
-
-      if (!result.hasNextPage) break;
-      if (page < MAX_UPCOMING_PAGES) await wait(2200);
-    }
-
-    writeCache(candidates);
-  }
-
-  const ownedTitles = new Set(
-    watchedEntries.map((entry) => normalizeTitle(entry.title)),
-  );
-
   const result: ComingItem[] = [];
   const seen = new Set<number>();
+  let limited = false;
 
-  candidates.forEach((candidate) => {
-    if (!isUpcomingMedia(candidate)) return;
+  for (let index = 0; index < watchedEntries.length; index += SEARCH_BATCH_SIZE) {
+    const batch = watchedEntries.slice(index, index + SEARCH_BATCH_SIZE);
+    const resolved: SearchResult[] = [];
+    const missing: LibraryEntry[] = [];
 
-    candidate.relations?.edges?.forEach((edge) => {
-      const node = edge.node;
-      if (!node) return;
+    batch.forEach((entry) => {
+      const cached = readCache(entry.title);
+      if (cached) {
+        resolved.push(cached);
+      } else {
+        missing.push(entry);
+      }
+    });
 
-      const relationType = edge.relationType ?? "";
-      const matchedEntry = watchedEntries.find((entry) => {
-        const normalized = normalizeTitle(entry.title);
-        return normalized === normalizeTitle(node.title?.romaji ?? "")
-          || normalized === normalizeTitle(node.title?.english ?? "");
+    if (missing.length) {
+      const fetched = await searchWatchedBatch(missing);
+
+      if (fetched.limited) {
+        limited = true;
+        break;
+      }
+
+      fetched.results.forEach((item, itemIndex) => {
+        const entry = missing[itemIndex];
+        if (entry) writeCache(entry.title, item);
+        resolved.push(item);
       });
 
-      if (!matchedEntry) return;
+      if (index + SEARCH_BATCH_SIZE < watchedEntries.length) {
+        await wait(SEARCH_DELAY_MS);
+      }
+    }
 
-      // La relación se expresa desde la nueva obra hacia la obra que ya vimos.
-      // PREQUEL es la señal más clara para una nueva temporada; para películas
-      // AniList puede usar varias relaciones legítimas, así que aceptamos las
-      // relaciones de continuación/derivación y descartamos las puramente
-      // alternativas o de personajes.
-      const validContinuationRelations = new Set([
-        "PREQUEL",
-        "SEQUEL",
-        "SIDE_STORY",
-        "PARENT",
-        "ADAPTATION",
-        "OTHER",
-        "COMPILATION",
-        "CONTAINS",
-      ]);
+    resolved.forEach(({ source, sourceTitle }) => {
+      if (!source) return;
 
-      if (!validContinuationRelations.has(relationType)) return;
-      if (ownedTitles.has(normalizeTitle(titleOf(candidate)))) return;
-      if (seen.has(candidate.id)) return;
+      source.relations?.edges?.forEach((edge) => {
+        const node = edge.node;
+        if (!node || !isUpcomingMedia(node)) return;
 
-      seen.add(candidate.id);
-      result.push({
-        ...candidate,
-        kind: "RELEASE",
-        sourceTitle: matchedEntry.title,
-        relationType,
+        const relationType = edge.relationType ?? "";
+
+        if (!["SEQUEL", "SIDE_STORY", "SPIN_OFF", "OTHER"].includes(relationType)) {
+          return;
+        }
+
+        if (seen.has(node.id)) return;
+
+        seen.add(node.id);
+        result.push({
+          ...node,
+          kind: "RELEASE",
+          sourceTitle,
+          relationType,
+        });
       });
     });
-  });
+  }
 
-  return { candidates: result, limited: false };
+  return { candidates: result, limited };
 }
-
 
 export default function ComingSoonView({ entries }: Props) {
   const [items, setItems] = useState<ComingItem[]>([]);
