@@ -153,7 +153,7 @@ async function fetchBatch(
   const query = `query CollectionUpcoming(${definitions}) { ${fields} }`;
 
   try {
-    const response = await fetch("/api/anilist", {
+    const response = await fetch("https://graphql.anilist.co/", {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({ query, variables }),
