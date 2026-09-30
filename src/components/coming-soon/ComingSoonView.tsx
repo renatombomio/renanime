@@ -164,7 +164,7 @@ async function searchWatchedBatch(
     }
     format
     status
-    relations(page: 1, perPage: 30) {
+    relations(page: 1, perPage: 25) {
       edges {
         relationType
         node {
