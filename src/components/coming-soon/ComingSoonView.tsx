@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { getFranchiseId } from "../../data/franchise";
+import { getFranchiseId, getFranchiseRootTitle } from "../../data/franchise";
 
 interface LibraryEntry {
   animeId: string;
@@ -243,7 +243,11 @@ export default function ComingSoonView({ entries }: Props) {
       if (seen.has(key)) return false;
       seen.add(key);
 
-      return Boolean(getFranchiseId(entry)) || ACTIVE_RADAR_TITLES.has(entry.title);
+      const franchiseId = getFranchiseId(entry);
+      const isFranchiseAnchor =
+        Boolean(franchiseId) && getFranchiseRootTitle(franchiseId!) === entry.title;
+
+      return isFranchiseAnchor || ACTIVE_RADAR_TITLES.has(entry.title);
     });
   }, [entries]);
 
