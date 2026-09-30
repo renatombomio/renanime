@@ -9,7 +9,6 @@ const links = [
   { label: "Géneros", href: "/genres/" },
   { label: "Buscar", href: "/search/" },
   { label: "Pendientes", href: "/pending/" },
-  { label: "Próximamente", href: "/coming-soon/" },
   { label: "El secreto de Ren", href: "/ghibli/" },
 ];
 
