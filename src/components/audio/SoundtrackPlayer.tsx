@@ -21,18 +21,18 @@ type SavedState = {
 
 const PLAYLISTS: Record<PlaylistKey, Track[]> = {
   hero: [
-    { title: "Dandadan — Main Theme", src: "/audio/hero/dandadan-main-theme.mp3" },
-    { title: "Kimi no Na Wa — Main Theme", src: "/audio/hero/kiminonawa-main-theme.mp3" },
-    { title: "Kiznaiver — Theme", src: "/audio/hero/kiznaiver-theme-main.mp3" },
-    { title: "Mashle — Main Theme", src: "/audio/hero/mashle-main-theme.mp3" },
-    { title: "Naruto — Main Theme", src: "/audio/hero/naruto-main-theme.mp3" },
-    { title: "Noragami — Main Theme", src: "/audio/hero/Noragami-main-theme.mp3" },
-    { title: "Wolf's Rain — Main Theme", src: "/audio/hero/WolfsRain-main-theme.mp3" },
+    { title: "Otonoke — Creepy Nuts", src: "/audio/hero/dandadan-main-theme.mp3" },
+    { title: "Sparkle (スパークル, Supākuru)", src: "/audio/hero/kiminonawa-main-theme.mp3" },
+    { title: "LAY YOUR HANDS ON ME — Boom Boom Satellites", src: "/audio/hero/kiznaiver-theme-main.mp3" },
+    { title: "Bling-Bang-Bang-Born — Creepy Nuts", src: "/audio/hero/mashle-main-theme.mp3" },
+    { title: "Hero's Come Back!! — nobodyknows+", src: "/audio/hero/naruto-main-theme.mp3" },
+    { title: "Goya no Machiawase (午夜の待ち合わせ) — Hello Sleepwalkers", src: "/audio/hero/Noragami-main-theme.mp3" },
+    { title: "Stray — Steve Conte", src: "/audio/hero/WolfsRain-main-theme.mp3" },
   ],
   ghibli: [
-    { title: "Arrietty — Main Theme", src: "/audio/ghibli/arrietys-main-theme.mp3" },
-    { title: "Howl's Moving Castle — Main Theme", src: "/audio/ghibli/howlsmovingcastle-main-theme.mp3" },
-    { title: "The Boy and the Heron — Main Theme", src: "/audio/ghibli/theboyandtheheron-main-theme.mp3" },
+    { title: "The Neglected Garden — Cécile Corbel", src: "/audio/ghibli/arrietys-main-theme.mp3" },
+    { title: "FREEDOM PIANO STORIES — Joe Hisaishi", src: "/audio/ghibli/howlsmovingcastle-main-theme.mp3" },
+    { title: "Ask me why — Joe Hisaishi", src: "/audio/ghibli/theboyandtheheron-main-theme.mp3" },
   ],
 };
 
