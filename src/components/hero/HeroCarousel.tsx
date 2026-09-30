@@ -21,8 +21,17 @@ export default function HeroCarousel({
     const video = videoRef.current;
     if (!video) return;
 
+    // Keep every Hero video silent. React can hydrate the HTML muted attribute
+    // differently from the browser's media property, so set both DOM properties
+    // before attempting playback.
+    video.defaultMuted = true;
+    video.muted = true;
+
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const syncPlayback = () => {
+      video.defaultMuted = true;
+      video.muted = true;
+
       if (mediaQuery.matches) {
         video.pause();
         return;
@@ -44,6 +53,7 @@ export default function HeroCarousel({
           className="hero-video"
           ref={videoRef}
           muted
+          suppressHydrationWarning
           loop
           playsInline
           preload="metadata"
