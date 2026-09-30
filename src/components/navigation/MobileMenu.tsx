@@ -4,11 +4,12 @@ interface Props { variant?: "default" | "ghibli"; }
 
 const links = [
   { label: "Inicio", href: "/" },
-  { label: "Favoritos", href: "/favorites/" },
-  { label: "Mi colección", href: "/collection/" },
-  { label: "Géneros", href: "/genres/" },
-  { label: "Buscar", href: "/search/" },
   { label: "Mi lista", href: "/pending/" },
+  { label: "Mi colección", href: "/collection/" },
+  { label: "Colección de Ren", href: "/ren-collection/" },
+  { label: "Favoritos de Ren", href: "/favorites/" },
+  { label: "Géneros de Ren", href: "/genres/" },
+  { label: "Buscar", href: "/search/" },
   { label: "El secreto de Ren", href: "/ghibli/" },
 ];
 
