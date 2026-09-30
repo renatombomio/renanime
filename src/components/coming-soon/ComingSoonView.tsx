@@ -109,7 +109,7 @@ function writeCache(title: string, data: SourceMedia | null) {
   } catch {}
 }
 
-async function fetchBatch(entries: LibraryEntry[]): Promise<SourceMedia[]> {
+async function fetchBatch(entries: LibraryEntry[]): Promise<Array<SourceMedia | null>> {
   const variables: Record<string, string> = {};
   const fields = entries.map((entry, index) => {
     const key = "s" + index;
