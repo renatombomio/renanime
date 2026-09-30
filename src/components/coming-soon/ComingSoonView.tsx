@@ -141,7 +141,7 @@ async function fetchBatch(entries: LibraryEntry[]): Promise<Array<SourceMedia | 
         }
       }
     `;
-  }).join("\\n");
+  }).join("\n");
 
   const definitions = entries.map((_, index) => "$s" + index + ": String!").join(", ");
   const query = `query CollectionUpcoming(${definitions}) { ${fields} }`;
