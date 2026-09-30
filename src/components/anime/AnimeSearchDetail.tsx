@@ -40,22 +40,34 @@ function status(value:string|null|undefined){
  return value==="FINISHED"?"Finalizado":value==="RELEASING"?"En emisión":value==="NOT_YET_RELEASED"?"Próximamente":value==="HIATUS"?"En pausa":value==="CANCELLED"?"Cancelado":"";
 }
 async function fetchGenreRecommendations(genres:string[],excludeId:number){
-  const selected=[...new Set(genres.filter(Boolean))].slice(0,3);
+  const selected=[...new Set(genres.filter(Boolean))];
   if(!selected.length)return [];
-  const query=`query RelatedByGenre(\$genre:String!){Page(page:1,perPage:12){media(type:ANIME,genre:\$genre,sort:POPULARITY_DESC){id title{romaji english} coverImage{extraLarge large} format startDate{year}}}}`;
+  const query=`query RelatedByGenre(\$genre:String!){Page(page:1,perPage:30){media(type:ANIME,genre:\$genre,sort:POPULARITY_DESC){id title{romaji english} genres coverImage{extraLarge large} format startDate{year}}}}`;
   try{
-    const responses=await Promise.all(selected.map(async genre=>{
+    const responses=await Promise.all(selected.slice(0,3).map(async genre=>{
       const response=await fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables:{genre}})});
       if(!response.ok)return [];
       const payload=await response.json();
       return payload.data?.Page?.media??[];
     }));
     const seen=new Set<number>([excludeId]);
-    const merged:any[]=[];
+    const candidates:any[]=[];
     responses.flat().forEach((item:any)=>{
-      if(item?.id&&!seen.has(item.id)){seen.add(item.id);merged.push(item);}
+      if(!item?.id||seen.has(item.id))return;
+      seen.add(item.id);
+      const itemGenres=new Set<string>(item.genres??[]);
+      const shared=selected.filter(genre=>itemGenres.has(genre)).length;
+      const minimumShared=selected.length>=2?2:1;
+      if(shared<minimumShared)return;
+      const union=new Set([...selected,...(item.genres??[])]);
+      const jaccard=shared/union.size;
+      const score=(shared*10)+(jaccard*8);
+      candidates.push({...item,__score:score});
     });
-    return merged.slice(0,12);
+    return candidates
+      .sort((a:any,b:any)=>b.__score-a.__score)
+      .slice(0,8)
+      .map(({__score,...item}:any)=>item);
   }catch{return []}
 }
 
