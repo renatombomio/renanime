@@ -47,13 +47,6 @@ const CACHE_PREFIX = "renanime:coming-soon:v3:";
 const CACHE_TTL = 6 * 60 * 60 * 1000;
 const BATCH_SIZE = 3;
 const BATCH_DELAY_MS = 2600;
-const ALLOWED_RELATIONS = new Set([
-  "SEQUEL",
-  "SIDE_STORY",
-  "SPIN_OFF",
-  "ALTERNATIVE",
-]);
-
 function titleOf(media: RelatedMedia | undefined, fallback = "Sin título") {
   return media?.title?.romaji || media?.title?.english || fallback;
 }
