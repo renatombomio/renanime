@@ -42,6 +42,30 @@ export default function GhibliStory({ entries }: { entries: GhibliStoryEntry[] }
     return () => { cancelled = true; };
   }, [entries]);
 
+  useEffect(() => {
+    if (loading) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const targets = Array.from(document.querySelectorAll<HTMLElement>(".ghs-intro, .ghs-entry"));
+
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+      targets.forEach((target) => target.classList.add("is-visible"));
+      return;
+    }
+
+    const observer = new IntersectionObserver((observed) => {
+      observed.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.08, rootMargin: "0px 0px -8% 0px" });
+
+    targets.forEach((target) => observer.observe(target));
+
+    return () => observer.disconnect();
+  }, [loading]);
+
   if (loading) {
     return <div className="ghs-loading" role="status" aria-live="polite">Recordando el viaje…</div>;
   }
@@ -51,7 +75,7 @@ export default function GhibliStory({ entries }: { entries: GhibliStoryEntry[] }
       <style>{`
         .ghs{--pink:#F0A9A5;--coral:#F45164;--blue:#18528A;--teal:#0B798B;--lime:#91CC57;--red:#B12A31;--cream:#FFF7E8;--paper:#F4E9D5;--sky:#DCEFF1;--moss:#486B3C;--ink:#19362F;--serif:Georgia,"Times New Roman",serif;--sans:"Helvetica Neue",Helvetica,Arial,sans-serif;--mono:"SFMono-Regular",Consolas,monospace;max-width:1320px;margin:0 auto;padding:clamp(3rem,7vw,8rem) clamp(1rem,4vw,4rem) 8rem;color:var(--ink);font-family:var(--sans)}
         .ghs-loading{padding:7rem 1rem;text-align:center;color:#486B3C;font:600 .65rem/1 var(--ghibli-meta);letter-spacing:.14em;text-transform:uppercase}
-        .ghs-intro{display:grid;grid-template-columns:1fr .72fr;min-height:330px;margin-bottom:clamp(3rem,6vw,5.5rem);background:#fff;border-radius:32px;overflow:hidden;box-shadow:0 22px 60px rgba(25,54,47,.1)}
+        .ghs-intro{display:grid;opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1);grid-template-columns:1fr .72fr;min-height:330px;margin-bottom:clamp(3rem,6vw,5.5rem);background:#fff;border-radius:32px;overflow:hidden;box-shadow:0 22px 60px rgba(25,54,47,.1)}
         .ghs-intro-copy{display:flex;flex-direction:column;justify-content:center;padding:clamp(2rem,4vw,4.5rem)}
         .ghs-kicker{margin:0 0 1.1rem;color:var(--coral);font:600 .58rem/1 var(--mono);letter-spacing:.16em;text-transform:uppercase}
         .ghs-intro-copy>p:last-child{max-width:690px;margin:0;color:#48675D;font:400 clamp(1.05rem,1.6vw,1.3rem)/1.65 var(--sans)}
@@ -65,13 +89,18 @@ export default function GhibliStory({ entries }: { entries: GhibliStoryEntry[] }
         .ghs-intro-note{position:absolute;z-index:5;right:1.75rem;bottom:1.75rem;padding:.7rem .9rem;border:1px solid rgba(255,255,255,.35);border-radius:999px;color:#fff;font:600 .55rem/1 var(--mono);letter-spacing:.1em;text-transform:uppercase}
         .ghs-route{display:flex;align-items:center;gap:1rem;margin:0 0 1.5rem;color:var(--moss);font:600 .58rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase}
         .ghs-route i{height:1px;flex:1;background:rgba(25,54,47,.2)}
-        .ghs-entry{position:relative;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);align-items:center;min-height:650px;margin:0 0 clamp(3rem,6vw,7rem)}
+        .ghs-intro.is-visible,.ghs-entry.is-visible{opacity:1;transform:none}
+        .ghs-entry{position:relative;opacity:0;transform:translateY(34px);transition:opacity .75s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1);display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);align-items:center;min-height:650px;margin:0 0 clamp(3rem,6vw,7rem)}
         .ghs-entry:nth-child(even){grid-template-columns:minmax(320px,.8fr) minmax(0,1.2fr)}
         .ghs-entry:nth-child(even) .ghs-image-wrap{grid-column:2;grid-row:1}
         .ghs-entry:nth-child(even) .ghs-copy{grid-column:1;grid-row:1}
         .ghs-image-wrap{position:relative;z-index:1;height:min(70vw,700px);overflow:hidden;border-radius:34px;background:var(--sky);box-shadow:0 30px 80px rgba(25,54,47,.16)}
         .ghs-image-wrap img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.22,1,.36,1)}
         .ghs-entry:hover .ghs-image-wrap img{transform:scale(1.035)}
+        @media(prefers-reduced-motion:reduce){
+          .ghs-intro,.ghs-entry{opacity:1;transform:none;transition:none}
+          .ghs-entry:hover .ghs-image-wrap img{transform:none}
+        }
         .ghs-image-wrap:after{position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(25,54,47,.28));content:"";pointer-events:none}
         .ghs-year{position:absolute;z-index:3;right:1.25rem;bottom:1.25rem;padding:.55rem .75rem;border-radius:999px;background:rgba(255,247,232,.92);color:var(--blue);font:600 .55rem/1 var(--mono);letter-spacing:.1em}
         .ghs-num{position:absolute;z-index:4;top:1.5rem;left:1.5rem;display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:var(--cream);color:var(--blue);font:600 .62rem/1 var(--mono);box-shadow:0 10px 25px rgba(25,54,47,.16)}
