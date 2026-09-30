@@ -359,7 +359,7 @@ export default function ComingSoonView({ entries }: Props) {
                   <div className="coming-info">
                     <h3>{title}</h3>
                     <span>{label}</span>
-                    <small>Continuación de ${item.sourceTitle}</small>
+                    <small>Continuación de {item.sourceTitle}</small>
                   </div>
                 </a>
               );
