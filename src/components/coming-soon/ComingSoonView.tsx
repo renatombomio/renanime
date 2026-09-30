@@ -192,7 +192,7 @@ async function searchWatchedBatch(
 
   const query = `
     query CollectionUpcoming(
-      ${aliases.map(({ variable }) => "$" + variable + ": String!").join("\\n      ")}
+      ${aliases.map(({ variable }) => "$" + variable + ": String!").join("\n      ")}
     ) {
       ${aliases
         .map(
