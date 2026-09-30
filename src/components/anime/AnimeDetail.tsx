@@ -17,7 +17,7 @@ interface Media {
   coverImage?: { extraLarge?: string|null; large?: string|null };
   bannerImage?: string|null;
   trailer?: { id?: string|null; site?: string|null; thumbnail?: string|null }|null;
-  recommendations?: { nodes?: { media?: { id:number; title?: { romaji?:string|null; english?:string|null }; coverImage?: { extraLarge?:string|null; large?:string|null }; format?:string|null; startDate?: { year?:number|null }|null }|null }[] }|null;
+  recommendations?: { nodes?: { mediaRecommendation?: { id:number; title?: { romaji?:string|null; english?:string|null }; coverImage?: { extraLarge?:string|null; large?:string|null }; format?:string|null; startDate?: { year?:number|null }|null }|null }[] }|null;
   relations?: { edges?: { relationType?: string|null; node?: { id:number; type?:string|null; format?:string|null; title?: { romaji?:string|null; english?:string|null }; coverImage?: { extraLarge?:string|null; large?:string|null } } }[] }|null;
 }
 
@@ -80,52 +80,22 @@ async function translateToSpanish(text:string){
   return result;
 }
 
-async function fetchGenreRecommendations(genres:string[],excludeId:number){
-  const selected=[...new Set(genres.filter(Boolean))];
-  if(!selected.length)return [];
-  const query=`query RelatedByGenre(\$genre:String!){Page(page:1,perPage:30){media(type:ANIME,genre:\$genre,sort:POPULARITY_DESC){id title{romaji english} genres coverImage{extraLarge large} format startDate{year}}}}`;
-  try{
-    const responses=await Promise.all(selected.slice(0,3).map(async genre=>{
-      const response=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables:{genre}})});
-      if(!response.ok)return [];
-      const payload=await response.json();
-      return payload.data?.Page?.media??[];
-    }));
-    const seen=new Set<number>([excludeId]);
-    const candidates:any[]=[];
-    responses.flat().forEach((item:any)=>{
-      if(!item?.id||seen.has(item.id))return;
-      seen.add(item.id);
-      const itemGenres=new Set<string>(item.genres??[]);
-      const shared=selected.filter(genre=>itemGenres.has(genre)).length;
-      const minimumShared=selected.length>=2?2:1;
-      if(shared<minimumShared)return;
-      const union=new Set([...selected,...(item.genres??[])]);
-      const jaccard=shared/union.size;
-      const score=(shared*10)+(jaccard*8);
-      candidates.push({...item,__score:score});
-    });
-    return candidates
-      .sort((a:any,b:any)=>b.__score-a.__score)
-      .slice(0,8)
-      .map(({__score,...item}:any)=>item);
-  }catch{return []}
-}
+
 
 async function findAnime(entry: LibraryEntry): Promise<Media|null> {
   try {
     const cached=sessionStorage.getItem(CACHE_PREFIX+entry.animeId);
     if(cached) return JSON.parse(cached);
   } catch {}
-  const query=`query Detail($search:String!){Page(page:1,perPage:1){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} relations{edges{relationType node{id type format title{romaji english} coverImage{extraLarge large}}}}}}}`;
+  const query=`query Detail($search:String!){Page(page:1,perPage:1){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}} relations{edges{relationType node{id type format title{romaji english} coverImage{extraLarge large}}}}}}}`;
   try {
     const response=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables:{search:entry.title}})});
     if(!response.ok) return null;
     const payload=await response.json();
     const media=payload.data?.Page?.media?.[0]??null;
     if(!media)return null;
-    const related=await fetchGenreRecommendations(media.genres??[],media.id);
-    media.recommendations={nodes:related.slice(0,8).map((item:any)=>({media:item}))};
+    const related=(media.recommendations?.nodes??[]).map((node:any)=>node.mediaRecommendation).filter(Boolean).filter((item:any)=>item.id!==media.id);
+    media.recommendations={nodes:related.slice(0,8).map((item:any)=>({mediaRecommendation:item}))};
     try{sessionStorage.setItem(CACHE_PREFIX+entry.animeId,JSON.stringify(media));}catch{}
     return media;
   } catch { return null; }
