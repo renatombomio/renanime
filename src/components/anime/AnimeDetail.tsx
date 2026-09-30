@@ -82,6 +82,36 @@ async function translateToSpanish(text:string){
 
 
 
+
+
+async function fetchAniListRecommendations(mediaId:number){
+  const query=`query Recommendations($mediaId:Int!){
+    Page(page:1,perPage:12){
+      recommendations(mediaId:$mediaId,sort:RATING_DESC){
+        nodes{
+          mediaRecommendation{
+            id
+            title{romaji english}
+            coverImage{extraLarge large}
+            format
+            startDate{year}
+          }
+        }
+      }
+    }
+  }`;
+  try{
+    const response=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables:{mediaId}})});
+    if(!response.ok)return [];
+    const payload=await response.json();
+    return (payload.data?.Page?.recommendations?.nodes??[])
+      .map((node:any)=>node.mediaRecommendation)
+      .filter(Boolean)
+      .filter((item:any)=>item.id!==mediaId)
+      .slice(0,8);
+  }catch{return []}
+}
+
 async function findAnime(entry: LibraryEntry): Promise<Media|null> {
   try {
     const cached=sessionStorage.getItem(CACHE_PREFIX+entry.animeId);
@@ -94,8 +124,8 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
     const payload=await response.json();
     const media=payload.data?.Page?.media?.[0]??null;
     if(!media)return null;
-    const related=(media.recommendations?.nodes??[]).map((node:any)=>node.mediaRecommendation).filter(Boolean).filter((item:any)=>item.id!==media.id);
-    media.recommendations={nodes:related.slice(0,8).map((item:any)=>({mediaRecommendation:item}))};
+    const related=await fetchAniListRecommendations(media.id);
+    media.recommendations={nodes:related.map((item:any)=>({mediaRecommendation:item}))};
     try{sessionStorage.setItem(CACHE_PREFIX+entry.animeId,JSON.stringify(media));}catch{}
     return media;
   } catch { return null; }
@@ -178,7 +208,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
     .anime-detail:not(.anime-detail--ghibli) .anime-detail-synopsis-wrap{max-width:42rem;margin-top:1.35rem;padding:1rem 1.15rem 1.1rem;border:1px solid rgba(245,242,236,.18);border-radius:14px;background:rgba(9,9,9,.42);box-shadow:0 12px 34px rgba(0,0,0,.16);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
     .anime-detail:not(.anime-detail--ghibli) .anime-detail-synopsis{margin:0;color:var(--color-paper-50)}
     .anime-detail:not(.anime-detail--ghibli) .anime-detail-translate{border-color:rgba(245,242,236,.28);background:rgba(245,242,236,.06);color:var(--color-paper-200)}
-    .anime-detail-recommendations{margin-top:2rem;width:100%}
+    .anime-detail-recommendations{grid-column:1 / -1;margin-top:2rem;width:100%;min-width:0}
     .anime-detail-recommendations-head{margin-bottom:.8rem}
     .anime-detail-recommendations-track{display:flex;gap:.7rem;min-height:0;overflow-x:auto;padding:.15rem 0 .65rem;scroll-snap-type:x mandatory;scrollbar-width:thin;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
     .anime-detail-recommendation{flex:0 0 clamp(116px,30vw,138px);scroll-snap-align:start;color:inherit;text-decoration:none}
