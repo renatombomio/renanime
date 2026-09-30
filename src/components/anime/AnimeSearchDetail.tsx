@@ -175,7 +175,9 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     .anime-detail--ghibli .anime-detail-recommendation-title{color:#fff}
     .anime-detail--ghibli .anime-detail-recommendation-meta{color:rgba(255,255,255,.68)}
     @media(max-width:760px){
-      .anime-detail-recommendations{margin-top:1.35rem}
+      .anime-detail-recommendations{grid-column:1 / -1;width:100%;margin-top:1.35rem}
+      .anime-detail-recommendations-track{width:100%;max-width:none}
+      .anime-detail-recommendation{flex-basis:104px}
       .anime-detail-recommendations-head{margin-bottom:.85rem}
       .anime-detail-recommendation{flex-basis:116px}
       .anime-detail-recommendation-title{font-size:.68rem}
