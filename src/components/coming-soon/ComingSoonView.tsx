@@ -157,9 +157,9 @@ async function fetchBatch(entries: LibraryEntry[]): Promise<Array<SourceMedia | 
     const payload = await response.json();
     if (payload.errors) return [];
 
-    return entries
-      .map((_, index) => payload.data?.["a" + index]?.media?.[0] as SourceMedia | undefined)
-      .filter((item): item is SourceMedia => Boolean(item));
+    return entries.map(
+      (_, index) => (payload.data?.["a" + index]?.media?.[0] as SourceMedia | undefined) ?? null,
+    );
   } catch {
     return [];
   }
@@ -193,7 +193,12 @@ export default function ComingSoonView({ entries }: Props) {
         const batch = missing.slice(offset, offset + BATCH_SIZE);
         const result = await fetchBatch(batch);
         batch.forEach((entry, index) => writeCache(entry.title, result[index] ?? null));
-        if (!cancelled) setSources((current) => [...current, ...result]);
+        if (!cancelled) {
+          setSources((current) => [
+            ...current,
+            ...result.filter((item): item is SourceMedia => Boolean(item)),
+          ]);
+        }
       }
 
       if (!cancelled) setLoading(false);
