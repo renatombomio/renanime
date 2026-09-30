@@ -83,7 +83,7 @@ async function translateToSpanish(text:string){
 async function fetchGenreRecommendations(genres:string[],excludeId:number){
   const selected=genres.filter(Boolean).slice(0,3);
   if(!selected.length)return [];
-  const query=`query RelatedByGenre(\$genres:[String!]!){Page(page:1,perPage:20){media(type:ANIME,genre_in:\$genres,sort:[POPULARITY_DESC,SCORE_DESC]){id title{romaji english} coverImage{extraLarge large} format startDate{year}}}}`;
+  const query=`query RelatedByGenre($genres:[String]){Page(page:1,perPage:20){media(type:ANIME,genre_in:$genres,sort:[POPULARITY_DESC,SCORE_DESC]){id title{romaji english} coverImage{extraLarge large} format startDate{year}}}}`;
   try{
     const response=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables:{genres:selected}})});
     if(!response.ok)return [];
