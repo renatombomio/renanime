@@ -81,28 +81,14 @@ async function translateToSpanish(text:string){
 }
 
 async function fetchGenreRecommendations(genres:string[],excludeId:number){
-  const selected=genres.slice(0,2);
+  const selected=genres.filter(Boolean).slice(0,3);
   if(!selected.length)return [];
-  const variables:Record<string,string>={};
-  const fields=selected.map((genre,index)=>{
-    const variable="g"+index;
-    variables[variable]=genre;
-    return `g${index}:Page(page:1,perPage:12){media(type:ANIME,genre:${variable},sort:POPULARITY_DESC){id title{romaji english} coverImage{extraLarge large} format startDate{year}}}`;
-  }).join(" ");
-  const definitions=selected.map((_,index)=>"$g"+index+":String!").join(",");
-  const query=`query RelatedByGenre(${definitions}){${fields}}`;
+  const query=`query RelatedByGenre(\$genres:[String!]!){Page(page:1,perPage:20){media(type:ANIME,genre_in:\$genres,sort:[POPULARITY_DESC,SCORE_DESC]){id title{romaji english} coverImage{extraLarge large} format startDate{year}}}}`;
   try{
-    const response=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables})});
+    const response=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables:{genres:selected}})});
     if(!response.ok)return [];
     const payload=await response.json();
-    const seen=new Set<number>();
-    const result:any[]=[];
-    selected.forEach((_,index)=>{
-      (payload.data?.["g"+index]?.media??[]).forEach((item:any)=>{
-        if(item.id!==excludeId&&!seen.has(item.id)){seen.add(item.id);result.push(item);}
-      });
-    });
-    return result;
+    return (payload.data?.Page?.media??[]).filter((item:any)=>item?.id!==excludeId);
   }catch{return []}
 }
 
@@ -122,7 +108,7 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
     const seen=new Set<number>([media.id]);
     const merged:any[]=[];
     current.forEach((item:any)=>{if(item?.id&&!seen.has(item.id)){seen.add(item.id);merged.push(item)}});
-    if(merged.length<5){
+    if(merged.length<8){
       const fallback=await fetchGenreRecommendations(media.genres??[],media.id);
       fallback.forEach((item:any)=>{if(merged.length<8&&!seen.has(item.id)){seen.add(item.id);merged.push(item)}});
     }
@@ -217,7 +203,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
     .anime-detail-recommendation-poster img{display:block;width:100%;height:100%;object-fit:cover;transition:transform 320ms cubic-bezier(.22,1,.36,1)}
     .anime-detail-recommendation:hover .anime-detail-recommendation-poster img{transform:scale(1.035)}
     .anime-detail-recommendation-title{display:block;margin-top:.48rem;font-size:.72rem;line-height:1.25;font-weight:500}
-    .anime-detail-recommendations-empty{display:flex;align-items:center;min-height:0;padding:1rem;color:inherit;opacity:.58;font-family:var(--font-meta);font-size:.5rem;letter-spacing:.08em;text-transform:uppercase}.anime-detail-recommendation-meta{display:block;margin-top:.22rem;font-family:var(--font-meta);font-size:.5rem;letter-spacing:.06em;text-transform:uppercase;opacity:.58}
+    .anime-detail-recommendation-meta{display:block;margin-top:.22rem;font-family:var(--font-meta);font-size:.5rem;letter-spacing:.06em;text-transform:uppercase;opacity:.58}
     @media(max-width:760px){.anime-detail:not(.anime-detail--ghibli) .anime-detail-synopsis-wrap{margin-top:1rem;padding:.85rem .9rem .95rem;border-radius:12px}.anime-detail-recommendations{margin-top:1.35rem}.anime-detail-recommendation{flex-basis:116px}.anime-detail-recommendation-title{font-size:.68rem}}
   `}</style>
   <section className="anime-detail-hero" style={banner?{backgroundImage:`linear-gradient(90deg,rgba(9,9,9,.98) 0%,rgba(9,9,9,.78) 43%,rgba(9,9,9,.35) 72%,rgba(9,9,9,.72) 100%),linear-gradient(0deg,rgba(9,9,9,.98),transparent 42%),url("${banner}")`}:undefined}>
@@ -258,7 +244,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
                 <span className="anime-detail-recommendation-title">{recTitle}</span>
                 <span className="anime-detail-recommendation-meta">{item.format==="MOVIE"?"Film":"Series"}{item.startDate?.year?" · "+item.startDate.year:""}</span>
               </a>;
-            }) : <div className="anime-detail-recommendations-empty">Explorando nuevas historias…</div>}
+            }) : }
           </div>
         </section>;
        })()}
