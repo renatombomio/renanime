@@ -11,14 +11,14 @@ const entries = getFavoritesLibrary();
 const recommendations = getRecommendedLibrary().filter((entry) => !entry.state.favorite);
 ---
 
-<Layout title="Favoritos — Renanime's Gallery">
+<Layout title="Favoritos de Ren — Renanime's Gallery">
   <Navbar />
   <main id="main-content" class="favorites-page">
     <Container>
       <SectionHeader
-        eyebrow="Selección personal"
-        title="Favoritos"
-        description="Mis animes favoritos. Historias que me han conmovido, personajes que se quedan contigo y valores que, sin pedir permiso, terminan enseñándote algo."
+        eyebrow="Archivo de Ren"
+        title="Favoritos de Ren"
+        description="Los animes favoritos de Ren. Historias que me han conmovido, personajes que se quedan contigo y valores que, sin pedir permiso, terminan enseñándote algo."
       />
       <div class="favorites-page-content">
         <FavoritesView entries={entries} recommendations={recommendations} client:load />
