@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import "./SoundtrackPlayer.css";
 
 type Track = {
   title: string;
@@ -170,7 +171,9 @@ export default function SoundtrackPlayer() {
       audio.pause();
     };
 
-    const handleVideoPause = () => {
+    const handleVideoPause = (event: Event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLVideoElement)) return;
       if (!resumeAfterVideoRef.current) return;
 
       resumeAfterVideoRef.current = false;
