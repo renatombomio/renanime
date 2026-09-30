@@ -95,6 +95,7 @@ export default function SoundtrackPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const saveTimerRef = useRef<number | null>(null);
   const resumeAfterVideoRef = useRef(false);
+  const settingsRef = useRef({ enabled: false, volume: DEFAULT_VOLUME, muted: false, shuffle: false, repeat: "all" as RepeatMode });
 
   const [playlistKey, setPlaylistKey] = useState<PlaylistKey>("hero");
   const [trackIndex, setTrackIndex] = useState(0);
@@ -111,6 +112,8 @@ export default function SoundtrackPlayer() {
 
   const tracks = PLAYLISTS[playlistKey];
   const track = tracks[trackIndex] ?? tracks[0];
+
+  settingsRef.current = { enabled, volume, muted, shuffle, repeat };
 
   const progress = useMemo(
     () => (duration > 0 ? Math.min(100, (position / duration) * 100) : 0),
@@ -171,13 +174,13 @@ export default function SoundtrackPlayer() {
       if (saveTimerRef.current !== null) return;
       saveTimerRef.current = window.setTimeout(() => {
         saveState({
-          enabled,
+          enabled: settingsRef.current.enabled,
           trackIndex,
           position: audio.currentTime,
-          volume,
-          muted,
-          shuffle,
-          repeat,
+          volume: settingsRef.current.volume,
+          muted: settingsRef.current.muted,
+          shuffle: settingsRef.current.shuffle,
+          repeat: settingsRef.current.repeat,
         });
         saveTimerRef.current = null;
       }, 750);
@@ -191,7 +194,7 @@ export default function SoundtrackPlayer() {
     };
 
     const handleEnded = () => {
-      if (repeat === "one") {
+      if (settingsRef.current.repeat === "one") {
         audio.currentTime = 0;
         void audio.play().catch(() => setPlaying(false));
         return;
@@ -205,10 +208,10 @@ export default function SoundtrackPlayer() {
           enabled: false,
           trackIndex,
           position: 0,
-          volume,
-          muted,
-          shuffle,
-          repeat,
+          volume: settingsRef.current.volume,
+          muted: settingsRef.current.muted,
+          shuffle: settingsRef.current.shuffle,
+          repeat: settingsRef.current.repeat,
         });
         return;
       }
@@ -323,14 +326,14 @@ export default function SoundtrackPlayer() {
   function getNextIndex(direction: 1 | -1): number | null {
     if (!tracks.length) return null;
 
-    if (shuffle && tracks.length > 1) {
+    if (settingsRef.current.shuffle && tracks.length > 1) {
       const candidates = tracks.map((_, index) => index).filter((index) => index !== trackIndex);
       return candidates[Math.floor(Math.random() * candidates.length)] ?? 0;
     }
 
     const next = trackIndex + direction;
     if (next >= 0 && next < tracks.length) return next;
-    if (repeat === "all") return (next + tracks.length) % tracks.length;
+    if (settingsRef.current.repeat === "all") return (next + tracks.length) % tracks.length;
     return null;
   }
 
