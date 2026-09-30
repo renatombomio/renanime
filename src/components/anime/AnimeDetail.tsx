@@ -245,7 +245,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
                 <span className="anime-detail-recommendation-title">{recTitle}</span>
                 <span className="anime-detail-recommendation-meta">{item.format==="MOVIE"?"Film":"Series"}{item.startDate?.year?" · "+item.startDate.year:""}</span>
               </a>;
-            }) : }
+            }) : null}
           </div>
         </section>;
        })()}
