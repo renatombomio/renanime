@@ -14,6 +14,7 @@ interface AiringEpisode {
 
 interface RelatedMedia {
   id: number;
+  idMal?: number | null;
   title?: { romaji?: string | null; english?: string | null };
   startDate?: DateParts | null;
   coverImage?: { extraLarge?: string | null; large?: string | null };
@@ -21,8 +22,7 @@ interface RelatedMedia {
   status?: string | null;
 }
 
-interface SourceMedia extends RelatedMedia {
-  nextAiringEpisode?: AiringEpisode | null;
+interface CandidateMedia extends RelatedMedia {
   relations?: {
     edges?: Array<{
       relationType?: string | null;
@@ -32,23 +32,42 @@ interface SourceMedia extends RelatedMedia {
 }
 
 interface ComingItem extends RelatedMedia {
-  kind: "RELEASE" | "EPISODE";
+  kind: "RELEASE";
   sourceTitle: string;
   relationType?: string | null;
-  episode?: number;
-  airingAt?: number;
 }
 
 interface Props {
   entries: LibraryEntry[];
 }
 
-const CACHE_PREFIX = "renanime:coming-soon:v4:";
+const CACHE_PREFIX = "renanime:coming-soon:v5:";
 const CACHE_TTL = 6 * 60 * 60 * 1000;
-const BATCH_SIZE = 3;
-const BATCH_DELAY_MS = 2600;
+const UPCOMING_PAGE_SIZE = 20;
+const MAX_UPCOMING_PAGES = 10;
+
 function titleOf(media: RelatedMedia | undefined, fallback = "Sin título") {
   return media?.title?.romaji || media?.title?.english || fallback;
+}
+
+function normalizeTitle(title: string) {
+  return title
+    .normalize("NFKD")
+    .replace(/[\\u0300-\\u036f]/g, "")
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\\s+/g, " ");
+}
+
+function titleMatches(entryTitle: string, node: RelatedMedia) {
+  const wanted = normalizeTitle(entryTitle);
+  if (!wanted) return false;
+
+  return [node.title?.romaji, node.title?.english]
+    .filter((value): value is string => Boolean(value))
+    .some((value) => normalizeTitle(value) === wanted);
 }
 
 function dateValue(date: DateParts | null | undefined) {
@@ -66,91 +85,96 @@ function dateLabel(date: DateParts | null | undefined) {
   });
 }
 
-function episodeDateLabel(timestamp?: number) {
-  if (!timestamp) return "Fecha por confirmar";
-  return new Date(timestamp * 1000).toLocaleDateString("es-ES", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-}
-
-function isFuture(date: DateParts | null | undefined) {
-  if (!date?.year) return false;
-  const today = Number(new Date().toISOString().slice(0, 10).replace(/-/g, ""));
-  return dateValue(date) >= today;
-}
-
 function isUpcomingMedia(media: RelatedMedia) {
-  return media.status === "NOT_YET_RELEASED" || isFuture(media.startDate);
+  if (media.status === "NOT_YET_RELEASED") return true;
+  return dateValue(media.startDate) >= Number(new Date().toISOString().slice(0, 10).replace(/-/g, ""));
 }
 
 function wait(ms: number) {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
-function readCache(title: string): SourceMedia | null | undefined {
+function readCache(): CandidateMedia[] | undefined {
   try {
-    const raw = localStorage.getItem(CACHE_PREFIX + title.toLowerCase());
+    const raw = localStorage.getItem(CACHE_PREFIX + "upcoming");
     if (!raw) return undefined;
-    const parsed = JSON.parse(raw) as { savedAt: number; data: SourceMedia | null };
+
+    const parsed = JSON.parse(raw) as {
+      savedAt: number;
+      data: CandidateMedia[];
+    };
+
     if (!parsed || Date.now() - parsed.savedAt > CACHE_TTL) {
-      localStorage.removeItem(CACHE_PREFIX + title.toLowerCase());
+      localStorage.removeItem(CACHE_PREFIX + "upcoming");
       return undefined;
     }
+
     return parsed.data;
   } catch {
     return undefined;
   }
 }
 
-function writeCache(title: string, data: SourceMedia | null) {
+function writeCache(data: CandidateMedia[]) {
   try {
     localStorage.setItem(
-      CACHE_PREFIX + title.toLowerCase(),
+      CACHE_PREFIX + "upcoming",
       JSON.stringify({ savedAt: Date.now(), data }),
     );
   } catch {}
 }
 
-async function fetchBatch(
-  entries: LibraryEntry[],
-): Promise<{ ok: boolean; data: Array<SourceMedia | null>; limited?: boolean }> {
-  const variables: Record<string, string> = {};
-
-  const fields = entries.map((entry, index) => {
-    const key = "s" + index;
-    const alias = "a" + index;
-    variables[key] = entry.title;
-
-    return `
-      ${alias}: Media(search: $${key}, type: ANIME) {
-        id
-        title { romaji english }
-        startDate { year month day }
-        coverImage { extraLarge large }
-        format
-        status
-        nextAiringEpisode { airingAt episode }
-        relations(page: 1, perPage: 20) {
-          edges {
-            relationType
-            node {
-              id
-              title { romaji english }
-              startDate { year month day }
-              coverImage { extraLarge large }
-              format
-              status
+async function fetchUpcomingPage(page: number): Promise<{
+  ok: boolean;
+  data: CandidateMedia[];
+  hasNextPage: boolean;
+  limited?: boolean;
+}> {
+  const query = `
+    query UpcomingCollection($page: Int!, $perPage: Int!) {
+      Page(page: $page, perPage: $perPage) {
+        pageInfo {
+          hasNextPage
+        }
+        media(
+          type: ANIME
+          status: NOT_YET_RELEASED
+          format_in: [TV, MOVIE]
+          sort: START_DATE
+        ) {
+          id
+          idMal
+          title {
+            romaji
+            english
+          }
+          startDate {
+            year
+            month
+            day
+          }
+          coverImage {
+            extraLarge
+            large
+          }
+          format
+          status
+          relations(page: 1, perPage: 10) {
+            edges {
+              relationType
+              node {
+                id
+                title {
+                  romaji
+                  english
+                }
+              }
             }
           }
         }
       }
-    `;
-  }).join("\n");
-
-  const definitions = entries.map((_, index) => "$s" + index + ": String!").join(", ");
-  const query = `query CollectionUpcoming(${definitions}) { ${fields} }`;
+    }
+  `;
 
   try {
     const response = await fetch("https://graphql.anilist.co", {
@@ -159,166 +183,150 @@ async function fetchBatch(
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify({ query, variables }),
+      body: JSON.stringify({
+        query,
+        variables: {
+          page,
+          perPage: UPCOMING_PAGE_SIZE,
+        },
+      }),
     });
 
     const payload = await response.json().catch(() => null);
 
     if (response.status === 429) {
-      console.warn("[Renanime] AniList rate limit reached. Stopping the queue.");
-      return { ok: false, data: [], limited: true };
+      console.warn("[Renanime] AniList rate limit reached.");
+      return { ok: false, data: [], hasNextPage: false, limited: true };
     }
 
-    if (!response.ok) {
-      console.warn(
-        "[Renanime] AniList request rejected:",
-        response.status,
-        payload?.errors ?? payload,
-      );
-      return { ok: false, data: [] };
-    }
-
-    if (payload?.errors) {
-      console.warn("[Renanime] AniList GraphQL errors:", payload.errors);
-      return { ok: false, data: [] };
+    if (!response.ok || payload?.errors) {
+      console.warn("[Renanime] AniList upcoming query failed:", {
+        status: response.status,
+        errors: payload?.errors ?? null,
+      });
+      return { ok: false, data: [], hasNextPage: false };
     }
 
     return {
       ok: true,
-      data: entries.map(
-        (_, index) => (payload.data?.["a" + index] as SourceMedia | null | undefined) ?? null,
-      ),
+      data: (payload.data?.Page?.media ?? []) as CandidateMedia[],
+      hasNextPage: Boolean(payload.data?.Page?.pageInfo?.hasNextPage),
     };
   } catch (error) {
-    console.warn("[Renanime] AniList request failed:", error);
-    return { ok: false, data: [] };
+    console.warn("[Renanime] AniList upcoming request failed:", error);
+    return { ok: false, data: [], hasNextPage: false };
   }
 }
 
+async function fetchUpcoming(entries: LibraryEntry[]) {
+  const watchedEntries = entries.filter((entry) => entry.state.status === "WATCHED");
+  const cached = readCache();
+  const candidates: CandidateMedia[] = cached ? [...cached] : [];
+  const seenCandidates = new Set(candidates.map((candidate) => candidate.id));
+
+  if (!cached) {
+    for (let page = 1; page <= MAX_UPCOMING_PAGES; page += 1) {
+      const result = await fetchUpcomingPage(page);
+
+      if (!result.ok) {
+        return {
+          candidates,
+          limited: result.limited ?? false,
+        };
+      }
+
+      result.data.forEach((candidate) => {
+        if (!seenCandidates.has(candidate.id)) {
+          seenCandidates.add(candidate.id);
+          candidates.push(candidate);
+        }
+      });
+
+      if (!result.hasNextPage) break;
+      if (page < MAX_UPCOMING_PAGES) await wait(2200);
+    }
+
+    writeCache(candidates);
+  }
+
+  const ownedTitles = new Set(
+    watchedEntries.map((entry) => normalizeTitle(entry.title)),
+  );
+
+  const result: ComingItem[] = [];
+  const seen = new Set<number>();
+
+  candidates.forEach((candidate) => {
+    if (!isUpcomingMedia(candidate)) return;
+
+    candidate.relations?.edges?.forEach((edge) => {
+      const node = edge.node;
+      if (!node) return;
+
+      const relationType = edge.relationType ?? "";
+      const matchedEntry = watchedEntries.find((entry) => {
+        const normalized = normalizeTitle(entry.title);
+        return normalized === normalizeTitle(node.title?.romaji ?? "")
+          || normalized === normalizeTitle(node.title?.english ?? "");
+      });
+
+      if (!matchedEntry) return;
+
+      // Desde el punto de vista de la nueva obra, PREQUEL significa
+      // que la obra relacionada es anterior: por tanto, es una continuación.
+      const isNewSeason = relationType === "PREQUEL";
+      const isMovieContinuation = candidate.format === "MOVIE" && relationType === "PARENT";
+
+      if (!isNewSeason && !isMovieContinuation) return;
+      if (ownedTitles.has(normalizeTitle(titleOf(candidate)))) return;
+      if (seen.has(candidate.id)) return;
+
+      seen.add(candidate.id);
+      result.push({
+        ...candidate,
+        kind: "RELEASE",
+        sourceTitle: matchedEntry.title,
+        relationType,
+      });
+    });
+  });
+
+  return { candidates: result, limited: false };
+}
+
+
 export default function ComingSoonView({ entries }: Props) {
-  const [sources, setSources] = useState<SourceMedia[]>([]);
+  const [items, setItems] = useState<ComingItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [apiLimited, setApiLimited] = useState(false);
-
-  const uniqueEntries = useMemo(() => {
-    const seen = new Set<string>();
-
-    return entries.filter((entry) => {
-      if (entry.state.status !== "WATCHED") return false;
-
-      const key = entry.title.trim().toLowerCase();
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-  }, [entries]);
-
-  const ownedTitles = useMemo(
-    () => new Set(uniqueEntries.map((entry) => entry.title.trim().toLowerCase())),
-    [uniqueEntries],
-  );
 
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
-      const cached: SourceMedia[] = [];
-      const missing: LibraryEntry[] = [];
+      const result = await fetchUpcoming(entries);
 
-      uniqueEntries.forEach((entry) => {
-        const value = readCache(entry.title);
-        if (value === undefined) missing.push(entry);
-        else if (value) cached.push(value);
-      });
-
-      if (cached.length && !cancelled) setSources(cached);
-
-      for (let offset = 0; offset < missing.length; offset += BATCH_SIZE) {
-        if (cancelled) break;
-
-        // Cargamos pequeños grupos y dejamos respirar a AniList entre peticiones.
-        // Así la página empieza a mostrar resultados enseguida sin disparar una ráfaga.
-        if (offset > 0) await wait(BATCH_DELAY_MS);
-
-        const batch = missing.slice(offset, offset + BATCH_SIZE);
-        const result = await fetchBatch(batch);
-
-        if (!result.ok) {
-          if (!cancelled && result.limited) setApiLimited(true);
-          break;
-        }
-
-        batch.forEach((entry, index) => {
-          writeCache(entry.title, result.data[index] ?? null);
-        });
-
-        if (!cancelled) {
-          setSources((current) => [
-            ...current,
-            ...result.data.filter((item): item is SourceMedia => Boolean(item)),
-          ]);
-        }
+      if (!cancelled) {
+        setItems(
+          result.candidates.sort(
+            (a, b) => dateValue(a.startDate) - dateValue(b.startDate),
+          ),
+        );
+        setApiLimited(result.limited);
+        setLoading(false);
       }
-
-      if (!cancelled) setLoading(false);
     }
 
     load();
+
     return () => {
       cancelled = true;
     };
-  }, [uniqueEntries]);
+  }, [entries]);
 
-  const items = useMemo<ComingItem[]>(() => {
-    const ownedSourceIds = new Set(sources.map((source) => source.id));
-    const seen = new Set<number>();
-    const result: ComingItem[] = [];
-
-    sources.forEach((source) => {
-      const sourceTitle = titleOf(source);
-
-      if (source.nextAiringEpisode?.airingAt && source.nextAiringEpisode.airingAt * 1000 > Date.now()) {
-        result.push({
-          ...source,
-          kind: "EPISODE",
-          sourceTitle,
-          episode: source.nextAiringEpisode.episode,
-          airingAt: source.nextAiringEpisode.airingAt,
-        });
-      }
-
-      source.relations?.edges?.forEach((edge) => {
-        const node = edge.node;
-        if (!node) return;
-
-        const relationType = edge.relationType ?? "";
-        const nodeTitle = titleOf(node).trim().toLowerCase();
-        const isNewSeason = relationType === "SEQUEL";
-        const isRelatedMovie = node.format === "MOVIE";
-
-        if (!isNewSeason && !isRelatedMovie) return;
-        if (ownedSourceIds.has(node.id) || ownedTitles.has(nodeTitle) || seen.has(node.id)) return;
-        if (!isUpcomingMedia(node)) return;
-
-        seen.add(node.id);
-        result.push({
-          ...node,
-          kind: "RELEASE",
-          sourceTitle,
-          relationType,
-        });
-      });
-    });
-
-    return result.sort((a, b) => {
-      const aDate = a.kind === "EPISODE" ? (a.airingAt ?? Infinity) : dateValue(a.startDate);
-      const bDate = b.kind === "EPISODE" ? (b.airingAt ?? Infinity) : dateValue(b.startDate);
-      return aDate - bDate;
-    });
-  }, [sources, ownedTitles]);
 
   if (loading && !items.length) {
-    return <div className="coming-loading">Buscando lo próximo de mi colección…</div>;
+    return <div className="coming-loading">Buscando nuevas temporadas y películas de mi colección…</div>;
   }
 
   return (
@@ -329,7 +337,7 @@ export default function ComingSoonView({ entries }: Props) {
             {items.length} {items.length === 1 ? "próximo lanzamiento" : "próximos lanzamientos"}
           </div>
 
-          {loading ? <div className="coming-progress">Revisando más animes de tu colección…</div> : null}
+          {loading ? <div className="coming-progress">Comprobando próximas temporadas y películas…</div> : null}
           {apiLimited ? (
             <div className="coming-api-note">
               AniList está limitando temporalmente las consultas. Mostrando lo que ya se pudo cargar.
