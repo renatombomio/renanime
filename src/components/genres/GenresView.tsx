@@ -226,48 +226,44 @@ export default function GenresView({ entries }: Props) {
         .genres-grid {
           display: grid;
           grid-template-columns: repeat(3, minmax(0, 1fr));
-          grid-auto-rows: minmax(10rem, 12rem);
-          align-items: stretch;
+          gap: 1px;
           margin-top: clamp(2rem, 4vw, 3.5rem);
-          border-top: 1px solid var(--color-border);
-          border-left: 1px solid var(--color-border);
+          border: 1px solid var(--color-border);
+          background: var(--color-border);
         }
 
         .genre-card {
           position: relative;
           display: flex;
           width: 100%;
+          height: clamp(10rem, 15vw, 13rem);
           min-width: 0;
-          height: 100%;
           min-height: 0;
-          grid-column: span 1 !important;
           flex-direction: column;
           justify-content: space-between;
           align-items: flex-start;
-          padding: clamp(1rem, 2vw, 1.6rem);
+          padding: clamp(1rem, 2vw, 1.5rem);
           border: 0;
-          border-right: 1px solid var(--color-border);
-          border-bottom: 1px solid var(--color-border);
-          background: transparent;
+          background: var(--color-ink-950);
           color: var(--color-paper-50);
           text-align: left;
           cursor: pointer;
           overflow: hidden;
           box-sizing: border-box;
-          transition: background 260ms ease, color 260ms ease;
+          transition: background 220ms ease, color 220ms ease;
         }
 
         .genre-card::after {
           position: absolute;
-          right: 1rem;
+          left: 1rem;
           bottom: 1rem;
-          width: 2.5rem;
+          width: 2rem;
           height: 1px;
           background: var(--color-accent-soft);
           content: "";
           transform: scaleX(0);
           transform-origin: left;
-          transition: transform 320ms cubic-bezier(.22,1,.36,1);
+          transition: transform 260ms cubic-bezier(.22,1,.36,1);
         }
 
         .genre-card:hover,
@@ -281,12 +277,13 @@ export default function GenresView({ entries }: Props) {
         }
 
         .genre-name {
-          max-width: 12ch;
+          max-width: 100%;
+          color: var(--color-paper-50);
           font-family: var(--font-heading);
-          font-size: clamp(1.6rem, 3vw, 3rem);
+          font-size: clamp(1.5rem, 2.8vw, 2.8rem);
           font-weight: 400;
           letter-spacing: -.045em;
-          line-height: .9;
+          line-height: .95;
           text-wrap: balance;
         }
 
@@ -416,14 +413,15 @@ export default function GenresView({ entries }: Props) {
 
         @media (max-width: 900px) {
           .genres-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+          .genre-card { height: 10rem; }
           .genre-results-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         }
 
         @media (max-width: 620px) {
           .genres-meta { display: grid; gap: .5rem; }
-          .genres-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: minmax(8rem, 10rem); }
-          .genre-card { min-height: 0; padding: 1rem; }
-          .genre-name { font-size: clamp(1.35rem, 7vw, 2rem); }
+          .genres-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+          .genre-card { height: 9rem; padding: 1rem; }
+          .genre-name { font-size: clamp(1.2rem, 6.5vw, 1.9rem); }
           .genre-results-head { grid-template-columns: 1fr auto; }
           .genre-results-head > div { grid-column: 1 / -1; grid-row: 1; order: -1; text-align: left; }
           .genre-results-head > span:last-child { grid-column: 2; grid-row: 2; }
