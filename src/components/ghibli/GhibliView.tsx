@@ -124,7 +124,7 @@ export default function GhibliView({ films }: { films: Film[] }) {
         .ghibli-view .ghibli-poster{border-radius:0;background:var(--gp-sky)}
         .ghibli-view .ghibli-poster:after{background:linear-gradient(180deg,transparent 48%,rgba(25,54,47,.34))}
         .ghibli-view .ghibli-year{left:.8rem;bottom:.8rem;background:rgba(255,247,232,.94);color:var(--gp-blue);border:1px solid rgba(24,82,138,.12)}
-        .ghibli-view .ghibli-badge{top:.8rem;right:.8rem;background:var(--gp-lime);color:var(--gp-ink);border:0}
+        .ghibli-view .ghibli-badge{top:.8rem;right:.8rem;left:auto;bottom:auto;padding:.28rem .42rem;background:rgba(17,17,17,.82);color:#fff;border:0;border-radius:0;font-family:var(--font-meta);font-size:.42rem;line-height:1;letter-spacing:.08em;text-transform:uppercase;box-shadow:0 4px 12px rgba(0,0,0,.18)}
         .ghibli-view .ghibli-info{min-height:5.25rem;padding:.68rem .7rem .78rem;background:#fff}
         .ghibli-view .ghibli-info h3{color:var(--gp-blue);font-family:Georgia,"Times New Roman",serif;font-size:.92rem;line-height:1.08;letter-spacing:-.02em}
         .ghibli-view .ghibli-info span{display:block;margin-top:.15rem;color:#59756b;font-size:.52rem;line-height:1.3}
@@ -137,7 +137,8 @@ export default function GhibliView({ films }: { films: Film[] }) {
           .ghibli-view .ghibli-info{min-height:4.8rem;padding:.55rem .48rem .62rem}
           .ghibli-view .ghibli-info h3{font-size:.66rem;line-height:1.05}
           .ghibli-view .ghibli-info span{font-size:.38rem;line-height:1.25}
-          .ghibli-view .ghibli-year,.ghibli-view .ghibli-badge{padding:.25rem .3rem;font-size:.35rem}
+          .ghibli-view .ghibli-year{padding:.25rem .3rem;font-size:.35rem}
+          .ghibli-view .ghibli-badge{top:.55rem;right:.55rem;padding:.22rem .3rem;font-size:.32rem}
         }
       `}</style>
       {loading ? (
