@@ -130,7 +130,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
  return <div className={"anime-detail" + (from === "ghibli" ? " anime-detail--ghibli" : "")}>
   <style>{`
     .anime-detail--ghibli{--gd-cream:#FFF7E8;--gd-paper:#F4E9D5;--gd-sky:#DCEFF1;--gd-blue:#18528A;--gd-teal:#0B798B;--gd-coral:#F45164;--gd-pink:#F0A9A5;--gd-lime:#91CC57;--gd-ink:#19362F;min-height:100vh;background:var(--gd-sky);color:var(--gd-ink)}
-    .anime-detail--ghibli .anime-detail-hero{min-height:clamp(34rem,72vh,52rem);background-color:var(--gd-ink)!important;background-position:center;background-size:cover}
+    .anime-detail--ghibli .anime-detail-hero{min-height:0;background-color:var(--gd-ink)!important;background-position:center;background-size:cover}
     .anime-detail--ghibli .anime-detail-inner{position:relative}
     .anime-detail--ghibli .anime-detail-back{position:relative;z-index:20;display:flex!important;align-items:center;gap:.45rem;padding:.48rem .7rem;margin-bottom:clamp(1.25rem,3vw,2.5rem);border:1px solid rgba(255,247,232,.55);border-radius:999px;background:rgba(255,247,232,.9);color:var(--gd-blue);box-shadow:0 8px 24px rgba(25,54,47,.12);backdrop-filter:blur(8px)}
     .anime-detail--ghibli .anime-detail-back:hover{background:#fff}
@@ -169,7 +169,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     body:has(.anime-detail--ghibli) .site-footer .closing{color:var(--gd-ink)}
     body:has(.anime-detail--ghibli) .site-footer .thanks{color:#59756b}
     body:has(.anime-detail--ghibli) .site-footer .footer-meta{color:#6b7d76}
-    .anime-detail-recommendations{grid-column:1 / -1;margin-top:1.8rem;width:100%;min-width:0}
+    .anime-detail-recommendations{grid-column:1 / -1;margin-top:1.25rem;width:100%;min-width:0}
     .anime-detail-recommendations-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:.7rem}
     .anime-detail-recommendations-track{display:flex;gap:.7rem;min-height:0;overflow-x:auto;padding:.15rem 0 .65rem;scroll-snap-type:x mandatory;scrollbar-width:thin;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
     .anime-detail-recommendation{flex:0 0 clamp(116px,30vw,138px);scroll-snap-align:start;color:inherit;text-decoration:none}
