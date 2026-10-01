@@ -257,7 +257,12 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
       <div className="anime-detail-copy">
        {personal.favorite&&<span className="anime-detail-eyebrow">Favorito</span>}
        <h1>{title}</h1>
-       <div className="anime-detail-meta"><span><small>Formato</small><strong>{format(entry.format||media?.format)}</strong></span><span><small>Estreno</small><strong>{date(media?.startDate)}</strong></span>{media?.episodes&&<span><small>Episodios</small><strong>{media.episodes}</strong></span>}{media?.duration&&<span><small>Duración</small><strong>{media.duration} min</strong></span>}</div>
+       <div className="anime-detail-meta">
+  <span><small>Tipo</small><strong>{format(entry.format||media?.format)}</strong></span>
+  <span><small>Lanzamiento</small><strong>{date(media?.startDate)}</strong></span>
+  {media?.format!=="MOVIE"&&media?.episodes&&<span><small>Episodios</small><strong>{media.episodes}</strong></span>}
+  {media?.duration&&<span><small>{media?.format==="MOVIE"?"Duración":"Duración / episodio"}</small><strong>{media.duration} min</strong></span>}
+</div>
        {media?.id && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>}
        {media?.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map((genre)=><span key={genre}>{genre}</span>)}</div>}
        <div className="anime-detail-synopsis-wrap">
