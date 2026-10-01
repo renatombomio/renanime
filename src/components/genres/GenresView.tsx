@@ -138,8 +138,8 @@ export default function GenresView({ entries }: Props) {
       {!selectedGenre ? (
         <>
           <div className="genres-meta">
-            <span>{loading ? "Construyendo mapa…" : catalog.length + " géneros en tu colección"}</span>
-            <span>{entries.length} títulos</span>
+            <span>{loading ? "Construyendo mapa…" : catalog.length + " géneros en el archivo de Ren"}</span>
+            <span>{entries.length} títulos vistos</span>
           </div>
 
           <div className="genres-grid">
@@ -164,7 +164,7 @@ export default function GenresView({ entries }: Props) {
               ← Géneros
             </button>
             <div>
-              <span className="genre-results-kicker">Mi colección</span>
+              <span className="genre-results-kicker">Archivo de Ren</span>
               <span className="genre-results-title">{selectedGenre.name}</span>
             </div>
             <span>{selectedGenre.entries.length} títulos</span>
@@ -204,6 +204,232 @@ export default function GenresView({ entries }: Props) {
       {!loading && catalog.length === 0 && (
         <p className="genres-empty">No hemos podido recuperar los géneros de tu colección.</p>
       )}
+
+      <style>{`
+        .genres-view {
+          width: 100%;
+        }
+
+        .genres-meta {
+          display: flex;
+          align-items: baseline;
+          justify-content: space-between;
+          gap: 1rem;
+          padding-bottom: .9rem;
+          border-bottom: 1px solid var(--color-border);
+          color: var(--color-muted-400);
+          font: 500 .58rem/1 var(--font-meta);
+          letter-spacing: .1em;
+          text-transform: uppercase;
+        }
+
+        .genres-grid {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          margin-top: clamp(2rem, 4vw, 3.5rem);
+          border-top: 1px solid var(--color-border);
+          border-left: 1px solid var(--color-border);
+        }
+
+        .genre-card {
+          position: relative;
+          display: flex;
+          min-height: clamp(9rem, 16vw, 13rem);
+          flex-direction: column;
+          justify-content: space-between;
+          align-items: flex-start;
+          padding: clamp(1rem, 2vw, 1.6rem);
+          border: 0;
+          border-right: 1px solid var(--color-border);
+          border-bottom: 1px solid var(--color-border);
+          background: transparent;
+          color: var(--color-paper-50);
+          text-align: left;
+          cursor: pointer;
+          overflow: hidden;
+          transition: background 260ms ease, color 260ms ease;
+        }
+
+        .genre-card::after {
+          position: absolute;
+          right: 1rem;
+          bottom: 1rem;
+          width: 2.5rem;
+          height: 1px;
+          background: var(--color-accent-soft);
+          content: "";
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 320ms cubic-bezier(.22,1,.36,1);
+        }
+
+        .genre-card:hover,
+        .genre-card:focus-visible {
+          background: var(--color-ink-900);
+        }
+
+        .genre-card:hover::after,
+        .genre-card:focus-visible::after {
+          transform: scaleX(1);
+        }
+
+        .genre-name {
+          max-width: 12ch;
+          font-family: var(--font-heading);
+          font-size: clamp(1.6rem, 3vw, 3rem);
+          font-weight: 400;
+          letter-spacing: -.045em;
+          line-height: .9;
+          text-wrap: balance;
+        }
+
+        .genre-count {
+          color: var(--color-muted-400);
+          font: 500 .55rem/1 var(--font-meta);
+          letter-spacing: .1em;
+          text-transform: uppercase;
+        }
+
+        .genre-results {
+          margin-top: clamp(2.5rem, 5vw, 4rem);
+        }
+
+        .genre-results-head {
+          display: grid;
+          grid-template-columns: 1fr auto 1fr;
+          align-items: end;
+          gap: 1rem;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid var(--color-border);
+        }
+
+        .genre-results-head > span:last-child {
+          justify-self: end;
+          color: var(--color-muted-400);
+          font: 500 .58rem/1 var(--font-meta);
+          letter-spacing: .1em;
+          text-transform: uppercase;
+        }
+
+        .genre-back {
+          justify-self: start;
+          padding: 0;
+          border: 0;
+          background: transparent;
+          color: var(--color-muted-400);
+          font: 500 .58rem/1 var(--font-meta);
+          letter-spacing: .1em;
+          text-transform: uppercase;
+          cursor: pointer;
+        }
+
+        .genre-back:hover { color: var(--color-paper-50); }
+
+        .genre-results-head > div {
+          display: grid;
+          gap: .35rem;
+          text-align: center;
+        }
+
+        .genre-results-kicker {
+          color: var(--color-accent-soft);
+          font: 500 .52rem/1 var(--font-meta);
+          letter-spacing: .12em;
+          text-transform: uppercase;
+        }
+
+        .genre-results-title {
+          color: var(--color-paper-50);
+          font-family: var(--font-heading);
+          font-size: clamp(1.8rem, 4vw, 3.6rem);
+          font-weight: 400;
+          letter-spacing: -.05em;
+          line-height: .9;
+        }
+
+        .genre-results-grid {
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: clamp(1.2rem, 2.5vw, 2.5rem) 1rem;
+          margin-top: clamp(2rem, 4vw, 3.5rem);
+        }
+
+        .genre-anime-card {
+          min-width: 0;
+          color: inherit;
+          text-decoration: none;
+        }
+
+        .genre-anime-poster {
+          position: relative;
+          aspect-ratio: 2 / 3;
+          overflow: hidden;
+          background: var(--color-ink-900);
+        }
+
+        .genre-anime-poster img {
+          display: block;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 650ms cubic-bezier(.22,1,.36,1);
+        }
+
+        .genre-anime-card:hover .genre-anime-poster img {
+          transform: scale(1.025);
+        }
+
+        .genre-anime-info {
+          display: grid;
+          gap: .35rem;
+          padding-top: .75rem;
+        }
+
+        .genre-anime-info strong {
+          color: var(--color-paper-50);
+          font: 500 .75rem/1.2 var(--font-body);
+        }
+
+        .genre-anime-info span {
+          color: var(--color-muted-400);
+          font: 500 .48rem/1.2 var(--font-meta);
+          letter-spacing: .06em;
+          text-transform: uppercase;
+        }
+
+        .genre-results-loading,
+        .genres-empty {
+          padding: 4rem 1rem;
+          color: var(--color-muted-400);
+          font: 500 .65rem/1 var(--font-meta);
+          letter-spacing: .08em;
+          text-align: center;
+          text-transform: uppercase;
+        }
+
+        @media (max-width: 900px) {
+          .genres-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+          .genre-results-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 620px) {
+          .genres-meta { display: grid; gap: .5rem; }
+          .genres-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+          .genre-card { min-height: 8rem; padding: 1rem; }
+          .genre-name { font-size: clamp(1.35rem, 7vw, 2rem); }
+          .genre-results-head { grid-template-columns: 1fr auto; }
+          .genre-results-head > div { grid-column: 1 / -1; grid-row: 1; order: -1; text-align: left; }
+          .genre-results-head > span:last-child { grid-column: 2; grid-row: 2; }
+          .genre-results-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem .7rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .genre-card,
+          .genre-card::after,
+          .genre-anime-poster img { transition-duration: .01ms !important; }
+        }
+      `}</style>
+
     </div>
   );
 }
