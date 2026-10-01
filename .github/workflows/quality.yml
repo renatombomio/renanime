@@ -25,6 +25,9 @@ jobs:
           node-version: 22
           cache: pnpm
 
+      - name: Add missing test dependency
+        run: pnpm add -D vitest@5.0.3 --lockfile-only
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
