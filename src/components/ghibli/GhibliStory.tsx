@@ -87,7 +87,7 @@ export default function GhibliStory({ entries }: { entries: GhibliStoryEntry[] }
         .ghs-index{position:absolute;z-index:5;left:2rem;bottom:1.75rem;color:#fff;font:600 .65rem/1 var(--mono);letter-spacing:.14em}
         .ghs-index b{font-size:2rem;color:var(--cream);font-weight:500}
         .ghs-intro-note{position:absolute;z-index:5;right:1.75rem;bottom:1.75rem;padding:.7rem .9rem;border:1px solid rgba(255,255,255,.35);border-radius:999px;color:#fff;font:600 .55rem/1 var(--mono);letter-spacing:.1em;text-transform:uppercase}
-        .ghs-route{display:flex;align-items:center;gap:1rem;margin:0 0 1.5rem;color:var(--moss);font:600 .58rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase}\n        .ghs-entries{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(2rem,4vw,4.5rem) clamp(1rem,2.4vw,2.5rem)}
+        .ghs-route{display:flex;align-items:center;gap:1rem;margin:0 0 1.5rem;color:var(--moss);font:600 .58rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase}
         .ghs-route i{height:1px;flex:1;background:rgba(25,54,47,.2)}
         .ghs-intro.is-visible,.ghs-entry.is-visible{opacity:1;transform:none}
         .ghs-entry{position:relative;opacity:0;transform:translateY(34px);transition:opacity .75s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1);display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);align-items:center;min-height:650px;margin:0 0 clamp(3rem,6vw,7rem)}
@@ -129,17 +129,10 @@ export default function GhibliStory({ entries }: { entries: GhibliStoryEntry[] }
           .ghs-kicker{margin-bottom:.8rem}
           .ghs-sun{width:70px;height:70px;right:19%;top:18%}.ghs-leaf{width:90px;height:38px}
           .ghs-index{left:1rem;bottom:.75rem}.ghs-intro-note{right:1rem;bottom:.75rem}
-          .ghs-entries{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem .7rem}
-          .ghs-entry,.ghs-entry:nth-child(even){display:block;min-height:0;margin:0}
+          .ghs-entry,.ghs-entry:nth-child(even){display:block;min-height:0;margin-bottom:3rem}
           .ghs-entry:nth-child(even) .ghs-image-wrap,.ghs-entry:nth-child(even) .ghs-copy{grid-column:auto;grid-row:auto}
-          .ghs-image-wrap{height:auto;aspect-ratio:4/5;max-height:none;border-radius:15px}
-          .ghs-copy,.ghs-entry:nth-child(even) .ghs-copy{margin:-1.5rem .45rem 0;padding:1.1rem .85rem 1.2rem;border-radius:15px}
-          .ghs-chapter{font-size:.45rem}
-          .ghs-copy h3{font-size:clamp(1.25rem,6vw,2rem)}
-          .ghs-ren{font-size:.72rem;line-height:1.5}
-          .ghs-creator{margin-top:1rem;padding-top:.7rem}
-          .ghs-creator-label span,.ghs-creator-label b{font-size:.4rem}
-          .ghs-creator p{font-size:.6rem;line-height:1.45}
+          .ghs-image-wrap{height:112vw;max-height:560px;border-radius:22px}
+          .ghs-copy,.ghs-entry:nth-child(even) .ghs-copy{margin:-4rem .7rem 0;padding:1.5rem 1.2rem 1.75rem;border-radius:22px}
           .ghs-num{top:1rem;left:1rem;width:42px;height:42px}
           .ghs-copy h3{font-size:clamp(2.2rem,11vw,3.5rem)}
           .ghs-ren{font-size:.9rem;line-height:1.6}
