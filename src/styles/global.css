@@ -1176,7 +1176,7 @@ section[id] {
 .anime-detail-meta span{display:inline-flex;align-items:baseline;min-width:0}
 .anime-detail-meta small{margin-right:.4rem;color:var(--color-paper-200);font:600 .62rem/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase}
 .anime-detail-meta strong{min-width:0;color:var(--color-paper-50);font:inherit;font-weight:600;overflow-wrap:anywhere}
-.anime-detail-meta span+span::before{content:"·";margin-right:1rem;color:rgba(245,242,236,.5)}
+.anime-detail-meta span+span::before{content:none}
 .anime-detail-genres{
   display:flex;
   flex-wrap:wrap;
