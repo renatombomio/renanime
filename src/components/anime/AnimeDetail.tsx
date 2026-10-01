@@ -265,10 +265,11 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
 </div>
        {media?.id && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>}
        {media?.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map((genre)=><span key={genre}>{genre}</span>)}</div>}
-
-
-
-
+       <div className="anime-detail-state">
+        <span>{personal.status==="WATCHED"?"Visto":personal.status==="PENDING"?"Pendiente":"En mi archivo"}</span>
+        {personal.recommended&&<span>Recomendado por Ren</span>}
+        {status(media?.status)&&<span>{status(media?.status)}</span>}
+       </div>
        </div>
       </div>
        <div className="anime-detail-synopsis-wrap">
@@ -303,11 +304,6 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
           </div>
         </section>;
        })()}
-       <div className="anime-detail-state">
-        <span>{personal.status==="WATCHED"?"Visto":personal.status==="PENDING"?"Pendiente":"En mi archivo"}</span>
-        {personal.recommended&&<span>Recomendado por Ren</span>}
-        {status(media?.status)&&<span>{status(media?.status)}</span>}
-       </div>
     </div>
    </div>
   </section>
