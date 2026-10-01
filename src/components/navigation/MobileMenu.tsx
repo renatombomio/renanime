@@ -101,27 +101,12 @@ export default function MobileMenu({ variant = "default" }: Props) {
         .mobile-panel {
           position: fixed; top: 68px; right: 0; left: 0; z-index: 2;
           min-height: calc(100dvh - 68px); max-height: calc(100dvh - 68px);
-          padding: 18px 24px 40px; overflow-y: auto; overscroll-behavior: contain;
-          background:
-            radial-gradient(circle at 92% 8%, rgba(164,138,104,.08), transparent 25%),
-            radial-gradient(circle at 8% 72%, rgba(245,242,236,.025), transparent 24%),
-            #090909;
-          color: #f5f2ec; opacity: 0; visibility: hidden;
+          padding: 12px 24px 40px; overflow-y: auto; overscroll-behavior: contain;
+          background: #090909; color: #f5f2ec; opacity: 0; visibility: hidden;
           pointer-events: none; transform: translateY(-18px);
           transition: opacity 360ms ease, transform 480ms cubic-bezier(.22,1,.36,1), visibility 0s linear 480ms;
           box-shadow: 0 24px 60px rgba(0,0,0,.3);
           -webkit-overflow-scrolling: touch;
-        }
-        .mobile-panel::before {
-          position: absolute; top: 0; bottom: 0; left: 24px; width: 1px;
-          background: linear-gradient(180deg, rgba(164,138,104,.5), rgba(245,242,236,.08) 38%, transparent 88%);
-          content: "";
-          pointer-events: none;
-        }
-        .mobile-panel::after {
-          position: absolute; right: 24px; bottom: 28px; width: 84px; height: 84px;
-          border: 1px solid rgba(164,138,104,.12); border-radius: 50%;
-          content: ""; pointer-events: none;
         }
         .mobile-nav.is-open .mobile-panel {
           opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0);
@@ -149,8 +134,7 @@ export default function MobileMenu({ variant = "default" }: Props) {
           position: relative;
           margin-top: 22px;
           min-height: 58px;
-          grid-template-columns: 28px minmax(0,1fr) 22px;
-          padding: 15px 2px 16px 12px;
+          padding: 15px 2px 16px;
           border: 0;
           border-top: 1px solid rgba(164,138,104,.28);
           border-bottom: 1px solid rgba(164,138,104,.28);
@@ -163,7 +147,6 @@ export default function MobileMenu({ variant = "default" }: Props) {
           letter-spacing: .015em;
           text-transform: none;
           overflow: hidden;
-          margin-left: 0;
         }
         .mobile-link--secret::before {
           position: absolute;
@@ -180,7 +163,13 @@ export default function MobileMenu({ variant = "default" }: Props) {
         .mobile-link--secret:active::before {
           transform: scaleX(1);
         }
-        
+        .mobile-link--secret i {
+          color: #c2ae91;
+          font-family: Georgia,serif;
+          font-size: 17px;
+          font-style: normal;
+          margin-left: 8px;
+        }
 
         .mobile-nav--ghibli .mobile-toggle { color: #19362f; }
         .mobile-nav--ghibli .mobile-panel { background: #fffdf8; color: #19362f; }
@@ -194,6 +183,14 @@ export default function MobileMenu({ variant = "default" }: Props) {
         }
         .mobile-nav--ghibli .mobile-link--secret::before {
           background: linear-gradient(90deg, transparent, #18528a 22%, #f45164 78%, transparent);
+        }
+        .mobile-nav--ghibli .mobile-link--secret i { color: #f45164; }
+
+        @media (min-width: 521px) and (max-width: 1120px) {
+          .mobile-panel {
+            top: 74px; min-height: calc(100dvh - 74px); max-height: calc(100dvh - 74px);
+            padding-left: 40px; padding-right: 40px;
+          }
         }
         @media (min-width: 1121px) { .mobile-nav { display: none; } }
         @media (prefers-reduced-motion: reduce) {
