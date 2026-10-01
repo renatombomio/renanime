@@ -49,18 +49,15 @@ async function fetchAniListRecommendations(mediaId:number){
 }
 
 function cleanDescription(text:string){
- return text
-  .replace(/<br\s*\/?>/gi,"\n")
-  .replace(/\\+n/g,"\n")
-  .replace(/<[^>]*>/g,"")
-  .replace(/&amp;/g,"&")
-  .replace(/&lt;/g,"<")
-  .replace(/&gt;/g,">")
-  .replace(/&quot;/g,'"')
-  .replace(/&#39;/g,"'")
-  .replace(/\u00a0/g," ")
-  .replace(/\n{3,}/g,"\n\n")
-  .trim();
+ const htmlEntityDecoder=document.createElement("textarea");
+ htmlEntityDecoder.innerHTML=text
+   .replace(/<br\s*\/?>/gi,"\n")
+   .replace(/\\+n/g,"\n")
+   .replace(/<[^>]*>/g,"");
+ return (htmlEntityDecoder.value||text)
+   .replace(/\u00a0/g," ")
+   .replace(/\n{3,}/g,"\n\n")
+   .trim();
 }
 function date(value:Media["startDate"]){
  if(!value?.year)return "Fecha desconocida";
