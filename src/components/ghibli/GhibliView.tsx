@@ -115,7 +115,7 @@ export default function GhibliView({ films }: { films: Film[] }) {
         .ghibli-view{--gp-cream:#FFF7E8;--gp-paper:#F4E9D5;--gp-sky:#DCEFF1;--gp-blue:#18528A;--gp-teal:#0B798B;--gp-coral:#F45164;--gp-pink:#F0A9A5;--gp-lime:#91CC57;--gp-ink:#19362F}
         .ghibli-view .ghibli-meta{border-bottom-color:rgba(25,54,47,.16);color:#486B3C}
         .ghibli-view .ghibli-meta strong{color:var(--gp-coral)}
-        .ghibli-view{width:min(1120px,calc(100% - clamp(2rem,8vw,6rem)));margin:0 auto}.ghibli-view .ghibli-grid{gap:1rem .72rem;margin-top:1.35rem}
+        .ghibli-view{width:min(1120px,calc(100% - clamp(2rem,8vw,6rem)));margin:0 auto}.ghibli-view .ghibli-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(2rem,4vw,4.5rem) clamp(1rem,2.4vw,2.5rem);margin-top:1.35rem}.ghibli-view .ghibli-card{width:100%}
         .ghibli-view .ghibli-card{position:relative;overflow:hidden;border:1px solid rgba(25,54,47,.1);border-radius:22px;background:#fff;box-shadow:0 12px 32px rgba(25,54,47,.07);transition:transform .45s cubic-bezier(.22,1,.36,1),box-shadow .45s,border-color .45s}
         .ghibli-view .ghibli-card:before{position:absolute;z-index:5;left:0;top:0;bottom:0;width:3px;background:var(--gp-coral);content:"";opacity:.75}
         .ghibli-view .ghibli-card:nth-child(3n):before{background:var(--gp-blue)}
@@ -130,8 +130,8 @@ export default function GhibliView({ films }: { films: Film[] }) {
         .ghibli-view .ghibli-info span{display:block;margin-top:.15rem;color:#59756b;font-size:.52rem;line-height:1.3}
         .ghibli-view .ghibli-placeholder{position:relative;background:linear-gradient(145deg,#f4c1bd 0%,#e6eff0 100%);color:var(--gp-blue)}
         .ghibli-view .ghibli-placeholder:after{position:absolute;inset:12%;border:1px solid rgba(24,82,138,.18);border-radius:50%;content:"";transform:rotate(-12deg)}
-        @media(max-width:560px){
-          .ghibli-view .ghibli-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem .7rem;margin-top:1rem}
+        @media(max-width:700px){
+          .ghibli-view .ghibli-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:2.5rem .75rem;margin-top:1rem}
           .ghibli-view .ghibli-card{border-radius:13px}
           .ghibli-view .ghibli-card:before{width:2px}
           .ghibli-view .ghibli-info{min-height:4.8rem;padding:.55rem .48rem .62rem}
