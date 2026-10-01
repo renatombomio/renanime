@@ -141,12 +141,6 @@ export default function GhibliView({ films }: { films: Film[] }) {
           .ghibli-view .ghibli-year,.ghibli-view .ghibli-badge{padding:.25rem .3rem;font-size:.35rem}
         }
       `}</style>
-      <div className="ghibli-meta">
-        <span><strong>{watched}</strong> vistas</span>
-        <span><strong>{films.length - watched}</strong> por descubrir</span>
-        <span>{films.length} películas</span>
-      </div>
-
       {loading ? (
         <div className="ghibli-loading" role="status" aria-live="polite">Abriendo el archivo…</div>
       ) : (
