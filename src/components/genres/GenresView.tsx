@@ -226,6 +226,8 @@ export default function GenresView({ entries }: Props) {
         .genres-grid {
           display: grid;
           grid-template-columns: repeat(3, minmax(0, 1fr));
+          grid-auto-rows: minmax(10rem, 1fr);
+          align-items: stretch;
           margin-top: clamp(2rem, 4vw, 3.5rem);
           border-top: 1px solid var(--color-border);
           border-left: 1px solid var(--color-border);
@@ -234,7 +236,10 @@ export default function GenresView({ entries }: Props) {
         .genre-card {
           position: relative;
           display: flex;
-          min-height: clamp(9rem, 16vw, 13rem);
+          width: 100%;
+          min-width: 0;
+          height: 100%;
+          min-height: 0;
           flex-direction: column;
           justify-content: space-between;
           align-items: flex-start;
@@ -247,6 +252,7 @@ export default function GenresView({ entries }: Props) {
           text-align: left;
           cursor: pointer;
           overflow: hidden;
+          box-sizing: border-box;
           transition: background 260ms ease, color 260ms ease;
         }
 
@@ -414,8 +420,8 @@ export default function GenresView({ entries }: Props) {
 
         @media (max-width: 620px) {
           .genres-meta { display: grid; gap: .5rem; }
-          .genres-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-          .genre-card { min-height: 8rem; padding: 1rem; }
+          .genres-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: minmax(8rem, 1fr); }
+          .genre-card { min-height: 0; padding: 1rem; }
           .genre-name { font-size: clamp(1.35rem, 7vw, 2rem); }
           .genre-results-head { grid-template-columns: 1fr auto; }
           .genre-results-head > div { grid-column: 1 / -1; grid-row: 1; order: -1; text-align: left; }
