@@ -224,24 +224,24 @@ export default function GenresView({ entries }: Props) {
         }
 
         .genres-grid {
-          display: flex;
-          flex-wrap: wrap;
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
           gap: 1px;
           margin-top: clamp(2rem, 4vw, 3.5rem);
           background: var(--color-border);
           border: 1px solid var(--color-border);
         }
 
-        .genre-card {
+        .genres-view .genre-card {
           position: relative;
           display: flex;
-          width: calc((100% - 2px) / 3);
-          height: 9rem;
-          min-width: 0;
-          flex: 0 0 calc((100% - 2px) / 3);
           flex-direction: column;
           justify-content: space-between;
           align-items: flex-start;
+          width: auto;
+          min-width: 0;
+          min-height: 0;
+          height: 9rem;
           padding: .9rem 1rem;
           margin: 0;
           border: 0;
@@ -256,7 +256,12 @@ export default function GenresView({ entries }: Props) {
           transition: background 220ms ease;
         }
 
-        .genre-card::after {
+        .genres-view .genre-card:hover,
+        .genres-view .genre-card:focus-visible {
+          background: var(--color-ink-900);
+        }
+
+        .genres-view .genre-card::after {
           position: absolute;
           left: .9rem;
           bottom: .8rem;
@@ -269,30 +274,31 @@ export default function GenresView({ entries }: Props) {
           transition: transform 260ms cubic-bezier(.22,1,.36,1);
         }
 
-        .genre-card:hover,
-        .genre-card:focus-visible {
-          background: var(--color-ink-900);
-        }
-
-        .genre-card:hover::after,
-        .genre-card:focus-visible::after {
+        .genres-view .genre-card:hover::after,
+        .genres-view .genre-card:focus-visible::after {
           transform: scaleX(1);
         }
 
-        .genre-name {
+        .genres-view .genre-name {
+          display: block;
           max-width: 100%;
+          min-width: 0;
           color: var(--color-paper-50);
           font-family: var(--font-heading);
-          font-size: clamp(1.35rem, 2.2vw, 2.1rem);
+          font-size: clamp(1.1rem, 2vw, 1.8rem) !important;
           font-weight: 400;
           letter-spacing: -.035em;
-          line-height: 1;
+          line-height: 1.05;
+          overflow-wrap: anywhere;
+          word-break: break-word;
+          hyphens: auto;
           text-wrap: balance;
         }
 
-        .genre-count {
+        .genres-view .genre-count {
+          display: block;
           color: var(--color-muted-400);
-          font: 500 .48rem/1 var(--font-meta);
+          font: 500 .6rem/1 var(--font-meta);
           letter-spacing: .1em;
           text-transform: uppercase;
         }
@@ -415,18 +421,54 @@ export default function GenresView({ entries }: Props) {
         }
 
         @media (max-width: 900px) {
-          .genre-card { width: calc((100% - 1px) / 2); flex-basis: calc((100% - 1px) / 2); height: 7.25rem; padding: .75rem; }
-          .genre-results-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+          .genres-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+
+          .genres-view .genre-card {
+            height: 7.5rem;
+          }
+
+          .genre-results-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+          }
         }
 
         @media (max-width: 620px) {
-          .genres-meta { display: grid; gap: .5rem; }
-          .genre-card { width: calc((100% - 1px) / 2); flex-basis: calc((100% - 1px) / 2); height: 6.5rem; padding: .7rem; }
-          .genre-name { font-size: clamp(1rem, 5.5vw, 1.55rem); }
-          .genre-results-head { grid-template-columns: 1fr auto; }
-          .genre-results-head > div { grid-column: 1 / -1; grid-row: 1; order: -1; text-align: left; }
-          .genre-results-head > span:last-child { grid-column: 2; grid-row: 2; }
-          .genre-results-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem .7rem; }
+          .genres-meta {
+            display: grid;
+            gap: .5rem;
+          }
+
+          .genres-view .genre-card {
+            height: 7rem;
+            padding: .75rem;
+          }
+
+          .genres-view .genre-name {
+            font-size: clamp(1.15rem, 5.5vw, 1.5rem) !important;
+          }
+
+          .genre-results-head {
+            grid-template-columns: 1fr auto;
+          }
+
+          .genre-results-head > div {
+            grid-column: 1 / -1;
+            grid-row: 1;
+            order: -1;
+            text-align: left;
+          }
+
+          .genre-results-head > span:last-child {
+            grid-column: 2;
+            grid-row: 2;
+          }
+
+          .genre-results-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.5rem .7rem;
+          }
         }
 
         @media (prefers-reduced-motion: reduce) {
