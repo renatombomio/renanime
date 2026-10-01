@@ -28,18 +28,8 @@ const films = getGhibliFilms();
 
         <GhibliStory entries={ghibliStory} client:load />
 
-        <header class="ghibli-archive-intro">
-          <div class="ghibli-archive-bg ghibli-archive-bg--chihiro" aria-hidden="true"></div>
-          <div class="ghibli-archive-bg ghibli-archive-bg--totoro" aria-hidden="true"></div>
-          <div class="ghibli-archive-bg ghibli-archive-bg--heron" aria-hidden="true"></div>
-          <div class="ghibli-archive-shade" aria-hidden="true"></div>
-          <div class="ghibli-archive-copy">
-            <div class="ghibli-archive-kicker">
-              <span>Mi archivo</span><i aria-hidden="true"></i><span>24 películas</span>
-            </div>
-            <h2 id="archive-title">Mi viaje<br><em>con Ghibli.</em></h2>
-            <p>Las que ya forman parte de mí. Las que todavía me quedan por descubrir.</p>
-          </div>
+        <header class="ghibli-archive-intro" id="archive-title">
+          <h2>Descubre el universo de Estudio Ghibli</h2>
         </header>
         <GhibliView films={films} client:load />
       </section>
