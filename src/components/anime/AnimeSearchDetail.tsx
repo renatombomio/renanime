@@ -207,7 +207,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
       }
     }
   `}</style>
-  <section className="anime-detail-hero" style={banner?{backgroundImage:from==="ghibli"?`url("${banner}")`:`linear-gradient(90deg,rgba(9,9,9,.98),rgba(9,9,9,.72) 45%,rgba(9,9,9,.35) 75%,rgba(9,9,9,.8)),linear-gradient(0deg,rgba(9,9,9,.98),transparent 45%),url("${banner}")`}:undefined}>
+  <section className="anime-detail-hero" style={banner?{backgroundImage:from==="ghibli"?"url(\"${banner}\")":"linear-gradient(90deg,rgba(9,9,9,.98),rgba(9,9,9,.72) 45%,rgba(9,9,9,.35) 75%,rgba(9,9,9,.8)),linear-gradient(0deg,rgba(9,9,9,.98),transparent 45%),url(\"${banner}\")"}:undefined}>
    <div className="anime-detail-inner">
     <a className="anime-detail-back" href={backHref}>← {backLabel}</a>
     <div className={"anime-detail-layout"+(title.length>24?" has-long-title":"")}>
@@ -215,19 +215,21 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
      <div className="anime-detail-copy">
       <h1>{title}</h1>
       <div className="anime-detail-meta">
-  <span className="anime-detail-meta-type"><strong>{media.format==="MOVIE"?"Película":"Serie"}</strong></span>
-  <span><small>LANZAMIENTO</small><strong>{date(media.startDate)}</strong></span>
-  {media.format!=="MOVIE"&&media.episodes&&<span><small>EPISODIOS</small><strong>{media.episodes}</strong></span>}
-  {media.duration&&<span><small>{media.format==="MOVIE"?"DURACIÓN":"DURACIÓN / EPISODIO"}</small><strong>{media.duration} min</strong></span>}
-</div>
+       <span className="anime-detail-meta-type"><strong>{media.format==="MOVIE"?"Película":"Serie"}</strong></span>
+       <span><small>LANZAMIENTO</small><strong>{date(media.startDate)}</strong></span>
+       {media.format!=="MOVIE"&&media.episodes&&<span><small>EPISODIOS</small><strong>{media.episodes}</strong></span>}
+       {media.duration&&<span><small>{media.format==="MOVIE"?"DURACIÓN":"DURACIÓN / EPISODIO"}</small><strong>{media.duration} min</strong></span>}
+      </div>
       {media.id > 0 && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>}
       {media.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map(genre=><span key={genre}>{genre}</span>)}</div>}
       <div className="anime-detail-synopsis-wrap">
        <p className="anime-detail-synopsis">{translated||synopsis||(hasSynopsis?"":"Todavía no hay una sinopsis disponible.")}</p>
        {hasSynopsis&&media.description&&<button type="button" className="anime-detail-translate" onClick={translateSynopsis} disabled={translating}>{translating?"Traduciendo…":translated?"Traducido al español":"Traducir al español"}</button>}
       </div>
-      {media.trailer?.id&&media.trailer.site==="youtube"&&<section className="anime-detail-trailer"><span className="anime-detail-label">Tráiler</span><div className="anime-detail-video"><iframe src={"https://www.youtube.com/embed/"+media.trailer.id+"?rel=0"} title={"Tráiler de "+title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div></section>}
-       {(() => {
+      <div className="anime-detail-state">{status(media.status)&&<span>{status(media.status)}</span>}</div>
+     </div>
+
+     {(() => {
        const seen = new Set<number>();
        const items = (media.recommendations?.nodes ?? [])
         .map((node) => node.mediaRecommendation)
@@ -236,7 +238,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
         .slice(0, 8);
        return <section className="anime-detail-recommendations" aria-label="Recomendaciones">
         <div className="anime-detail-recommendations-head">
-         <span className="anime-detail-label">Si te gusta este anime, te puede gustar…</span>
+         <span className="anime-detail-label">Si has visto este anime, tal vez te guste…</span>
         </div>
         <div className="anime-detail-recommendations-track">
          {items.length ? items.map((item) => {
@@ -251,8 +253,8 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
         </div>
        </section>;
       })()}
-      <div className="anime-detail-state">{status(media.status)&&<span>{status(media.status)}</span>}</div>
-     </div>
+
+      {media.trailer?.id&&media.trailer.site==="youtube"&&<section className="anime-detail-trailer"><span className="anime-detail-label">Tráiler</span><div className="anime-detail-video"><iframe src={"https://www.youtube.com/embed/"+media.trailer.id+"?rel=0"} title={"Tráiler de "+title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div></section>}
     </div>
    </div>
   </section>
