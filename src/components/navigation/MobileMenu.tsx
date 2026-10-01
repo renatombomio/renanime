@@ -64,7 +64,7 @@ export default function MobileMenu({ variant = "default" }: Props) {
             >
               <span className="mobile-link-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
               <span className="mobile-link-label">{link.label}</span>
-              <span className="mobile-link-arrow" aria-hidden="true">{link.href === "/ghibli/" ? "✦" : "↗"}</span>
+              <span className="mobile-link-arrow" aria-hidden="true">"↗"</span>
             </a>
           ))}
         </nav>
@@ -201,11 +201,7 @@ export default function MobileMenu({ variant = "default" }: Props) {
           transform: scaleX(1);
         }
         .mobile-link--secret .mobile-link-index { color: #c2ae91; }
-        .mobile-link--secret .mobile-link-arrow {
-          color: #c2ae91;
-          font-family: Georgia,serif;
-          font-size: 17px;
-        }
+        
 
         .mobile-nav--ghibli .mobile-toggle { color: #19362f; }
         .mobile-nav--ghibli .mobile-panel { background: #fffdf8; color: #19362f; }
