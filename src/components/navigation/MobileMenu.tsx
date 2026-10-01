@@ -62,8 +62,9 @@ export default function MobileMenu({ variant = "default" }: Props) {
               onClick={() => setOpen(false)}
               style={{ "--menu-index": index } as React.CSSProperties}
             >
-              <span>{link.label}</span>
-              {link.href === "/ghibli/" && <i aria-hidden="true">✦</i>}
+              <span className="mobile-link-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+              <span className="mobile-link-label">{link.label}</span>
+              <span className="mobile-link-arrow" aria-hidden="true">{link.href === "/ghibli/" ? "✦" : "↗"}</span>
             </a>
           ))}
         </nav>
@@ -102,12 +103,27 @@ export default function MobileMenu({ variant = "default" }: Props) {
         .mobile-panel {
           position: fixed; top: 68px; right: 0; left: 0; z-index: 2;
           min-height: calc(100dvh - 68px); max-height: calc(100dvh - 68px);
-          padding: 12px 24px 40px; overflow-y: auto; overscroll-behavior: contain;
-          background: #090909; color: #f5f2ec; opacity: 0; visibility: hidden;
+          padding: 18px 24px 40px; overflow-y: auto; overscroll-behavior: contain;
+          background:
+            radial-gradient(circle at 92% 8%, rgba(164,138,104,.08), transparent 25%),
+            radial-gradient(circle at 8% 72%, rgba(245,242,236,.025), transparent 24%),
+            #090909;
+          color: #f5f2ec; opacity: 0; visibility: hidden;
           pointer-events: none; transform: translateY(-18px);
           transition: opacity 360ms ease, transform 480ms cubic-bezier(.22,1,.36,1), visibility 0s linear 480ms;
           box-shadow: 0 24px 60px rgba(0,0,0,.3);
           -webkit-overflow-scrolling: touch;
+        }
+        .mobile-panel::before {
+          position: absolute; top: 0; bottom: 0; left: 24px; width: 1px;
+          background: linear-gradient(180deg, rgba(164,138,104,.5), rgba(245,242,236,.08) 38%, transparent 88%);
+          content: "";
+          pointer-events: none;
+        }
+        .mobile-panel::after {
+          position: absolute; right: 24px; bottom: 28px; width: 84px; height: 84px;
+          border: 1px solid rgba(164,138,104,.12); border-radius: 50%;
+          content: ""; pointer-events: none;
         }
         .mobile-nav.is-open .mobile-panel {
           opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0);
@@ -116,26 +132,45 @@ export default function MobileMenu({ variant = "default" }: Props) {
         .mobile-panel nav { display: flex; flex-direction: column; }
 
         .mobile-link {
-          display: flex; align-items: center; justify-content: space-between;
-          min-height: 54px; padding: 13px 0;
-          border-bottom: 1px solid rgba(245,242,236,.1);
-          color: #b9b2a7; font-family: var(--font-meta); font-size: 12px;
-          font-weight: 500; letter-spacing: .08em; line-height: 1.2;
+          position: relative;
+          display: grid; grid-template-columns: 28px minmax(0,1fr) 22px; align-items: center;
+          min-height: 58px; padding: 14px 2px 14px 12px;
+          border-bottom: 1px solid rgba(245,242,236,.075);
+          color: #9f998f; font-family: var(--font-meta); font-size: 11px;
+          font-weight: 500; letter-spacing: .1em; line-height: 1.2;
           text-transform: uppercase; text-decoration: none; opacity: 0;
           transform: translateY(14px);
-          transition: color 180ms ease, opacity 420ms cubic-bezier(.22,1,.36,1), transform 420ms cubic-bezier(.22,1,.36,1);
+          transition: color 180ms ease, opacity 420ms cubic-bezier(.22,1,.36,1), transform 420ms cubic-bezier(.22,1,.36,1), padding-left 220ms ease;
           transition-delay: 0ms; -webkit-tap-highlight-color: transparent;
         }
         .mobile-nav.is-open .mobile-link {
           opacity: 1; transform: translateY(0);
           transition-delay: calc(70ms + (var(--menu-index) * 48ms));
         }
-        .mobile-link:active { color: #f5f2ec; }
+        .mobile-link::before {
+          position: absolute; left: -1px; top: 50%; width: 3px; height: 0;
+          background: #c2ae91; content: ""; transform: translateY(-50%);
+          transition: height 220ms cubic-bezier(.22,1,.36,1);
+        }
+        .mobile-link:active, .mobile-link:hover { color: #f5f2ec; padding-left: 17px; }
+        .mobile-link:active::before, .mobile-link:hover::before { height: 28px; }
+        .mobile-link-index {
+          color: rgba(164,138,104,.55); font-size: 8px; letter-spacing: .06em;
+        }
+        .mobile-link-label { min-width: 0; }
+        .mobile-link-arrow {
+          justify-self: end; color: rgba(245,242,236,.22); font-family: var(--font-body);
+          font-size: 14px; letter-spacing: 0; transition: color 180ms ease, transform 220ms ease;
+        }
+        .mobile-link:hover .mobile-link-arrow, .mobile-link:active .mobile-link-arrow {
+          color: #c2ae91; transform: translateX(3px);
+        }
         .mobile-link--secret {
           position: relative;
           margin-top: 22px;
           min-height: 58px;
-          padding: 15px 2px 16px;
+          grid-template-columns: 28px minmax(0,1fr) 22px;
+          padding: 15px 2px 16px 12px;
           border: 0;
           border-top: 1px solid rgba(164,138,104,.28);
           border-bottom: 1px solid rgba(164,138,104,.28);
@@ -148,6 +183,7 @@ export default function MobileMenu({ variant = "default" }: Props) {
           letter-spacing: .015em;
           text-transform: none;
           overflow: hidden;
+          margin-left: 0;
         }
         .mobile-link--secret::before {
           position: absolute;
@@ -164,12 +200,11 @@ export default function MobileMenu({ variant = "default" }: Props) {
         .mobile-link--secret:active::before {
           transform: scaleX(1);
         }
-        .mobile-link--secret i {
+        .mobile-link--secret .mobile-link-index { color: #c2ae91; }
+        .mobile-link--secret .mobile-link-arrow {
           color: #c2ae91;
           font-family: Georgia,serif;
           font-size: 17px;
-          font-style: normal;
-          margin-left: 8px;
         }
 
         .mobile-nav--ghibli .mobile-toggle { color: #19362f; }
