@@ -2,15 +2,34 @@ import { useEffect, useState } from "react";
 
 interface Props { variant?: "default" | "ghibli"; }
 
-const links = [
-  { label: "Inicio", href: "/" },
-  { label: "Mi lista", href: "/pending/" },
-  { label: "Mi colección", href: "/collection/" },
-  { label: "Colección de Ren", href: "/ren-collection/" },
-  { label: "Favoritos de Ren", href: "/favorites/" },
-  { label: "Géneros de Ren", href: "/genres/" },
-  { label: "Buscar", href: "/search/" },
-  { label: "El secreto de Ren", href: "/ghibli/" },
+const groups = [
+  {
+    label: null,
+    links: [{ label: "Inicio", href: "/" }]
+  },
+  {
+    label: "Archivo de Ren",
+    links: [
+      { label: "Colección de Ren", href: "/ren-collection/" },
+      { label: "Favoritos de Ren", href: "/favorites/" },
+      { label: "Géneros de Ren", href: "/genres/" }
+    ]
+  },
+  {
+    label: null,
+    links: [{ label: "Buscar", href: "/search/" }]
+  },
+  {
+    label: "Mi biblioteca",
+    links: [
+      { label: "Mi lista", href: "/pending/" },
+      { label: "Mi colección", href: "/collection/" }
+    ]
+  },
+  {
+    label: null,
+    links: [{ label: "El secreto de Ren", href: "/ghibli/" }]
+  }
 ];
 
 export default function MobileMenu({ variant = "default" }: Props) {
@@ -28,6 +47,8 @@ export default function MobileMenu({ variant = "default" }: Props) {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, []);
+
+  let itemIndex = 0;
 
   return (
     <div className={`mobile-nav ${variant === "ghibli" ? "mobile-nav--ghibli" : ""} ${open ? "is-open" : ""}`}>
@@ -53,19 +74,30 @@ export default function MobileMenu({ variant = "default" }: Props) {
 
       <div className="mobile-panel" id="mobile-navigation" aria-hidden={!open}>
         <nav aria-label="Navegación móvil">
-          {links.map((link, index) => (
-            <a
-              key={link.href}
-              className={link.href === "/ghibli/" ? "mobile-link mobile-link--secret" : "mobile-link"}
-              href={link.href}
-              tabIndex={open ? 0 : -1}
-              onClick={() => setOpen(false)}
-              style={{ "--menu-index": index } as React.CSSProperties}
-            >
-              <span className="mobile-link-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-              <span className="mobile-link-label">{link.label}</span>
-              <span className="mobile-link-arrow" aria-hidden="true">"↗"</span>
-            </a>
+          {groups.map((group) => (
+            <div className={group.label ? "mobile-nav-group mobile-nav-group--labeled" : "mobile-nav-group"} key={group.label ?? group.links[0].href}>
+              {group.label && <div className="mobile-nav-section-label"><span>{group.label}</span></div>}
+              <div className="mobile-nav-group-links">
+                {group.links.map((link) => {
+                  const index = itemIndex++;
+                  const isSecret = link.href === "/ghibli/";
+                  return (
+                    <a
+                      key={link.href}
+                      className={isSecret ? "mobile-link mobile-link--secret" : "mobile-link"}
+                      href={link.href}
+                      tabIndex={open ? 0 : -1}
+                      onClick={() => setOpen(false)}
+                      style={{ "--menu-index": index } as React.CSSProperties}
+                    >
+                      <span className="mobile-link-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                      <span className="mobile-link-label">{link.label}</span>
+                      <span className="mobile-link-arrow" aria-hidden="true">↗</span>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
           ))}
         </nav>
       </div>
@@ -117,8 +149,7 @@ export default function MobileMenu({ variant = "default" }: Props) {
         .mobile-panel::before {
           position: absolute; top: 0; bottom: 0; left: 24px; width: 1px;
           background: linear-gradient(180deg, rgba(164,138,104,.5), rgba(245,242,236,.08) 38%, transparent 88%);
-          content: "";
-          pointer-events: none;
+          content: ""; pointer-events: none;
         }
         .mobile-panel::after {
           position: absolute; right: 24px; bottom: 28px; width: 84px; height: 84px;
@@ -129,12 +160,49 @@ export default function MobileMenu({ variant = "default" }: Props) {
           opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0);
           transition: opacity 360ms ease, transform 480ms cubic-bezier(.22,1,.36,1), visibility 0s;
         }
-        .mobile-panel nav { display: flex; flex-direction: column; }
+        .mobile-panel nav { display: flex; flex-direction: column; gap: 18px; }
+
+        .mobile-nav-group {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .mobile-nav-group--labeled {
+          padding-top: 8px;
+        }
+
+        .mobile-nav-section-label {
+          position: relative;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin: 0 0 5px 40px;
+          color: rgba(164,138,104,.72);
+          font-family: var(--font-meta);
+          font-size: 8px;
+          font-weight: 600;
+          letter-spacing: .16em;
+          line-height: 1;
+          text-transform: uppercase;
+        }
+
+        .mobile-nav-section-label::after {
+          flex: 1;
+          height: 1px;
+          background: rgba(164,138,104,.16);
+          content: "";
+        }
+
+        .mobile-nav-group-links {
+          display: flex;
+          flex-direction: column;
+        }
 
         .mobile-link {
           position: relative;
           display: grid; grid-template-columns: 28px minmax(0,1fr) 22px; align-items: center;
-          min-height: 58px; padding: 14px 2px 14px 12px;
+          min-height: 54px; padding: 13px 2px 13px 12px;
           border-bottom: 1px solid rgba(245,242,236,.075);
           color: #9f998f; font-family: var(--font-meta); font-size: 11px;
           font-weight: 500; letter-spacing: .1em; line-height: 1.2;
@@ -143,38 +211,45 @@ export default function MobileMenu({ variant = "default" }: Props) {
           transition: color 180ms ease, opacity 420ms cubic-bezier(.22,1,.36,1), transform 420ms cubic-bezier(.22,1,.36,1), padding-left 220ms ease;
           transition-delay: 0ms; -webkit-tap-highlight-color: transparent;
         }
+
         .mobile-nav.is-open .mobile-link {
           opacity: 1; transform: translateY(0);
           transition-delay: calc(70ms + (var(--menu-index) * 48ms));
         }
+
         .mobile-link::before {
           position: absolute; left: -1px; top: 50%; width: 3px; height: 0;
           background: #c2ae91; content: ""; transform: translateY(-50%);
           transition: height 220ms cubic-bezier(.22,1,.36,1);
         }
+
         .mobile-link:active, .mobile-link:hover { color: #f5f2ec; padding-left: 17px; }
         .mobile-link:active::before, .mobile-link:hover::before { height: 28px; }
+
         .mobile-link-index {
           color: rgba(164,138,104,.55); font-size: 8px; letter-spacing: .06em;
         }
+
         .mobile-link-label { min-width: 0; }
+
         .mobile-link-arrow {
           justify-self: end; color: rgba(245,242,236,.22); font-family: var(--font-body);
           font-size: 14px; letter-spacing: 0; transition: color 180ms ease, transform 220ms ease;
         }
+
         .mobile-link:hover .mobile-link-arrow, .mobile-link:active .mobile-link-arrow {
           color: #c2ae91; transform: translateX(3px);
         }
+
         .mobile-link--secret {
           position: relative;
-          margin-top: 22px;
+          margin-top: 8px;
           min-height: 58px;
           grid-template-columns: 28px minmax(0,1fr) 22px;
           padding: 15px 2px 16px 12px;
           border: 0;
           border-top: 1px solid rgba(164,138,104,.28);
           border-bottom: 1px solid rgba(164,138,104,.28);
-          border-radius: 0;
           background: transparent;
           color: #f5f2ec;
           font-family: var(--font-heading);
@@ -183,40 +258,34 @@ export default function MobileMenu({ variant = "default" }: Props) {
           letter-spacing: .015em;
           text-transform: none;
           overflow: hidden;
-          margin-left: 0;
         }
+
         .mobile-link--secret::before {
           position: absolute;
-          right: 0;
-          bottom: 0;
-          left: 0;
-          height: 2px;
+          right: 0; bottom: 0; left: 0; height: 2px;
           background: linear-gradient(90deg, transparent, #a48a68 22%, #c2ae91 78%, transparent);
-          content: "";
-          transform: scaleX(.45);
-          transform-origin: center;
+          content: ""; transform: scaleX(.45); transform-origin: center;
           transition: transform 420ms cubic-bezier(.22,1,.36,1);
         }
-        .mobile-link--secret:active::before {
-          transform: scaleX(1);
-        }
+
+        .mobile-link--secret:active::before { transform: scaleX(1); }
         .mobile-link--secret .mobile-link-index { color: #c2ae91; }
-        
 
         .mobile-nav--ghibli .mobile-toggle { color: #19362f; }
         .mobile-nav--ghibli .mobile-panel { background: #fffdf8; color: #19362f; }
         .mobile-nav--ghibli .mobile-link { color: #527066; border-bottom-color: rgba(25,54,47,.12); }
-        .mobile-nav--ghibli .mobile-link:active { color: #18528a; }
+        .mobile-nav--ghibli .mobile-link:active,
+        .mobile-nav--ghibli .mobile-link:hover { color: #18528a; }
+        .mobile-nav--ghibli .mobile-nav-section-label { color: rgba(24,82,138,.68); }
+        .mobile-nav--ghibli .mobile-nav-section-label::after { background: rgba(24,82,138,.16); }
         .mobile-nav--ghibli .mobile-link--secret {
           border-top-color: rgba(24,82,138,.24);
           border-bottom-color: rgba(24,82,138,.24);
-          background: transparent;
           color: #19362f;
         }
         .mobile-nav--ghibli .mobile-link--secret::before {
           background: linear-gradient(90deg, transparent, #18528a 22%, #f45164 78%, transparent);
         }
-        .mobile-nav--ghibli .mobile-link--secret i { color: #f45164; }
 
         @media (min-width: 521px) and (max-width: 1120px) {
           .mobile-panel {
@@ -224,7 +293,9 @@ export default function MobileMenu({ variant = "default" }: Props) {
             padding-left: 40px; padding-right: 40px;
           }
         }
+
         @media (min-width: 1121px) { .mobile-nav { display: none; } }
+
         @media (prefers-reduced-motion: reduce) {
           .mobile-toggle span, .mobile-backdrop, .mobile-panel, .mobile-link {
             transition-duration: .01ms !important; transition-delay: 0ms !important;
