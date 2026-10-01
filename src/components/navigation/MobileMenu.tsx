@@ -4,13 +4,13 @@ interface Props { variant?: "default" | "ghibli"; }
 
 const links = [
   { label: "Inicio", href: "/" },
-  { label: "Mi lista", href: "/pending/" },
-  { label: "Mi colección", href: "/collection/" },
   { label: "Colección de Ren", href: "/ren-collection/" },
   { label: "Favoritos de Ren", href: "/favorites/" },
   { label: "Géneros de Ren", href: "/genres/" },
   { label: "Buscar", href: "/search/" },
-  { label: "El secreto de Ren", href: "/ghibli/" },
+  { label: "Mi lista", href: "/pending/" },
+  { label: "Mi colección", href: "/collection/" },
+  { label: "El secreto de Ren", href: "/ghibli/" }
 ];
 
 export default function MobileMenu({ variant = "default" }: Props) {
@@ -62,9 +62,7 @@ export default function MobileMenu({ variant = "default" }: Props) {
               onClick={() => setOpen(false)}
               style={{ "--menu-index": index } as React.CSSProperties}
             >
-              <span className="mobile-link-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-              <span className="mobile-link-label">{link.label}</span>
-              <span className="mobile-link-arrow" aria-hidden="true">"↗"</span>
+              <span>{link.label}</span>
             </a>
           ))}
         </nav>
@@ -132,39 +130,21 @@ export default function MobileMenu({ variant = "default" }: Props) {
         .mobile-panel nav { display: flex; flex-direction: column; }
 
         .mobile-link {
-          position: relative;
-          display: grid; grid-template-columns: 28px minmax(0,1fr) 22px; align-items: center;
-          min-height: 58px; padding: 14px 2px 14px 12px;
-          border-bottom: 1px solid rgba(245,242,236,.075);
-          color: #9f998f; font-family: var(--font-meta); font-size: 11px;
-          font-weight: 500; letter-spacing: .1em; line-height: 1.2;
+          display: flex; align-items: center; justify-content: space-between;
+          min-height: 54px; padding: 13px 0;
+          border-bottom: 1px solid rgba(245,242,236,.1);
+          color: #b9b2a7; font-family: var(--font-meta); font-size: 12px;
+          font-weight: 500; letter-spacing: .08em; line-height: 1.2;
           text-transform: uppercase; text-decoration: none; opacity: 0;
           transform: translateY(14px);
-          transition: color 180ms ease, opacity 420ms cubic-bezier(.22,1,.36,1), transform 420ms cubic-bezier(.22,1,.36,1), padding-left 220ms ease;
+          transition: color 180ms ease, opacity 420ms cubic-bezier(.22,1,.36,1), transform 420ms cubic-bezier(.22,1,.36,1);
           transition-delay: 0ms; -webkit-tap-highlight-color: transparent;
         }
         .mobile-nav.is-open .mobile-link {
           opacity: 1; transform: translateY(0);
           transition-delay: calc(70ms + (var(--menu-index) * 48ms));
         }
-        .mobile-link::before {
-          position: absolute; left: -1px; top: 50%; width: 3px; height: 0;
-          background: #c2ae91; content: ""; transform: translateY(-50%);
-          transition: height 220ms cubic-bezier(.22,1,.36,1);
-        }
-        .mobile-link:active, .mobile-link:hover { color: #f5f2ec; padding-left: 17px; }
-        .mobile-link:active::before, .mobile-link:hover::before { height: 28px; }
-        .mobile-link-index {
-          color: rgba(164,138,104,.55); font-size: 8px; letter-spacing: .06em;
-        }
-        .mobile-link-label { min-width: 0; }
-        .mobile-link-arrow {
-          justify-self: end; color: rgba(245,242,236,.22); font-family: var(--font-body);
-          font-size: 14px; letter-spacing: 0; transition: color 180ms ease, transform 220ms ease;
-        }
-        .mobile-link:hover .mobile-link-arrow, .mobile-link:active .mobile-link-arrow {
-          color: #c2ae91; transform: translateX(3px);
-        }
+        .mobile-link:active { color: #f5f2ec; }
         .mobile-link--secret {
           position: relative;
           margin-top: 22px;
@@ -200,7 +180,6 @@ export default function MobileMenu({ variant = "default" }: Props) {
         .mobile-link--secret:active::before {
           transform: scaleX(1);
         }
-        .mobile-link--secret .mobile-link-index { color: #c2ae91; }
         
 
         .mobile-nav--ghibli .mobile-toggle { color: #19362f; }
@@ -215,14 +194,6 @@ export default function MobileMenu({ variant = "default" }: Props) {
         }
         .mobile-nav--ghibli .mobile-link--secret::before {
           background: linear-gradient(90deg, transparent, #18528a 22%, #f45164 78%, transparent);
-        }
-        .mobile-nav--ghibli .mobile-link--secret i { color: #f45164; }
-
-        @media (min-width: 521px) and (max-width: 1120px) {
-          .mobile-panel {
-            top: 74px; min-height: calc(100dvh - 74px); max-height: calc(100dvh - 74px);
-            padding-left: 40px; padding-right: 40px;
-          }
         }
         @media (min-width: 1121px) { .mobile-nav { display: none; } }
         @media (prefers-reduced-motion: reduce) {
