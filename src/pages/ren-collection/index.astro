@@ -51,35 +51,9 @@ const collectionEntries = getWatchedLibrary();
     margin-bottom: clamp(4.5rem, 9vw, 8rem);
   }
 
-  .ren-collection-stat {
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-end;
-    gap: .75rem;
-    margin-top: clamp(2.5rem, 5vw, 4rem);
-    padding-top: .9rem;
-    border-top: 1px solid var(--color-border);
-  }
-
-  .ren-collection-stat strong {
-    color: var(--color-paper-50);
-    font-family: var(--font-heading);
-    font-size: clamp(2rem, 4vw, 3.75rem);
-    font-weight: 400;
-    letter-spacing: -.05em;
-    line-height: 1;
-  }
-
-  .ren-collection-stat span {
-    color: var(--color-muted-500);
-    font: 500 .55rem/1 var(--font-meta);
-    letter-spacing: .11em;
-    text-transform: uppercase;
-  }
 
   @media (max-width: 700px) {
     .ren-collection-page { padding-top: 5rem; }
     .ren-collection-header { margin-bottom: 4rem; }
-    .ren-collection-stat { justify-content: flex-start; }
   }
 </style>
