@@ -55,10 +55,6 @@ const recommendations = getRecommendedLibrary().filter((entry) => !entry.state.f
     background: transparent;
   }
 
-  :global(.favorite-card:nth-child(even)) {
-    margin-top: clamp(2rem, 5vw, 5rem);
-  }
-
   :global(.favorite-card a) {
     display: block;
     width: 100%;
@@ -188,7 +184,6 @@ const recommendations = getRecommendedLibrary().filter((entry) => !entry.state.f
   @media (max-width: 700px) {
     .favorites-page-content { margin-top: 4.5rem; }
     :global(.favorites-track) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.5rem .75rem; }
-    :global(.favorite-card:nth-child(even)) { margin-top: 2rem; }
     :global(.favorite-caption) { padding: 3rem .65rem .65rem; }
     :global(.favorite-caption h3) { font-size: .72rem; line-height: 1.05; }
     :global(.favorite-caption span) { font-size: .38rem; }
