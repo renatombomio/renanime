@@ -5,34 +5,15 @@ interface Props { variant?: "default" | "ghibli"; }
 
 const { variant = "default" } = Astro.props;
 
-const groups = [
-  {
-    label: null,
-    links: [{ label: "Inicio", href: "/" }]
-  },
-  {
-    label: "Archivo de Ren",
-    links: [
-      { label: "Colección de Ren", href: "/ren-collection/" },
-      { label: "Favoritos de Ren", href: "/favorites/" },
-      { label: "Géneros de Ren", href: "/genres/" }
-    ]
-  },
-  {
-    label: null,
-    links: [{ label: "Buscar", href: "/search/" }]
-  },
-  {
-    label: "Mi biblioteca",
-    links: [
-      { label: "Mi lista", href: "/pending/" },
-      { label: "Mi colección", href: "/collection/" }
-    ]
-  },
-  {
-    label: null,
-    links: [{ label: "El secreto de Ren", href: "/ghibli/" }]
-  }
+const links = [
+  { label: "Inicio", href: "/" },
+  { label: "Mi lista", href: "/pending/" },
+  { label: "Mi colección", href: "/collection/" },
+  { label: "Colección de Ren", href: "/ren-collection/" },
+  { label: "Favoritos de Ren", href: "/favorites/" },
+  { label: "Géneros de Ren", href: "/genres/" },
+  { label: "Buscar", href: "/search/" },
+  { label: "El secreto de Ren", href: "/ghibli/" }
 ];
 
 const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
@@ -45,35 +26,11 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     </a>
 
     <nav class="desktop-nav" aria-label="Navegación principal">
-      <div class="desktop-nav-group desktop-nav-group--intro">
-        <a class="desktop-nav-link" href="/" aria-current={currentPath === "/" ? "page" : undefined}>Inicio</a>
-      </div>
-
-      <div class="desktop-nav-group">
-        <span class="desktop-nav-label">Archivo de Ren</span>
-        <div class="desktop-nav-links">
-          {groups[1].links.map((link) => (
-            <a class="desktop-nav-link" href={link.href} aria-current={currentPath === (link.href.replace(/\/$/, "") || "/") ? "page" : undefined}>{link.label}</a>
-          ))}
-        </div>
-      </div>
-
-      <div class="desktop-nav-group desktop-nav-group--single">
-        <a class="desktop-nav-link" href="/search/" aria-current={currentPath === "/search" ? "page" : undefined}>Buscar</a>
-      </div>
-
-      <div class="desktop-nav-group">
-        <span class="desktop-nav-label">Mi biblioteca</span>
-        <div class="desktop-nav-links">
-          {groups[3].links.map((link) => (
-            <a class="desktop-nav-link" href={link.href} aria-current={currentPath === (link.href.replace(/\/$/, "") || "/") ? "page" : undefined}>{link.label}</a>
-          ))}
-        </div>
-      </div>
-
-      <div class="desktop-nav-group desktop-nav-group--single desktop-nav-group--secret">
-        <a class="desktop-nav-link" href="/ghibli/" aria-current={currentPath === "/ghibli" ? "page" : undefined}>El secreto de Ren</a>
-      </div>
+      <ul>
+        {links.map((link) => (
+          <li><a href={link.href} aria-current={currentPath === (link.href.replace(/\/$/, "") || "/") ? "page" : undefined}>{link.label}</a></li>
+        ))}
+      </ul>
     </nav>
 
     <div class="mobile-menu">
@@ -114,89 +71,49 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     transition: opacity 180ms ease, color 180ms ease;
   }
 
-  .brand-accent { color: #a48a68; }
+  .brand-accent {
+    color: #a48a68;
+  }
 
   .brand:hover,
-  .brand:focus-visible { color: #ffffff; }
+  .brand:focus-visible {
+    color: #ffffff;
+  }
 
   .brand:hover .brand-accent,
-  .brand:focus-visible .brand-accent { color: #c2ae91; }
+  .brand:focus-visible .brand-accent {
+    color: #c2ae91;
+  }
 
   .desktop-nav {
     margin-left: auto;
-    display: flex;
-    align-items: stretch;
-    gap: clamp(18px, 2vw, 30px);
-    height: 100%;
   }
 
-  .desktop-nav-group {
-    position: relative;
+  .desktop-nav ul {
     display: flex;
     align-items: center;
-    gap: 13px;
-    padding-left: 18px;
+    gap: clamp(22px, 2.25vw, 36px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
-  .desktop-nav-group::before {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    width: 1px;
-    height: 24px;
-    background: rgba(245, 242, 236, 0.11);
-    content: "";
-    transform: translateY(-50%);
-  }
-
-  .desktop-nav-group--intro,
-  .desktop-nav-group--single { padding-left: 0; }
-
-  .desktop-nav-group--intro::before,
-  .desktop-nav-group--single::before { display: none; }
-
-  .desktop-nav-group--secret {
-    margin-left: -4px;
-    padding-left: 20px;
-  }
-
-  .desktop-nav-label {
-    align-self: flex-start;
-    margin-top: 27px;
-    color: rgba(164, 138, 104, 0.7);
-    font-family: var(--font-meta);
-    font-size: 7px;
-    font-weight: 600;
-    letter-spacing: 0.13em;
-    line-height: 1;
-    text-transform: uppercase;
-    white-space: nowrap;
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-  }
-
-  .desktop-nav-links {
-    display: flex;
-    align-items: center;
-    gap: clamp(15px, 1.5vw, 23px);
-  }
-
-  .desktop-nav-link {
+  .desktop-nav a {
     position: relative;
     display: inline-block;
     padding: 10px 0;
     color: #8f8a82;
     font-family: var(--font-meta);
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 500;
-    letter-spacing: 0.065em;
+    letter-spacing: 0.075em;
     line-height: 1;
     text-transform: uppercase;
     white-space: nowrap;
     transition: color 180ms ease, transform 180ms ease;
   }
 
-  .desktop-nav-link::after {
+  .desktop-nav a::after {
     position: absolute;
     right: 0;
     bottom: 1px;
@@ -209,27 +126,15 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .desktop-nav-link:hover,
-  .desktop-nav-link:focus-visible,
-  .desktop-nav-link[aria-current="page"] {
+  .desktop-nav a:hover,
+  .desktop-nav a:focus-visible {
     color: #f5f2ec;
     transform: translateY(-1px);
   }
 
-  .desktop-nav-link:hover::after,
-  .desktop-nav-link:focus-visible::after,
-  .desktop-nav-link[aria-current="page"]::after { transform: scaleX(1); }
-
-  .desktop-nav-group--secret .desktop-nav-link {
-    color: #b6afa4;
-    font-family: var(--font-heading);
-    font-size: 12px;
-    letter-spacing: 0.01em;
-    text-transform: none;
-  }
-
-  .desktop-nav-group--secret .desktop-nav-link::after {
-    background: #c2ae91;
+  .desktop-nav a:hover::after,
+  .desktop-nav a:focus-visible::after {
+    transform: scaleX(1);
   }
 
   .site-header--ghibli {
@@ -244,14 +149,10 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
   .site-header--ghibli .brand:focus-visible { color: var(--ghibli-blue, #18528a); }
   .site-header--ghibli .brand:hover .brand-accent,
   .site-header--ghibli .brand:focus-visible .brand-accent { color: var(--ghibli-coral, #f45164); }
-  .site-header--ghibli .desktop-nav-link { color: #527066; }
-  .site-header--ghibli .desktop-nav-link:hover,
-  .site-header--ghibli .desktop-nav-link:focus-visible,
-  .site-header--ghibli .desktop-nav-link[aria-current="page"] { color: var(--ghibli-blue, #18528a); }
-  .site-header--ghibli .desktop-nav-link::after { background: var(--ghibli-coral, #f45164); }
-  .site-header--ghibli .desktop-nav-label { color: rgba(24, 82, 138, 0.65); }
-  .site-header--ghibli .desktop-nav-group::before { background: rgba(25,54,47,.13); }
-  .site-header--ghibli .desktop-nav-group--secret .desktop-nav-link { color: #19362f; }
+  .site-header--ghibli .desktop-nav a { color: #527066; }
+  .site-header--ghibli .desktop-nav a:hover,
+  .site-header--ghibli .desktop-nav a:focus-visible { color: var(--ghibli-blue, #18528a); }
+  .site-header--ghibli .desktop-nav a::after { background: var(--ghibli-coral, #f45164); }
 
   .mobile-menu {
     display: none;
@@ -259,19 +160,19 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     flex: 0 0 auto;
   }
 
-  @media (max-width: 1280px) {
-    .header-inner { width: calc(100% - 56px); }
-    .desktop-nav { gap: 14px; }
-    .desktop-nav-group { gap: 9px; padding-left: 12px; }
-    .desktop-nav-links { gap: 12px; }
-    .desktop-nav-link { font-size: 9px; }
-    .desktop-nav-label { font-size: 6px; }
-  }
-
   @media (max-width: 1120px) {
-    .site-header { height: 74px; }
-    .header-inner { width: calc(100% - 40px); }
-    .desktop-nav { display: none; }
+    .site-header {
+      height: 74px;
+    }
+
+    .header-inner {
+      width: calc(100% - 40px);
+    }
+
+    .desktop-nav {
+      display: none;
+    }
+
     .mobile-menu {
       display: flex;
       align-items: center;
@@ -281,8 +182,16 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
   }
 
   @media (max-width: 520px) {
-    .site-header { height: 68px; }
-    .header-inner { width: calc(100% - 32px); }
-    .brand { font-size: 20px; }
+    .site-header {
+      height: 68px;
+    }
+
+    .header-inner {
+      width: calc(100% - 32px);
+    }
+
+    .brand {
+      font-size: 20px;
+    }
   }
 </style>
