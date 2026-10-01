@@ -129,10 +129,17 @@ export default function GhibliStory({ entries }: { entries: GhibliStoryEntry[] }
           .ghs-kicker{margin-bottom:.8rem}
           .ghs-sun{width:70px;height:70px;right:19%;top:18%}.ghs-leaf{width:90px;height:38px}
           .ghs-index{left:1rem;bottom:.75rem}.ghs-intro-note{right:1rem;bottom:.75rem}
-          .ghs-entry,.ghs-entry:nth-child(even){display:block;min-height:0;margin-bottom:3rem}
+          .ghs-entries{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem .7rem}
+          .ghs-entry,.ghs-entry:nth-child(even){display:block;min-height:0;margin:0}
           .ghs-entry:nth-child(even) .ghs-image-wrap,.ghs-entry:nth-child(even) .ghs-copy{grid-column:auto;grid-row:auto}
-          .ghs-image-wrap{height:112vw;max-height:560px;border-radius:22px}
-          .ghs-copy,.ghs-entry:nth-child(even) .ghs-copy{margin:-4rem .7rem 0;padding:1.5rem 1.2rem 1.75rem;border-radius:22px}
+          .ghs-image-wrap{height:auto;aspect-ratio:4/5;max-height:none;border-radius:15px}
+          .ghs-copy,.ghs-entry:nth-child(even) .ghs-copy{margin:-1.5rem .45rem 0;padding:1.1rem .85rem 1.2rem;border-radius:15px}
+          .ghs-chapter{font-size:.45rem}
+          .ghs-copy h3{font-size:clamp(1.25rem,6vw,2rem)}
+          .ghs-ren{font-size:.72rem;line-height:1.5}
+          .ghs-creator{margin-top:1rem;padding-top:.7rem}
+          .ghs-creator-label span,.ghs-creator-label b{font-size:.4rem}
+          .ghs-creator p{font-size:.6rem;line-height:1.45}
           .ghs-num{top:1rem;left:1rem;width:42px;height:42px}
           .ghs-copy h3{font-size:clamp(2.2rem,11vw,3.5rem)}
           .ghs-ren{font-size:.9rem;line-height:1.6}
