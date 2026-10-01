@@ -1064,6 +1064,7 @@ section[id] {
 }
 
 .home-gallery-card {
+  position: relative;
   display: block;
   aspect-ratio: 2 / 3;
   overflow: hidden;
