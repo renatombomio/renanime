@@ -16,9 +16,15 @@ const collectionEntries = getWatchedLibrary();
     <div class="ren-collection-header">
       <SectionHeader
         eyebrow="Archivo de Ren"
+        index="01"
+        variant="ren"
         title="Colección de Ren"
-        description="La colección de anime que Ren ha visto. Este es el archivo editorial de Renanime's Gallery; no es la biblioteca personal del visitante."
+        description="Todo lo que he visto, reunido en un mismo lugar. Mi archivo personal de anime: historias terminadas, descubrimientos y años de obsesión." 
       />
+      <div class="ren-collection-stat" aria-label={`${collectionEntries.length} animes en la colección`}>
+        <strong>{String(collectionEntries.length).padStart(3, "0")}</strong>
+        <span>títulos vistos</span>
+      </div>
     </div>
 
     <section class="ren-collection-content" aria-label="Colección de Ren">
@@ -42,12 +48,39 @@ const collectionEntries = getWatchedLibrary();
   }
 
   .ren-collection-header {
-    margin-bottom: clamp(3rem, 6vw, 5rem);
+    position: relative;
+    margin-bottom: clamp(4.5rem, 9vw, 8rem);
+  }
+
+  .ren-collection-stat {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: .75rem;
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    padding-top: .9rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .ren-collection-stat strong {
+    color: var(--color-paper-50);
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3.75rem);
+    font-weight: 400;
+    letter-spacing: -.05em;
+    line-height: 1;
+  }
+
+  .ren-collection-stat span {
+    color: var(--color-muted-500);
+    font: 500 .55rem/1 var(--font-meta);
+    letter-spacing: .11em;
+    text-transform: uppercase;
   }
 
   @media (max-width: 700px) {
-    .ren-collection-page {
-      padding-top: 5rem;
-    }
+    .ren-collection-page { padding-top: 5rem; }
+    .ren-collection-header { margin-bottom: 4rem; }
+    .ren-collection-stat { justify-content: flex-start; }
   }
 </style>
