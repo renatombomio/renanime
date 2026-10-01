@@ -255,6 +255,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
     <div className="anime-detail-layout">
       <div className="anime-detail-poster">{poster?<img src={poster} alt={title}/>:<div className="anime-detail-placeholder">RENANIME</div>}</div>
       <div className="anime-detail-copy">
+       <div className="anime-detail-copy-main">
        {personal.favorite&&<span className="anime-detail-eyebrow">Favorito</span>}
        <h1>{title}</h1>
        <div className="anime-detail-meta">
@@ -272,6 +273,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
         <span>{personal.status==="WATCHED"?"Visto":personal.status==="PENDING"?"Pendiente":"En mi archivo"}</span>
         {personal.recommended&&<span>Recomendado por Ren</span>}
         {status(media?.status)&&<span>{status(media?.status)}</span>}
+       </div>
        </div>
       </div>
        <div className="anime-detail-synopsis-wrap">
