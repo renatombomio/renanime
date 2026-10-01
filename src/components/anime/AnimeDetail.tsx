@@ -208,7 +208,7 @@ function date(value:Media["startDate"]){
   return new Date(value.year,value.month-1,value.day).toLocaleDateString("es-ES",{day:"numeric",month:"long",year:"numeric"});
 }
 
-function format(value:string|null|undefined){return value==="MOVIE"?"Film":value==="TV"?"Series":value||"Anime";}
+function format(value:string|null|undefined){return value==="MOVIE"?"Película":value==="TV"?"Serie":value||"Anime";}
 function status(value:string|null|undefined){return value==="FINISHED"?"Finalizado":value==="RELEASING"?"En emisión":value==="NOT_YET_RELEASED"?"Próximamente":value==="HIATUS"?"En pausa":value==="CANCELLED"?"Cancelado":"";}
 
 export default function AnimeDetail({entry}:{entry:LibraryEntry}){
@@ -232,6 +232,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
  const poster=media?.coverImage?.extraLarge||media?.coverImage?.large;
  const banner=media?.bannerImage||poster;
  const personal=entry.state;
+ const longTitle=title.length>24;
  const relations=(media?.relations?.edges??[]).filter(edge=>edge.node?.type==="ANIME"&&edge.node.id!==media?.id);
  return <div className="anime-detail">
   <style>{`
@@ -252,12 +253,12 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
   <section className="anime-detail-hero" style={banner?{backgroundImage:`linear-gradient(90deg,rgba(9,9,9,.98) 0%,rgba(9,9,9,.78) 43%,rgba(9,9,9,.35) 72%,rgba(9,9,9,.72) 100%),linear-gradient(0deg,rgba(9,9,9,.98),transparent 42%),url("${banner}")`}:undefined}>
    <div className="anime-detail-inner">
     <a className="anime-detail-back" href="/collection/">← Volver a la colección</a>
-    <div className="anime-detail-layout">
+    <div className={"anime-detail-layout"+(longTitle?" has-long-title":"")}>
       <div className="anime-detail-poster">{poster?<img src={poster} alt={title}/>:<div className="anime-detail-placeholder">RENANIME</div>}</div>
       <div className="anime-detail-copy">
        {personal.favorite&&<span className="anime-detail-eyebrow">Favorito</span>}
        <h1>{title}</h1>
-       <div className="anime-detail-meta"><span>{format(entry.format||media?.format)}</span><span>{date(media?.startDate)}</span>{media?.episodes&&<span>{media.episodes} episodios</span>}{media?.duration&&<span>{media.duration} min</span>}</div>
+       <div className="anime-detail-meta"><span><small>Formato</small><strong>{format(entry.format||media?.format)}</strong></span><span><small>Estreno</small><strong>{date(media?.startDate)}</strong></span>{media?.episodes&&<span><small>Episodios</small><strong>{media.episodes}</strong></span>}{media?.duration&&<span><small>Duración</small><strong>{media.duration} min</strong></span>}</div>
        {media?.id && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>}
        {media?.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map((genre)=><span key={genre}>{genre}</span>)}</div>}
        <div className="anime-detail-synopsis-wrap">
