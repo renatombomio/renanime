@@ -68,9 +68,9 @@ export default function PersonalLibraryView({mode}:Props){
   if(loading&&!entries.length)return <p className="personal-library-status">Cargando mi biblioteca…</p>;
 
   return <div className="personal-library-view">
-    <div className="personal-library-count" aria-live="polite">
+    <div className="personal-library-intro"><span>{mode==="WATCHED"?"Tu recorrido":"Guardado para después"}</span><div className="personal-library-count" aria-live="polite">
       {entries.length} {entries.length===1?"anime":"animes"}
-    </div>
+    </div></div>
 
     {visibleEntries.length?<div className="personal-library-grid">
       {visibleEntries.map(entry=>{
@@ -105,8 +105,12 @@ export default function PersonalLibraryView({mode}:Props){
 
     <style>{`
       .personal-library-view{width:100%}
-      .personal-library-count{margin:1rem 0 2rem;color:var(--color-muted-400);font:500 .62rem/1 var(--font-meta);letter-spacing:.08em;text-transform:uppercase}
-      .personal-library-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(3rem,5vw,5rem) clamp(.85rem,1.8vw,1.75rem)}.personal-library-card{min-width:0}
+      .personal-library-intro{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;padding-bottom:.85rem;border-bottom:1px solid var(--color-border);color:var(--color-accent-soft);font:500 .58rem/1 var(--font-meta);letter-spacing:.11em;text-transform:uppercase}
+      .personal-library-count{margin:0;color:var(--color-muted-400);}
+      
+      .personal-library-grid{display:grid;margin-top:clamp(2rem,4vw,3.5rem);grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(3rem,5vw,5rem) clamp(.85rem,1.8vw,1.75rem)}.personal-library-card{min-width:0}
+      .personal-library-link{transition:transform 280ms var(--ease-out)}
+      .personal-library-link:hover{transform:translateY(-3px)}
       .personal-library-link{display:block;color:inherit}.personal-library-poster{position:relative;aspect-ratio:2/3;overflow:hidden;background:var(--color-ink-800)}.personal-library-poster img{display:block;width:100%;height:100%;object-fit:cover;transition:transform var(--duration-slow) var(--ease-out),filter var(--duration-base) var(--ease-out)}.personal-library-link:hover .personal-library-poster img{transform:scale(1.035);filter:saturate(1.04)}
       .personal-library-poster::after{position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,9,9,.02) 45%,rgba(9,9,9,.78) 100%);content:"";pointer-events:none}
       .personal-library-placeholder{width:100%;height:100%;background:radial-gradient(circle at 18% 18%,rgba(245,242,236,.08),transparent 38%),linear-gradient(145deg,var(--color-ink-700),var(--color-ink-950))}
