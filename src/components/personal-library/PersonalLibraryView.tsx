@@ -62,10 +62,17 @@ export default function PersonalLibraryView({mode}:Props){
     return()=>{cancelled=true;};
   },[entries.map(entry=>entry.animeId).join("|")]);
 
-  const visibleEntries=entries.slice(0,visible);\n  const hasMore=visible<entries.length;\n\n  if(loading&&!entries.length)return <p className="personal-library-status">Cargando mi biblioteca…</p>;
+  const visibleEntries=entries.slice(0,visible);
+  const hasMore=visible<entries.length;
+
+  if(loading&&!entries.length)return <p className="personal-library-status">Cargando mi biblioteca…</p>;
 
   return <div className="personal-library-view">
-    <div className="personal-library-count" aria-live="polite">\n      {entries.length} {entries.length===1?"anime":"animes"}\n    </div>\n\n    {visibleEntries.length?<div className="personal-library-grid">
+    <div className="personal-library-count" aria-live="polite">
+      {entries.length} {entries.length===1?"anime":"animes"}
+    </div>
+
+    {visibleEntries.length?<div className="personal-library-grid">
       {visibleEntries.map(entry=>{
         const item=media[entry.animeId];
         const title=titleOf(item);
@@ -89,12 +96,12 @@ export default function PersonalLibraryView({mode}:Props){
         </article>;
       })}
     </div>:<div className="personal-library-empty">
-      <strong>{query||filter!=="ALL"?"No hay resultados en este filtro.":mode==="WATCHED"?"¿Qué, todavía no has visto anime?":"Esto está igual de vacío que tu corazón."}</strong>
-      <span>{query||filter!=="ALL"?"Prueba otra búsqueda o cambia el filtro.":mode==="WATCHED"?"¿No sabes lo que te estás perdiendo? Venga, anímate, que me hace falta más gente friki por aquí. 😂":"Venga va, dame cariño y mete algún anime en la lista. Gracias. No leo lloros. 🫶"}</span>
-      {!query&&filter==="ALL"&&<a className="personal-library-empty-cta" href="/search/">{mode==="WATCHED"?"Explorar anime →":"Buscar algo que ver →"}</a>}
+      <strong>{mode==="WATCHED"?"¿Qué, todavía no has visto anime?":"Esto está igual de vacío que tu corazón."}</strong>
+      <span>{mode==="WATCHED"?"¿No sabes lo que te estás perdiendo? Venga, anímate, que me hace falta más gente friki por aquí. 😂":"Venga va, dame cariño y mete algún anime en la lista. Gracias. No leo lloros. 🫶"}</span>
+      <a className="personal-library-empty-cta" href="/search/">{mode==="WATCHED"?"Explorar anime →":"Buscar algo que ver →"}</a>
     </div>}
 
-    {hasMore&&<button type="button" className="personal-library-load-more" onClick={()=>setVisible(value=>Math.min(value+PAGE_SIZE,filteredEntries.length))}>Cargar más · {filteredEntries.length-visible} restantes</button>}
+    {hasMore&&<button type="button" className="personal-library-load-more" onClick={()=>setVisible(value=>Math.min(value+PAGE_SIZE,entries.length))}>Cargar más · {entries.length-visible} restantes</button>}
 
     <style>{`
       .personal-library-view{width:100%}
