@@ -1,10 +1,7 @@
 /* Renanime — Dark Cinematic Editorial design system */
 
 :root {
-  /* ─────────────────────────────────────────────
-     Color
-     ───────────────────────────────────────────── */
-
+  /* Color */
   --color-ink-950: #090909;
   --color-ink-900: #0d0d0d;
   --color-ink-850: #121212;
@@ -26,6 +23,7 @@
 
   --color-border: rgba(245, 242, 236, 0.12);
   --color-border-strong: rgba(245, 242, 236, 0.22);
+  --color-focus: var(--color-paper-50);
   --color-overlay: rgba(9, 9, 9, 0.72);
 
   /* Editorial gradients */
@@ -37,10 +35,7 @@
     radial-gradient(circle at 76% 34%, rgba(245, 242, 236, 0.02) 0 0.5px, transparent 0.75px),
     radial-gradient(circle at 38% 82%, rgba(245, 242, 236, 0.018) 0 0.55px, transparent 0.8px);
 
-  /* ─────────────────────────────────────────────
-     Typography
-     ───────────────────────────────────────────── */
-
+  /* Typography */
   --font-display: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-heading: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -72,10 +67,7 @@
   --leading-body: 1.6;
   --leading-meta: 1.2;
 
-  /* ─────────────────────────────────────────────
-     Spacing
-     ───────────────────────────────────────────── */
-
+  /* Spacing */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -93,49 +85,40 @@
   --section-space: clamp(5rem, 10vw, 10rem);
   --section-space-compact: clamp(3.5rem, 7vw, 6rem);
 
-  /* ─────────────────────────────────────────────
-     Layout
-     ───────────────────────────────────────────── */
-
+  /* Layout */
   --container-max: 1440px;
   --content-max: 960px;
   --reading-max: 680px;
   --gutter: clamp(1.25rem, 4vw, 4rem);
-
   --grid-gap: clamp(0.75rem, 1.5vw, 1.5rem);
   --grid-gap-lg: clamp(1.5rem, 3vw, 3rem);
 
-  /* ─────────────────────────────────────────────
-     Shape
-     ───────────────────────────────────────────── */
+  /* Responsive breakpoints */
+  --breakpoint-mobile: 560px;
+  --breakpoint-tablet: 800px;
+  --breakpoint-desktop: 1120px;
+  --breakpoint-wide: 1280px;
 
+  /* Shape */
   --radius-sm: 2px;
   --radius-md: 6px;
   --radius-lg: 12px;
   --radius-pill: 999px;
 
-  /* ─────────────────────────────────────────────
-     Shadows / depth
-     ───────────────────────────────────────────── */
-
+  /* Shadows / depth */
   --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.18);
   --shadow-deep: 0 24px 80px rgba(0, 0, 0, 0.32);
   --shadow-image: 0 18px 50px rgba(0, 0, 0, 0.28);
+  --shadow-overlay: 0 24px 60px rgba(0, 0, 0, 0.45);
 
-  /* ─────────────────────────────────────────────
-     Opacity
-     ───────────────────────────────────────────── */
-
+  /* Opacity */
   --opacity-disabled: 0.42;
   --opacity-muted: 0.68;
   --opacity-overlay: 0.72;
   --opacity-hover: 0.88;
   --opacity-full: 1;
 
-  /* ─────────────────────────────────────────────
-     Motion language
-     ───────────────────────────────────────────── */
-
+  /* Motion language */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-linear: linear;
@@ -150,11 +133,9 @@
   --motion-distance-sm: 10px;
   --motion-distance-md: 24px;
   --motion-distance-lg: 48px;
+  --motion-stagger-step: 55ms;
 
-  /* ─────────────────────────────────────────────
-     Z-index
-     ───────────────────────────────────────────── */
-
+  /* Layering */
   --z-base: 0;
   --z-content: 10;
   --z-header: 50;
@@ -163,15 +144,11 @@
 }
 
 @media (min-width: 768px) {
-  :root {
-    --gutter: clamp(2rem, 5vw, 5rem);
-  }
+  :root { --gutter: clamp(2rem, 5vw, 5rem); }
 }
 
 @media (min-width: 1280px) {
-  :root {
-    --grid-gap: 1.5rem;
-  }
+  :root { --grid-gap: 1.5rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -184,5 +161,6 @@
     --motion-distance-sm: 0px;
     --motion-distance-md: 0px;
     --motion-distance-lg: 0px;
+    --motion-stagger-step: 0ms;
   }
 }
