@@ -159,11 +159,6 @@ export default function HomeGallery({ entries }: Props) {
         </div>
       </div>
 
-      <div className="archive-count" aria-live="polite">
-        {filteredEntries.length} {filteredEntries.length === 1 ? "anime" : "animes"}
-        {(query || filter !== "ALL") ? ` · ${entries.length} en total` : ""}
-      </div>
-
       <div className="home-gallery-grid">
         {page.map((entry, index) => {
           const item = media[entry.animeId];
