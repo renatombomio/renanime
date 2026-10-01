@@ -144,6 +144,7 @@ section[id] { scroll-margin-top: 6rem; }
 html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
 
 /* Anime detail */
+.anime-detail-search-page{padding-top:88px}
 .anime-detail-page{min-height:100vh;padding-top:88px}
 .anime-detail-hero{min-height:0;display:flex;align-items:flex-start;background-color:var(--color-ink-950);background-position:center;background-size:cover}
 .anime-detail-inner{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin-inline:auto;padding-block:clamp(3rem,6vw,5rem) clamp(3rem,6vw,5rem)}
@@ -220,6 +221,7 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
 }
 @media(max-width:1120px){
  .anime-detail-page{padding-top:74px}
+ .anime-detail-search-page{padding-top:74px}
 }
 @media(max-width:800px){
  .anime-detail-related-grid,.anime-detail-franchise-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem}
