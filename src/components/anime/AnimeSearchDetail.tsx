@@ -117,9 +117,6 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
 
  const params=new URLSearchParams(location.search);
  const from=variant === "ghibli" ? "ghibli" : params.get("from");
- const requestedBack=params.get("back");
- const backHref=from==="ghibli"?"/ghibli/":from==="coming-soon"?"/coming-soon/":from==="anime"&&requestedBack?.startsWith("/anime/")?requestedBack:"/search/";
- const backLabel=from==="ghibli"?"Volver a El secreto de Ren":from==="coming-soon"?"Volver a próximamente":from==="anime"?"Volver al anime":"Volver a buscar";
  const title=from==="ghibli" ? (media.title?.english||media.title?.romaji||"Sin título") : (media.title?.romaji||media.title?.english||"Sin título");
  const image=media.coverImage?.extraLarge||media.coverImage?.large;
  const banner=media.bannerImage||image;
