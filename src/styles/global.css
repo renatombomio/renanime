@@ -164,15 +164,15 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
 .anime-detail-meta .anime-detail-meta-type strong{font-family:var(--font-body);font-size:1.05rem;font-weight:500;letter-spacing:-.01em}
 .anime-detail-genres{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:1.2rem}
 .anime-detail-genres span{padding:.38rem .55rem;border:1px solid var(--color-border);color:var(--color-muted-400);font:var(--text-xs)/1 var(--font-mono)}
-.anime-detail-synopsis-wrap{max-width:42rem}
-.anime-detail-synopsis{max-width:42rem;margin:1.6rem 0 0;color:var(--color-paper-200);font-size:clamp(.95rem,1.3vw,1.08rem);line-height:1.75}
+.anime-detail-synopsis-wrap{max-width:42rem;margin-top:1.35rem;padding:1rem 1.15rem 1.1rem;border:1px solid rgba(245,242,236,.18);border-radius:14px;background:rgba(9,9,9,.42);box-shadow:0 12px 34px rgba(0,0,0,.16);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.anime-detail-synopsis{max-width:42rem;margin:0;color:var(--color-paper-200);font-size:clamp(.95rem,1.3vw,1.08rem);line-height:1.75}
 .anime-detail-translate{margin-top:.8rem;border:1px solid var(--color-border);background:rgba(9,9,9,.45);color:var(--color-muted-400);padding:.5rem .7rem;font:var(--text-xs)/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
 .anime-detail-translate:hover:not(:disabled){color:var(--color-paper-50);border-color:var(--color-border-strong)}
 .anime-detail-translate:disabled{cursor:wait;opacity:.65}
 .anime-detail-library-actions{margin-top:1rem}
-.anime-detail-trailer{grid-column:1 / -1;margin-top:1.5rem;max-width:58rem}
+.anime-detail-trailer{grid-column:1 / -1;width:100%;margin-top:1.5rem;max-width:58rem}
 .anime-detail-trailer>.anime-detail-label{display:block;margin-bottom:.8rem}
-.anime-detail-video{position:relative;aspect-ratio:16/9;overflow:hidden;border:1px solid var(--color-border);background:#000}
+.anime-detail-video{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border:1px solid var(--color-border);background:#000}
 .anime-detail-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .anime-detail-state{display:flex;flex-wrap:wrap;gap:.45rem .8rem;margin-top:1.5rem}
 .anime-detail-state span{color:var(--color-muted-400);font:var(--text-xs)/1 var(--font-mono);letter-spacing:.05em;text-transform:uppercase}
