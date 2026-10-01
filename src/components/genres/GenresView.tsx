@@ -138,7 +138,7 @@ export default function GenresView({ entries }: Props) {
       {!selectedGenre ? (
         <>
           <div className="genres-meta">
-            <span>{loading ? "Construyendo mapa…" : catalog.length + " géneros en el archivo de Ren"}</span>
+            <span>{loading ? "Construyendo mapa…" : catalog.length + " géneros"}</span>
             <span>{entries.length} títulos vistos</span>
           </div>
 
