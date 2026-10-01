@@ -230,6 +230,7 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
  .anime-detail-layout{grid-template-columns:minmax(0,9rem) minmax(0,1fr);gap:1.25rem;align-items:start}
  .anime-detail-poster{grid-column:1;grid-row:1 / span 3;width:100%}
  .anime-detail-copy{display:contents}
+ .anime-detail-copy-main{display:contents}
  .anime-detail-eyebrow{grid-column:2;align-self:end}
  .anime-detail-copy h1{grid-column:2;margin:.25rem 0 .8rem;font-size:clamp(2.25rem,10vw,4rem);line-height:.95}
  .anime-detail-meta{grid-column:2;align-self:start;gap:.3rem;font-size:.68rem}
