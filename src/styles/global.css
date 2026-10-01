@@ -1213,11 +1213,31 @@ section[id] {
  .anime-detail-poster{grid-column:1;grid-row:1 / span 3;width:100%}
  .anime-detail-copy{display:contents}
  .anime-detail-eyebrow{grid-column:2;align-self:end}
- .anime-detail-copy h1{grid-column:2;margin:.25rem 0 .8rem;font-size:clamp(2.25rem,10vw,4rem);line-height:.95}
- .anime-detail-meta{grid-column:2;align-self:start;gap:.3rem .55rem;font-size:.48rem}
+ .anime-detail-copy h1{
+  grid-column:2;
+  min-width:0;
+  margin:.25rem 0 .8rem;
+  font-size:clamp(2rem,8.5vw,3.25rem);
+  line-height:.94;
+  overflow-wrap:anywhere;
+  word-break:normal;
+  text-wrap:balance;
+ }
+ .anime-detail-meta{
+  grid-column:2;
+  align-self:start;
+  min-width:0;
+  gap:.42rem .65rem;
+  font-size:clamp(.58rem,2vw,.72rem);
+  line-height:1.45;
+ }
+ .anime-detail-meta span{
+  min-width:0;
+ }
  .anime-detail-meta span+span::before{margin-right:.55rem}
  .anime-detail-genres{
   grid-column:1 / -1;
+  min-width:0;
   margin-top:1rem;
   gap:.5rem;
   padding-top:.15rem;
@@ -1232,7 +1252,7 @@ section[id] {
   border-color:rgba(245,242,236,.28);
   background:rgba(9,9,9,.38);
   color:var(--color-paper-50);
-  font-size:.49rem;
+  font-size:.54rem;
   letter-spacing:.045em;
  }
  .anime-detail-synopsis-wrap{grid-column:1 / -1;margin-top:.35rem}
