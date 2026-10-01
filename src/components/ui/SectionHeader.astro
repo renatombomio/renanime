@@ -1,15 +1,87 @@
 ---
-interface Props { eyebrow?: string; title: string; description?: string; id?: string; }
-const { eyebrow, title, description, id } = Astro.props;
+interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  id?: string;
+  index?: string;
+  variant?: "default" | "ren";
+}
+const { eyebrow, title, description, id, index, variant = "default" } = Astro.props;
 ---
-<header id={id} class="section-header">
-  {eyebrow && <span class="eyebrow">{eyebrow}</span>}
-  <h2>{title}</h2>
-  {description && <p>{description}</p>}
+<header id={id} class:list={["section-header", variant === "ren" && "section-header--ren"]}>
+  <div class="section-header-top">
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+    {index && <span class="section-index" aria-hidden="true">{index}</span>}
+  </div>
+  <div class="section-header-main">
+    <h2>{title}</h2>
+    {description && <p>{description}</p>}
+  </div>
 </header>
 <style>
-  .section-header { display:grid; gap:var(--space-4); max-width:48rem; }
-  .eyebrow { color:var(--color-muted-400); font:var(--text-xs)/1 var(--font-mono); letter-spacing:.12em; text-transform:uppercase; }
-  h2 { margin:0; color:var(--color-paper-50); font-family:var(--font-heading); font-size:clamp(2.5rem,6vw,5rem); font-weight:400; letter-spacing:-.02em; line-height:var(--leading-tight); }
-  p { max-width:42rem; margin:0; color:var(--color-muted-400); font-family:var(--font-body); font-size:var(--text-base); line-height:var(--leading-body); }
+  .section-header {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    width: 100%;
+    max-width: none;
+  }
+
+  .section-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: .8rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .eyebrow,
+  .section-index {
+    color: var(--color-muted-400);
+    font: 500 .6rem/1 var(--font-meta);
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+
+  .section-index { color: var(--color-accent-soft); }
+
+  .section-header-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(16rem, .55fr);
+    align-items: end;
+    gap: clamp(2rem, 7vw, 8rem);
+  }
+
+  h2 {
+    max-width: 11ch;
+    margin: 0;
+    color: var(--color-paper-50);
+    font-family: var(--font-heading);
+    font-size: clamp(3.25rem, 8vw, 7.75rem);
+    font-weight: 400;
+    letter-spacing: -.055em;
+    line-height: .86;
+    text-wrap: balance;
+  }
+
+  p {
+    max-width: 31rem;
+    margin: 0 0 .35rem;
+    color: var(--color-muted-400);
+    font-family: var(--font-body);
+    font-size: clamp(.86rem, 1.15vw, 1rem);
+    line-height: 1.65;
+  }
+
+  .section-header--ren h2::first-letter {
+    color: var(--color-paper-50);
+  }
+
+  @media (max-width: 760px) {
+    .section-header { gap: 1.5rem; }
+    .section-header-main { grid-template-columns: 1fr; gap: 1.4rem; }
+    h2 { max-width: 10ch; font-size: clamp(3.1rem, 15vw, 5rem); line-height: .88; }
+    p { max-width: 30rem; margin: 0; font-size: .88rem; }
+  }
 </style>
