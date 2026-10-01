@@ -56,7 +56,7 @@ export default function MobileMenu({ variant = "default" }: Props) {
           {links.map((link, index) => (
             <a
               key={link.href}
-              className={link.href === "/ghibli/" ? "mobile-link mobile-link--secret" : "mobile-link"}
+              className="mobile-link"
               href={link.href}
               tabIndex={open ? 0 : -1}
               onClick={() => setOpen(false)}
@@ -129,41 +129,7 @@ export default function MobileMenu({ variant = "default" }: Props) {
           opacity: 1; transform: translateY(0);
           transition-delay: calc(70ms + (var(--menu-index) * 48ms));
         }
-        .mobile-link:active { color: #f5f2ec; }
-        .mobile-link--secret {
-          position: relative;
-          margin-top: 22px;
-          min-height: 58px;
-          padding: 15px 2px 16px;
-          border: 0;
-          border-top: 1px solid rgba(164,138,104,.28);
-          border-bottom: 1px solid rgba(164,138,104,.28);
-          border-radius: 0;
-          background: transparent;
-          color: #f5f2ec;
-          font-family: var(--font-heading);
-          font-size: 15px;
-          font-weight: 500;
-          letter-spacing: .015em;
-          text-transform: none;
-          overflow: hidden;
-        }
-        .mobile-link--secret::before {
-          position: absolute;
-          right: 0;
-          bottom: 0;
-          left: 0;
-          height: 2px;
-          background: linear-gradient(90deg, transparent, #a48a68 22%, #c2ae91 78%, transparent);
-          content: "";
-          transform: scaleX(.45);
-          transform-origin: center;
-          transition: transform 420ms cubic-bezier(.22,1,.36,1);
-        }
-        .mobile-link--secret:active::before {
-          transform: scaleX(1);
-        }
-        .mobile-link--secret i {
+        .mobile-link:active { color: #f5f2ec; }        .mobile-link--secret i {
           color: #c2ae91;
           font-family: Georgia,serif;
           font-size: 17px;
@@ -174,17 +140,7 @@ export default function MobileMenu({ variant = "default" }: Props) {
         .mobile-nav--ghibli .mobile-toggle { color: #19362f; }
         .mobile-nav--ghibli .mobile-panel { background: #fffdf8; color: #19362f; }
         .mobile-nav--ghibli .mobile-link { color: #527066; border-bottom-color: rgba(25,54,47,.12); }
-        .mobile-nav--ghibli .mobile-link:active { color: #18528a; }
-        .mobile-nav--ghibli .mobile-link--secret {
-          border-top-color: rgba(24,82,138,.24);
-          border-bottom-color: rgba(24,82,138,.24);
-          background: transparent;
-          color: #19362f;
-        }
-        .mobile-nav--ghibli .mobile-link--secret::before {
-          background: linear-gradient(90deg, transparent, #18528a 22%, #f45164 78%, transparent);
-        }
-        .mobile-nav--ghibli .mobile-link--secret i { color: #f45164; }
+        .mobile-nav--ghibli .mobile-link:active { color: #18528a; }        .mobile-nav--ghibli .mobile-link--secret i { color: #f45164; }
 
         @media (min-width: 521px) and (max-width: 1120px) {
           .mobile-panel {
