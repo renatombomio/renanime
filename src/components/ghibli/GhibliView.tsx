@@ -116,28 +116,25 @@ export default function GhibliView({ films }: { films: Film[] }) {
         .ghibli-view .ghibli-meta{border-bottom-color:rgba(25,54,47,.16);color:#486B3C}
         .ghibli-view .ghibli-meta strong{color:var(--gp-coral)}
         .ghibli-view{width:min(1120px,calc(100% - clamp(2rem,8vw,6rem)));margin:0 auto}.ghibli-view .ghibli-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(2rem,4vw,4.5rem) clamp(1rem,2.4vw,2.5rem);margin-top:1.35rem}.ghibli-view .ghibli-card{width:100%}
-        .ghibli-view .ghibli-card{position:relative;overflow:hidden;border:1px solid rgba(25,54,47,.1);border-radius:22px;background:#fff;box-shadow:0 12px 32px rgba(25,54,47,.07);transition:transform .45s cubic-bezier(.22,1,.36,1),box-shadow .45s,border-color .45s}
-        .ghibli-view .ghibli-card:before{position:absolute;z-index:5;left:0;top:0;bottom:0;width:3px;background:var(--gp-coral);content:"";opacity:.75}
-        .ghibli-view .ghibli-card:nth-child(3n):before{background:var(--gp-blue)}
-        .ghibli-view .ghibli-card:nth-child(3n+2):before{background:var(--gp-lime)}
-        .ghibli-view .ghibli-card:hover{border-color:rgba(24,82,138,.24);background:#fff;box-shadow:0 22px 48px rgba(25,54,47,.13);transform:translateY(-6px)}
-        .ghibli-view .ghibli-poster{border-radius:0;background:var(--gp-sky)}
-        .ghibli-view .ghibli-poster:after{background:linear-gradient(180deg,transparent 48%,rgba(25,54,47,.34))}
-        .ghibli-view .ghibli-year{left:.8rem;bottom:.8rem;background:rgba(255,247,232,.94);color:var(--gp-blue);border:1px solid rgba(24,82,138,.12)}
-        .ghibli-view .ghibli-badge{top:.8rem;right:.8rem;left:auto;bottom:auto;padding:.28rem .42rem;background:rgba(17,17,17,.82);color:#fff;border:0;border-radius:0;font-family:var(--font-meta);font-size:.42rem;line-height:1;letter-spacing:.08em;text-transform:uppercase;box-shadow:0 4px 12px rgba(0,0,0,.18)}
-        .ghibli-view .ghibli-info{min-height:5.25rem;padding:.68rem .7rem .78rem;background:#fff}
-        .ghibli-view .ghibli-info h3{color:var(--gp-blue);font-family:Georgia,"Times New Roman",serif;font-size:.92rem;line-height:1.08;letter-spacing:-.02em}
-        .ghibli-view .ghibli-info span{display:block;margin-top:.15rem;color:#59756b;font-size:.52rem;line-height:1.3}
+        .ghibli-view .ghibli-card{position:relative;overflow:hidden;border:0;border-radius:0;background:#111;box-shadow:none;transition:transform .45s cubic-bezier(.22,1,.36,1)}
+        .ghibli-view .ghibli-card:hover{transform:translateY(-4px)}
+        .ghibli-view .ghibli-poster{position:relative;width:100%;aspect-ratio:2 / 3;border-radius:0;background:var(--gp-sky);overflow:hidden}
+        .ghibli-view .ghibli-poster:after{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.08) 0%,transparent 48%,rgba(0,0,0,.82) 100%);content:"";pointer-events:none}
+        .ghibli-view .ghibli-poster img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.22,1,.36,1)}
+        .ghibli-view .ghibli-card:hover .ghibli-poster img{transform:scale(1.025)}
+        .ghibli-view .ghibli-year{left:.65rem;bottom:.6rem;background:transparent;color:rgba(255,255,255,.72);border:0;padding:0;font-family:var(--font-meta);font-size:.42rem;line-height:1;letter-spacing:.08em}
+        .ghibli-view .ghibli-badge{top:.65rem;right:.65rem;left:auto;bottom:auto;padding:.3rem .42rem;background:rgba(17,17,17,.72);color:#fff;border:0;border-radius:0;font-family:var(--font-meta);font-size:.4rem;line-height:1;letter-spacing:.08em;text-transform:uppercase;box-shadow:none}
+        .ghibli-view .ghibli-info{position:absolute;z-index:3;left:.65rem;right:.65rem;bottom:.9rem;min-height:0;padding:0;background:transparent;pointer-events:none}
+        .ghibli-view .ghibli-info h3{margin:0;color:#fff;font-family:var(--font-body);font-size:clamp(.72rem,1.3vw,.95rem);font-weight:500;line-height:1.05;letter-spacing:-.02em;text-shadow:0 1px 8px rgba(0,0,0,.4)}
+        .ghibli-view .ghibli-info span{display:none}
         .ghibli-view .ghibli-placeholder{position:relative;background:linear-gradient(145deg,#f4c1bd 0%,#e6eff0 100%);color:var(--gp-blue)}
         .ghibli-view .ghibli-placeholder:after{position:absolute;inset:12%;border:1px solid rgba(24,82,138,.18);border-radius:50%;content:"";transform:rotate(-12deg)}
         @media(max-width:700px){
           .ghibli-view .ghibli-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:2.5rem .75rem;margin-top:1rem}
-          .ghibli-view .ghibli-card{border-radius:13px}
-          .ghibli-view .ghibli-card:before{width:2px}
-          .ghibli-view .ghibli-info{min-height:4.8rem;padding:.55rem .48rem .62rem}
-          .ghibli-view .ghibli-info h3{font-size:.66rem;line-height:1.05}
-          .ghibli-view .ghibli-info span{font-size:.38rem;line-height:1.25}
-          .ghibli-view .ghibli-year{padding:.25rem .3rem;font-size:.35rem}
+          .ghibli-view .ghibli-card{border-radius:0}
+          .ghibli-view .ghibli-info{left:.55rem;right:.55rem;bottom:.72rem}
+          .ghibli-view .ghibli-info h3{font-size:.72rem;line-height:1.05}
+          .ghibli-view .ghibli-year{left:.55rem;bottom:.55rem;font-size:.32rem}
           .ghibli-view .ghibli-badge{top:.55rem;right:.55rem;padding:.22rem .3rem;font-size:.32rem}
         }
       `}</style>
