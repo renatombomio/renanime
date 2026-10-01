@@ -1172,11 +1172,42 @@ section[id] {
 .anime-detail-eyebrow{color:var(--color-accent-soft);font:var(--text-xs)/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase}
 .anime-detail-copy h1{margin:.8rem 0 1.2rem;color:var(--color-paper-50);font-family:var(--font-body);font-size:clamp(3rem,7vw,7rem);font-weight:400;letter-spacing:-.045em;line-height:.92}
 .anime-detail-meta,.anime-detail-genres,.anime-detail-state{display:flex;flex-wrap:wrap;gap:.45rem .8rem}
-.anime-detail-meta{display:flex;flex-wrap:wrap;align-items:baseline;gap:.55rem 1rem;color:var(--color-paper-50);font:500 clamp(.8rem,1.45vw,.98rem)/1.45 var(--font-mono);letter-spacing:.015em}
-.anime-detail-meta span{display:inline-flex;align-items:baseline;min-width:0}
-.anime-detail-meta small{margin-right:.4rem;color:var(--color-paper-200);font:600 .62rem/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase}
-.anime-detail-meta strong{min-width:0;color:var(--color-paper-50);font:inherit;font-weight:600;overflow-wrap:anywhere}
-.anime-detail-meta span+span::before{content:none}
+.anime-detail-meta{
+  display:grid;
+  gap:.38rem;
+  color:var(--color-paper-50);
+  font:500 clamp(.82rem,1.45vw,.98rem)/1.45 var(--font-mono);
+  letter-spacing:.015em;
+}
+.anime-detail-meta span{
+  display:flex;
+  align-items:baseline;
+  min-width:0;
+  gap:.55rem;
+}
+.anime-detail-meta small{
+  flex:0 0 auto;
+  color:var(--color-paper-200);
+  font:700 .66rem/1 var(--font-mono);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.anime-detail-meta strong{
+  min-width:0;
+  color:var(--color-paper-50);
+  font:inherit;
+  font-weight:600;
+  overflow-wrap:anywhere;
+}
+.anime-detail-meta .anime-detail-meta-type{
+  margin-bottom:.12rem;
+}
+.anime-detail-meta .anime-detail-meta-type strong{
+  font-family:var(--font-body);
+  font-size:1.05rem;
+  font-weight:500;
+  letter-spacing:-.01em;
+}
 .anime-detail-genres{
   display:flex;
   flex-wrap:wrap;
@@ -1230,17 +1261,22 @@ section[id] {
   grid-column:2;
   align-self:start;
   min-width:0;
-  gap:.28rem .6rem;
-  font-size:clamp(.62rem,2.2vw,.78rem);
-  line-height:1.45;
+  gap:.42rem;
+  font-size:clamp(.7rem,2.7vw,.86rem);
+  line-height:1.4;
+ }
+ .anime-detail-meta span{
+  gap:.45rem;
  }
  .anime-detail-meta small{
-  font-size:.46rem;
-  margin-right:.28rem;
+  font-size:.5rem;
  }
  .anime-detail-meta strong{
   font-size:inherit;
   line-height:1.3;
+ }
+ .anime-detail-meta .anime-detail-meta-type strong{
+  font-size:clamp(.9rem,3.5vw,1.05rem);
  }
  .anime-detail-genres{
   grid-column:1 / -1;
