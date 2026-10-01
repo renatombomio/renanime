@@ -36,12 +36,15 @@ jobs:
           set -o pipefail
           pnpm test 2>&1 | tee test-output.txt
 
-      - name: Upload test output
+      - name: Upload QA artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-output
-          path: test-output.txt
+          name: qa-output
+          path: |
+            test-output.txt
+            package.json
+            pnpm-lock.yaml
 
       - name: Build production
         run: pnpm build
