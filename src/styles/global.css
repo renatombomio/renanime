@@ -207,7 +207,12 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
  .anime-detail:not(.anime-detail--ghibli) .anime-detail-synopsis-wrap{grid-column:3;grid-row:1;align-self:start}
 }
 @media(min-width:1051px){
- .anime-detail .anime-detail-trailer{grid-column:2 / -1;max-width:48rem}
+ .anime-detail .anime-detail-trailer{
+   grid-column-start:2 !important;
+   grid-column-end:-1 !important;
+   justify-self:start;
+   max-width:48rem;
+ }
 }
 @media(max-width:1050px){
  .anime-detail-layout{grid-template-columns:minmax(12rem,15rem) minmax(0,1fr);gap:1.5rem}
