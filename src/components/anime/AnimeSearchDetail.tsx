@@ -218,10 +218,10 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
      <div className="anime-detail-copy">
       <h1>{title}</h1>
       <div className="anime-detail-meta">
-  <span><small>Tipo</small><strong>{media.format==="MOVIE"?"Película":"Serie"}</strong></span>
-  <span><small>Lanzamiento</small><strong>{date(media.startDate)}</strong></span>
-  {media.format!=="MOVIE"&&media.episodes&&<span><small>Episodios</small><strong>{media.episodes}</strong></span>}
-  {media.duration&&<span><small>{media.format==="MOVIE"?"Duración":"Duración / episodio"}</small><strong>{media.duration} min</strong></span>}
+  <span className="anime-detail-meta-type"><strong>{media.format==="MOVIE"?"Película":"Serie"}</strong></span>
+  <span><small>LANZAMIENTO</small><strong>{date(media.startDate)}</strong></span>
+  {media.format!=="MOVIE"&&media.episodes&&<span><small>EPISODIOS</small><strong>{media.episodes}</strong></span>}
+  {media.duration&&<span><small>{media.format==="MOVIE"?"DURACIÓN":"DURACIÓN / EPISODIO"}</small><strong>{media.duration} min</strong></span>}
 </div>
       {media.id > 0 && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>}
       {media.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map(genre=><span key={genre}>{genre}</span>)}</div>}
