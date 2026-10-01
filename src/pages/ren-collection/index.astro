@@ -3,7 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/layout/Navbar.astro";
 import Footer from "../../components/layout/Footer.astro";
 import SectionHeader from "../../components/ui/SectionHeader.astro";
-import HomeGallery from "../../components/home/HomeGallery";
+import RenCollectionGallery from "../../components/archive/RenCollectionGallery";
 import { getWatchedLibrary } from "../../data/library";
 
 const collectionEntries = getWatchedLibrary();
@@ -28,7 +28,7 @@ const collectionEntries = getWatchedLibrary();
     </div>
 
     <section class="ren-collection-content" aria-label="Colección de Ren">
-      <HomeGallery entries={collectionEntries} client:load />
+      <RenCollectionGallery entries={collectionEntries} client:load />
     </section>
   </main>
 
