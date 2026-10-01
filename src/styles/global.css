@@ -201,6 +201,10 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
 .anime-detail-franchise-copy strong{display:-webkit-box;overflow:hidden;color:var(--color-paper-50);font-family:var(--font-body);font-size:.68rem;font-weight:500;line-height:1.25;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .anime-detail-franchise-copy span{color:var(--color-muted-400);font-family:var(--font-meta);font-size:.47rem;letter-spacing:.03em}
 
+@media(max-width:1050px){
+ .anime-detail-layout{grid-template-columns:minmax(12rem,15rem) minmax(0,1fr);gap:1.5rem}
+ .anime-detail-synopsis-wrap{grid-column:1 / -1;margin-top:.25rem}
+}
 @media(max-width:1120px){
  .anime-detail-page{padding-top:74px}
 }
