@@ -10,10 +10,10 @@ interface Props {
 const { eyebrow, title, description, id, index, variant = "default" } = Astro.props;
 ---
 <header id={id} class:list={["section-header", variant === "ren" && "section-header--ren"]}>
-  <div class="section-header-top">
+  {(eyebrow || index) && <div class="section-header-top">
     {eyebrow && <span class="eyebrow">{eyebrow}</span>}
     {index && <span class="section-index" aria-hidden="true">{index}</span>}
-  </div>
+  </div>}
   <div class="section-header-main">
     <h2>{title}</h2>
     {description && <p>{description}</p>}
