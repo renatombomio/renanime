@@ -232,7 +232,6 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
  const poster=media?.coverImage?.extraLarge||media?.coverImage?.large;
  const banner=media?.bannerImage||poster;
  const personal=entry.state;
- const longTitle=title.length>24;
  const relations=(media?.relations?.edges??[]).filter(edge=>edge.node?.type==="ANIME"&&edge.node.id!==media?.id);
  return <div className="anime-detail">
   <style>{`
@@ -253,7 +252,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
   <section className="anime-detail-hero" style={banner?{backgroundImage:`linear-gradient(90deg,rgba(9,9,9,.98) 0%,rgba(9,9,9,.78) 43%,rgba(9,9,9,.35) 72%,rgba(9,9,9,.72) 100%),linear-gradient(0deg,rgba(9,9,9,.98),transparent 42%),url("${banner}")`}:undefined}>
    <div className="anime-detail-inner">
     <a className="anime-detail-back" href="/collection/">← Volver a la colección</a>
-    <div className={"anime-detail-layout"+(longTitle?" has-long-title":"")}>
+    <div className="anime-detail-layout">
       <div className="anime-detail-poster">{poster?<img src={poster} alt={title}/>:<div className="anime-detail-placeholder">RENANIME</div>}</div>
       <div className="anime-detail-copy">
        {personal.favorite&&<span className="anime-detail-eyebrow">Favorito</span>}
