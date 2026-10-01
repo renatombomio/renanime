@@ -10,14 +10,16 @@ import { getWatchedLibrary } from "../../data/library";
 const entries = getWatchedLibrary();
 ---
 
-<Layout title="Géneros — Renanime's Gallery">
+<Layout title="Géneros de Ren — Renanime's Gallery">
   <Navbar />
   <main id="main-content" class="genres-page">
     <Container>
       <SectionHeader
         eyebrow="Archivo de Ren"
+        index="03"
+        variant="ren"
         title="Géneros de Ren"
-        description="Explora los animes que Ren ha visto por género."
+        description="Un mapa de lo que he visto. No es una lista universal de géneros: cada palabra aquí existe porque forma parte de mi colección."
       />
       <div class="genres-page-content">
         <GenresView entries={entries} client:load />
@@ -34,6 +36,6 @@ const entries = getWatchedLibrary();
   }
 
   .genres-page-content {
-    margin-top: clamp(3rem, 6vw, 5rem);
+    margin-top: clamp(5rem, 10vw, 9rem);
   }
 </style>
