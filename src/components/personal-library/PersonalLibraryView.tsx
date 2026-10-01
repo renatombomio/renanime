@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { PersonalAnimeEntry } from "../../types/personal";
+import PersonalLibraryActions from "./PersonalLibraryActions";
 import { getPersonalLibrary, subscribeToPersonalLibrary } from "../../data/personal-library";
 
 type Mode = "WATCHED" | "PENDING";
