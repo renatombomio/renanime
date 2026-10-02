@@ -261,7 +261,10 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
   <section className="anime-detail-hero" style={banner?{backgroundImage:`linear-gradient(90deg,rgba(9,9,9,.98) 0%,rgba(9,9,9,.78) 43%,rgba(9,9,9,.35) 72%,rgba(9,9,9,.72) 100%),linear-gradient(0deg,rgba(9,9,9,.98),transparent 42%),url("${banner}")`}:undefined}>
    <div className="anime-detail-inner">
     <div className="anime-detail-layout">
+      <div className="anime-detail-poster-column">
       <div className="anime-detail-poster">{poster?<img src={poster} alt={title}/>:<div className="anime-detail-placeholder">RENANIME</div>}</div>
+       <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>
+      </div>
       <div className="anime-detail-copy">
        <div className="anime-detail-copy-main">
        {personal.favorite&&<span className="anime-detail-eyebrow">Favorito</span>}
@@ -273,7 +276,6 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
   {media?.duration&&<span><small>{media?.format==="MOVIE"?"DURACIÓN":"DURACIÓN / EPISODIO"}</small><strong>{media.duration} min</strong></span>}
   {media?.format!=="MOVIE"&&getSeasonCount(media)&&<span><small>TEMPORADAS</small><strong>{getSeasonCount(media)}</strong></span>}
 </div>
-      {media?.id && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>}
        {media?.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map((genre)=><span key={genre}>{genre}</span>)}</div>}
        </div>
       </div>
