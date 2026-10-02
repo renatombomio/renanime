@@ -81,7 +81,7 @@ interface Props {
  variant?: "default" | "ghibli";
 }
 
-const RED_TURTLE_LIBRARY_ID = 109641;
+const RED_TURTLE_LIBRARY_ID = "ghibli-red-turtle";
 
 export default function AnimeSearchDetail({ variant = "default" }: Props){
  const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translated,setTranslated]=useState(""),[translating,setTranslating]=useState(false);
