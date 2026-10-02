@@ -22,6 +22,17 @@ interface Media{
 
 const ENDPOINT="https://graphql.anilist.co";
 
+async function translate(text:string){
+ const clean=cleanDescription(text);
+ if(!clean)return clean;
+ try{
+  const response=await fetch("https://api.mymemory.translated.net/get?"+new URLSearchParams({q:clean,langpair:"en|es",mt:"1"}));
+  if(!response.ok)return clean;
+  const payload=await response.json();
+  return payload.responseData?.translatedText||clean;
+ }catch{return clean;}
+}
+
 function cleanDescription(text:string){
  const htmlEntityDecoder=document.createElement("textarea");
  htmlEntityDecoder.innerHTML=text
@@ -57,12 +68,12 @@ interface Props {
 const RED_TURTLE_LIBRARY_ID = "ghibli-red-turtle";
 
 export default function AnimeSearchDetail({ variant = "default" }: Props){
+ const params=new URLSearchParams(location.search);
+ const idParam=params.get("id");
+ const id=idParam ? Number(idParam) : NaN;
+ const localEntry=idParam && !Number.isFinite(id) ? getLibrary().find(entry=>entry.animeId===idParam) : undefined;
  const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translated,setTranslated]=useState(""),[translating,setTranslating]=useState(false);
  useEffect(()=>{
-  const params=new URLSearchParams(location.search);
-  const idParam=params.get("id");
-  const id=idParam ? Number(idParam) : NaN;
-  const localEntry=idParam && !Number.isFinite(id) ? getLibrary().find(entry=>entry.animeId===idParam) : undefined;
   const film=params.get("film");
 
   if(film==="the-red-turtle" && !Number.isFinite(id)){
@@ -113,7 +124,6 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
  if(loading)return <div className="anime-search-detail-state">Cargando ficha…</div>;
  if(!media)return <div className="anime-search-detail-state">No se ha encontrado este anime.</div>;
 
- const params=new URLSearchParams(location.search);
  const from=variant === "ghibli" ? "ghibli" : params.get("from");
  const title=idParam==="movie-063" ? "Kimetsu no Yaiba: Mugen-jō-hen" : from==="ghibli" ? (media.title?.english||media.title?.romaji||"Sin título") : (media.title?.romaji||media.title?.english||localEntry?.title||"Sin título");
  const image=media.coverImage?.extraLarge||media.coverImage?.large;
