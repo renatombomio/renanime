@@ -409,3 +409,120 @@ body.theme-ghibli .soundtrack-player__modes button.is-active {
     animation: none;
   }
 }
+
+
+/* QA/polish: compact global player by default. Expand on demand. */
+.soundtrack-player {
+  width: min(300px, calc(100vw - 1.3rem));
+  right: .65rem;
+  bottom: .65rem;
+}
+
+.soundtrack-player__inner {
+  border-radius: 16px;
+}
+
+.soundtrack-player__top {
+  gap: .35rem;
+  padding: .42rem .5rem;
+}
+
+.soundtrack-player__main-button {
+  min-width: 30px;
+  width: 30px;
+  height: 30px;
+  justify-content: center;
+  padding: 0;
+}
+
+.soundtrack-player__status,
+.soundtrack-player__track-label {
+  display: none;
+}
+
+.soundtrack-player__current {
+  padding: .05rem .1rem;
+}
+
+.soundtrack-player__track-title {
+  margin-top: 0;
+  font-size: .62rem;
+}
+
+.soundtrack-player__quick {
+  gap: .05rem;
+}
+
+.soundtrack-player__quick button {
+  width: 24px;
+  height: 24px;
+  font-size: .7rem;
+}
+
+.soundtrack-player__progress {
+  display: none;
+}
+
+.soundtrack-player.is-open {
+  width: min(390px, calc(100vw - 1.3rem));
+}
+
+.soundtrack-player.is-open .soundtrack-player__inner {
+  border-radius: 22px;
+}
+
+.soundtrack-player.is-open .soundtrack-player__top {
+  gap: .65rem;
+  padding: .7rem .7rem .45rem;
+}
+
+.soundtrack-player.is-open .soundtrack-player__main-button {
+  width: auto;
+  min-width: 88px;
+  height: auto;
+  justify-content: initial;
+  padding: .42rem .55rem;
+}
+
+.soundtrack-player.is-open .soundtrack-player__status,
+.soundtrack-player.is-open .soundtrack-player__track-label {
+  display: block;
+}
+
+.soundtrack-player.is-open .soundtrack-player__track-title {
+  margin-top: .22rem;
+  font-size: .68rem;
+}
+
+.soundtrack-player.is-open .soundtrack-player__progress {
+  display: grid;
+  grid-template-columns: 2.1rem minmax(0, 1fr) 2.1rem;
+  padding: 0 .8rem .7rem;
+}
+
+@media (max-width: 640px) {
+  .soundtrack-player.is-open {
+    width: calc(100vw - 1.3rem);
+  }
+
+  .soundtrack-player.is-open .soundtrack-player__top {
+    gap: .35rem;
+    padding: .6rem .55rem .4rem;
+  }
+
+  .soundtrack-player.is-open .soundtrack-player__main-button {
+    min-width: 74px;
+    width: auto;
+    height: auto;
+    padding-inline: .45rem;
+  }
+
+  .soundtrack-player.is-open .soundtrack-player__status {
+    font-size: .42rem;
+  }
+
+  .soundtrack-player.is-open .soundtrack-player__progress {
+    grid-template-columns: 2rem minmax(0, 1fr) 2rem;
+    padding-inline: .65rem;
+  }
+}
