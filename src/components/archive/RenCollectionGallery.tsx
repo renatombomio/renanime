@@ -78,7 +78,7 @@ async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null
         try {
           sessionStorage.setItem(CACHE_PREFIX + entry.title.toLowerCase(), JSON.stringify(result[entry.animeId] ?? null));
         } catch {}
-      });
+      }
     } catch {}
   }
 
