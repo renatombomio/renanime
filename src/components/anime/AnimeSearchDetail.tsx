@@ -15,6 +15,7 @@ interface Media{
  coverImage?:{extraLarge?:string|null;large?:string|null};
  bannerImage?:string|null;
  trailer?:{id?:string|null;site?:string|null;thumbnail?:string|null}|null;
+ relations?:{edges?:{relationType?:string|null;node?:{id:number;format?:string|null}}[]}|null;
  recommendations?:{nodes?:{mediaRecommendation?:{id:number;title?:{romaji?:string|null;english?:string|null};coverImage?:{extraLarge?:string|null;large?:string|null};format?:string|null;startDate?:{year?:number|null}|null}|null}[]};
 }
 
@@ -69,6 +70,16 @@ function status(value:string|null|undefined){
 }
 
 
+function getSeasonCount(media: Media){
+  if(media.format==="MOVIE") return null;
+  const relatedTv=(media.relations?.edges??[])
+    .filter((edge)=>edge.relationType==="PREQUEL"||edge.relationType==="SEQUEL")
+    .filter((edge)=>edge.node?.format==="TV")
+    .map((edge)=>edge.node?.id)
+    .filter((id): id is number => typeof id==="number");
+  return Math.max(1,new Set(relatedTv).size+1);
+}
+
 interface Props {
  variant?: "default" | "ghibli";
 }
@@ -103,7 +114,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
 
   if(!Number.isFinite(id)){setLoading(false);return}
   fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({
-   query:"query Detail($id:Int!){Media(id:$id,type:ANIME){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}}}}",
+   query:"query Detail($id:Int!){Media(id:$id,type:ANIME){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} relations{edges{relationType node{id format}}} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}}}}",
    variables:{id}
   })}).then(r=>r.ok?r.json():Promise.reject()).then(async p=>{
    const found=p.data?.Media??null;
@@ -209,10 +220,11 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
         <span><small>LANZAMIENTO</small><strong>{date(media.startDate)}</strong></span>
         {media.format!=="MOVIE"&&media.episodes&&<span><small>EPISODIOS</small><strong>{media.episodes}</strong></span>}
         {media.duration&&<span><small>{media.format==="MOVIE"?"DURACIÓN":"DURACIÓN / EPISODIO"}</small><strong>{media.duration} min</strong></span>}
+        {media.format!=="MOVIE"&&getSeasonCount(media)&&<span><small>TEMPORADAS</small><strong>{getSeasonCount(media)}</strong></span>}
        </div>
      {media.id > 0 && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>}
        {media.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map(genre=><span key={genre}>{genre}</span>)}</div>}
-       <div className="anime-detail-state">{status(media.status)&&<span>{status(media.status)}</span>}</div>
+       {media.format!=="MOVIE"&&<div className="anime-detail-state">{status(media.status)&&<span>{status(media.status)}</span>}</div>
       </div>
      </div>
 
