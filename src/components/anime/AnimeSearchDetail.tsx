@@ -21,34 +21,6 @@ interface Media{
 
 const ENDPOINT="https://graphql.anilist.co";
 
-async function fetchAniListRecommendations(mediaId:number){
-  const query=`query Recommendations($mediaId:Int!){
-    Media(id:$mediaId,type:ANIME){
-      recommendations(sort:RATING_DESC,page:1,perPage:12){
-        nodes{
-          mediaRecommendation{
-            id
-            title{romaji english}
-            coverImage{extraLarge large}
-            format
-            startDate{year}
-          }
-        }
-      }
-    }
-  }`;
-  try{
-    const response=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables:{mediaId}})});
-    if(!response.ok)return [];
-    const payload=await response.json();
-    return (payload.data?.Media?.recommendations?.nodes??[])
-      .map((node:any)=>node.mediaRecommendation)
-      .filter(Boolean)
-      .filter((item:any)=>item.id!==mediaId)
-      .slice(0,8);
-  }catch{return []}
-}
-
 function cleanDescription(text:string){
  const htmlEntityDecoder=document.createElement("textarea");
  htmlEntityDecoder.innerHTML=text
