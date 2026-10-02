@@ -224,7 +224,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
        </div>
      {media.id > 0 && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>}
        {media.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map(genre=><span key={genre}>{genre}</span>)}</div>}
-       {media.format!=="MOVIE"&&<div className="anime-detail-state">{status(media.status)&&<span>{status(media.status)}</span>}</div>
+       {media.format!=="MOVIE"&&<div className="anime-detail-state">{status(media.status)&&<span>{status(media.status)}</span>}</div>}
       </div>
      </div>
 
