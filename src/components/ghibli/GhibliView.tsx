@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { fetchFallbackPoster } from "../../lib/api/poster-fallback";
 
 interface Film { id: string; title: string; year: number; watched: boolean; searchTitle?: string; }
 interface Media { id: number; title?: { romaji?: string | null; english?: string | null }; coverImage?: { extraLarge?: string | null; large?: string | null }; }
@@ -24,12 +25,19 @@ export default function GhibliView({ films }: { films: Film[] }) {
       body: JSON.stringify({ query: "query Ghibli(" + definitions + "){" + fields + "}", variables }),
     })
       .then((response) => response.ok ? response.json() : Promise.reject())
-      .then((payload) => {
+      .then(async (payload) => {
         if (cancelled) return;
         const result: Record<string, Media | null> = {};
         films.forEach((film, index) => {
           result[film.id] = payload.data?.["a" + index]?.media?.[0] ?? null;
         });
+        for (const film of films) {
+          const item = result[film.id];
+          if (!item?.coverImage?.extraLarge && !item?.coverImage?.large) {
+            const poster = await fetchFallbackPoster(film.searchTitle || film.title);
+            if (poster) result[film.id] = { ...(item ?? { id: 0 }), coverImage: { extraLarge: poster, large: poster } };
+          }
+        }
         setMedia(result);
       })
       .catch(() => {})
