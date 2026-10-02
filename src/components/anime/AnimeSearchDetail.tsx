@@ -127,11 +127,14 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
  return <div className={"anime-detail" + (from === "ghibli" ? " anime-detail--ghibli" : "")}>
   <style>{`
     .anime-detail--ghibli{--gd-cream:#FFF7E8;--gd-paper:#F4E9D5;--gd-sky:#DCEFF1;--gd-blue:#18528A;--gd-teal:#0B798B;--gd-coral:#F45164;--gd-pink:#F0A9A5;--gd-lime:#91CC57;--gd-ink:#19362F;min-height:100vh;background:var(--gd-sky);color:var(--gd-ink)}
-    .anime-detail--ghibli .anime-detail-hero{min-height:0;background-color:var(--gd-ink)!important;background-position:center;background-size:cover}
-    .anime-detail--ghibli .anime-detail-inner{position:relative}
+    .anime-detail--ghibli .anime-detail-hero{position:relative;isolation:isolate;min-height:0;background-color:var(--gd-ink)!important;background-position:center;background-size:cover}
+    .anime-detail--ghibli .anime-detail-hero::before{position:absolute;inset:0;z-index:0;content:"";pointer-events:none;background:radial-gradient(ellipse 52% 72% at 69% 42%,rgba(25,54,47,.62) 0%,rgba(25,54,47,.38) 46%,rgba(25,54,47,.08) 78%,transparent 100%),linear-gradient(90deg,rgba(25,54,47,.12) 0%,rgba(25,54,47,.28) 46%,rgba(25,54,47,.06) 100%),linear-gradient(0deg,rgba(25,54,47,.34) 0%,transparent 38%)}
+    .anime-detail--ghibli .anime-detail-inner{position:relative;z-index:1}
     .anime-detail--ghibli .anime-detail-copy h1{text-shadow:0 2px 18px rgba(0,0,0,.18)}
-    .anime-detail--ghibli .anime-detail-copy h1{color:#fff}
-    .anime-detail--ghibli .anime-detail-meta{color:rgba(255,255,255,.78)}
+    .anime-detail--ghibli .anime-detail-copy h1{color:#fff;text-shadow:0 2px 22px rgba(0,0,0,.4)}
+    .anime-detail--ghibli .anime-detail-meta{color:rgba(255,255,255,.92);text-shadow:0 1px 8px rgba(0,0,0,.42)}
+    .anime-detail--ghibli .anime-detail-meta small{color:rgba(255,255,255,.76);text-shadow:0 1px 6px rgba(0,0,0,.42)}
+    .anime-detail--ghibli .anime-detail-meta strong{color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.42)}
     .anime-detail--ghibli .anime-detail-genres span{border-color:rgba(255,255,255,.25);color:#fff;background:rgba(25,54,47,.35)}
     .anime-detail--ghibli .anime-detail-synopsis-wrap{
       max-width:42rem;
@@ -147,7 +150,9 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     .anime-detail--ghibli .anime-detail-synopsis{margin:0;color:#fff}
     .anime-detail--ghibli .anime-detail-translate{border-color:rgba(255,247,232,.45);background:rgba(255,247,232,.12);color:#fff}
     .anime-detail--ghibli .anime-detail-translate:hover:not(:disabled){background:#fff;color:var(--gd-blue)}
-    .anime-detail--ghibli .anime-detail-state span{color:var(--gd-lime)}
+    .anime-detail--ghibli .anime-detail-state span{color:#a7df72;text-shadow:0 1px 7px rgba(25,54,47,.62)}
+    .anime-detail--ghibli .personal-actions button,.anime-detail--ghibli .personal-status{border-color:rgba(255,255,255,.34);background:rgba(25,54,47,.28);color:#fff;-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);text-shadow:0 1px 5px rgba(0,0,0,.32)}
+    .anime-detail--ghibli .personal-actions button:hover,.anime-detail--ghibli .personal-actions button.is-active{background:#fff;color:var(--gd-blue);text-shadow:none}
     .anime-detail--ghibli .anime-detail-info{border-top:0;background:var(--gd-teal);padding:0;width:100%}
     .anime-detail--ghibli .anime-detail-info>div{background:var(--gd-teal);color:#fff;width:100%;border-top:1px solid rgba(255,255,255,.2)}
     .anime-detail--ghibli .anime-detail-info>div:first-child{border-top:0}
