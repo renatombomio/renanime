@@ -207,7 +207,9 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
   <section className="anime-detail-hero" style={banner?{backgroundImage:from==="ghibli"?'url("'+banner+'")':'linear-gradient(90deg,rgba(9,9,9,.98),rgba(9,9,9,.72) 45%,rgba(9,9,9,.35) 75%,rgba(9,9,9,.8)),linear-gradient(0deg,rgba(9,9,9,.98),transparent 45%),url("'+banner+'")'}:undefined}>
    <div className="anime-detail-inner">
     <div className={"anime-detail-layout"+(title.length>24?" has-long-title":"")}>
-     <div className="anime-detail-poster">{image?<img src={image} alt={title}/>:<div className="anime-detail-placeholder">RENANIME</div>}</div>
+     <div className="anime-detail-poster-column">
+      <div className="anime-detail-poster">{image?<img src={image} alt={title}/>:<div className="anime-detail-placeholder">RENANIME</div>}</div>
+      </div>
 
      <div className="anime-detail-copy">
       <div className="anime-detail-copy-main">
