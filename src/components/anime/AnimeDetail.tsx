@@ -253,6 +253,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
    <div className="anime-detail-inner">
     <div className="anime-detail-layout">
       <div className="anime-detail-poster">{poster?<img src={poster} alt={title}/>:<div className="anime-detail-placeholder">RENANIME</div>}</div>
+      {media?.id && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>}
       <div className="anime-detail-copy">
        <div className="anime-detail-copy-main">
        {personal.favorite&&<span className="anime-detail-eyebrow">Favorito</span>}
@@ -263,7 +264,6 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
   {media?.format!=="MOVIE"&&media?.episodes&&<span><small>EPISODIOS</small><strong>{media.episodes}</strong></span>}
   {media?.duration&&<span><small>{media?.format==="MOVIE"?"DURACIÓN":"DURACIÓN / EPISODIO"}</small><strong>{media.duration} min</strong></span>}
 </div>
-       {media?.id && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>}
        {media?.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map((genre)=><span key={genre}>{genre}</span>)}</div>}
        <div className="anime-detail-state">
         <span>{personal.status==="WATCHED"?"Visto":personal.status==="PENDING"?"Pendiente":"En mi archivo"}</span>
@@ -273,6 +273,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
        </div>
       </div>
        <div className="anime-detail-synopsis-wrap">
+        <span className="anime-detail-label">Sinopsis</span>
         <p className="anime-detail-synopsis">{loading?"Cargando ficha…":translatedSynopsis||cleanSynopsis||"Todavía no hay una sinopsis disponible para este título."}</p>
         {hasSynopsis&&media?.description&&<button type="button" className="anime-detail-translate" onClick={translateSynopsis} disabled={translating}>{translating?"Traduciendo…":translatedSynopsis?"Traducido al español":"Traducir al español"}</button>}
        </div>
