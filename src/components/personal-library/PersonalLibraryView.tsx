@@ -82,15 +82,15 @@ export default function PersonalLibraryView({mode}:Props){
           <a href={`/anime/search?id=${entry.animeId}&from=personal-library`} className="personal-library-link" aria-label={`Ver ${title}`}>
             <div className="personal-library-poster">
               {image?<img src={image} alt="" loading="lazy"/>:<div className="personal-library-placeholder" aria-hidden="true"/>}
+              <div className="personal-library-overlay">
+                <h2>{title}</h2>
+                <span>{item?.startDate?.year||"—"}</span>
+              </div>
               <div className="personal-library-badges" aria-hidden="true">
                 {entry.state.favorite&&<span>Favorito</span>}
                 {entry.state.recommended&&<span>Recomendado</span>}
                 {score!=null&&<span>★ {score}</span>}
               </div>
-            </div>
-            <div className="personal-library-info">
-              <h2>{title}</h2>
-              <span>{formatDate(item?.startDate)} · {isMovie(item)?"Película":"Serie"}</span>
             </div>
           </a>
         </article>;
@@ -108,14 +108,22 @@ export default function PersonalLibraryView({mode}:Props){
       .personal-library-intro{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;padding-bottom:.85rem;border-bottom:1px solid var(--color-border);color:var(--color-accent-soft);font:500 .58rem/1 var(--font-meta);letter-spacing:.11em;text-transform:uppercase}
       .personal-library-count{margin:0;color:var(--color-muted-400);}
       
-      .personal-library-grid{display:grid;margin-top:clamp(2rem,4vw,3.5rem);grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(3rem,5vw,5rem) clamp(.85rem,1.8vw,1.75rem)}.personal-library-card{min-width:0}
-      .personal-library-link{transition:transform 280ms var(--ease-out)}
+      .personal-library-grid{display:grid;margin-top:clamp(2rem,4vw,3.5rem);grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(3rem,5vw,5rem) clamp(.85rem,1.8vw,1.75rem)}
+      .personal-library-card{min-width:0}
+      .personal-library-link{display:block;color:inherit;transition:transform 280ms var(--ease-out)}
       .personal-library-link:hover{transform:translateY(-3px)}
-      .personal-library-link{display:block;color:inherit}.personal-library-poster{position:relative;aspect-ratio:2/3;overflow:hidden;background:var(--color-ink-800)}.personal-library-poster img{display:block;width:100%;height:100%;object-fit:cover;transition:transform var(--duration-slow) var(--ease-out),filter var(--duration-base) var(--ease-out)}.personal-library-link:hover .personal-library-poster img{transform:scale(1.035);filter:saturate(1.04)}
-      .personal-library-poster::after{position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,9,9,.02) 45%,rgba(9,9,9,.78) 100%);content:"";pointer-events:none}
+      .personal-library-poster{position:relative;aspect-ratio:2/3;overflow:hidden;background:var(--color-ink-800)}
+      .personal-library-poster img{display:block;width:100%;height:100%;object-fit:cover;transition:transform var(--duration-slow) var(--ease-out),filter var(--duration-base) var(--ease-out)}
+      .personal-library-link:hover .personal-library-poster img{transform:scale(1.035);filter:saturate(1.04)}
+      .personal-library-poster::after{position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,9,9,.02) 38%,rgba(9,9,9,.88) 100%);content:"";pointer-events:none}
       .personal-library-placeholder{width:100%;height:100%;background:radial-gradient(circle at 18% 18%,rgba(245,242,236,.08),transparent 38%),linear-gradient(145deg,var(--color-ink-700),var(--color-ink-950))}
-      .personal-library-badges{position:absolute;right:.6rem;bottom:.6rem;left:.6rem;z-index:1;display:flex;flex-wrap:wrap;gap:.35rem}.personal-library-badges span{padding:.3rem .4rem;border:1px solid rgba(245,242,236,.22);background:rgba(9,9,9,.55);backdrop-filter:blur(8px);color:var(--color-paper-50);font:500 .48rem/1 var(--font-meta);letter-spacing:.06em;text-transform:uppercase}
-      .personal-library-info{display:grid;gap:.35rem;padding-top:.7rem}.personal-library-info h2{display:-webkit-box;overflow:hidden;margin:0;color:var(--color-paper-50);font:500 .82rem/1.2 var(--font-body);-webkit-box-orient:vertical;-webkit-line-clamp:2}.personal-library-info span{color:var(--color-muted-400);font:500 .52rem/1.2 var(--font-meta);letter-spacing:.04em;text-transform:uppercase}
+      .personal-library-overlay{position:absolute;right:.7rem;bottom:.7rem;left:.7rem;z-index:2;color:var(--color-paper-50)}
+      .personal-library-overlay h2{display:-webkit-box;overflow:hidden;margin:0;font:500 .82rem/1.12 var(--font-body);-webkit-box-orient:vertical;-webkit-line-clamp:2}
+      .personal-library-overlay span{display:block;margin-top:.32rem;color:var(--color-paper-200);font:600 .62rem/1 var(--font-meta);letter-spacing:.09em}
+      .personal-library-badges{position:absolute;top:.6rem;right:.6rem;left:.6rem;z-index:2;display:flex;flex-wrap:wrap;gap:.35rem}
+      .personal-library-badges span{padding:.3rem .4rem;border:1px solid rgba(245,242,236,.22);background:rgba(9,9,9,.55);backdrop-filter:blur(8px);color:var(--color-paper-50);font:500 .48rem/1 var(--font-meta);letter-spacing:.06em;text-transform:uppercase}
+      @media(max-width:900px){.personal-library-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:2.5rem .75rem}}
+      @media(max-width:560px){.personal-library-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:2.5rem .7rem}.personal-library-overlay{right:.55rem;bottom:.55rem;left:.55rem}.personal-library-overlay h2{font-size:.76rem}.personal-library-overlay span{font-size:.66rem}.personal-library-badges{top:.5rem;right:.5rem;left:.5rem}.personal-library-badges span{padding:.25rem .32rem;font-size:.42rem}}
       .personal-library-status,.personal-library-empty{padding:4rem 1rem;border:1px solid var(--color-border);color:var(--color-muted-400);text-align:center}.personal-library-empty{display:grid;justify-items:center;gap:.7rem}.personal-library-empty strong{color:var(--color-paper-50);font:500 1.1rem/1.2 var(--font-body)}.personal-library-empty span{max-width:34rem;line-height:1.55}.personal-library-empty-cta,.personal-library-load-more{display:inline-flex;margin-top:.8rem;padding:.7rem 1rem;border:1px solid var(--color-border-strong);background:transparent;color:var(--color-paper-50);font:500 .58rem/1 var(--font-meta);letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background var(--duration-fast) var(--ease-out),color var(--duration-fast) var(--ease-out)}.personal-library-empty-cta:hover,.personal-library-load-more:hover{background:var(--color-paper-50);color:var(--color-ink-950)}.personal-library-load-more{display:flex;margin:3rem auto 0}
     `}</style>
   </div>;
