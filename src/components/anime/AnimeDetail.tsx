@@ -186,7 +186,7 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
       return "a" + index + ": Page(page:1,perPage:1){media(search:$" + key + ",type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail}}}"
     }).join("\n");
 
-    const definitions = batch.map((_, index) => "$s" + index + ":String!").join(",");
+    const definitions = batch.filter((entry) => !FRANCHISE_MEDIA_ALIASES[entry.animeId]).map((entry) => "$s" + batch.indexOf(entry) + ":String!").join(",");
     const query = `query FranchiseBatch(${definitions}){${fields}}`;
 
     try {
@@ -201,7 +201,7 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
       const payload = await response.json();
 
       for (const [index, entry] of batch.entries()) {
-        const media = payload.data?.["a" + index]?.media?.[0] ?? null;
+        const media = payload.data?.["a" + index]?.media?.[0] ?? payload.data?.["a" + index] ?? null;
         if (media?.coverImage?.extraLarge || media?.coverImage?.large) {
           result[entry.animeId] = media;
         } else {
