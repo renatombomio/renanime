@@ -81,6 +81,8 @@ interface Props {
  variant?: "default" | "ghibli";
 }
 
+const RED_TURTLE_LIBRARY_ID = 109641;
+
 export default function AnimeSearchDetail({ variant = "default" }: Props){
  const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translated,setTranslated]=useState(""),[translating,setTranslating]=useState(false);
  useEffect(()=>{
@@ -209,7 +211,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     <div className={"anime-detail-layout"+(title.length>24?" has-long-title":"")}>
      <div className="anime-detail-poster-column">
       <div className="anime-detail-poster">{image?<img src={image} alt={title}/>:<div className="anime-detail-placeholder">RENANIME</div>}</div>
-      {media.id > 0 && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>}
+      <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id > 0 ? media.id : RED_TURTLE_LIBRARY_ID} /></div>
      </div>
 
      <div className="anime-detail-copy">
