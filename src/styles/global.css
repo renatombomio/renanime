@@ -226,8 +226,8 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
  .anime-detail-hero{min-height:0;align-items:stretch}
  .anime-detail-inner{padding-block:2.5rem 3rem}
  .anime-detail-layout{grid-template-columns:minmax(0,9rem) minmax(0,1fr);gap:1.25rem;align-items:start}
- .anime-detail-poster{grid-column:1;grid-row:1;width:100%}
- .anime-detail-library-actions{grid-column:1;grid-row:2;width:100%;margin-top:.65rem}
+ .anime-detail-poster{grid-column:1;grid-row:1 / span 3;width:100%}
+ .anime-detail-library-actions{grid-column:1;grid-row:4;width:100%;margin-top:.65rem}
  .anime-detail-library-actions .personal-actions{margin-top:0;display:grid;gap:.4rem}
  .anime-detail-library-actions .personal-actions button,.anime-detail-library-actions .personal-status{width:100%;justify-content:center;text-align:center;min-height:2rem;padding:.45rem .5rem;font-size:.46rem}
  .anime-detail-copy,
