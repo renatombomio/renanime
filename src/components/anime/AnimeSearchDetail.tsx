@@ -118,8 +118,8 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
   })}).then(r=>r.ok?r.json():Promise.reject()).then(async p=>{
    const found=p.data?.Media??null;
    if(!found)return;
-   const related=await fetchAniListRecommendations(found.id);
-   setMedia({...found,recommendations:{nodes:related.map((item:any)=>({mediaRecommendation:item}))}});
+   // The detail query already includes recommendations; avoid a second AniList request.
+   setMedia(found);
   }).catch(()=>{}).finally(()=>setLoading(false));
  },[]);
  if(loading)return <div className="anime-search-detail-state">Cargando ficha…</div>;
