@@ -219,7 +219,6 @@ function date(value:Media["startDate"]){
 }
 
 function format(value:string|null|undefined){return value==="MOVIE"?"Película":value==="TV"?"Serie":value||"Anime";}
-function status(value:string|null|undefined){return value==="FINISHED"?"Finalizado":value==="RELEASING"?"En emisión":value==="NOT_YET_RELEASED"?"Próximamente":value==="HIATUS"?"En pausa":value==="CANCELLED"?"Cancelado":"";}
 
 export default function AnimeDetail({entry}:{entry:LibraryEntry}){
  const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translatedSynopsis,setTranslatedSynopsis]=useState(""),[translating,setTranslating]=useState(false),[franchiseMedia,setFranchiseMedia]=useState<Record<string,Media|null>>({});
@@ -276,11 +275,6 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
 </div>
       {media?.id && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>}
        {media?.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map((genre)=><span key={genre}>{genre}</span>)}</div>}
-       {media?.format!=="MOVIE"&&<div className="anime-detail-state">
-        <span>{personal.status==="WATCHED"?"Visto":personal.status==="PENDING"?"Pendiente":"En mi archivo"}</span>
-        {personal.recommended&&<span>Recomendado por Ren</span>}
-        {status(media?.status)&&<span>{status(media?.status)}</span>}
-       </div>}
        </div>
       </div>
        <div className="anime-detail-synopsis-wrap">
