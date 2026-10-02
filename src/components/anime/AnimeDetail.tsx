@@ -131,15 +131,25 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
     const cached=sessionStorage.getItem(CACHE_PREFIX+entry.animeId);
     if(cached) return JSON.parse(cached);
   } catch {}
-  const query=`query Detail($search:String!){Page(page:1,perPage:1){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}} relations{edges{relationType node{id type format title{romaji english} coverImage{extraLarge large}}}}}}}`;
+
+  const directId=FRANCHISE_MEDIA_ALIASES[entry.animeId];
+  const query=directId
+    ? `query DetailById($id:Int!){Media(id:$id,type:ANIME){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} relations{edges{relationType node{id type format title{romaji english} coverImage{extraLarge large}}}}}}`
+    : `query Detail($search:String!){Page(page:1,perPage:1){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}} relations{edges{relationType node{id type format title{romaji english} coverImage{extraLarge large}}}}}}}`;
+
   try {
-    const response=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query,variables:{search:entry.title}})});
+    const body=directId
+      ? {query,variables:{id:directId}}
+      : {query,variables:{search:entry.title}};
+    const response=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(body)});
     if(!response.ok) return null;
     const payload=await response.json();
-    const media=payload.data?.Page?.media?.[0]??null;
+    const media=directId ? (payload.data?.Media??null) : (payload.data?.Page?.media?.[0]??null);
     if(!media)return null;
-    const related=await fetchAniListRecommendations(media.id);
-    media.recommendations={nodes:related.map((item:any)=>({mediaRecommendation:item}))};
+    if(!directId){
+      const related=await fetchAniListRecommendations(media.id);
+      media.recommendations={nodes:related.map((item:any)=>({mediaRecommendation:item}))};
+    }
     try{sessionStorage.setItem(CACHE_PREFIX+entry.animeId,JSON.stringify(media));}catch{}
     return media;
   } catch { return null; }
@@ -166,27 +176,45 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
 
   if (!unresolved.length) return result;
 
-  // AniList can reject very large aliased Page queries with HTTP 400.
-  // Resolve franchise entries in small batches so one large franchise
-  // cannot make every poster disappear.
+  // Resolve explicit AniList IDs separately. Mixing direct Media fields with
+  // aliased Page fields made AniList reject the whole batch with HTTP 400.
+  for (const entry of unresolved) {
+    const directId = FRANCHISE_MEDIA_ALIASES[entry.animeId];
+    if (!directId) continue;
+
+    const query = `query FranchiseMediaById($id:Int!){Media(id:$id,type:ANIME){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail}}}`;
+    try {
+      const response = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: {"Content-Type":"application/json",Accept:"application/json"},
+        body: JSON.stringify({query,variables:{id:directId}}),
+      });
+      if (!response.ok) continue;
+      const payload = await response.json();
+      const media = payload.data?.Media ?? null;
+      if (media) {
+        result[entry.animeId] = media;
+        try { sessionStorage.setItem(CACHE_PREFIX + entry.animeId, JSON.stringify(media)); } catch {}
+      }
+    } catch {}
+  }
+
+  const searchEntries = unresolved.filter((entry) => !FRANCHISE_MEDIA_ALIASES[entry.animeId]);
+  if (!searchEntries.length) return result;
+
+  // Keep search batches small to avoid AniList rejecting large aliased queries.
   const BATCH_SIZE = 5;
 
-  for (let offset = 0; offset < unresolved.length; offset += BATCH_SIZE) {
-    const batch = unresolved.slice(offset, offset + BATCH_SIZE);
+  for (let offset = 0; offset < searchEntries.length; offset += BATCH_SIZE) {
+    const batch = searchEntries.slice(offset, offset + BATCH_SIZE);
     const variables: Record<string, string> = {};
-
     const fields = batch.map((entry, index) => {
       const key = "s" + index;
       const alias = "a" + index;
       variables[key] = entry.title;
-      const directId = FRANCHISE_MEDIA_ALIASES[entry.animeId];
-      if (directId) {
-        return "a" + index + ": Media(id:" + directId + ",type:ANIME){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail}}}";
-      }
-      return "a" + index + ": Page(page:1,perPage:1){media(search:$" + key + ",type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail}}}"
+      return alias + ": Page(page:1,perPage:1){media(search:$" + key + ",type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail}}}";
     }).join("\n");
-
-    const definitions = batch.filter((entry) => !FRANCHISE_MEDIA_ALIASES[entry.animeId]).map((entry) => "$s" + batch.indexOf(entry) + ":String!").join(",");
+    const definitions = batch.map((_, index) => "$s" + index + ":String!").join(",");
     const query = `query FranchiseBatch(${definitions}){${fields}}`;
 
     try {
@@ -201,7 +229,7 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
       const payload = await response.json();
 
       for (const [index, entry] of batch.entries()) {
-        const media = payload.data?.["a" + index]?.media?.[0] ?? payload.data?.["a" + index] ?? null;
+        const media = payload.data?.["a" + index]?.media?.[0] ?? null;
         if (media?.coverImage?.extraLarge || media?.coverImage?.large) {
           result[entry.animeId] = media;
         } else {
@@ -217,8 +245,6 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
             : media;
         }
 
-        // Never persist a failed lookup as null: a temporary API failure
-        // must not permanently hide a franchise poster for this session.
         if (result[entry.animeId]) {
           try {
             sessionStorage.setItem(CACHE_PREFIX + entry.animeId, JSON.stringify(result[entry.animeId]));
@@ -256,7 +282,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
   return()=>{cancelled=true};
  },[entry.animeId]);
  const translateSynopsis=async()=>{if(!media?.description||translating)return;setTranslating(true);const value=await translateToSpanish(media.description);setTranslatedSynopsis(value);setTranslating(false)};
- const title=media?.title?.romaji||media?.title?.english||entry.title;
+ const title=FRANCHISE_MEDIA_ALIASES[entry.animeId]?entry.title:(media?.title?.romaji||media?.title?.english||entry.title);
  const poster=media?.coverImage?.extraLarge||media?.coverImage?.large;
  const banner=media?.bannerImage||poster;
  const personal=entry.state;
@@ -344,7 +370,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
     {franchiseEntries.map((candidate,index)=>{
       const item=franchiseMedia[candidate.animeId];
       const image=item?.coverImage?.extraLarge||item?.coverImage?.large;
-      const candidateTitle=item?.title?.romaji||item?.title?.english||candidate.title;
+      const candidateTitle=FRANCHISE_MEDIA_ALIASES[candidate.animeId]?candidate.title:(item?.title?.romaji||item?.title?.english||candidate.title);
       return <a className={"anime-detail-franchise-card"+(candidate.animeId===entry.animeId?" is-current":"")} href={"/anime/"+candidate.animeId} key={candidate.animeId}>
        <div className="anime-detail-franchise-poster">{image?<img src={image} alt=""/>:<div/>}{candidate.animeId===entry.animeId&&<span>Estás aquí</span>}</div>
        <div className="anime-detail-franchise-copy"><strong>{candidateTitle}</strong><span>{candidate.format==="MOVIE"||item?.format==="MOVIE"?"Film":"Series"} · {candidate.state.status==="WATCHED"?"Vista":"Pendiente"}</span></div>
