@@ -237,7 +237,7 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
  .anime-detail-copy-main,
  .anime-detail--ghibli .anime-detail-copy-main{display:contents}
  .anime-detail-eyebrow{grid-column:2;grid-row:1;align-self:end}
- .anime-detail-copy h1{grid-column:2;grid-row:1;margin:.25rem 0 .8rem;font-size:clamp(2.25rem,10vw,4rem);line-height:.95}
+ .anime-detail-copy h1{grid-column:2;grid-row:1;min-width:0;max-width:100%;margin:.25rem 0 .8rem;font-size:clamp(2rem,8vw,3.5rem);line-height:.95;overflow-wrap:anywhere}
  .anime-detail-meta{grid-column:2;grid-row:2;align-self:start;display:flex;flex-wrap:wrap;align-items:baseline;gap:.3rem .65rem;font-size:.58rem;line-height:1.25}
  .anime-detail-meta span{display:flex;align-items:baseline;gap:.32rem;min-width:max-content}
  .anime-detail-meta small{font-size:.48rem;letter-spacing:.06em}
