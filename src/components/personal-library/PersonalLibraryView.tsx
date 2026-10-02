@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import type { PersonalAnimeEntry } from "../../types/personal";
 import { getPersonalLibrary, subscribeToPersonalLibrary } from "../../data/personal-library";
-import { fetchFallbackPoster } from "../../lib/api/poster-fallback";
 
 type Mode = "WATCHED" | "PENDING";
 interface Props { mode: Mode; }
@@ -33,10 +32,6 @@ async function fetchMedia(ids:string[]):Promise<Record<string,Media|null>>{
     valid.forEach((id,i)=>{result[String(id)]=payload.data?.["a"+i]??null;});
     for(const id of valid){
       const key=String(id), item=result[key];
-      if(item && !item.coverImage?.extraLarge && !item.coverImage?.large){
-        const poster=await fetchFallbackPoster(titleOf(item));
-        if(poster) result[key]={...item,coverImage:{extraLarge:poster,large:poster}};
-      }
     }
   }catch{}
   return result;
