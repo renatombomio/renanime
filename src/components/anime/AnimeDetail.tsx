@@ -24,7 +24,7 @@ interface Media {
 }
 
 const ENDPOINT="https://graphql.anilist.co";
-const CACHE_PREFIX="renanime:detail:v6:";
+const CACHE_PREFIX="renanime:detail:v7:";
 const TRANSLATION_PREFIX="renanime:translation:en-es:v1:";
 const FRANCHISE_MEDIA_ALIASES: Record<string, number> = {
   "movie-063": 178788,
@@ -310,12 +310,12 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
           .filter((item): item is NonNullable<typeof item> => Boolean(item))
           .filter((item) => item.id !== media?.id && !seen.has(item.id) && seen.add(item.id))
           .slice(0, 8);
-        return <section className="anime-detail-recommendations" aria-label="Recomendaciones">
+        return items.length ? <section className="anime-detail-recommendations" aria-label="Recomendaciones">
           <div className="anime-detail-recommendations-head">
             <span className="anime-detail-label">Si te gusta este anime, te puede gustar…</span>
           </div>
           <div className="anime-detail-recommendations-track">
-            {items.length ? items.map((item) => {
+            {items.map((item) => {
               const recTitle=item.title?.romaji||item.title?.english||"Sin título";
               const recImage=item.coverImage?.extraLarge||item.coverImage?.large;
               return <a className="anime-detail-recommendation" href={"/anime/search?id="+item.id+"&from=anime&back=/anime/"+entry.animeId} key={item.id}>
@@ -323,9 +323,9 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
                 <span className="anime-detail-recommendation-title">{recTitle}</span>
                 <span className="anime-detail-recommendation-meta">{item.format==="MOVIE"?"Film":"Series"}{item.startDate?.year?" · "+item.startDate.year:""}</span>
               </a>;
-            }) : null}
+            })}
           </div>
-        </section>;
+        </section> : null;
        })()}
     </div>
    </div>
