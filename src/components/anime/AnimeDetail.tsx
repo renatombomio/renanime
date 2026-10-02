@@ -113,8 +113,8 @@ async function fetchAniListRecommendations(mediaId:number){
   }catch{return []}
 }
 
-function getSeasonCount(media: Media){
-  if(media.format==="MOVIE") return null;
+function getSeasonCount(media: Media|null){
+  if(!media || media.format==="MOVIE") return null;
   const relatedTv=(media.relations?.edges??[])
     .filter((edge)=>edge.relationType==="PREQUEL"||edge.relationType==="SEQUEL")
     .filter((edge)=>edge.node?.format==="TV")
