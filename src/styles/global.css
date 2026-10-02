@@ -168,7 +168,11 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
 .anime-detail-translate{margin-top:.8rem;border:1px solid var(--color-border);background:rgba(9,9,9,.45);color:var(--color-muted-400);padding:.5rem .7rem;font:var(--text-xs)/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
 .anime-detail-translate:hover:not(:disabled){color:var(--color-paper-50);border-color:var(--color-border-strong)}
 .anime-detail-translate:disabled{cursor:wait;opacity:.65}
-.anime-detail-library-actions{margin-top:1rem}
+.anime-detail-library-actions{grid-column:1;grid-row:2;width:100%;margin-top:.85rem}
+.anime-detail-library-actions .personal-actions{margin-top:0;display:grid;gap:.45rem}
+.anime-detail-library-actions .personal-actions button,.anime-detail-library-actions .personal-status{width:100%;justify-content:center;text-align:center}
+.anime-detail-synopsis-wrap>.anime-detail-label{display:block;margin-bottom:.7rem;color:var(--color-paper-200)}
+.anime-detail-synopsis-wrap>.anime-detail-synopsis{margin-top:0}
 .anime-detail-trailer{grid-column:1 / -1;width:100%;margin-top:1.5rem;max-width:58rem}
 .anime-detail-trailer>.anime-detail-label{display:block;margin-bottom:.8rem}
 .anime-detail-video{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border:1px solid var(--color-border);background:#000}
@@ -204,6 +208,8 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
 @media(min-width:761px){
  .anime-detail-copy{display:contents}
  .anime-detail-copy-main{grid-column:2;min-width:0;max-width:52rem;padding-bottom:0}
+ .anime-detail-genres{grid-column:2}
+ .anime-detail-state{grid-column:2}
  .anime-detail-synopsis-wrap{grid-column:3;grid-row:1;align-self:start}
 }
 @media(min-width:1051px){
@@ -229,7 +235,10 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
  .anime-detail-hero{min-height:0;align-items:stretch}
  .anime-detail-inner{padding-block:2.5rem 3rem}
  .anime-detail-layout{grid-template-columns:minmax(0,9rem) minmax(0,1fr);gap:1.25rem;align-items:start}
- .anime-detail-poster{grid-column:1;grid-row:1 / span 3;width:100%}
+ .anime-detail-poster{grid-column:1;grid-row:1;width:100%}
+ .anime-detail-library-actions{grid-column:1;grid-row:2;margin-top:.65rem}
+ .anime-detail-library-actions .personal-actions{gap:.4rem}
+ .anime-detail-library-actions .personal-actions button,.anime-detail-library-actions .personal-status{min-height:2rem;padding:.45rem .5rem;font-size:.46rem}
  .anime-detail-copy,
  .anime-detail--ghibli .anime-detail-copy{display:contents}
  .anime-detail-copy-main,
@@ -237,13 +246,13 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
  .anime-detail-eyebrow{grid-column:2;align-self:end}
  .anime-detail-copy h1{grid-column:2;margin:.25rem 0 .8rem;font-size:clamp(2.25rem,10vw,4rem);line-height:.95}
  .anime-detail-meta{grid-column:2;align-self:start;gap:.3rem;font-size:.68rem}
- .anime-detail-genres{grid-column:2;margin-top:.7rem;gap:.35rem}
+ .anime-detail-genres{grid-column:2;grid-row:2;margin-top:.7rem;gap:.35rem}
  .anime-detail-genres span{padding:.3rem .42rem;font-size:.44rem}
- .anime-detail-synopsis-wrap{grid-column:1 / -1;margin-top:.35rem}
+ .anime-detail-state{grid-column:1 / -1;grid-row:3;margin-top:.15rem}
+ .anime-detail-synopsis-wrap{grid-column:1 / -1;grid-row:4;margin-top:.35rem}
  .anime-detail-synopsis{font-size:.9rem;line-height:1.62}
  .anime-detail-translate{font-size:.46rem}
  .anime-detail-trailer{grid-column:1 / -1;margin-top:2rem}
- .anime-detail-state{grid-column:1 / -1;margin-top:1.25rem}
  .anime-detail-info{grid-template-columns:1fr}
  .anime-detail-related{padding-top:2.5rem}
  .anime-detail-related-grid,.anime-detail-franchise-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem}

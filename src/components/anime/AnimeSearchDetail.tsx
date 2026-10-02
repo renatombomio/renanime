@@ -200,6 +200,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
    <div className="anime-detail-inner">
     <div className={"anime-detail-layout"+(title.length>24?" has-long-title":"")}>
      <div className="anime-detail-poster">{image?<img src={image} alt={title}/>:<div className="anime-detail-placeholder">RENANIME</div>}</div>
+     {media.id > 0 && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>}
 
      <div className="anime-detail-copy">
       <div className="anime-detail-copy-main">
@@ -210,13 +211,13 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
         {media.format!=="MOVIE"&&media.episodes&&<span><small>EPISODIOS</small><strong>{media.episodes}</strong></span>}
         {media.duration&&<span><small>{media.format==="MOVIE"?"DURACIÓN":"DURACIÓN / EPISODIO"}</small><strong>{media.duration} min</strong></span>}
        </div>
-       {media.id > 0 && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>}
        {media.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map(genre=><span key={genre}>{genre}</span>)}</div>}
        <div className="anime-detail-state">{status(media.status)&&<span>{status(media.status)}</span>}</div>
       </div>
      </div>
 
      <div className="anime-detail-synopsis-wrap">
+      <span className="anime-detail-label">Sinopsis</span>
       <p className="anime-detail-synopsis">{translated||synopsis||(hasSynopsis?"":"Todavía no hay una sinopsis disponible.")}</p>
       {hasSynopsis&&media.description&&<button type="button" className="anime-detail-translate" onClick={translateSynopsis} disabled={translating}>{translating?"Traduciendo…":translated?"Traducido al español":"Traducir al español"}</button>}
      </div>
