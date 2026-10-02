@@ -146,10 +146,7 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
     const payload=await response.json();
     const media=directId ? (payload.data?.Media??null) : (payload.data?.Page?.media?.[0]??null);
     if(!media)return null;
-    if(!directId){
-      const related=await fetchAniListRecommendations(media.id);
-      media.recommendations={nodes:related.map((item:any)=>({mediaRecommendation:item}))};
-    }
+    // The detail query already includes recommendations; avoid a second AniList request.
     try{sessionStorage.setItem(CACHE_PREFIX+entry.animeId,JSON.stringify(media));}catch{}
     return media;
   } catch { return null; }
