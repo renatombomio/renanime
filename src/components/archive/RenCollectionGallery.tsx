@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { fetchFallbackPoster } from "../../lib/api/poster-fallback";
 
 interface Entry {
   animeId: string;
