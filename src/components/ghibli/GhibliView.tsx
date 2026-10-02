@@ -135,7 +135,7 @@ export default function GhibliView({ films }: { films: Film[] }) {
           .ghibli-view .ghibli-card{border-radius:0}
           .ghibli-view .ghibli-info{left:.55rem;right:.55rem;bottom:.68rem}
           .ghibli-view .ghibli-info h3{font-size:.72rem;line-height:1.05}
-          .ghibli-view .ghibli-year{font-size:.32rem;margin-top:.18rem}
+          .ghibli-view .ghibli-year{font-size:.66rem;margin-top:.22rem}
           .ghibli-view .ghibli-badge{top:.55rem;right:.55rem;padding:.22rem .3rem;font-size:.32rem}
         }
       `}</style>
