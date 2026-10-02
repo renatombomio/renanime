@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { fetchFallbackPoster } from "../../lib/api/poster-fallback";
 
 interface Entry {
   animeId: string;
@@ -67,8 +68,15 @@ async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null
       chunk.forEach((entry, index) => {
         const media = payload.data?.["a" + index]?.media?.[0] ?? null;
         result[entry.animeId] = media;
+      });
+      for (const entry of chunk) {
+        const current = result[entry.animeId];
+        if (!current?.coverImage?.extraLarge && !current?.coverImage?.large) {
+          const poster = await fetchFallbackPoster(entry.title);
+          if (poster) result[entry.animeId] = { ...(current ?? {}), coverImage: { extraLarge: poster, large: poster } };
+        }
         try {
-          sessionStorage.setItem(CACHE_PREFIX + entry.title.toLowerCase(), JSON.stringify(media));
+          sessionStorage.setItem(CACHE_PREFIX + entry.title.toLowerCase(), JSON.stringify(result[entry.animeId] ?? null));
         } catch {}
       });
     } catch {}
