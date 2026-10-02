@@ -101,7 +101,7 @@ export default function HomeGallery({ entries }: Props) {
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    const missing = entries.filter((entry) => !(entry.animeId in media));
+    const missing = entries.slice(0, visible).filter((entry) => !(entry.animeId in media));
     if (!missing.length) return;
 
     let cancelled = false;
@@ -113,7 +113,7 @@ export default function HomeGallery({ entries }: Props) {
     });
 
     return () => { cancelled = true; };
-  }, [entries]);
+  }, [entries, visible]);
 
   const filteredEntries = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase("es");
