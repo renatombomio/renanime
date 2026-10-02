@@ -1,5 +1,6 @@
 import {useEffect,useState} from "react";
 import PersonalLibraryActions from "../personal-library/PersonalLibraryActions";
+import { getLibrary } from "../../data/library";
 
 interface Media{
  id:number;
@@ -61,6 +62,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
   const params=new URLSearchParams(location.search);
   const idParam=params.get("id");
   const id=idParam ? Number(idParam) : NaN;
+  const localEntry=idParam && !Number.isFinite(id) ? getLibrary().find(entry=>entry.animeId===idParam) : undefined;
   const film=params.get("film");
 
   if(film==="the-red-turtle" && !Number.isFinite(id)){
@@ -83,23 +85,37 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
    return;
   }
 
-  if(!Number.isFinite(id)){setLoading(false);return}
-  fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({
-   query:"query Detail($id:Int!){Media(id:$id,type:ANIME){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} relations{edges{relationType node{id format}}} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}}}}",
-   variables:{id}
-  })}).then(r=>r.ok?r.json():Promise.reject()).then(async p=>{
-   const found=p.data?.Media??null;
-   if(!found)return;
-   // The detail query already includes recommendations; avoid a second AniList request.
-   setMedia(found);
-  }).catch(()=>{}).finally(()=>setLoading(false));
+  const directId = idParam === "movie-063" ? 178788 : Number.isFinite(id) ? id : null;
+  const searchTitle = localEntry?.title ?? null;
+
+  const request = directId
+    ? {
+        query:"query Detail($id:Int!){Media(id:$id,type:ANIME){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} relations{edges{relationType node{id format}}} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}}}}",
+        variables:{id:directId}
+      }
+    : searchTitle
+      ? {
+          query:"query Detail($search:String!){Page(page:1,perPage:1){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} relations{edges{relationType node{id format}}} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}}}}}",
+          variables:{search:searchTitle}
+        }
+      : null;
+
+  if(!request){setLoading(false);return}
+
+  fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(request)})
+    .then(r=>r.ok?r.json():Promise.reject())
+    .then(p=>{
+      const found=directId ? (p.data?.Media??null) : (p.data?.Page?.media?.[0]??null);
+      if(!found)return;
+      setMedia(found);
+    }).catch(()=>{}).finally(()=>setLoading(false));
  },[]);
  if(loading)return <div className="anime-search-detail-state">Cargando ficha…</div>;
  if(!media)return <div className="anime-search-detail-state">No se ha encontrado este anime.</div>;
 
  const params=new URLSearchParams(location.search);
  const from=variant === "ghibli" ? "ghibli" : params.get("from");
- const title=from==="ghibli" ? (media.title?.english||media.title?.romaji||"Sin título") : (media.title?.romaji||media.title?.english||"Sin título");
+ const title=idParam==="movie-063" ? "Kimetsu no Yaiba: Mugen-jō-hen" : from==="ghibli" ? (media.title?.english||media.title?.romaji||"Sin título") : (media.title?.romaji||media.title?.english||localEntry?.title||"Sin título");
  const image=media.coverImage?.extraLarge||media.coverImage?.large;
  const banner=media.bannerImage||image;
  const synopsis=media.description?cleanDescription(media.description):"";
