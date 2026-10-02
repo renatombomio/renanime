@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { PersonalAnimeEntry } from "../../types/personal";
 import { getPersonalLibrary, subscribeToPersonalLibrary } from "../../data/personal-library";
+import { fetchFallbackPoster } from "../../lib/api/poster-fallback";
 
 type Mode = "WATCHED" | "PENDING";
 interface Props { mode: Mode; }
@@ -16,6 +17,7 @@ const PAGE_SIZE = 15;
 
 async function fetchMedia(ids:string[]):Promise<Record<string,Media|null>>{
   const result:Record<string,Media|null>={};
+  if(ids.includes("ghibli-red-turtle")) result["ghibli-red-turtle"]={id:0,title:{english:"The Red Turtle",romaji:"The Red Turtle"},startDate:{year:2016,month:9,day:17},format:"MOVIE",coverImage:{extraLarge:"https://www.ghibli.jp/images/red-turtle.jpg",large:"https://www.ghibli.jp/images/red-turtle.jpg"}};
   const valid=ids.map(Number).filter(Number.isFinite);
   if(!valid.length)return result;
   const variables:Record<string,number>={};
@@ -29,6 +31,13 @@ async function fetchMedia(ids:string[]):Promise<Record<string,Media|null>>{
     if(!response.ok)return result;
     const payload=await response.json();
     valid.forEach((id,i)=>{result[String(id)]=payload.data?.["a"+i]??null;});
+    for(const id of valid){
+      const key=String(id), item=result[key];
+      if(item && !item.coverImage?.extraLarge && !item.coverImage?.large){
+        const poster=await fetchFallbackPoster(titleOf(item));
+        if(poster) result[key]={...item,coverImage:{extraLarge:poster,large:poster}};
+      }
+    }
   }catch{}
   return result;
 }
