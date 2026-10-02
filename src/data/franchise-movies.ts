@@ -78,7 +78,7 @@ export const franchiseMovies: LibraryEntry[] = [
 
   // Kimetsu no Yaiba
   { animeId: "movie-062", title: "Demon Slayer: Mugen Train", franchiseId: "kimetsu-no-yaiba", format: "MOVIE", state: { status: "WATCHED", favorite: false, recommended: false } },
-  { animeId: "movie-063", title: "Demon Slayer: Infinity Castle — Part 1: Akaza Returns", franchiseId: "kimetsu-no-yaiba", format: "MOVIE", state: { status: "WATCHED", favorite: false, recommended: false } },
+  { animeId: "movie-063", title: "Kimetsu no Yaiba: Mugen-jō-hen", franchiseId: "kimetsu-no-yaiba", format: "MOVIE", state: { status: "WATCHED", favorite: false, recommended: false } },
 
   // Other franchises from the personal list
   { animeId: "movie-064", title: "Black Clover: Sword of the Wizard King", franchiseId: "black-clover", format: "MOVIE", state: { status: "WATCHED", favorite: false, recommended: false } },
