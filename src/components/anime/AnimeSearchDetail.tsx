@@ -132,6 +132,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
     .anime-detail--ghibli .anime-detail-inner{position:relative;z-index:1}
     .anime-detail--ghibli .anime-detail-copy h1{text-shadow:0 2px 18px rgba(0,0,0,.18)}
     .anime-detail--ghibli .anime-detail-copy h1{color:#fff;text-shadow:0 2px 22px rgba(0,0,0,.4)}
+    .anime-detail--ghibli .anime-detail-copy-main{padding:1.15rem 1.2rem;border:1px solid rgba(255,247,232,.18);border-radius:18px;background:rgba(25,54,47,.68);box-shadow:0 16px 42px rgba(25,54,47,.22);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
     .anime-detail--ghibli .anime-detail-meta{color:rgba(255,255,255,.92);text-shadow:0 1px 8px rgba(0,0,0,.42)}
     .anime-detail--ghibli .anime-detail-meta small{color:rgba(255,255,255,.76);text-shadow:0 1px 6px rgba(0,0,0,.42)}
     .anime-detail--ghibli .anime-detail-meta strong{color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.42)}
@@ -187,6 +188,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
       .anime-detail-recommendation-title{font-size:.68rem}
     }
     @media(max-width:760px){
+      .anime-detail--ghibli .anime-detail-copy-main{padding:.95rem;border-radius:15px;background:rgba(25,54,47,.74)}
       .anime-detail--ghibli .anime-detail-synopsis-wrap{
         margin-top:1rem;
         padding:.85rem .9rem .95rem;
