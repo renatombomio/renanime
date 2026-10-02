@@ -63,6 +63,10 @@ export default function PersonalLibraryView({mode}:Props){
   },[mode]);
 
   useEffect(()=>{
+    setVisible(PAGE_SIZE);
+  },[mode]);
+
+  useEffect(()=>{
     let cancelled=false;
     const missing=entries.map(entry=>entry.animeId).filter(id=>!(id in media));
     if(!missing.length){setLoading(false);return;}
@@ -90,7 +94,7 @@ export default function PersonalLibraryView({mode}:Props){
         return <article className="personal-library-card" key={entry.animeId}>
           <a href={`/anime/search?id=${entry.animeId}&from=personal-library`} className="personal-library-link" aria-label={`Ver ${title}`}>
             <div className="personal-library-poster">
-              {image?<img src={image} alt="" loading="lazy"/>:<div className="personal-library-placeholder" aria-hidden="true"/>}
+              {image?<img src={image} alt="" loading="lazy" onError={event=>{event.currentTarget.style.display="none";}}/>:<div className="personal-library-placeholder" aria-hidden="true"/>}
               <div className="personal-library-overlay">
                 <h2>{title}</h2>
                 <span>{item?.startDate?.year||"—"}</span>
@@ -119,8 +123,8 @@ export default function PersonalLibraryView({mode}:Props){
       
       .personal-library-grid{display:grid;margin-top:clamp(2rem,4vw,3.5rem);grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(3rem,5vw,5rem) clamp(.85rem,1.8vw,1.75rem)}
       .personal-library-card{min-width:0}
-      .personal-library-link{display:block;color:inherit;transition:transform 280ms var(--ease-out)}
-      .personal-library-link:hover{transform:translateY(-3px)}
+      .personal-library-link{display:block;overflow:hidden;border:1px solid rgba(245,242,236,.13);border-radius:10px;background:var(--color-ink-900);color:inherit;transition:transform 280ms var(--ease-out),border-color 220ms ease,box-shadow 220ms ease}
+      .personal-library-link:hover{transform:translateY(-3px);border-color:rgba(245,242,236,.28);box-shadow:0 18px 42px rgba(0,0,0,.28)}
       .personal-library-poster{position:relative;aspect-ratio:2/3;overflow:hidden;background:var(--color-ink-800)}
       .personal-library-poster img{display:block;width:100%;height:100%;object-fit:cover;transition:transform var(--duration-slow) var(--ease-out),filter var(--duration-base) var(--ease-out)}
       .personal-library-link:hover .personal-library-poster img{transform:scale(1.035);filter:saturate(1.04)}
