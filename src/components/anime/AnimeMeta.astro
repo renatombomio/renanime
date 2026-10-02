@@ -7,6 +7,6 @@ const items = [type, year, genres.length ? genres.slice(0,2).join(" · ") : unde
 <style>
 .anime-meta{display:flex;flex-wrap:wrap;gap:.25rem .7rem;color:var(--color-muted-400);font:var(--text-xs)/1.4 var(--font-mono);letter-spacing:.01em}
 .anime-meta span+span::before{content:"·";margin-right:.7rem;color:var(--color-muted-600)}
-.anime-meta .anime-year{font-size:.62rem;font-weight:600;line-height:1}
+.anime-meta .anime-year{font-size:.62rem;font-weight:600;line-height:1;color:var(--color-paper-200)}
 @media(max-width:560px){.anime-meta .anime-year{font-size:.66rem}}
 </style>
