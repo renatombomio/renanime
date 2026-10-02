@@ -227,9 +227,9 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
  .anime-detail-inner{padding-block:2.5rem 3rem}
  .anime-detail-layout{grid-template-columns:minmax(0,9rem) minmax(0,1fr);gap:1.25rem;align-items:start}
  .anime-detail-poster{grid-column:1;grid-row:1 / span 3;width:100%}
- .anime-detail-library-actions{grid-column:1;grid-row:4;width:100%;margin-top:.65rem}
+ .anime-detail-library-actions{grid-column:1;grid-row:4;width:100%;margin-top:.15rem;align-self:start}
  .anime-detail-library-actions .personal-actions{margin-top:0;display:grid;gap:.4rem}
- .anime-detail-library-actions .personal-actions button,.anime-detail-library-actions .personal-status{width:100%;justify-content:center;text-align:center;min-height:2rem;padding:.45rem .5rem;font-size:.46rem}
+ .anime-detail-library-actions .personal-actions button,.anime-detail-library-actions .personal-status{width:100%;justify-content:center;text-align:center;min-height:2rem;padding:.5rem .5rem;font-size:.48rem;border-color:rgba(245,242,236,.42);background:rgba(9,9,9,.28);color:var(--color-paper-50)}
  .anime-detail-copy,
  .anime-detail--ghibli .anime-detail-copy{display:contents}
  .anime-detail-copy-main,
@@ -242,8 +242,7 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
  .anime-detail-meta strong{font-size:.58rem;white-space:nowrap;overflow-wrap:normal}
  .anime-detail-meta .anime-detail-meta-type strong{font-size:.82rem}
  .anime-detail-genres{grid-column:2;grid-row:3;margin-top:.55rem;gap:.3rem}
- .anime-detail-genres span{padding:.3rem .42rem;font-size:.44rem}
- .anime-detail-state{grid-column:2;grid-row:4;margin-top:.15rem;align-self:start}
+ .anime-detail-genres span{padding:.32rem .45rem;font-size:.48rem;color:var(--color-paper-50);border-color:rgba(245,242,236,.38)}
  .anime-detail-synopsis-wrap{grid-column:1 / -1;grid-row:5;margin-top:.35rem}
  .anime-detail-synopsis{font-size:.9rem;line-height:1.62}
  .anime-detail-translate{font-size:.46rem}
