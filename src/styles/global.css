@@ -243,7 +243,7 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
  .anime-detail-meta .anime-detail-meta-type strong{font-size:.82rem}
  .anime-detail-genres{grid-column:2;grid-row:3;margin-top:.55rem;gap:.3rem}
  .anime-detail-genres span{padding:.3rem .42rem;font-size:.44rem}
- .anime-detail-state{grid-column:1 / -1;grid-row:4;margin-top:.15rem}
+ .anime-detail-state{grid-column:2;grid-row:4;margin-top:.15rem;align-self:start}
  .anime-detail-synopsis-wrap{grid-column:1 / -1;grid-row:5;margin-top:.35rem}
  .anime-detail-synopsis{font-size:.9rem;line-height:1.62}
  .anime-detail-translate{font-size:.46rem}
