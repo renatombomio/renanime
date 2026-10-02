@@ -113,6 +113,16 @@ async function fetchAniListRecommendations(mediaId:number){
   }catch{return []}
 }
 
+function getSeasonCount(media: Media){
+  if(media.format==="MOVIE") return null;
+  const relatedTv=(media.relations?.edges??[])
+    .filter((edge)=>edge.relationType==="PREQUEL"||edge.relationType==="SEQUEL")
+    .filter((edge)=>edge.node?.format==="TV")
+    .map((edge)=>edge.node?.id)
+    .filter((id): id is number => typeof id==="number");
+  return Math.max(1,new Set(relatedTv).size+1);
+}
+
 async function findAnime(entry: LibraryEntry): Promise<Media|null> {
   try {
     const cached=sessionStorage.getItem(CACHE_PREFIX+entry.animeId);
@@ -262,14 +272,15 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
   <span><small>LANZAMIENTO</small><strong>{date(media?.startDate)}</strong></span>
   {media?.format!=="MOVIE"&&media?.episodes&&<span><small>EPISODIOS</small><strong>{media.episodes}</strong></span>}
   {media?.duration&&<span><small>{media?.format==="MOVIE"?"DURACIÓN":"DURACIÓN / EPISODIO"}</small><strong>{media.duration} min</strong></span>}
+  {media?.format!=="MOVIE"&&getSeasonCount(media)&&<span><small>TEMPORADAS</small><strong>{getSeasonCount(media)}</strong></span>}
 </div>
       {media?.id && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>}
        {media?.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map((genre)=><span key={genre}>{genre}</span>)}</div>}
-       <div className="anime-detail-state">
+       {media?.format!=="MOVIE"&&<div className="anime-detail-state">
         <span>{personal.status==="WATCHED"?"Visto":personal.status==="PENDING"?"Pendiente":"En mi archivo"}</span>
         {personal.recommended&&<span>Recomendado por Ren</span>}
         {status(media?.status)&&<span>{status(media?.status)}</span>}
-       </div>
+       </div>}
        </div>
       </div>
        <div className="anime-detail-synopsis-wrap">
