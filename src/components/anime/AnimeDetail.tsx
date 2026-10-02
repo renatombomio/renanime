@@ -25,7 +25,9 @@ interface Media {
 
 const ENDPOINT="https://graphql.anilist.co";
 const CACHE_PREFIX="renanime:detail:v6:";
-const TRANSLATION_PREFIX="renanime:translation:en-es:v1:";
+const TRANSLATION_PREFIX="renanime:translation:en-es:v1:";\nconst FRANCHISE_MEDIA_ALIASES: Record<string, number> = {
+  "movie-063": 178788,
+};
 
 function cleanDescription(text:string){
   return text
