@@ -3,6 +3,7 @@ import type { LibraryEntry } from "../../types/personal";
 import { getLibrary } from "../../data/library";
 import { getPersonalFranchiseEntries } from "../../data/franchise";
 import PersonalLibraryActions from "../personal-library/PersonalLibraryActions";
+import { fetchFallbackPoster } from "../../lib/api/poster-fallback";
 
 interface Media {
   id: number;
@@ -194,18 +195,31 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
 
       const payload = await response.json();
 
-      batch.forEach((entry, index) => {
+      for (const [index, entry] of batch.entries()) {
         const media = payload.data?.["a" + index]?.media?.[0] ?? null;
-        result[entry.animeId] = media;
+        if (media?.coverImage?.extraLarge || media?.coverImage?.large) {
+          result[entry.animeId] = media;
+        } else {
+          const poster = await fetchFallbackPoster(entry.title);
+          result[entry.animeId] = poster
+            ? {
+                ...(media ?? {}),
+                id: media?.id ?? 0,
+                title: media?.title ?? { romaji: entry.title, english: entry.title },
+                format: media?.format ?? entry.format,
+                coverImage: { extraLarge: poster, large: poster },
+              }
+            : media;
+        }
 
         // Never persist a failed lookup as null: a temporary API failure
         // must not permanently hide a franchise poster for this session.
-        if (media) {
+        if (result[entry.animeId]) {
           try {
-            sessionStorage.setItem(CACHE_PREFIX + entry.animeId, JSON.stringify(media));
+            sessionStorage.setItem(CACHE_PREFIX + entry.animeId, JSON.stringify(result[entry.animeId]));
           } catch {}
         }
-      });
+      }
     } catch {}
   }
 
