@@ -202,9 +202,9 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
 .anime-detail-franchise-copy span{color:var(--color-muted-400);font-family:var(--font-meta);font-size:.47rem;letter-spacing:.03em}
 
 @media(min-width:761px){
- .anime-detail:not(.anime-detail--ghibli) .anime-detail-copy{display:contents}
- .anime-detail:not(.anime-detail--ghibli) .anime-detail-copy-main{grid-column:2;min-width:0;max-width:52rem;padding-bottom:0}
- .anime-detail:not(.anime-detail--ghibli) .anime-detail-synopsis-wrap{grid-column:3;grid-row:1;align-self:start}
+ .anime-detail-copy{display:contents}
+ .anime-detail-copy-main{grid-column:2;min-width:0;max-width:52rem;padding-bottom:0}
+ .anime-detail-synopsis-wrap{grid-column:3;grid-row:1;align-self:start}
 }
 @media(min-width:1051px){
  .anime-detail .anime-detail-trailer{
