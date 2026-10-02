@@ -65,9 +65,6 @@ function date(value:Media["startDate"]){
  if(!value.month||!value.day)return String(value.year);
  return new Date(value.year,value.month-1,value.day).toLocaleDateString("es-ES",{day:"numeric",month:"long",year:"numeric"});
 }
-function status(value:string|null|undefined){
- return value==="FINISHED"?"Finalizado":value==="RELEASING"?"En emisión":value==="NOT_YET_RELEASED"?"Próximamente":value==="HIATUS"?"En pausa":value==="CANCELLED"?"Cancelado":"";
-}
 
 
 function getSeasonCount(media: Media){
@@ -224,7 +221,6 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
        </div>
      {media.id > 0 && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} /></div>}
        {media.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map(genre=><span key={genre}>{genre}</span>)}</div>}
-       {media.format!=="MOVIE"&&<div className="anime-detail-state">{status(media.status)&&<span>{status(media.status)}</span>}</div>}
       </div>
      </div>
 
