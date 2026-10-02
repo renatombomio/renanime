@@ -242,12 +242,12 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
         .filter((item): item is NonNullable<typeof item> => Boolean(item))
         .filter((item) => item.id !== media.id && !seen.has(item.id) && seen.add(item.id))
         .slice(0, 8);
-       return <section className="anime-detail-recommendations" aria-label="Recomendaciones">
+       return items.length ? <section className="anime-detail-recommendations" aria-label="Recomendaciones">
         <div className="anime-detail-recommendations-head">
          <span className="anime-detail-label">Si has visto este anime, tal vez te guste…</span>
         </div>
         <div className="anime-detail-recommendations-track">
-         {items.length ? items.map((item) => {
+         {items.map((item) => {
           const recTitle=item.title?.romaji||item.title?.english||"Sin título";
           const recImage=item.coverImage?.extraLarge||item.coverImage?.large;
           return <a className="anime-detail-recommendation" href={"/anime/search?id="+item.id+"&from="+(from==="ghibli"?"ghibli":"anime")} key={item.id}>
@@ -255,9 +255,9 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
            <span className="anime-detail-recommendation-title">{recTitle}</span>
            <span className="anime-detail-recommendation-meta">{item.format==="MOVIE"?"Film":"Series"}{item.startDate?.year?" · "+item.startDate.year:""}</span>
           </a>;
-         }) : null}
+         })}
         </div>
-       </section>;
+       </section> : null;
       })()}
     </div>
    </div>
