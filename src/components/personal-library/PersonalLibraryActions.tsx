@@ -8,7 +8,7 @@ import {
 } from "../../data/personal-library";
 
 interface Props {
-  animeId: number;
+  animeId: number | string;
 }
 
 export default function PersonalLibraryActions({ animeId }: Props) {
