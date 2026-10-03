@@ -2,6 +2,15 @@ const JIKAN_BASE = "https://api.jikan.moe/v4";
 const KITSU_BASE = "https://kitsu.io/api/edge";
 const MIN_REQUEST_INTERVAL = 700;
 
+function titleSimilarity(query: string, candidate: string): number {
+  const wanted = new Set(query.toLocaleLowerCase("en").replace(/[^a-z0-9]+/g, " ").split(/\s+/).filter((token) => token.length > 2));
+  const found = new Set(candidate.toLocaleLowerCase("en").replace(/[^a-z0-9]+/g, " ").split(/\s+/).filter((token) => token.length > 2));
+  if (!wanted.size || !found.size) return 0;
+  let overlap = 0;
+  wanted.forEach((token) => { if (found.has(token)) overlap += 1; });
+  return overlap / wanted.size;
+}
+
 const cache = new Map<string, string | null>();
 const pending = new Map<string, Promise<string | null>>();
 let lastRequestAt = 0;
@@ -44,7 +53,7 @@ async function requestJikan(query: string): Promise<string | null> {
         .filter(Boolean)
         .some((value: string) => value.toLocaleLowerCase("en") === normalized)
     );
-    const item = exact ?? items[0];
+    const item = exact ?? items.find((candidate: any) => {\n      const candidateTitle = [candidate?.title, candidate?.title_english, ...(candidate?.title_synonyms ?? [])].filter(Boolean).join(" ");\n      return titleSimilarity(query, candidateTitle) >= 0.5;\n    });
     return item?.images?.webp?.large_image_url
       || item?.images?.jpg?.large_image_url
       || item?.images?.webp?.image_url
@@ -82,7 +91,7 @@ async function requestKitsu(query: string): Promise<string | null> {
         .some((value: string) => value.toLocaleLowerCase("en") === normalized);
     });
 
-    const item = exact ?? items[0];
+    const item = exact ?? items.find((candidate: any) => {\n      const attributes = candidate?.attributes;\n      const candidateTitle = [attributes?.canonicalTitle, attributes?.titles?.en, attributes?.titles?.en_jp, attributes?.titles?.ja_jp].filter(Boolean).join(" ");\n      return titleSimilarity(query, candidateTitle) >= 0.5;\n    });
     const image = item?.attributes?.posterImage;
     return image?.large || image?.medium || image?.small || image?.original || null;
   } catch {
