@@ -3,7 +3,7 @@ import type { LibraryEntry } from "../../types/personal";
 import { getLibrary } from "../../data/library";
 import { getPersonalFranchiseEntries } from "../../data/franchise";
 import PersonalLibraryActions from "../personal-library/PersonalLibraryActions";
-import { fetchFallbackPoster } from "../../lib/api/poster-fallback";
+import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
 
 interface Media {
   id: number;
@@ -27,10 +27,6 @@ const ENDPOINT="https://graphql.anilist.co";
 const CACHE_PREFIX="renanime:detail:v8:";
 const TRANSLATION_PREFIX="renanime:translation:en-es:v1:";
 const FRANCHISE_MEDIA_ALIASES: Record<string, number> = {
-  "movie-001": 100723,
-  "movie-002": 108553,
-  "movie-003": 126659,
-  "movie-004": 168013,
   "movie-063": 178788,
 };
 
@@ -112,7 +108,7 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
   const directId=FRANCHISE_MEDIA_ALIASES[entry.animeId];
   const query=directId
     ? `query DetailById($id:Int!){Media(id:$id,type:ANIME){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}} relations{edges{relationType node{id type format title{romaji english} coverImage{extraLarge large}}}}}}`
-    : `query Detail($search:String!){Page(page:1,perPage:1){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}} relations{edges{relationType node{id type format title{romaji english} coverImage{extraLarge large}}}}}}}`;
+    : `query Detail($search:String!){Page(page:1,perPage:10){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}} relations{edges{relationType node{id type format title{romaji english} coverImage{extraLarge large}}}}}}}`;
 
   try {
     const body=directId
@@ -121,7 +117,8 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
     const response=await fetch(ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(body)});
     if(!response.ok) return null;
     const payload=await response.json();
-    const media=directId ? (payload.data?.Media??null) : (payload.data?.Page?.media?.[0]??null);
+    const candidates=directId ? (payload.data?.Media ? [payload.data.Media] : []) : (payload.data?.Page?.media ?? []);
+    const media=selectBestAnimeCandidate(candidates, entry.title, entry.format);
     if(!media)return null;
     // The detail query already includes recommendations; avoid a second AniList request.
     try{sessionStorage.setItem(CACHE_PREFIX+entry.animeId,JSON.stringify(media));}catch{}
@@ -203,11 +200,12 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
       const payload = await response.json();
 
       for (const [index, entry] of batch.entries()) {
-        const media = payload.data?.["a" + index]?.media?.[0] ?? null;
+        const candidates = payload.data?.["a" + index]?.media ?? [];
+        const media = selectBestAnimeCandidate(candidates, entry.title, entry.format);
         if (media?.coverImage?.extraLarge || media?.coverImage?.large) {
           result[entry.animeId] = media;
         } else {
-          const poster = await fetchFallbackPoster(entry.title);
+          const poster = await fetchFallbackPoster(entry.title, entry.format);
           result[entry.animeId] = poster
             ? {
                 ...(media ?? {}),
