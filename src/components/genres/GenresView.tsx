@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { LibraryEntry } from "../../types/personal";
 import { buildGenreCatalog } from "../../lib/anime/genre-catalog";
+import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
 
 interface Props {
   entries: LibraryEntry[];
@@ -67,8 +68,13 @@ async function fetchMediaMetadata(entries: LibraryEntry[], includeImages = false
       const payload = await response.json();
 
       batch.forEach((entry, index) => {
-        const media = payload.data?.["a" + index]?.media?.[0] as GenreMedia | undefined;
+        const candidates = payload.data?.["a" + index]?.media ?? [];
+        const media = selectBestAnimeCandidate(candidates, entry.title, entry.format) as GenreMedia | null;
         result[entry.animeId] = media ?? { genres: [] };
+        if (includeImages && !media?.coverImage?.large && !media?.coverImage?.extraLarge) {
+          const poster = await fetchFallbackPoster(entry.title, entry.format);
+          if (poster) result[entry.animeId] = { ...(media ?? { genres: [] }), title: media?.title ?? { romaji: entry.title }, format: media?.format ?? entry.format, coverImage: { large: poster, extraLarge: poster } };
+        }
         if (media) {
           try { sessionStorage.setItem(getCacheKey(entry), JSON.stringify(media)); } catch {}
         }
