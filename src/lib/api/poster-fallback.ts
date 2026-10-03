@@ -84,11 +84,6 @@ async function requestWithTimeout(url: URL, headers?: HeadersInit): Promise<Resp
 async function requestAniList(query: string, format?: PosterFormat): Promise<string | null> {
   const gql = `query PosterSearch($search:String!,$perPage:Int!,$format:MediaFormat){Page(page:1,perPage:$perPage){media(search:$search,type:ANIME,format:$format,sort:SEARCH_MATCH){title{romaji english} format coverImage{extraLarge large}}}}`;
   try {
-    const response = await requestWithTimeout(new URL(ANILIST_BASE), { "Content-Type": "application/json", Accept: "application/json" });
-    if (!response) return null;
-  } catch { return null; }
-
-  try {
     const response = await fetch(ANILIST_BASE, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
