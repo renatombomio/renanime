@@ -24,9 +24,13 @@ interface Media {
 }
 
 const ENDPOINT="https://graphql.anilist.co";
-const CACHE_PREFIX="renanime:detail:v7:";
+const CACHE_PREFIX="renanime:detail:v8:";
 const TRANSLATION_PREFIX="renanime:translation:en-es:v1:";
 const FRANCHISE_MEDIA_ALIASES: Record<string, number> = {
+  "movie-001": 100723,
+  "movie-002": 108553,
+  "movie-003": 126659,
+  "movie-004": 168013,
   "movie-063": 178788,
 };
 
