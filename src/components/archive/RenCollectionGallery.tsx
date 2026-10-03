@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { fetchFallbackPoster } from "../../lib/api/poster-fallback";
 
 interface Entry {
   animeId: string;
@@ -22,7 +23,13 @@ type Filter = "ALL" | "SERIES" | "MOVIES";
 type Sort = "ADDED" | "TITLE" | "YEAR" | "SCORE";
 
 const PAGE_SIZE = 15;
-const CACHE_PREFIX = "renanime:collection:v4:";
+const CACHE_PREFIX = "renanime:collection:v5:";
+const ANILIST_ID_ALIASES: Record<string, number> = {
+  "movie-001": 100723,
+  "movie-002": 108553,
+  "movie-003": 126659,
+  "movie-004": 168013,
+};
 
 async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null>> {
   const result: Record<string, Media | null> = {};
@@ -51,7 +58,12 @@ async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null
       const key = "s" + index;
       const alias = "a" + index;
       variables[key] = entry.title;
-      return `${alias}: Page(page: 1, perPage: 1) { media(search: $${key}, type: ANIME, sort: SEARCH_MATCH) { title { romaji english } startDate { year month day } format coverImage { extraLarge large } } }`;
+      const directId = ANILIST_ID_ALIASES[entry.animeId];
+      if (directId) {
+        return `${alias}: Media(id: ${directId}, type: ANIME) { title { romaji english } startDate { year month day } format coverImage { extraLarge large } }`;
+      }
+      const formatFilter = entry.format === "MOVIE" ? ", format: MOVIE" : "";
+      return `${alias}: Page(page: 1, perPage: 1) { media(search: ${key}, type: ANIME${formatFilter}, sort: SEARCH_MATCH) { title { romaji english } startDate { year month day } format coverImage { extraLarge large } } }`;
     }).join("\n");
     const definitions = chunk.map((_, index) => `$s${index}: String!`).join(", ");
 
@@ -65,7 +77,9 @@ async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null
       const payload = await response.json();
 
       chunk.forEach((entry, index) => {
-        const media = payload.data?.["a" + index]?.media?.[0] ?? null;
+        const media = ANILIST_ID_ALIASES[entry.animeId]
+          ? (payload.data?.["a" + index] ?? null)
+          : (payload.data?.["a" + index]?.media?.[0] ?? null);
         result[entry.animeId] = media;
       });
       for (const entry of chunk) {
