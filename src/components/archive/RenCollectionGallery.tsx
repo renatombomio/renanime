@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { fetchFallbackPoster } from "../../lib/api/poster-fallback";
+import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
 
 interface Entry {
   animeId: string;
@@ -23,13 +23,7 @@ type Filter = "ALL" | "SERIES" | "MOVIES";
 type Sort = "ADDED" | "TITLE" | "YEAR" | "SCORE";
 
 const PAGE_SIZE = 15;
-const CACHE_PREFIX = "renanime:collection:v5:";
-const ANILIST_ID_ALIASES: Record<string, number> = {
-  "movie-001": 100723,
-  "movie-002": 108553,
-  "movie-003": 126659,
-  "movie-004": 168013,
-};
+const CACHE_PREFIX = "renanime:collection:v6:";
 
 async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null>> {
   const result: Record<string, Media | null> = {};
@@ -77,15 +71,13 @@ async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null
       const payload = await response.json();
 
       chunk.forEach((entry, index) => {
-        const media = ANILIST_ID_ALIASES[entry.animeId]
-          ? (payload.data?.["a" + index] ?? null)
-          : (payload.data?.["a" + index]?.media?.[0] ?? null);
-        result[entry.animeId] = media;
+        const candidates = payload.data?.["a" + index]?.media ?? [];
+        result[entry.animeId] = selectBestAnimeCandidate(candidates, entry.title, entry.format);
       });
       for (const entry of chunk) {
         const current = result[entry.animeId];
         if (!current?.coverImage?.extraLarge && !current?.coverImage?.large) {
-          const poster = await fetchFallbackPoster(entry.title);
+          const poster = await fetchFallbackPoster(entry.title, entry.format);
           if (poster) result[entry.animeId] = { ...(current ?? {}), coverImage: { extraLarge: poster, large: poster } };
         }
         try {
