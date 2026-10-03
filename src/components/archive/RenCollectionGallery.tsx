@@ -52,12 +52,8 @@ async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null
       const key = "s" + index;
       const alias = "a" + index;
       variables[key] = entry.title;
-      const directId = ANILIST_ID_ALIASES[entry.animeId];
-      if (directId) {
-        return `${alias}: Media(id: ${directId}, type: ANIME) { title { romaji english } startDate { year month day } format coverImage { extraLarge large } }`;
-      }
       const formatFilter = entry.format === "MOVIE" ? ", format: MOVIE" : "";
-      return `${alias}: Page(page: 1, perPage: 1) { media(search: ${key}, type: ANIME${formatFilter}, sort: SEARCH_MATCH) { title { romaji english } startDate { year month day } format coverImage { extraLarge large } } }`;
+      return `${alias}: Page(page: 1, perPage: 10) { media(search: $${key}, type: ANIME${formatFilter}, sort: SEARCH_MATCH) { title { romaji english } startDate { year month day } format coverImage { extraLarge large } } }`;
     }).join("\n");
     const definitions = chunk.map((_, index) => `$s${index}: String!`).join(", ");
 
