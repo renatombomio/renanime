@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
 
 interface FavoriteEntry {
   animeId: string;
@@ -11,6 +12,7 @@ interface Media {
   title: { romaji?: string | null; english?: string | null };
   startDate?: { year?: number | null; month?: number | null; day?: number | null } | null;
   coverImage?: { extraLarge?: string | null; large?: string | null };
+  format?: string | null;
 }
 
 interface Props {
@@ -38,7 +40,7 @@ export default function FavoritesView({ entries, recommendations }: Props) {
         const variable = "s" + index;
         variables[variable] = entry.title;
 
-        return key + ": Page(page: 1, perPage: 1) { media(search: $" + variable + ", type: ANIME, sort: SEARCH_MATCH) { title { romaji english } startDate { year month day } coverImage { extraLarge large } } }";
+        return key + ": Page(page: 1, perPage: 10) { media(search: $" + variable + ", type: ANIME, sort: SEARCH_MATCH) { title { romaji english } startDate { year month day } coverImage { extraLarge large } } }";
       }).join("\n");
 
       const definitions = batch.map((_, index) => "$s" + index + ": String!").join(", ");
@@ -61,7 +63,13 @@ export default function FavoritesView({ entries, recommendations }: Props) {
       const result: Record<string, Media | null> = {};
 
       batch.forEach((entry, index) => {
-        result[entry.animeId] = payload.data?.["a" + index]?.media?.[0] ?? null;
+        const candidates = payload.data?.["a" + index]?.media ?? [];
+        const selected = selectBestAnimeCandidate(candidates, entry.title, entry.format);
+        result[entry.animeId] = selected ?? null;
+        if (!selected?.coverImage?.extraLarge && !selected?.coverImage?.large) {
+          const poster = await fetchFallbackPoster(entry.title, entry.format);
+          if (poster) result[entry.animeId] = { ...(selected ?? {}), title: selected?.title ?? { romaji: entry.title }, format: selected?.format ?? entry.format, coverImage: { extraLarge: poster, large: poster } };
+        }
       });
 
       if (!cancelled) {
