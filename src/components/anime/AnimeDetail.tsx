@@ -140,9 +140,8 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
 
     if(!mediaId) return null;
 
-    // Once the identity is known, fetch the complete Media object by ID.
-    // This guarantees that franchise relations and recommendations are
-    // retrieved from the exact work rather than from a search candidate.
+    // Fetch the core Media object separately from relations/recommendations.
+    // A failure in either connection must never make the whole detail disappear.
     const detailQuery=`query DetailById($id:Int!){
       Media(id:$id,type:ANIME){
         id
@@ -159,29 +158,6 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
         coverImage{extraLarge large}
         bannerImage
         trailer{id site thumbnail}
-        recommendations(sort:RATING_DESC,page:1,perPage:12){
-          nodes{
-            mediaRecommendation{
-              id title{romaji english native} synonyms
-              coverImage{extraLarge large}
-              format
-              startDate{year}
-            }
-          }
-        }
-        relations(page:1,perPage:25){
-          edges{
-            relationType
-            node{
-              id
-              type
-              format
-              title{romaji english native}
-              synonyms
-              coverImage{extraLarge large}
-            }
-          }
-        }
       }
     }`;
     const response=await fetch(ENDPOINT,{
@@ -193,6 +169,70 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
     const payload=await response.json();
     const media=payload.data?.Media ?? null;
     if(!media) return null;
+
+    // Relations are fetched independently. This is the important part:
+    // AniList's relations connection can fail without taking down the detail.
+    try{
+      const relationsQuery=`query DetailRelations($id:Int!){
+        Media(id:$id,type:ANIME){
+          relations(page:1,perPage:25){
+            edges{
+              relationType
+              node{
+                id
+                type
+                format
+                title{romaji english native}
+                synonyms
+                coverImage{extraLarge large}
+              }
+            }
+          }
+        }
+      }`;
+      const relationsResponse=await fetch(ENDPOINT,{
+        method:"POST",
+        headers:{"Content-Type":"application/json",Accept:"application/json"},
+        body:JSON.stringify({query:relationsQuery,variables:{id:mediaId}}),
+      });
+      if(relationsResponse.ok){
+        const relationsPayload=await relationsResponse.json();
+        media.relations=relationsPayload.data?.Media?.relations ?? {edges:[]};
+      }
+    }catch{
+      media.relations={edges:[]};
+    }
+
+    // Recommendations are also independent, so they cannot block relations.
+    try{
+      const recommendationsQuery=`query DetailRecommendations($id:Int!){
+        Media(id:$id,type:ANIME){
+          recommendations(sort:RATING_DESC,page:1,perPage:12){
+            nodes{
+              mediaRecommendation{
+                id
+                title{romaji english native}
+                synonyms
+                coverImage{extraLarge large}
+                format
+                startDate{year}
+              }
+            }
+          }
+        }
+      }`;
+      const recommendationsResponse=await fetch(ENDPOINT,{
+        method:"POST",
+        headers:{"Content-Type":"application/json",Accept:"application/json"},
+        body:JSON.stringify({query:recommendationsQuery,variables:{id:mediaId}}),
+      });
+      if(recommendationsResponse.ok){
+        const recommendationsPayload=await recommendationsResponse.json();
+        media.recommendations=recommendationsPayload.data?.Media?.recommendations ?? {nodes:[]};
+      }
+    }catch{
+      media.recommendations={nodes:[]};
+    }
 
     try{sessionStorage.setItem(CACHE_PREFIX+entry.animeId,JSON.stringify(media));}catch{}
     return media;
