@@ -24,7 +24,8 @@ interface Media {
 }
 
 const ENDPOINT="https://graphql.anilist.co";
-const CACHE_PREFIX="renanime:detail:v10:";
+const CACHE_PREFIX="renanime:detail:v11:";
+const FRANCHISE_CACHE_PREFIX="renanime:franchise:v1:";
 const TRANSLATION_PREFIX="renanime:translation:en-es:v1:";
 const FRANCHISE_MEDIA_ALIASES: Record<string, number> = {
   "movie-063": 178788,
@@ -246,14 +247,14 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
 
   for (const entry of entries) {
     try {
-      const cached = sessionStorage.getItem(CACHE_PREFIX + entry.animeId);
+      const cached = sessionStorage.getItem(FRANCHISE_CACHE_PREFIX + entry.animeId);
       if (cached) {
         const parsed = JSON.parse(cached) as Media|null;
         if (parsed) {
           result[entry.animeId] = parsed;
           continue;
         }
-        sessionStorage.removeItem(CACHE_PREFIX + entry.animeId);
+        sessionStorage.removeItem(FRANCHISE_CACHE_PREFIX + entry.animeId);
       }
     } catch {}
     unresolved.push(entry);
@@ -333,7 +334,7 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
 
         if (result[entry.animeId]) {
           try {
-            sessionStorage.setItem(CACHE_PREFIX + entry.animeId, JSON.stringify(result[entry.animeId]));
+            sessionStorage.setItem(FRANCHISE_CACHE_PREFIX + entry.animeId, JSON.stringify(result[entry.animeId]));
           } catch {}
         }
       }
@@ -352,18 +353,57 @@ function date(value:Media["startDate"]){
 function format(value:string|null|undefined){return value==="MOVIE"?"Película":value==="TV"?"Serie":value||"Anime";}
 
 export default function AnimeDetail({entry}:{entry:LibraryEntry}){
- const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translatedSynopsis,setTranslatedSynopsis]=useState(""),[translating,setTranslating]=useState(false),[franchiseMedia,setFranchiseMedia]=useState<Record<string,Media|null>>({});
+ const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translatedSynopsis,setTranslatedSynopsis]=useState(""),[translating,setTranslating]=useState(false),[franchiseMedia,setFranchiseMedia]=useState<Record<string,Media|null>>({}),[relatedMedia,setRelatedMedia]=useState<NonNullable<Media["relations"]>["edges"]>([]);
  const cleanSynopsis=media?.description?cleanDescription(media.description):"";
  const hasSynopsis=cleanSynopsis.replace(/[\s\\n\\r]+/g,"").length>0;
  const franchiseEntries=getPersonalFranchiseEntries(entry,getLibrary());
  useEffect(()=>{
   let cancelled=false;
-  findAnime(entry).then(value=>{if(!cancelled)setMedia(value)}).finally(()=>{if(!cancelled)setLoading(false)});
-  if(franchiseEntries.length>1){
-   findAnimeBatch(franchiseEntries).then(results=>{
+  setRelatedMedia([]);
+  findAnime(entry).then(async value=>{
+    if(cancelled)return;
+    setMedia(value);
+    if(value?.id){
+      try{
+        const relationsQuery=`query DetailRelationsDirect($id:Int!){
+          Media(id:$id,type:ANIME){
+            relations(page:1,perPage:25){
+              edges{
+                relationType
+                node{
+                  id
+                  type
+                  format
+                  title{romaji english native}
+                  synonyms
+                  coverImage{extraLarge large}
+                }
+              }
+            }
+          }
+        }`;
+        const response=await fetch(ENDPOINT,{
+          method:"POST",
+          headers:{"Content-Type":"application/json",Accept:"application/json"},
+          body:JSON.stringify({query:relationsQuery,variables:{id:value.id}}),
+        });
+        if(!response.ok) throw new Error("relations");
+        const payload=await response.json();
+        const edges=payload.data?.Media?.relations?.edges;
+        if(!cancelled && Array.isArray(edges)) setRelatedMedia(edges);
+      }catch{
+        // Keep the section absent only when AniList genuinely cannot provide it.
+      }
+    }
+  }).finally(()=>{if(!cancelled)setLoading(false)});
+  const franchiseCandidates=franchiseEntries.filter(candidate=>candidate.animeId!==entry.animeId);
+  if(franchiseCandidates.length){
+   findAnimeBatch(franchiseCandidates).then(results=>{
     if(cancelled)return;
     setFranchiseMedia(results);
    });
+  }else{
+   setFranchiseMedia({});
   }
   return()=>{cancelled=true};
  },[entry.animeId]);
@@ -372,7 +412,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
  const poster=media?.coverImage?.extraLarge||media?.coverImage?.large;
  const banner=media?.bannerImage||poster;
  const personal=entry.state;
- const relations=(media?.relations?.edges??[]).filter(edge=>edge.node?.type==="ANIME"&&edge.node.id!==media?.id);
+ const relations=relatedMedia.filter(edge=>edge?.node?.type==="ANIME"&&edge.node.id!==media?.id);
  return <div className="anime-detail">
   <style>{`
     .anime-detail:not(.anime-detail--ghibli) .anime-detail-synopsis-wrap{max-width:42rem;margin-top:1.35rem;padding:1rem 1.15rem 1.1rem;border:1px solid rgba(245,242,236,.18);border-radius:14px;background:rgba(9,9,9,.42);box-shadow:0 12px 34px rgba(0,0,0,.16);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
