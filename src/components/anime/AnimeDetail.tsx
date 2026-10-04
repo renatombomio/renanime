@@ -24,7 +24,7 @@ interface Media {
 }
 
 const ENDPOINT="https://graphql.anilist.co";
-const CACHE_PREFIX="renanime:detail:v9:";
+const CACHE_PREFIX="renanime:detail:v10:";
 const TRANSLATION_PREFIX="renanime:translation:en-es:v1:";
 const FRANCHISE_MEDIA_ALIASES: Record<string, number> = {
   "movie-063": 178788,
@@ -102,12 +102,12 @@ function getSeasonCount(media: Media|null){
 async function findAnime(entry: LibraryEntry): Promise<Media|null> {
   try {
     const cached=sessionStorage.getItem(CACHE_PREFIX+entry.animeId);
-    if(cached) return JSON.parse(cached);
+    if(cached){ const parsed=JSON.parse(cached); if(parsed && "relations" in parsed && "recommendations" in parsed) return parsed; sessionStorage.removeItem(CACHE_PREFIX+entry.animeId); }
   } catch {}
 
   const directId=FRANCHISE_MEDIA_ALIASES[entry.animeId];
   const query=directId
-    ? `query DetailById($id:Int!){Media(id:$id,type:ANIME){id title{romaji english native} synonyms description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english native} synonyms coverImage{extraLarge large} format startDate{year}}}} relations{edges{relationType node{id type format title{romaji english native} synonyms coverImage{extraLarge large}}}}}}`
+    ? `query DetailById($id:Int!){Media(id:$id,type:ANIME){id title{romaji english native} synonyms description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english native} synonyms coverImage{extraLarge large} format startDate{year}}}} relations(page:1,perPage:25){edges{relationType node{id type format title{romaji english native} synonyms coverImage{extraLarge large}}}}}}`
     : `query Detail($search:String!){Page(page:1,perPage:10){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english native} synonyms description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english native} synonyms coverImage{extraLarge large} format startDate{year}}}} relations{edges{relationType node{id type format title{romaji english native} synonyms coverImage{extraLarge large}}}}}}}`;
 
   try {
@@ -351,15 +351,15 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
    </div>
   </section>}
   {relations.length>0&&<section className="anime-detail-related">
-   <div className="anime-detail-related-header"><span className="anime-detail-label">Universo</span><h2>Relacionado</h2></div>
+   <div className="anime-detail-related-header"><span className="anime-detail-label">Universo</span><h2>Franquicia</h2></div>
    <div className="anime-detail-related-grid">
-    {relations.slice(0,8).map((relation,index)=>{
+    {relations.slice(0,12).map((relation,index)=>{
       const node=relation.node;
       if(!node) return null;
-      const label=relation.relationType==="SEQUEL"?"Secuela":relation.relationType==="PREQUEL"?"Precuela":relation.relationType==="SIDE_STORY"?"Historia paralela":relation.relationType==="SPIN_OFF"?"Spin-off":relation.relationType==="ALTERNATIVE"?"Alternativa":"Relacionado";
+      const label=relation.relationType==="SEQUEL"?"Secuela":relation.relationType==="PREQUEL"?"Precuela":relation.relationType==="SIDE_STORY"?"Historia paralela":relation.relationType==="SPIN_OFF"?"Spin-off":relation.relationType==="ALTERNATIVE"?"Alternativa":relation.relationType==="PARENT"?"Principal":relation.relationType==="ADAPTATION"?"Adaptación":"Relacionado";
       return <a className="anime-detail-related-card" href={"/anime/search?id="+node.id+"&from=anime&back=/anime/"+entry.animeId} key={node.id+"-"+index}>
         <div className="anime-detail-related-poster">{node.coverImage?.extraLarge||node.coverImage?.large?<img src={node.coverImage.extraLarge||node.coverImage.large||""} alt=""/>:<div/>}</div>
-        <div className="anime-detail-related-copy"><strong>{node.title?.romaji||node.title?.english||"Sin título"}</strong><span>{label} · {node.format==="MOVIE"?"Film":"Series"}</span></div>
+        <div className="anime-detail-related-copy"><strong>{node.title?.romaji||node.title?.english||"Sin título"}</strong><span>{label} · {node.format==="MOVIE"?"Film":node.format==="OVA"?"OVA":node.format==="SPECIAL"?"Especial":"Series"}</span></div>
       </a>;
     })}
    </div>
