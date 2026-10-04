@@ -141,9 +141,9 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
 
     if(!mediaId) return null;
 
-    // Fetch the core Media object separately from relations/recommendations.
-    // A failure in either connection must never make the whole detail disappear.
-    const detailQuery=`query DetailById($id:Int!){
+    // Fetch the complete detail in one request. Keeping relations and recommendations
+    // in the same exact-ID query avoids extra AniList round-trips and rate-limit failures.
+    const detailQuery=\`query DetailById($id:Int!){
       Media(id:$id,type:ANIME){
         id
         title{romaji english native}
@@ -159,8 +159,33 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
         coverImage{extraLarge large}
         bannerImage
         trailer{id site thumbnail}
+        relations(page:1,perPage:25){
+          edges{
+            relationType
+            node{
+              id
+              type
+              format
+              title{romaji english native}
+              synonyms
+              coverImage{extraLarge large}
+            }
+          }
+        }
+        recommendations(sort:RATING_DESC,page:1,perPage:12){
+          nodes{
+            mediaRecommendation{
+              id
+              title{romaji english native}
+              synonyms
+              coverImage{extraLarge large}
+              format
+              startDate{year}
+            }
+          }
+        }
       }
-    }`;
+    }\`;
     const response=await fetch(ENDPOINT,{
       method:"POST",
       headers:{"Content-Type":"application/json",Accept:"application/json"},
@@ -170,70 +195,6 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
     const payload=await response.json();
     const media=payload.data?.Media ?? null;
     if(!media) return null;
-
-    // Relations are fetched independently. This is the important part:
-    // AniList's relations connection can fail without taking down the detail.
-    try{
-      const relationsQuery=`query DetailRelations($id:Int!){
-        Media(id:$id,type:ANIME){
-          relations(page:1,perPage:25){
-            edges{
-              relationType
-              node{
-                id
-                type
-                format
-                title{romaji english native}
-                synonyms
-                coverImage{extraLarge large}
-              }
-            }
-          }
-        }
-      }`;
-      const relationsResponse=await fetch(ENDPOINT,{
-        method:"POST",
-        headers:{"Content-Type":"application/json",Accept:"application/json"},
-        body:JSON.stringify({query:relationsQuery,variables:{id:mediaId}}),
-      });
-      if(relationsResponse.ok){
-        const relationsPayload=await relationsResponse.json();
-        media.relations=relationsPayload.data?.Media?.relations ?? {edges:[]};
-      }
-    }catch{
-      media.relations={edges:[]};
-    }
-
-    // Recommendations are also independent, so they cannot block relations.
-    try{
-      const recommendationsQuery=`query DetailRecommendations($id:Int!){
-        Media(id:$id,type:ANIME){
-          recommendations(sort:RATING_DESC,page:1,perPage:12){
-            nodes{
-              mediaRecommendation{
-                id
-                title{romaji english native}
-                synonyms
-                coverImage{extraLarge large}
-                format
-                startDate{year}
-              }
-            }
-          }
-        }
-      }`;
-      const recommendationsResponse=await fetch(ENDPOINT,{
-        method:"POST",
-        headers:{"Content-Type":"application/json",Accept:"application/json"},
-        body:JSON.stringify({query:recommendationsQuery,variables:{id:mediaId}}),
-      });
-      if(recommendationsResponse.ok){
-        const recommendationsPayload=await recommendationsResponse.json();
-        media.recommendations=recommendationsPayload.data?.Media?.recommendations ?? {nodes:[]};
-      }
-    }catch{
-      media.recommendations={nodes:[]};
-    }
 
     try{sessionStorage.setItem(CACHE_PREFIX+entry.animeId,JSON.stringify(media));}catch{}
     return media;
@@ -353,48 +314,15 @@ function date(value:Media["startDate"]){
 function format(value:string|null|undefined){return value==="MOVIE"?"Película":value==="TV"?"Serie":value||"Anime";}
 
 export default function AnimeDetail({entry}:{entry:LibraryEntry}){
- const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translatedSynopsis,setTranslatedSynopsis]=useState(""),[translating,setTranslating]=useState(false),[franchiseMedia,setFranchiseMedia]=useState<Record<string,Media|null>>({}),[relatedMedia,setRelatedMedia]=useState<NonNullable<Media["relations"]>["edges"]>([]);
+ const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translatedSynopsis,setTranslatedSynopsis]=useState(""),[translating,setTranslating]=useState(false),[franchiseMedia,setFranchiseMedia]=useState<Record<string,Media|null>>({});
  const cleanSynopsis=media?.description?cleanDescription(media.description):"";
  const hasSynopsis=cleanSynopsis.replace(/[\s\\n\\r]+/g,"").length>0;
  const franchiseEntries=getPersonalFranchiseEntries(entry,getLibrary());
  useEffect(()=>{
   let cancelled=false;
-  setRelatedMedia([]);
-  findAnime(entry).then(async value=>{
+  findAnime(entry).then(value=>{
     if(cancelled)return;
     setMedia(value);
-    if(value?.id){
-      try{
-        const relationsQuery=`query DetailRelationsDirect($id:Int!){
-          Media(id:$id,type:ANIME){
-            relations(page:1,perPage:25){
-              edges{
-                relationType
-                node{
-                  id
-                  type
-                  format
-                  title{romaji english native}
-                  synonyms
-                  coverImage{extraLarge large}
-                }
-              }
-            }
-          }
-        }`;
-        const response=await fetch(ENDPOINT,{
-          method:"POST",
-          headers:{"Content-Type":"application/json",Accept:"application/json"},
-          body:JSON.stringify({query:relationsQuery,variables:{id:value.id}}),
-        });
-        if(!response.ok) throw new Error("relations");
-        const payload=await response.json();
-        const edges=payload.data?.Media?.relations?.edges;
-        if(!cancelled && Array.isArray(edges)) setRelatedMedia(edges);
-      }catch{
-        // Keep the section absent only when AniList genuinely cannot provide it.
-      }
-    }
   }).finally(()=>{if(!cancelled)setLoading(false)});
   const franchiseCandidates=franchiseEntries.filter(candidate=>candidate.animeId!==entry.animeId);
   if(franchiseCandidates.length){
@@ -412,7 +340,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
  const poster=media?.coverImage?.extraLarge||media?.coverImage?.large;
  const banner=media?.bannerImage||poster;
  const personal=entry.state;
- const relations=relatedMedia.filter(edge=>edge?.node?.type==="ANIME"&&edge.node.id!==media?.id);
+ const relations=(media?.relations?.edges??[]).filter(edge=>edge?.node?.type==="ANIME"&&edge.node.id!==media?.id);
  return <div className="anime-detail">
   <style>{`
     .anime-detail:not(.anime-detail--ghibli) .anime-detail-synopsis-wrap{max-width:42rem;margin-top:1.35rem;padding:1rem 1.15rem 1.1rem;border:1px solid rgba(245,242,236,.18);border-radius:14px;background:rgba(9,9,9,.42);box-shadow:0 12px 34px rgba(0,0,0,.16);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
