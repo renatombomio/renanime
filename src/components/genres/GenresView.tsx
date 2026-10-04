@@ -49,7 +49,7 @@ async function fetchMediaMetadata(entries: LibraryEntry[], includeImages = false
       const key = "s" + index;
       const alias = "a" + index;
       variables[key] = entry.title;
-      return alias + ': Page(page: 1, perPage: 10) { media(search:  + ', type: ANIME, sort: SEARCH_MATCH) { genres coverImage { large extraLarge } title { romaji english } format seasonYear startDate { year month day } } }';
+      return alias + ": Page(page: 1, perPage: 10) { media(search: $" + key + ", type: ANIME, sort: SEARCH_MATCH) { genres coverImage { large extraLarge } title { romaji english native } synonyms format seasonYear startDate { year month day } } }";
     }).join("\n");
 
     const definitions = batch.map((_, index) => "$s" + index + ": String!").join(", ");
