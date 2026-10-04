@@ -67,18 +67,25 @@ async function fetchMediaMetadata(entries: LibraryEntry[], includeImages = false
       if (!response.ok) continue;
       const payload = await response.json();
 
-      batch.forEach((entry, index) => {
+      for (const [index, entry] of batch.entries()) {
         const candidates = payload.data?.["a" + index]?.media ?? [];
         const media = selectBestAnimeCandidate(candidates, entry.title, entry.format) as GenreMedia | null;
         result[entry.animeId] = media ?? { genres: [] };
         if (includeImages && !media?.coverImage?.large && !media?.coverImage?.extraLarge) {
           const poster = await fetchFallbackPoster(entry.title, entry.format);
-          if (poster) result[entry.animeId] = { ...(media ?? { genres: [] }), title: media?.title ?? { romaji: entry.title }, format: media?.format ?? entry.format, coverImage: { large: poster, extraLarge: poster } };
+          if (poster) {
+            result[entry.animeId] = {
+              ...(media ?? { genres: [] }),
+              title: media?.title ?? { romaji: entry.title },
+              format: media?.format ?? entry.format,
+              coverImage: { large: poster, extraLarge: poster },
+            };
+          }
         }
         if (media) {
           try { sessionStorage.setItem(getCacheKey(entry), JSON.stringify(media)); } catch {}
         }
-      });
+      }
     } catch {}
   }
 
