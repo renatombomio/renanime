@@ -17,7 +17,7 @@ interface GenreMedia {
 }
 
 const BATCH_SIZE = 25;
-const CACHE_PREFIX = "renanime:collection:v3:";
+const CACHE_PREFIX = "renanime:collection:v4:";
 
 function getCacheKey(entry: LibraryEntry) {
   return CACHE_PREFIX + entry.title.toLowerCase();
