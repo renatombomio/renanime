@@ -116,7 +116,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
 
   fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(request)})
     .then(r=>r.ok?r.json():Promise.reject())
-    .then(p=>{
+    .then(async p=>{
       const candidates=directId ? (p.data?.Media ? [p.data.Media] : []) : (p.data?.Page?.media ?? []);
       const found=selectBestAnimeCandidate(candidates, searchTitle ?? "Sin título", localEntry?.format);
       if(!found)return;
