@@ -6,7 +6,8 @@ const MIN_REQUEST_INTERVAL = 700;
 export type PosterFormat = "MOVIE" | "SERIES" | undefined;
 
 interface Candidate {
-  title?: { romaji?: string | null; english?: string | null };
+  idMal?: number | null;
+  title?: { romaji?: string | null; english?: string | null; native?: string | null };
   format?: string | null;
   coverImage?: { extraLarge?: string | null; large?: string | null };
 }
@@ -37,7 +38,7 @@ function similarity(query: string, candidate: string): number {
 }
 
 function titleVariants(candidate: Candidate): string[] {
-  return [candidate.title?.romaji, candidate.title?.english].filter(Boolean) as string[];
+  return [candidate.title?.romaji, candidate.title?.english, candidate.title?.native].filter(Boolean) as string[];
 }
 
 function formatMatches(format: PosterFormat, candidateFormat?: string | null): boolean {
@@ -81,8 +82,8 @@ async function requestWithTimeout(url: URL, headers?: HeadersInit): Promise<Resp
   }
 }
 
-async function requestAniList(query: string, format?: PosterFormat): Promise<string | null> {
-  const gql = `query PosterSearch($search:String!,$perPage:Int!,$format:MediaFormat){Page(page:1,perPage:$perPage){media(search:$search,type:ANIME,format:$format,sort:SEARCH_MATCH){title{romaji english} format coverImage{extraLarge large}}}}`;
+async function requestAniList(query: string, format?: PosterFormat): Promise<Candidate | null> {
+  const gql = `query PosterSearch($search:String!,$perPage:Int!,$format:MediaFormat){Page(page:1,perPage:$perPage){media(search:$search,type:ANIME,format:$format,sort:SEARCH_MATCH){idMal title{romaji english native} format coverImage{extraLarge large}}}}`;
   try {
     const response = await fetch(ANILIST_BASE, {
       method: "POST",
@@ -92,8 +93,28 @@ async function requestAniList(query: string, format?: PosterFormat): Promise<str
     if (!response.ok) return null;
     const payload = await response.json();
     const items = Array.isArray(payload?.data?.Page?.media) ? payload.data.Page.media : [];
-    const item = selectBestAnimeCandidate(items, query, format);
-    return item?.coverImage?.extraLarge || item?.coverImage?.large || null;
+    return selectBestAnimeCandidate(items, query, format);
+  } catch {
+    return null;
+  }
+}
+
+async function requestJikanByMalId(idMal: number): Promise<string | null> {
+  const elapsed = Date.now() - lastRequestAt;
+  if (elapsed < MIN_REQUEST_INTERVAL) await wait(MIN_REQUEST_INTERVAL - elapsed);
+  lastRequestAt = Date.now();
+
+  const url = new URL(`${JIKAN_BASE}/anime/${idMal}`);
+  const response = await requestWithTimeout(url);
+  if (!response?.ok) return null;
+
+  try {
+    const item = await response.json();
+    return item?.data?.images?.webp?.large_image_url
+      || item?.data?.images?.jpg?.large_image_url
+      || item?.data?.images?.webp?.image_url
+      || item?.data?.images?.jpg?.image_url
+      || null;
   } catch {
     return null;
   }
@@ -117,7 +138,8 @@ async function requestJikan(query: string, format?: PosterFormat): Promise<strin
     const payload = await response.json();
     const items = Array.isArray(payload?.data) ? payload.data : [];
     const candidates: Candidate[] = items.map((item: any) => ({
-      title: { romaji: item?.title, english: item?.title_english },
+      idMal: item?.mal_id,
+      title: { romaji: item?.title, english: item?.title_english, native: item?.title_japanese },
       format: item?.type,
       coverImage: {
         extraLarge: item?.images?.webp?.large_image_url || item?.images?.jpg?.large_image_url,
@@ -175,10 +197,19 @@ export function isAnimeCandidateMatch(
 }
 
 async function resolvePoster(query: string, format?: PosterFormat): Promise<string | null> {
-  // AniList is the primary catalogue. Jikan and Kitsu are independent fallbacks.
+  // AniList is the primary catalogue. When it identifies the exact entry,
+  // use its MAL id for Jikan instead of performing another title search.
   const aniList = await requestAniList(query, format);
-  if (aniList) return aniList;
+  if (aniList?.coverImage?.extraLarge || aniList?.coverImage?.large) {
+    return aniList.coverImage.extraLarge || aniList.coverImage.large || null;
+  }
 
+  if (aniList?.idMal) {
+    const jikanById = await requestJikanByMalId(aniList.idMal);
+    if (jikanById) return jikanById;
+  }
+
+  // Only fall back to Jikan title search when AniList could not identify the entry.
   const jikan = await requestJikan(query, format);
   if (jikan) return jikan;
 
