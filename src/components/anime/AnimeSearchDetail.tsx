@@ -1,5 +1,4 @@
 import {useEffect,useState} from "react";
-import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
 import PersonalLibraryActions from "../personal-library/PersonalLibraryActions";
 import { getLibrary } from "../../data/library";
 
@@ -107,7 +106,7 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
       }
     : searchTitle
       ? {
-          query:"query Detail($search:String!){Page(page:1,perPage:10){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} relations{edges{relationType node{id format}}} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}}}}}",
+          query:"query Detail($search:String!){Page(page:1,perPage:1){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} relations{edges{relationType node{id format}}} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}}}}}",
           variables:{search:searchTitle}
         }
       : null;
@@ -117,13 +116,8 @@ export default function AnimeSearchDetail({ variant = "default" }: Props){
   fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(request)})
     .then(r=>r.ok?r.json():Promise.reject())
     .then(async p=>{
-      const candidates=directId ? (p.data?.Media ? [p.data.Media] : []) : (p.data?.Page?.media ?? []);
-      const found=selectBestAnimeCandidate(candidates, searchTitle ?? "Sin título", localEntry?.format);
+      const found=directId ? (p.data?.Media??null) : (p.data?.Page?.media?.[0]??null);
       if(!found)return;
-      if(!found.coverImage?.extraLarge && !found.coverImage?.large){
-       const poster=await fetchFallbackPoster(searchTitle ?? found.title?.romaji ?? found.title?.english ?? "", localEntry?.format);
-       if(poster) found.coverImage={extraLarge:poster,large:poster};
-      }
       setMedia(found);
     }).catch(()=>{}).finally(()=>setLoading(false));
  },[]);
