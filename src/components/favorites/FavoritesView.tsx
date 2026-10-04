@@ -62,15 +62,22 @@ export default function FavoritesView({ entries, recommendations }: Props) {
       const payload = await response.json();
       const result: Record<string, Media | null> = {};
 
-      batch.forEach((entry, index) => {
+      for (const [index, entry] of batch.entries()) {
         const candidates = payload.data?.["a" + index]?.media ?? [];
         const selected = selectBestAnimeCandidate(candidates, entry.title, entry.format);
         result[entry.animeId] = selected ?? null;
         if (!selected?.coverImage?.extraLarge && !selected?.coverImage?.large) {
           const poster = await fetchFallbackPoster(entry.title, entry.format);
-          if (poster) result[entry.animeId] = { ...(selected ?? {}), title: selected?.title ?? { romaji: entry.title }, format: selected?.format ?? entry.format, coverImage: { extraLarge: poster, large: poster } };
+          if (poster) {
+            result[entry.animeId] = {
+              ...(selected ?? {}),
+              title: selected?.title ?? { romaji: entry.title },
+              format: selected?.format ?? entry.format,
+              coverImage: { extraLarge: poster, large: poster },
+            };
+          }
         }
-      });
+      }
 
       if (!cancelled) {
         setMedia((current) => ({ ...current, ...result }));
