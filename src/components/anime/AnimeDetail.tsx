@@ -24,7 +24,7 @@ interface Media {
 }
 
 const ENDPOINT="https://graphql.anilist.co";
-const CACHE_PREFIX="renanime:detail:v8:";
+const CACHE_PREFIX="renanime:detail:v9:";
 const TRANSLATION_PREFIX="renanime:translation:en-es:v1:";
 const FRANCHISE_MEDIA_ALIASES: Record<string, number> = {
   "movie-063": 178788,
@@ -107,8 +107,8 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
 
   const directId=FRANCHISE_MEDIA_ALIASES[entry.animeId];
   const query=directId
-    ? `query DetailById($id:Int!){Media(id:$id,type:ANIME){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}} relations{edges{relationType node{id type format title{romaji english} coverImage{extraLarge large}}}}}}`
-    : `query Detail($search:String!){Page(page:1,perPage:10){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english} coverImage{extraLarge large} format startDate{year}}}} relations{edges{relationType node{id type format title{romaji english} coverImage{extraLarge large}}}}}}}`;
+    ? `query DetailById($id:Int!){Media(id:$id,type:ANIME){id title{romaji english native} synonyms description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english native} synonyms coverImage{extraLarge large} format startDate{year}}}} relations{edges{relationType node{id type format title{romaji english native} synonyms coverImage{extraLarge large}}}}}}`
+    : `query Detail($search:String!){Page(page:1,perPage:10){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english native} synonyms description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail} recommendations(sort:RATING_DESC,page:1,perPage:12){nodes{mediaRecommendation{id title{romaji english native} synonyms coverImage{extraLarge large} format startDate{year}}}} relations{edges{relationType node{id type format title{romaji english native} synonyms coverImage{extraLarge large}}}}}}}`;
 
   try {
     const body=directId
@@ -153,7 +153,7 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
     const directId = FRANCHISE_MEDIA_ALIASES[entry.animeId];
     if (!directId) continue;
 
-    const query = `query FranchiseMediaById($id:Int!){Media(id:$id,type:ANIME){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail}}}`;
+    const query = `query FranchiseMediaById($id:Int!){Media(id:$id,type:ANIME){id title{romaji english native} synonyms description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail}}}`;
     try {
       const response = await fetch(ENDPOINT, {
         method: "POST",
@@ -183,7 +183,7 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
       const key = "s" + index;
       const alias = "a" + index;
       variables[key] = entry.title;
-      return alias + ": Page(page:1,perPage:10){media(search:$" + key + ",type:ANIME,sort:SEARCH_MATCH){id title{romaji english} description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail}}}";
+      return alias + ": Page(page:1,perPage:10){media(search:$" + key + ",type:ANIME,sort:SEARCH_MATCH){id title{romaji english native} synonyms description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail}}}";
     }).join("\n");
     const definitions = batch.map((_, index) => "$s" + index + ":String!").join(",");
     const query = `query FranchiseBatch(${definitions}){${fields}}`;
