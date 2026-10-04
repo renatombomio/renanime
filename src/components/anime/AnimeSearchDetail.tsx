@@ -68,7 +68,7 @@ interface Props {
 const RED_TURTLE_LIBRARY_ID = "ghibli-red-turtle";
 
 export default function AnimeSearchDetail({ variant = "default" }: Props){
- const params=new URLSearchParams(location.search);
+ const params=new URLSearchParams(typeof window!=="undefined" ? window.location.search : "");
  const idParam=params.get("id");
  const id=idParam ? Number(idParam) : NaN;
  const localEntry=idParam && !Number.isFinite(id) ? getLibrary().find(entry=>entry.animeId===idParam) : undefined;
