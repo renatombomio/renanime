@@ -8,6 +8,8 @@ export type PosterFormat = "MOVIE" | "SERIES" | undefined;
 interface Candidate {
   idMal?: number | null;
   title?: { romaji?: string | null; english?: string | null; native?: string | null };
+  synonyms?: string[];
+  abbreviatedTitles?: string[];
   format?: string | null;
   coverImage?: { extraLarge?: string | null; large?: string | null };
 }
@@ -38,7 +40,13 @@ function similarity(query: string, candidate: string): number {
 }
 
 function titleVariants(candidate: Candidate): string[] {
-  return [candidate.title?.romaji, candidate.title?.english, candidate.title?.native].filter(Boolean) as string[];
+  return [
+    candidate.title?.romaji,
+    candidate.title?.english,
+    candidate.title?.native,
+    ...(candidate.synonyms ?? []),
+    ...(candidate.abbreviatedTitles ?? []),
+  ].filter(Boolean) as string[];
 }
 
 function formatMatches(format: PosterFormat, candidateFormat?: string | null): boolean {
@@ -83,7 +91,7 @@ async function requestWithTimeout(url: URL, headers?: HeadersInit): Promise<Resp
 }
 
 async function requestAniList(query: string, format?: PosterFormat): Promise<Candidate | null> {
-  const gql = `query PosterSearch($search:String!,$perPage:Int!,$format:MediaFormat){Page(page:1,perPage:$perPage){media(search:$search,type:ANIME,format:$format,sort:SEARCH_MATCH){idMal title{romaji english native} format coverImage{extraLarge large}}}}`;
+  const gql = `query PosterSearch($search:String!,$perPage:Int!,$format:MediaFormat){Page(page:1,perPage:$perPage){media(search:$search,type:ANIME,format:$format,sort:SEARCH_MATCH){idMal title{romaji english native} synonyms format coverImage{extraLarge large}}}}`;
   try {
     const response = await fetch(ANILIST_BASE, {
       method: "POST",
@@ -140,6 +148,7 @@ async function requestJikan(query: string, format?: PosterFormat): Promise<strin
     const candidates: Candidate[] = items.map((item: any) => ({
       idMal: item?.mal_id,
       title: { romaji: item?.title, english: item?.title_english, native: item?.title_japanese },
+      synonyms: Array.isArray(item?.title_synonyms) ? item.title_synonyms : [],
       format: item?.type,
       coverImage: {
         extraLarge: item?.images?.webp?.large_image_url || item?.images?.jpg?.large_image_url,
@@ -168,7 +177,8 @@ async function requestKitsu(query: string, format?: PosterFormat): Promise<strin
       const a = item?.attributes;
       const subtype = String(a?.subtype || "").toUpperCase();
       return {
-        title: { romaji: a?.canonicalTitle, english: a?.titles?.en },
+        title: { romaji: a?.canonicalTitle, english: a?.titles?.en, native: a?.titles?.ja_jp },
+        abbreviatedTitles: Array.isArray(a?.abbreviatedTitles) ? a.abbreviatedTitles : [],
         format: subtype === "MOVIE" ? "MOVIE" : subtype === "TV" ? "TV" : subtype,
         coverImage: {
           extraLarge: a?.posterImage?.large || a?.posterImage?.original,
