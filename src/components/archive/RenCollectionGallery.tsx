@@ -23,7 +23,7 @@ type Filter = "ALL" | "SERIES" | "MOVIES";
 type Sort = "ADDED" | "TITLE" | "YEAR" | "SCORE";
 
 const PAGE_SIZE = 15;
-const CACHE_PREFIX = "renanime:collection:v6:";
+const CACHE_PREFIX = "renanime:collection:v7:";
 
 async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null>> {
   const result: Record<string, Media | null> = {};
@@ -53,7 +53,7 @@ async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null
       const alias = "a" + index;
       variables[key] = entry.title;
       const formatFilter = entry.format === "MOVIE" ? ", format: MOVIE" : "";
-      return `${alias}: Page(page: 1, perPage: 10) { media(search: $${key}, type: ANIME${formatFilter}, sort: SEARCH_MATCH) { title { romaji english } startDate { year month day } format coverImage { extraLarge large } } }`;
+      return `${alias}: Page(page: 1, perPage: 10) { media(search: $${key}, type: ANIME${formatFilter}, sort: SEARCH_MATCH) { title { romaji english native } synonyms startDate { year month day } format coverImage { extraLarge large } } }`;
     }).join("\n");
     const definitions = chunk.map((_, index) => `$s${index}: String!`).join(", ");
 
