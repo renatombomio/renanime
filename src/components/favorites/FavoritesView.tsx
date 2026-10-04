@@ -40,7 +40,7 @@ export default function FavoritesView({ entries, recommendations }: Props) {
         const variable = "s" + index;
         variables[variable] = entry.title;
 
-        return key + ": Page(page: 1, perPage: 10) { media(search: $" + variable + ", type: ANIME, sort: SEARCH_MATCH) { title { romaji english } startDate { year month day } coverImage { extraLarge large } format } }";
+        return key + ": Page(page: 1, perPage: 10) { media(search: $" + variable + ", type: ANIME, sort: SEARCH_MATCH) { title { romaji english native } synonyms startDate { year month day } coverImage { extraLarge large } format } }";
       }).join("\n");
 
       const definitions = batch.map((_, index) => "$s" + index + ": String!").join(", ");
