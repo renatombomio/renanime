@@ -24,7 +24,7 @@ interface Media {
 }
 
 const ENDPOINT="https://graphql.anilist.co";
-const CACHE_PREFIX="renanime:detail:v11:";
+const CACHE_PREFIX="renanime:detail:v12:";
 const FRANCHISE_CACHE_PREFIX="renanime:franchise:v1:";
 const TRANSLATION_PREFIX="renanime:translation:en-es:v1:";
 const FRANCHISE_MEDIA_ALIASES: Record<string, number> = {
