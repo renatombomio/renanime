@@ -414,8 +414,10 @@ body.theme-ghibli .soundtrack-player__modes button.is-active {
 /* QA/polish: compact global player by default. Expand on demand. */
 .soundtrack-player {
   width: min(300px, calc(100vw - 1.3rem));
-  right: .65rem;
+  right: auto;
+  left: 50%;
   bottom: .65rem;
+  transform: translateX(-50%);
 }
 
 .soundtrack-player__inner {
