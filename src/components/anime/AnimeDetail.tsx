@@ -184,8 +184,36 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
     const media=payload.data?.Media ?? null;
     if(!media) return null;
 
-    try{sessionStorage.setItem(CACHE_PREFIX+entry.animeId,JSON.stringify(media));}catch{}
-    return media;
+    let recommendations: Media["recommendations"] = null;
+    try{
+      const recommendationQuery=`query Recommendations($id:Int!){
+        Media(id:$id,type:ANIME){
+          recommendations(sort:RATING_DESC,page:1,perPage:12){
+            nodes{
+              mediaRecommendation{
+                id
+                title{romaji english native}
+                coverImage{extraLarge large}
+                format
+                startDate{year}
+              }
+            }
+          }
+        }
+      }`;
+      const recommendationResponse=await fetch(ENDPOINT,{
+        method:"POST",
+        headers:{"Content-Type":"application/json",Accept:"application/json"},
+        body:JSON.stringify({query:recommendationQuery,variables:{id:mediaId}}),
+      });
+      if(recommendationResponse.ok){
+        const recommendationPayload=await recommendationResponse.json();
+        recommendations=recommendationPayload.data?.Media?.recommendations ?? null;
+      }
+    }catch{}
+    const completeMedia={...media,recommendations};
+    try{sessionStorage.setItem(CACHE_PREFIX+entry.animeId,JSON.stringify(completeMedia));}catch{}
+    return completeMedia;
   } catch {
     return null;
   }
