@@ -24,7 +24,6 @@ interface Media {
 }
 
 const ENDPOINT="https://graphql.anilist.co";
-const CACHE_PREFIX="renanime:detail:v14:";
 const FRANCHISE_CACHE_PREFIX="renanime:franchise:v1:";
 const TRANSLATION_PREFIX="renanime:translation:en-es:v1:";
 const FRANCHISE_MEDIA_ALIASES: Record<string, number> = {
@@ -249,7 +248,7 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
       const media = payload.data?.Media ?? null;
       if (media) {
         result[entry.animeId] = media;
-        try { sessionStorage.setItem(CACHE_PREFIX + entry.animeId, JSON.stringify(media)); } catch {}
+        try { sessionStorage.setItem(FRANCHISE_CACHE_PREFIX + entry.animeId, JSON.stringify(media)); } catch {}
       }
     } catch {}
   }
