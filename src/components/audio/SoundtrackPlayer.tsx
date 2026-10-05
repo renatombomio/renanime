@@ -96,7 +96,6 @@ function formatTime(value: number) {
 export default function SoundtrackPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const saveTimerRef = useRef<number | null>(null);
-  const resumeAfterVideoRef = useRef(false);
   const settingsRef = useRef({ enabled: false, volume: DEFAULT_VOLUME, muted: false, shuffle: false, repeat: "all" as RepeatMode });
 
   const [playlistKey, setPlaylistKey] = useState<PlaylistKey>("hero");
