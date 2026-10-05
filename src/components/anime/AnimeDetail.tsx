@@ -144,7 +144,7 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
 
     // Fetch the complete detail in one request. Keeping relations and recommendations
     // in the same exact-ID query avoids extra AniList round-trips and rate-limit failures.
-    const detailQuery=\`query DetailById($id:Int!){
+    const detailQuery=`query DetailById($id:Int!){
       Media(id:$id,type:ANIME){
         id
         title{romaji english native}
@@ -186,7 +186,7 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
           }
         }
       }
-    }\`;
+    }`;
     const response=await fetch(ENDPOINT,{
       method:"POST",
       headers:{"Content-Type":"application/json",Accept:"application/json"},
