@@ -243,7 +243,6 @@ export default function GenresView({ entries }: Props) {
         }
 
         .genres-view .genre-card {
-          position: relative;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
@@ -263,7 +262,6 @@ export default function GenresView({ entries }: Props) {
           box-sizing: border-box;
           appearance: none;
           -webkit-appearance: none;
-          transition: background 220ms ease;
         }
 
         .genres-view .genre-name {
@@ -440,8 +438,6 @@ export default function GenresView({ entries }: Props) {
           }
         }
 
-        @media (prefers-reduced-motion: reduce) {
-        }
       `}</style>
 
     </div>
