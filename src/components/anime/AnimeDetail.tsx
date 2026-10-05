@@ -24,7 +24,7 @@ interface Media {
 }
 
 const ENDPOINT="https://graphql.anilist.co";
-const CACHE_PREFIX="renanime:detail:v13:";
+const CACHE_PREFIX="renanime:detail:v14:";
 const FRANCHISE_CACHE_PREFIX="renanime:franchise:v1:";
 const TRANSLATION_PREFIX="renanime:translation:en-es:v1:";
 const FRANCHISE_MEDIA_ALIASES: Record<string, number> = {
@@ -183,6 +183,40 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
     const payload=await response.json();
     const media=payload.data?.Media ?? null;
     if(!media) return null;
+
+    // AniList can return a valid Media object while a connection is absent
+    // from the payload. Relations are critical to this detail view, so verify
+    // them with an exact-ID query before accepting/caching the media.
+    if(!Array.isArray(media?.relations?.edges)){
+      const relationsQuery=`query DetailRelations($id:Int!){
+        Media(id:$id,type:ANIME){
+          relations(page:1,perPage:25){
+            edges{
+              relationType
+              node{
+                id
+                type
+                format
+                title{romaji english native}
+                coverImage{extraLarge large}
+              }
+            }
+          }
+        }
+      }`;
+      try{
+        const relationsResponse=await fetch(ENDPOINT,{
+          method:"POST",
+          headers:{"Content-Type":"application/json",Accept:"application/json"},
+          body:JSON.stringify({query:relationsQuery,variables:{id:mediaId}}),
+        });
+        if(relationsResponse.ok){
+          const relationsPayload=await relationsResponse.json();
+          const relations=relationsPayload.data?.Media?.relations;
+          if(relations && Array.isArray(relations.edges)) media.relations=relations;
+        }
+      }catch{}
+    }
 
     let recommendations: Media["recommendations"] = null;
     try{
