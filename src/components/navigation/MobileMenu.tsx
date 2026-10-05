@@ -137,7 +137,7 @@ export default function MobileMenu({ variant = "default" }: Props) {
           margin-left: 8px;
         }
 
-        .mobile-nav--ghibli .mobile-toggle { color: #19362f; }
+        .mobile-nav--ghibli .mobile-toggle { color: #19362f; }\n        .mobile-nav--ghibli .mobile-backdrop { background: rgba(25,54,47,.16); }
         .mobile-nav--ghibli .mobile-panel { background: #fffdf8; color: #19362f; }
         .mobile-nav--ghibli .mobile-link { color: #527066; border-bottom-color: rgba(25,54,47,.12); }
         .mobile-nav--ghibli .mobile-link:active { color: #18528a; }        .mobile-nav--ghibli .mobile-link--secret i { color: #f45164; }
