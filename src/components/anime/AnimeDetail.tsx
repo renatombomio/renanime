@@ -24,7 +24,7 @@ interface Media {
 }
 
 const ENDPOINT="https://graphql.anilist.co";
-const CACHE_PREFIX="renanime:detail:v12:";
+const CACHE_PREFIX="renanime:detail:v13:";
 const FRANCHISE_CACHE_PREFIX="renanime:franchise:v1:";
 const TRANSLATION_PREFIX="renanime:translation:en-es:v1:";
 const FRANCHISE_MEDIA_ALIASES: Record<string, number> = {
@@ -160,7 +160,7 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
         coverImage{extraLarge large}
         bannerImage
         trailer{id site thumbnail}
-        relations(page:1,perPage:25){
+        relations{
           edges{
             relationType
             node{
@@ -168,20 +168,7 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
               type
               format
               title{romaji english native}
-              synonyms
               coverImage{extraLarge large}
-            }
-          }
-        }
-        recommendations(sort:RATING_DESC,page:1,perPage:12){
-          nodes{
-            mediaRecommendation{
-              id
-              title{romaji english native}
-              synonyms
-              coverImage{extraLarge large}
-              format
-              startDate{year}
             }
           }
         }
