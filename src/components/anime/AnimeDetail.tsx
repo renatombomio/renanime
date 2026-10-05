@@ -426,7 +426,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
    <div><span className="anime-detail-label">Mi estado</span><strong>{personal.status==="WATCHED"?"He visto este anime":personal.status==="PENDING"?"Quiero verlo":"Parte de mi archivo"}</strong></div>
   </section>
   {franchiseEntries.length>1&&<section className="anime-detail-franchise">
-   <div className="anime-detail-related-header"><span className="anime-detail-label">Mi colección</span><h2>Esta franquicia</h2></div>
+   <div className="anime-detail-related-header"><span className="anime-detail-label">Mi colección</span><h2>Películas</h2></div>
    <div className="anime-detail-franchise-grid">
     {franchiseEntries.map((candidate,index)=>{
       const item=franchiseMedia[candidate.animeId];
@@ -440,7 +440,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
    </div>
   </section>}
   {relations.length>0&&<section className="anime-detail-related">
-   <div className="anime-detail-related-header"><span className="anime-detail-label">Universo</span><h2>Franquicia</h2></div>
+   <div className="anime-detail-related-header"><span className="anime-detail-label">Universo</span><h2>Contenido relacionado</h2></div>
    <div className="anime-detail-related-grid">
     {relations.slice(0,12).map((relation,index)=>{
       const node=relation.node;
