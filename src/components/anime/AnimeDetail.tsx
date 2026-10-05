@@ -101,96 +101,28 @@ function getSeasonCount(media: Media|null){
 }
 
 async function findAnime(entry: LibraryEntry): Promise<Media|null> {
-  try {
-    const cached=sessionStorage.getItem(CACHE_PREFIX+entry.animeId);
-    if(cached){
-      const parsed=JSON.parse(cached);
-      if(parsed && Array.isArray(parsed?.relations?.edges) && Array.isArray(parsed?.recommendations?.nodes)) return parsed;
-      sessionStorage.removeItem(CACHE_PREFIX+entry.animeId);
-    }
-  } catch {}
+  const numericId=Number(entry.animeId);
+  const mediaId=FRANCHISE_MEDIA_ALIASES[entry.animeId] ?? (
+    Number.isInteger(numericId) && numericId > 0 ? numericId : undefined
+  );
 
-  try {
-    const numericId=Number(entry.animeId);
-    const directId=FRANCHISE_MEDIA_ALIASES[entry.animeId] ?? (Number.isInteger(numericId) && numericId > 0 ? numericId : undefined);
-    let mediaId=directId ?? null;
-
-    // First resolve the exact AniList identity. We deliberately do not rely
-    // on a search result carrying nested relations/recommendations.
-    if(!mediaId){
-      const identityQuery=`query DetailIdentity($search:String!){
-        Page(page:1,perPage:10){
-          media(search:$search,type:ANIME,sort:SEARCH_MATCH){
-            id
-            title{romaji english native}
-            synonyms
-            format
-          }
-        }
-      }`;
-      const response=await fetch(ENDPOINT,{
-        method:"POST",
-        headers:{"Content-Type":"application/json",Accept:"application/json"},
-        body:JSON.stringify({query:identityQuery,variables:{search:entry.title}}),
-      });
-      if(!response.ok) return null;
-      const payload=await response.json();
-      const candidates=payload.data?.Page?.media ?? [];
-      const identity=selectBestAnimeCandidate(candidates,entry.title,entry.format);
-      mediaId=identity?.id ?? null;
-    }
-
-    if(!mediaId) return null;
-
-    // Fetch the complete detail in one request. Keeping relations and recommendations
-    // in the same exact-ID query avoids extra AniList round-trips and rate-limit failures.
-    const detailQuery=`query DetailById($id:Int!){
-      Media(id:$id,type:ANIME){
-        id
-        title{romaji english native}
-        synonyms
-        description(asHtml:false)
-        genres
-        startDate{year month day}
-        format
-        status
-        episodes
-        duration
-        studios(isMain:true){nodes{name}}
-        coverImage{extraLarge large}
-        bannerImage
-        trailer{id site thumbnail}
-        relations{
-          edges{
-            relationType
-            node{
-              id
-              type
-              format
-              title{romaji english native}
-              coverImage{extraLarge large}
-            }
-          }
-        }
-      }
-    }`;
-    const response=await fetch(ENDPOINT,{
-      method:"POST",
-      headers:{"Content-Type":"application/json",Accept:"application/json"},
-      body:JSON.stringify({query:detailQuery,variables:{id:mediaId}}),
-    });
-    if(!response.ok) return null;
-    const payload=await response.json();
-    const media=payload.data?.Media ?? null;
-    if(!media) return null;
-
-    // AniList can return a valid Media object while a connection is absent
-    // from the payload. Relations are critical to this detail view, so verify
-    // them with an exact-ID query before accepting/caching the media.
-    if(!Array.isArray(media?.relations?.edges)){
-      const relationsQuery=`query DetailRelations($id:Int!){
+  const query=mediaId
+    ? `query DetailById($id:Int!){
         Media(id:$id,type:ANIME){
-          relations(page:1,perPage:25){
+          id
+          title{romaji english native}
+          description(asHtml:false)
+          genres
+          startDate{year month day}
+          format
+          status
+          episodes
+          duration
+          studios(isMain:true){nodes{name}}
+          coverImage{extraLarge large}
+          bannerImage
+          trailer{id site thumbnail}
+          relations{
             edges{
               relationType
               node{
@@ -202,26 +134,6 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
               }
             }
           }
-        }
-      }`;
-      try{
-        const relationsResponse=await fetch(ENDPOINT,{
-          method:"POST",
-          headers:{"Content-Type":"application/json",Accept:"application/json"},
-          body:JSON.stringify({query:relationsQuery,variables:{id:mediaId}}),
-        });
-        if(relationsResponse.ok){
-          const relationsPayload=await relationsResponse.json();
-          const relations=relationsPayload.data?.Media?.relations;
-          if(relations && Array.isArray(relations.edges)) media.relations=relations;
-        }
-      }catch{}
-    }
-
-    let recommendations: Media["recommendations"] = null;
-    try{
-      const recommendationQuery=`query Recommendations($id:Int!){
-        Media(id:$id,type:ANIME){
           recommendations(sort:RATING_DESC,page:1,perPage:12){
             nodes{
               mediaRecommendation{
@@ -234,24 +146,70 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
             }
           }
         }
+      }`
+    : `query DetailBySearch($search:String!){
+        Page(page:1,perPage:1){
+          media(search:$search,type:ANIME,sort:SEARCH_MATCH){
+            id
+            title{romaji english native}
+            description(asHtml:false)
+            genres
+            startDate{year month day}
+            format
+            status
+            episodes
+            duration
+            studios(isMain:true){nodes{name}}
+            coverImage{extraLarge large}
+            bannerImage
+            trailer{id site thumbnail}
+            relations{
+              edges{
+                relationType
+                node{
+                  id
+                  type
+                  format
+                  title{romaji english native}
+                  coverImage{extraLarge large}
+                }
+              }
+            }
+            recommendations(sort:RATING_DESC,page:1,perPage:12){
+              nodes{
+                mediaRecommendation{
+                  id
+                  title{romaji english native}
+                  coverImage{extraLarge large}
+                  format
+                  startDate{year}
+                }
+              }
+            }
+          }
+        }
       }`;
-      const recommendationResponse=await fetch(ENDPOINT,{
-        method:"POST",
-        headers:{"Content-Type":"application/json",Accept:"application/json"},
-        body:JSON.stringify({query:recommendationQuery,variables:{id:mediaId}}),
-      });
-      if(recommendationResponse.ok){
-        const recommendationPayload=await recommendationResponse.json();
-        recommendations=recommendationPayload.data?.Media?.recommendations ?? null;
-      }
-    }catch{}
-    const completeMedia={...media,recommendations};
-    try{sessionStorage.setItem(CACHE_PREFIX+entry.animeId,JSON.stringify(completeMedia));}catch{}
-    return completeMedia;
-  } catch {
+
+  try{
+    const response=await fetch(ENDPOINT,{
+      method:"POST",
+      headers:{"Content-Type":"application/json",Accept:"application/json"},
+      body:JSON.stringify(
+        mediaId
+          ? {query,variables:{id:mediaId}}
+          : {query,variables:{search:entry.title}}
+      ),
+    });
+    if(!response.ok) return null;
+    const payload=await response.json();
+    return mediaId
+      ? (payload.data?.Media ?? null)
+      : (payload.data?.Page?.media?.[0] ?? null);
+  }catch{
     return null;
   }
 }
+
 async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, Media|null>> {
   const result: Record<string, Media|null> = {};
   const unresolved: LibraryEntry[] = [];
