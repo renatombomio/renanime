@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { LibraryEntry } from "../../types/personal";
 import { buildGenreCatalog } from "../../lib/anime/genre-catalog";
 import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
@@ -97,6 +97,7 @@ export default function GenresView({ entries }: Props) {
   const [selected, setSelected] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [resultsLoading, setResultsLoading] = useState(false);
+  const historyInitialized = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -119,6 +120,24 @@ export default function GenresView({ entries }: Props) {
 
   const catalog = useMemo(() => buildGenreCatalog(entries, genresByAnimeId), [entries, genresByAnimeId]);
   const selectedGenre = catalog.find((genre) => genre.name === selected);
+
+  useEffect(() => {
+    if (historyInitialized.current || catalog.length === 0) return;
+    historyInitialized.current = true;
+
+    const genreFromUrl = new URLSearchParams(window.location.search).get("genre");
+    if (genreFromUrl && catalog.some((genre) => genre.name === genreFromUrl)) {
+      setSelected(genreFromUrl);
+    }
+
+    const handlePopState = () => {
+      const genreFromUrl = new URLSearchParams(window.location.search).get("genre");
+      setSelected(genreFromUrl && catalog.some((genre) => genre.name === genreFromUrl) ? genreFromUrl : null);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [catalog]);
 
   const selectedEntryIds = selectedGenre?.entries.map((entry) => entry.animeId).join("|") ?? "";
 
@@ -162,7 +181,12 @@ export default function GenresView({ entries }: Props) {
                 className="genre-card"
                 key={genre.name}
                 aria-pressed={selected === genre.name}
-                onClick={() => setSelected(genre.name)}
+                onClick={() => {
+                  setSelected(genre.name);
+                  const url = new URL(window.location.href);
+                  url.searchParams.set("genre", genre.name);
+                  window.history.pushState({ genre: genre.name }, "", url.pathname + url.search);
+                }}
               >
                 <span className="genre-name">{genre.name}</span>
                 <span className="genre-count">{genre.entries.length} títulos</span>
