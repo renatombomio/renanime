@@ -2,10 +2,33 @@
 import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/layout/Navbar.astro";
 import Footer from "../../components/layout/Footer.astro";
+import AnimeDetail from "../../components/anime/AnimeDetail";
 import AnimeSearchDetail from "../../components/anime/AnimeSearchDetail";
+import { getLibrary } from "../../data/library";
+
+const id = Astro.url.searchParams.get("id");
+const from = Astro.url.searchParams.get("from");
+const isGhibli = from === "ghibli" || Astro.url.searchParams.get("film") === "the-red-turtle";
+const localEntry = id ? getLibrary().find((entry) => entry.animeId === id) : undefined;
+const numericId = id ? Number(id) : NaN;
+const detailEntry = localEntry ?? (id && Number.isInteger(numericId) && numericId > 0
+  ? {
+      animeId: id,
+      title: "",
+      state: { status: "NOT_IN_COLLECTION" as const, favorite: false, recommended: false },
+    }
+  : null);
 ---
 <Layout title="Anime — Renanime's Gallery">
-<Navbar variant={Astro.url.searchParams.get("from") === "ghibli" ? "ghibli" : "default"} />
-<main id="main-content" class="anime-detail-page"><AnimeSearchDetail client:load /></main>
-<Footer />
+  <Navbar variant={isGhibli ? "ghibli" : "default"} />
+  <main id="main-content" class="anime-detail-page">
+    {isGhibli ? (
+      <AnimeSearchDetail variant="ghibli" client:load />
+    ) : detailEntry ? (
+      <AnimeDetail entry={detailEntry} client:load />
+    ) : (
+      <AnimeSearchDetail client:load />
+    )}
+  </main>
+  <Footer />
 </Layout>
