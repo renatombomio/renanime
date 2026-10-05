@@ -173,9 +173,6 @@ export default function GenresView({ entries }: Props) {
       ) : (
         <section className="genre-results" aria-label={"Animes de género " + selectedGenre.name}>
           <div className="genre-results-head">
-            <button type="button" className="genre-back" onClick={() => setSelected(null)}>
-              ← Géneros
-            </button>
             <div>
               <span className="genre-results-kicker">Archivo de Ren</span>
               <span className="genre-results-title">{selectedGenre.name}</span>
@@ -269,29 +266,6 @@ export default function GenresView({ entries }: Props) {
           transition: background 220ms ease;
         }
 
-        .genres-view .genre-card:hover,
-        .genres-view .genre-card:focus-visible {
-          background: var(--color-ink-900);
-        }
-
-        .genres-view .genre-card::after {
-          position: absolute;
-          left: .9rem;
-          bottom: .8rem;
-          width: 1.6rem;
-          height: 1px;
-          background: var(--color-accent-soft);
-          content: "";
-          transform: scaleX(0);
-          transform-origin: left;
-          transition: transform 260ms cubic-bezier(.22,1,.36,1);
-        }
-
-        .genres-view .genre-card:hover::after,
-        .genres-view .genre-card:focus-visible::after {
-          transform: scaleX(1);
-        }
-
         .genres-view .genre-name {
           display: block;
           max-width: 100%;
@@ -336,20 +310,6 @@ export default function GenresView({ entries }: Props) {
           letter-spacing: .1em;
           text-transform: uppercase;
         }
-
-        .genre-back {
-          justify-self: start;
-          padding: 0;
-          border: 0;
-          background: transparent;
-          color: var(--color-muted-400);
-          font: 500 .58rem/1 var(--font-meta);
-          letter-spacing: .1em;
-          text-transform: uppercase;
-          cursor: pointer;
-        }
-
-        .genre-back:hover { color: var(--color-paper-50); }
 
         .genre-results-head > div {
           display: grid;
@@ -399,10 +359,6 @@ export default function GenresView({ entries }: Props) {
           height: 100%;
           object-fit: cover;
           transition: transform 650ms cubic-bezier(.22,1,.36,1);
-        }
-
-        .genre-anime-card:hover .genre-anime-poster img {
-          transform: scale(1.025);
         }
 
         .genre-anime-info {
@@ -485,9 +441,6 @@ export default function GenresView({ entries }: Props) {
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .genre-card,
-          .genre-card::after,
-          .genre-anime-poster img { transition-duration: .01ms !important; }
         }
       `}</style>
 
