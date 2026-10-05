@@ -285,36 +285,8 @@ export default function SoundtrackPlayer() {
     });
   }, [enabled, trackIndex, playlistKey]);
 
-  useEffect(() => {
-    const handleVideoPlay = (event: Event) => {
-      const target = event.target;
-      if (!(target instanceof HTMLVideoElement)) return;
-
-      const audio = audioRef.current;
-      if (!audio || audio.paused) return;
-
-      resumeAfterVideoRef.current = true;
-      audio.pause();
-    };
-
-    const handleVideoPause = (event: Event) => {
-      const target = event.target;
-      if (!(target instanceof HTMLVideoElement)) return;
-      if (!resumeAfterVideoRef.current) return;
-
-      resumeAfterVideoRef.current = false;
-      if (enabled) void audioRef.current?.play().catch(() => {});
-    };
-
-    document.addEventListener("play", handleVideoPlay, true);
-    document.addEventListener("pause", handleVideoPause, true);
-
-    return () => {
-      document.removeEventListener("play", handleVideoPlay, true);
-      document.removeEventListener("pause", handleVideoPause, true);
-    };
-  }, [enabled]);
-
+  // The soundtrack is independent from page videos. Once the user starts it,
+  // navigation and hero/video playback must not pause it.
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const target = event.target;
