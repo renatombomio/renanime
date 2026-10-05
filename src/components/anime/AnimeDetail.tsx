@@ -111,7 +111,8 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
   } catch {}
 
   try {
-    const directId=FRANCHISE_MEDIA_ALIASES[entry.animeId];
+    const numericId=Number(entry.animeId);
+    const directId=FRANCHISE_MEDIA_ALIASES[entry.animeId] ?? (Number.isInteger(numericId) && numericId > 0 ? numericId : undefined);
     let mediaId=directId ?? null;
 
     // First resolve the exact AniList identity. We deliberately do not rely
