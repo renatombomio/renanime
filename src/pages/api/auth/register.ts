@@ -29,6 +29,13 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         })
       }
 
+      if (error.message.includes('SAME_NAME_AKA')) {
+        return new Response(JSON.stringify({ ok: false, error: 'SAME_NAME_AKA' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      }
+
       if (error.message.includes('INVALID_PROFILE')) {
         return new Response(JSON.stringify({ ok: false, error: 'INVALID_PROFILE' }), {
           status: 400,
