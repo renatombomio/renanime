@@ -1,9 +1,30 @@
 import type { APIRoute } from 'astro'
 import { supabaseServer } from '../../../lib/supabase-server'
 
+export const prerender = false
+
 export const POST: APIRoute = async ({ request, cookies }) => {
   try {
-    const body = await request.json()
+    const rawBody = await request.text()
+
+    if (!rawBody.trim()) {
+      return new Response(JSON.stringify({ ok: false, error: 'MISSING_REQUEST_BODY' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
+    let body: { accessPassword?: unknown; name?: unknown; aka?: unknown }
+
+    try {
+      body = JSON.parse(rawBody)
+    } catch {
+      return new Response(JSON.stringify({ ok: false, error: 'INVALID_JSON' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+
     const accessPassword = String(body.accessPassword ?? '')
     const name = String(body.name ?? '').trim()
     const aka = String(body.aka ?? '').trim()
@@ -79,8 +100,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     })
   } catch (error) {
     console.error('Unexpected registration error:', error)
-    return new Response(JSON.stringify({ ok: false, error: 'INVALID_REQUEST' }), {
-      status: 400,
+    return new Response(JSON.stringify({ ok: false, error: 'REGISTER_REQUEST_FAILED' }), {
+      status: 500,
       headers: { 'Content-Type': 'application/json' },
     })
   }
