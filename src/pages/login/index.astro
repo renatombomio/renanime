@@ -121,7 +121,49 @@ import Layout from "../../layouts/Layout.astro";
   const accessForm = document.querySelector<HTMLFormElement>("#access-form");
   const accessPasswordInput = document.querySelector<HTMLInputElement>("#access-password");
   const accessMessage = document.querySelector<HTMLParagraphElement>("#access-message");
+  const accessCard = document.querySelector<HTMLElement>(".access-card");
   const onboarding = document.querySelector<HTMLElement>("#onboarding");
+
+  const accessJokes = document.createElement("div");
+  accessJokes.id = "access-jokes";
+  accessJokes.className = "access-jokes";
+  accessJokes.setAttribute("aria-live", "polite");
+  document.body.appendChild(accessJokes);
+
+  const accessFailureMessages = [
+    "No eres bienvenido, Renato.",
+    "Alguien se ha olvidado del código de acceso.",
+    "Renato no te quiere por aquí.",
+    "¿Seguro que sabes dónde estás?",
+    "La puerta está cerrada. Y tú sin llave.",
+    "Ese código no abre ni la nevera.",
+    "Buen intento. Muy mal intento.",
+    "RenAnime dice: acceso denegado.",
+    "Pista: no es el nombre de tu ex.",
+    "Vamos, Renato. Tú puedes... o no."
+  ];
+
+  const showAccessFailure = () => {
+    accessJokes.innerHTML = "";
+    accessCard?.classList.remove("access-wrong");
+    void accessCard?.offsetWidth;
+    accessCard?.classList.add("access-wrong");
+
+    const shuffled = [...accessFailureMessages].sort(() => Math.random() - 0.5);
+    const count = Math.floor(Math.random() * 5) + 1;
+
+    shuffled.slice(0, count).forEach((message, index) => {
+      const bubble = document.createElement("span");
+      bubble.textContent = message;
+      bubble.style.setProperty("--joke-index", String(index));
+      accessJokes.appendChild(bubble);
+    });
+
+    window.setTimeout(() => {
+      accessJokes.innerHTML = "";
+      accessCard?.classList.remove("access-wrong");
+    }, 3200);
+  };
   const existingHint = document.querySelector<HTMLElement>("#existing-hint");
   const showRecovery = document.querySelector<HTMLButtonElement>("#show-recovery");
 
@@ -174,10 +216,12 @@ import Layout from "../../layouts/Layout.astro";
       const data = await response.json();
 
       if (!response.ok) {
-        accessMessage.textContent =
-          data.error === "INVALID_ACCESS_PASSWORD"
-            ? "Código de acceso incorrecto."
-            : "No se ha podido abrir Renanime.";
+        if (data.error === "INVALID_ACCESS_PASSWORD") {
+          accessMessage.textContent = "Código de acceso incorrecto.";
+          showAccessFailure();
+        } else {
+          accessMessage.textContent = "No se ha podido abrir Renanime.";
+        }
         return;
       }
 
@@ -307,7 +351,100 @@ import Layout from "../../layouts/Layout.astro";
   }
 
   .access-card {
+    position: relative;
     width: min(100%, 430px);
+  }
+
+  .access-wrong {
+    animation: access-shake 0.42s ease;
+  }
+
+  .access-jokes {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .access-jokes span {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    max-width: min(220px, 42vw);
+    padding: 0.7rem 0.9rem;
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 999px;
+    background: rgba(12,12,12,0.94);
+    color: rgba(255,255,255,0.82);
+    font-size: 0.72rem;
+    line-height: 1.25;
+    text-align: center;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    animation: access-joke-pop 2.9s cubic-bezier(.2,.8,.2,1) forwards;
+    animation-delay: calc(var(--joke-index) * 0.08s);
+  }
+
+  .access-jokes span:nth-child(1) {
+    transform: translate(-50%, -50%) rotate(-8deg);
+    margin-left: -260px;
+    margin-top: -170px;
+  }
+
+  .access-jokes span:nth-child(2) {
+    transform: translate(-50%, -50%) rotate(6deg);
+    margin-left: 260px;
+    margin-top: -130px;
+  }
+
+  .access-jokes span:nth-child(3) {
+    transform: translate(-50%, -50%) rotate(-4deg);
+    margin-left: -285px;
+    margin-top: 130px;
+  }
+
+  .access-jokes span:nth-child(4) {
+    transform: translate(-50%, -50%) rotate(7deg);
+    margin-left: 280px;
+    margin-top: 170px;
+  }
+
+  .access-jokes span:nth-child(5) {
+    transform: translate(-50%, -50%) rotate(-3deg);
+    margin-left: 0;
+    margin-top: -250px;
+  }
+
+  @keyframes access-shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px) rotate(-0.5deg); }
+    40% { transform: translateX(8px) rotate(0.5deg); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+  }
+
+  @keyframes access-joke-pop {
+    0% {
+      opacity: 0;
+      scale: 0.35;
+      filter: blur(4px);
+    }
+    12% {
+      opacity: 1;
+      scale: 1.05;
+      filter: blur(0);
+    }
+    22% {
+      scale: 1;
+    }
+    78% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      scale: 0.9;
+      translate: 0 12px;
+    }
   }
 
   .brand {
@@ -487,6 +624,35 @@ import Layout from "../../layouts/Layout.astro";
   }
 
   @media (max-width: 560px) {
+    .access-jokes span {
+      max-width: 150px;
+      font-size: 0.62rem;
+    }
+
+    .access-jokes span:nth-child(1) {
+      margin-left: -105px;
+      margin-top: -210px;
+    }
+
+    .access-jokes span:nth-child(2) {
+      margin-left: 105px;
+      margin-top: -175px;
+    }
+
+    .access-jokes span:nth-child(3) {
+      margin-left: -110px;
+      margin-top: 170px;
+    }
+
+    .access-jokes span:nth-child(4) {
+      margin-left: 110px;
+      margin-top: 205px;
+    }
+
+    .access-jokes span:nth-child(5) {
+      margin-top: -265px;
+    }
+
     .joke-bubbles {
       inset: -18px;
     }
