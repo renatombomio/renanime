@@ -226,18 +226,18 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
  main#main-content.anime-detail-page{padding-top:74px !important}
  .anime-detail-hero{min-height:0;align-items:stretch}
  .anime-detail-inner{padding-block:2.5rem 3rem}
- .anime-detail-layout{grid-template-columns:minmax(0,9rem) minmax(0,1fr);gap:1.25rem;align-items:start}
+ .anime-detail-layout{grid-template-columns:clamp(9rem,31vw,11rem) minmax(0,1fr);gap:clamp(1rem,4vw,1.35rem);align-items:start}
  .anime-detail-poster-column{grid-column:1;grid-row:1 / span 4;width:100%;display:flex;flex-direction:column;align-self:start;gap:.7rem}
  .anime-detail-poster-column .anime-detail-poster{width:100%;flex:0 0 auto}
  .anime-detail-poster-column .anime-detail-library-actions{width:100%;margin:0;flex:0 0 auto}
  .anime-detail-library-actions .personal-actions{margin-top:0;display:grid;gap:.4rem}
- .anime-detail-library-actions .personal-actions button,.anime-detail-library-actions .personal-status{width:100%;justify-content:center;text-align:center;min-height:2rem;padding:.5rem .5rem;font-size:.48rem;border-color:rgba(245,242,236,.42);background:rgba(9,9,9,.28);color:var(--color-paper-50)}
+ .anime-detail-library-actions .personal-actions button,.anime-detail-library-actions .personal-status{width:100%;justify-content:center;text-align:center;min-height:2.15rem;padding:.5rem .4rem;font-size:.48rem;border-color:rgba(245,242,236,.42);background:rgba(9,9,9,.28);color:var(--color-paper-50)}
  .anime-detail-copy,
  .anime-detail--ghibli .anime-detail-copy{display:contents}
  .anime-detail-copy-main,
  .anime-detail--ghibli .anime-detail-copy-main{display:contents}
  .anime-detail-eyebrow{grid-column:2;grid-row:1;align-self:end}
- .anime-detail-copy h1{grid-column:2;grid-row:1;min-width:0;width:100%;max-width:100%;margin:.25rem 0 .8rem;font-size:clamp(2.25rem,10vw,4rem);line-height:.95;overflow-wrap:anywhere;word-break:normal}
+ .anime-detail-copy h1{grid-column:2;grid-row:1;min-width:0;width:100%;max-width:100%;margin:.25rem 0 .8rem;font-size:clamp(2.15rem,9vw,4rem);line-height:.95;overflow-wrap:anywhere;word-break:normal}
  .anime-detail-meta{grid-column:2;grid-row:2;align-self:start;display:flex;flex-wrap:wrap;align-items:baseline;gap:.3rem .65rem;font-size:.58rem;line-height:1.25}
  .anime-detail-meta span{display:flex;align-items:baseline;gap:.32rem;min-width:max-content}
  .anime-detail-meta small{font-size:.48rem;letter-spacing:.06em}
