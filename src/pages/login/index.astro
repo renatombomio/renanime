@@ -40,7 +40,7 @@ import Layout from "../../layouts/Layout.astro";
           <label for="name">Tu nombre</label>
           <input id="name" type="text" maxlength="80" autocomplete="name" />
 
-          <button id="continue-name" type="button">Continuar</button>
+          <button id="create-profile" type="button">Continuar</button>
           <p id="name-message" class="message" aria-live="polite"></p>
         </div>
 
@@ -57,17 +57,7 @@ import Layout from "../../layouts/Layout.astro";
           <p id="recovery-message" class="message" aria-live="polite"></p>
         </div>
 
-        <div class="step" data-step="aka" hidden>
-          <p class="panel-eyebrow">TU IDENTIDAD OTAKU</p>
-          <h2>¿Cuál es tu AKA?</h2>
-          <p>Ese será el nombre con el que vivirás tu archivo personal en Renanime.</p>
 
-          <label for="aka">AKA</label>
-          <input id="aka" type="text" maxlength="40" autocomplete="nickname" />
-
-          <button id="create-profile" type="button">Crear mi perfil</button>
-          <p id="aka-message" class="message" aria-live="polite"></p>
-        </div>
 
         <div class="step" data-step="complete" hidden>
           <p class="panel-eyebrow">PERFIL CREADO</p>
@@ -98,17 +88,13 @@ import Layout from "../../layouts/Layout.astro";
   const showRecovery = document.querySelector<HTMLButtonElement>("#show-recovery");
   const nameStep = document.querySelector<HTMLElement>('[data-step="profile"]');
   const recoveryStep = document.querySelector<HTMLElement>('[data-step="recovery"]');
-  const akaStep = document.querySelector<HTMLElement>('[data-step="aka"]');
   const completeStep = document.querySelector<HTMLElement>('[data-step="complete"]');
   const nameInput = document.querySelector<HTMLInputElement>("#name");
-  const akaInput = document.querySelector<HTMLInputElement>("#aka");
   const recoveryInput = document.querySelector<HTMLInputElement>("#recovery-code");
   const nameMessage = document.querySelector<HTMLParagraphElement>("#name-message");
-  const akaMessage = document.querySelector<HTMLParagraphElement>("#aka-message");
   const recoveryMessage = document.querySelector<HTMLParagraphElement>("#recovery-message");
   const welcomeName = document.querySelector<HTMLSpanElement>("#welcome-name");
   const recoveryDisplay = document.querySelector<HTMLDivElement>("#recovery-display");
-  const continueName = document.querySelector<HTMLButtonElement>("#continue-name");
   const createProfile = document.querySelector<HTMLButtonElement>("#create-profile");
   const recoverAccount = document.querySelector<HTMLButtonElement>("#recover-account");
   const backToCreate = document.querySelector<HTMLButtonElement>("#back-to-create");
@@ -118,7 +104,7 @@ import Layout from "../../layouts/Layout.astro";
   let hasProfiles = false;
 
   const showStep = (step: HTMLElement | null) => {
-    [nameStep, recoveryStep, akaStep, completeStep].forEach((item) => {
+    [nameStep, recoveryStep, completeStep].forEach((item) => {
       if (item) item.hidden = item !== step;
     });
   };
@@ -167,7 +153,7 @@ import Layout from "../../layouts/Layout.astro";
     existingHint.hidden = !hasProfiles;
   });
 
-  continueName?.addEventListener("click", () => {
+  createProfile?.addEventListener("click", async () => {
     if (!nameInput || !nameMessage) return;
 
     const name = nameInput.value.trim();
@@ -178,34 +164,19 @@ import Layout from "../../layouts/Layout.astro";
       return;
     }
 
-    showStep(akaStep);
-  });
-
-  createProfile?.addEventListener("click", async () => {
-    if (!nameInput || !akaInput || !akaMessage) return;
-
-    const name = nameInput.value.trim();
-    const aka = akaInput.value.trim();
-    akaMessage.textContent = "";
-
-    if (!aka || aka.length < 2) {
-      akaMessage.textContent = "Tu AKA debe tener al menos 2 caracteres.";
-      return;
-    }
-
     try {
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accessPassword, name, aka }),
+        body: JSON.stringify({ accessPassword, name, aka: name }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        akaMessage.textContent =
+        nameMessage.textContent =
           data.error === "INVALID_PROFILE"
-            ? "Revisa tu nombre y tu AKA."
+            ? "Revisa tu nombre."
             : "No se ha podido crear el perfil.";
         return;
       }
@@ -214,7 +185,7 @@ import Layout from "../../layouts/Layout.astro";
       recoveryDisplay!.textContent = data.recoveryCode;
       showStep(completeStep);
     } catch {
-      akaMessage.textContent = "No se ha podido conectar con Renanime.";
+      nameMessage.textContent = "No se ha podido conectar con Renanime.";
     }
   });
 
@@ -311,9 +282,16 @@ import Layout from "../../layouts/Layout.astro";
   }
 
   .panel {
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    position: fixed;
+    inset: 50% auto auto 50%;
+    z-index: 100;
+    width: min(calc(100% - 2rem), 430px);
+    transform: translate(-50%, -50%);
+    padding: 2rem;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    background: #090909;
+    box-shadow: 0 0 0 100vmax rgba(0,0,0,0.78), 0 24px 80px rgba(0,0,0,0.6);
   }
 
   label {
