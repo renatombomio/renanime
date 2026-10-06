@@ -123,6 +123,7 @@ import Layout from "../../layouts/Layout.astro";
   const accessMessage = document.querySelector<HTMLParagraphElement>("#access-message");
   const accessCard = document.querySelector<HTMLElement>(".access-card");
   const onboarding = document.querySelector<HTMLElement>("#onboarding");
+  const jokeBubbles = document.querySelector<HTMLElement>(".joke-bubbles");
 
   const accessJokes = document.createElement("div");
   accessJokes.id = "access-jokes";
@@ -200,7 +201,15 @@ import Layout from "../../layouts/Layout.astro";
     [nameStep, akaStep, completeStep, recoveryStep].forEach((item) => {
       if (item) item.hidden = item !== step;
     });
+
+    if (jokeBubbles) {
+      jokeBubbles.hidden = step !== akaStep;
+    }
   };
+
+  if (jokeBubbles) {
+    jokeBubbles.hidden = true;
+  }
 
   accessForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
