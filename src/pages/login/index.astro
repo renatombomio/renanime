@@ -215,12 +215,11 @@ import Layout from "../../layouts/Layout.astro";
       const data = await response.json();
 
       if (!response.ok) {
-        if (data.error === "INVALID_ACCESS_PASSWORD") {
-          accessMessage.textContent = "Código de acceso incorrecto.";
-          showAccessFailure();
-        } else {
-          accessMessage.textContent = "No se ha podido abrir Renanime.";
-        }
+        accessMessage.textContent =
+          data.error === "INVALID_ACCESS_PASSWORD"
+            ? "Código de acceso incorrecto."
+            : "Código incorrecto. La puerta sigue cerrada.";
+        showAccessFailure();
         return;
       }
 
