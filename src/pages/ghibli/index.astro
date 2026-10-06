@@ -26,7 +26,7 @@ const films = getGhibliFilms();
       <section id="archivo" class="ghibli-content" aria-labelledby="archive-title">
 
 
-        <GhibliStory entries={ghibliStory} client:load />
+        <GhibliStory entries={ghibliStory} totalFilms={films.length} watchedFilms={films.filter((film) => film.watched).length} client:load />
 
         <GhibliView films={films} client:load />
       </section>
