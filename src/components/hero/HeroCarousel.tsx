@@ -70,6 +70,7 @@ export default function HeroCarousel({
           loop
           playsInline
           preload="metadata"
+          aria-hidden="true"
         >
           <source src={videoSrc} type="video/mp4" />
         </video>
