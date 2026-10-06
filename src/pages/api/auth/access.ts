@@ -18,16 +18,13 @@ export const POST: APIRoute = async ({ request }) => {
     })
 
     if (error) {
-      if (error.message.includes('INVALID_ACCESS_PASSWORD')) {
-        return new Response(JSON.stringify({ ok: false, error: 'INVALID_ACCESS_PASSWORD' }), {
-          status: 401,
-          headers: { 'Content-Type': 'application/json' },
-        })
-      }
-
       console.error('Renanime access error:', error.message)
-      return new Response(JSON.stringify({ ok: false, error: 'ACCESS_FAILED' }), {
-        status: 500,
+
+      // renanime_check_access intentionally uses INVALID_ACCESS_PASSWORD
+      // for a wrong code. Normalize the RPC error so the UI can always
+      // trigger the playful access-denied experience.
+      return new Response(JSON.stringify({ ok: false, error: 'INVALID_ACCESS_PASSWORD' }), {
+        status: 401,
         headers: { 'Content-Type': 'application/json' },
       })
     }
