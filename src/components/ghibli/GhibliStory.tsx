@@ -9,7 +9,7 @@ interface Media {
 
 const accents = ["pink", "blue", "lime", "coral", "teal", "red", "sky"];
 
-export default function GhibliStory({ entries }: { entries: GhibliStoryEntry[] }) {
+export default function GhibliStory({ entries, totalFilms, watchedFilms }: { entries: GhibliStoryEntry[]; totalFilms: number; watchedFilms: number }) {
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(true);
 
@@ -201,7 +201,7 @@ export default function GhibliStory({ entries }: { entries: GhibliStoryEntry[] }
       <footer className="ghs-end">
         <span>El viaje continúa</span>
         <p>Algunas ya son recuerdos.<br /><em>Otras todavía me esperan.</em></p>
-        <small>24 películas · 7 vistas · 17 por descubrir</small>
+        <small>{totalFilms} películas · {watchedFilms} vistas · {totalFilms - watchedFilms} por descubrir</small>
       </footer>
     </section>
   );
