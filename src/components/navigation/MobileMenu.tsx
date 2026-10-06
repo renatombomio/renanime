@@ -15,7 +15,8 @@ const links = [
 ];
 
 export default function MobileMenu({ variant = "default" }: Props) {
-  const [open, setOpen] = useState(false);\n  const currentPath = typeof window !== "undefined" ? window.location.pathname.replace(/\\/$/, "") || "/" : "/";
+  const [open, setOpen] = useState(false);
+  const currentPath = typeof window !== "undefined" ? window.location.pathname.replace(/\/$/, "") || "/" : "/";
 
   useEffect(() => {
     document.documentElement.classList.toggle("mobile-menu-open", open);
