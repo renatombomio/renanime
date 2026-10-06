@@ -446,7 +446,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
       const node=relation.node;
       if(!node) return null;
       const label=relation.relationType==="SEQUEL"?"Secuela":relation.relationType==="PREQUEL"?"Precuela":relation.relationType==="SIDE_STORY"?"Historia paralela":relation.relationType==="SPIN_OFF"?"Spin-off":relation.relationType==="ALTERNATIVE"?"Alternativa":relation.relationType==="PARENT"?"Principal":relation.relationType==="ADAPTATION"?"Adaptación":"Relacionado";
-      return <a className="anime-detail-related-card" href={"/anime/search?id="+node.id+"&from=anime&back=/anime/"+entry.animeId} key={node.id+"-"+index}>
+      return <a className="anime-detail-related-card" href={"/anime/" + node.id} key={node.id+"-"+index}>
         <div className="anime-detail-related-poster">{node.coverImage?.extraLarge||node.coverImage?.large?<img src={node.coverImage.extraLarge||node.coverImage.large||""} alt=""/>:<div/>}</div>
         <div className="anime-detail-related-copy"><strong>{node.title?.romaji||node.title?.english||"Sin título"}</strong><span>{label} · {node.format==="MOVIE"?"Film":node.format==="OVA"?"OVA":node.format==="SPECIAL"?"Especial":"Series"}</span></div>
       </a>;
