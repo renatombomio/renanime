@@ -116,18 +116,13 @@ export default function HomeGallery({ entries }: Props) {
     const targetEntries = needsCompleteMetadata ? entries : entries.slice(0, visible);
     const missing = targetEntries.filter((entry) => !(entry.animeId in media));
 
-    if (!missing.length) {
-      if (needsCompleteMetadata) setMetadataReady(true);
-      return;
-    }
+    if (!missing.length) return;
 
     let cancelled = false;
     setLoading(true);
-    const needsCompleteMetadata = sort === "YEAR" || sort === "TITLE" || sort === "SCORE" || filter !== "ALL" || Boolean(query.trim());
     fetchMedia(missing, !needsCompleteMetadata).then((result) => {
       if (!cancelled) {
         setMedia((current) => ({ ...current, ...result }));
-        if (needsCompleteMetadata) setMetadataReady(true);
       }
     }).finally(() => {
       if (!cancelled) setLoading(false);
