@@ -60,6 +60,7 @@ export default function MobileMenu({ variant = "default" }: Props) {
               key={link.href}
               className="mobile-link"
               href={link.href}
+              aria-current={currentPath === (link.href.replace(/\/$/, "") || "/") ? "page" : undefined}
               tabIndex={open ? 0 : -1}
               onClick={() => setOpen(false)}
               style={{ "--menu-index": index } as React.CSSProperties}
