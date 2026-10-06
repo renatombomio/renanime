@@ -55,12 +55,12 @@ const joinedDate = profile.created_at
 
         <div class="stats">
           <article class="stat-card">
-            <span class="stat-number">{pending.length}</span>
+            <span class="stat-number" data-personal-count="PENDING">{pending.length}</span>
             <span class="stat-label">ANIMES EN MI LISTA</span>
           </article>
 
           <article class="stat-card">
-            <span class="stat-number">{watched.length}</span>
+            <span class="stat-number" data-personal-count="WATCHED">{watched.length}</span>
             <span class="stat-label">ANIMES EN MI COLECCIÓN</span>
           </article>
         </div>
@@ -245,3 +245,29 @@ const joinedDate = profile.created_at
     }
   }
 </style>
+
+<script>
+  const STORAGE_KEY = "renanime:personal-library:v1";
+  const CHANGE_EVENT = "renanime:personal-library-change";
+
+  function updatePersonalCounts() {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      const entries = raw ? JSON.parse(raw) : [];
+      const list = Array.isArray(entries) ? entries : [];
+      const pending = list.filter((entry) => entry?.state?.status === "PENDING").length;
+      const watched = list.filter((entry) => entry?.state?.status === "WATCHED").length;
+
+      document.querySelector('[data-personal-count="PENDING"]')?.replaceChildren(String(pending));
+      document.querySelector('[data-personal-count="WATCHED"]')?.replaceChildren(String(watched));
+    } catch {
+      // Keep the server-rendered values if localStorage is unavailable or malformed.
+    }
+  }
+
+  updatePersonalCounts();
+  window.addEventListener(CHANGE_EVENT, updatePersonalCounts);
+  window.addEventListener("storage", (event) => {
+    if (event.key === STORAGE_KEY) updatePersonalCounts();
+  });
+</script>
