@@ -168,9 +168,13 @@ export default function FavoritesView({ entries, recommendations }: Props) {
           </div>
         </div>
 
-        <div className="favorites-track" ref={favoriteTrackRef}>
-          {entries.slice(0, visibleFavorites).map((entry, index) => renderCard(entry, index))}
-        </div>
+        {entries.length ? (
+          <div className="favorites-track" ref={favoriteTrackRef}>
+            {entries.slice(0, visibleFavorites).map((entry, index) => renderCard(entry, index))}
+          </div>
+        ) : (
+          <div className="favorites-empty" role="status">Todavía no hay favoritos en este archivo.</div>
+        )}
 
         {visibleFavorites < entries.length && (
           <button
@@ -200,9 +204,13 @@ export default function FavoritesView({ entries, recommendations }: Props) {
           Historias que forman parte de mi recorrido y que quiero que descubras.
         </p>
 
-        <div className="favorites-track favorites-track--recommendations" ref={recommendationTrackRef}>
-          {recommendations.slice(0, visibleRecommendations).map((entry, index) => renderCard(entry, index, true))}
-        </div>
+        {recommendations.length ? (
+          <div className="favorites-track favorites-track--recommendations" ref={recommendationTrackRef}>
+            {recommendations.slice(0, visibleRecommendations).map((entry, index) => renderCard(entry, index, true))}
+          </div>
+        ) : (
+          <div className="favorites-empty" role="status">Todavía no hay recomendaciones en este archivo.</div>
+        )}
 
         {visibleRecommendations < recommendations.length && (
           <button
@@ -219,6 +227,20 @@ export default function FavoritesView({ entries, recommendations }: Props) {
       {loading && <span className="favorites-loading">Cargando archivo…</span>}
 
       <style>{`
+        .favorites-empty {
+          display: grid;
+          min-height: 8rem;
+          place-items: center;
+          margin-top: 1rem;
+          padding: 1.5rem;
+          border: 1px solid var(--color-border);
+          color: var(--color-muted-400);
+          font: 500 .62rem/1.5 var(--font-meta);
+          letter-spacing: .06em;
+          text-align: center;
+          text-transform: uppercase;
+        }
+
         .favorites-load-more {
           display: inline-flex;
           align-items: center;
