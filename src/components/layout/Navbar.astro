@@ -128,13 +128,15 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
   }
 
   .desktop-nav a:hover,
-  .desktop-nav a:focus-visible {
+  .desktop-nav a:focus-visible,
+  .desktop-nav a[aria-current="page"] {
     color: #f5f2ec;
     transform: translateY(-1px);
   }
 
   .desktop-nav a:hover::after,
-  .desktop-nav a:focus-visible::after {
+  .desktop-nav a:focus-visible::after,
+  .desktop-nav a[aria-current="page"]::after {
     transform: scaleX(1);
   }
 
