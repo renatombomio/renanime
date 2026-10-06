@@ -17,11 +17,11 @@ const collectionEntries = getWatchedLibrary();
       <SectionHeader
         variant="ren"
         title="Colección de Ren"
-        description={`${collectionEntries.length} animes vistos · Historias terminadas, descubrimientos y años de obsesión.`}
+        description="Historias terminadas, descubrimientos y años de obsesión."
       />
       <div class="ren-collection-stat" aria-label={`${collectionEntries.length} animes en la colección`}>
-        <strong>{String(collectionEntries.length).padStart(3, "0")}</strong>
-        <span>títulos vistos</span>
+        <strong>{collectionEntries.length}</strong>
+        <span>animes vistos</span>
       </div>
     </div>
 
