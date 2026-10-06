@@ -3,7 +3,7 @@ import { supabaseServer } from '../../../lib/supabase-server'
 
 export const prerender = false
 
-export const POST: APIRoute = async ({ request, cookies, response }) => {
+export const POST: APIRoute = async ({ request, cookies }) => {
   try {
     const rawBody = await request.text()
 
@@ -86,8 +86,12 @@ export const POST: APIRoute = async ({ request, cookies, response }) => {
       maxAge: 60 * 60 * 24 * 30,
     })
 
+    const headers = new Headers({
+      'Content-Type': 'application/json',
+    })
+
     for (const setCookie of cookies.headers()) {
-      response.headers.append('Set-Cookie', setCookie)
+      headers.append('Set-Cookie', setCookie)
     }
 
     return new Response(JSON.stringify({
@@ -100,7 +104,7 @@ export const POST: APIRoute = async ({ request, cookies, response }) => {
       },
     }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers,
     })
   } catch (error) {
     console.error('Unexpected registration error:', error)
