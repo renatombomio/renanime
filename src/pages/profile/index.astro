@@ -265,7 +265,13 @@ const joinedDate = profile.created_at
     }
   }
 
-  updatePersonalCounts();
+  function bindPersonalCountSync() {
+    updatePersonalCounts();
+  }
+
+  bindPersonalCountSync();
+  document.addEventListener("astro:page-load", bindPersonalCountSync);
+
   window.addEventListener(CHANGE_EVENT, updatePersonalCounts);
   window.addEventListener("storage", (event) => {
     if (event.key === STORAGE_KEY) updatePersonalCounts();
