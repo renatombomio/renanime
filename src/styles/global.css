@@ -49,8 +49,14 @@ a { color: inherit; text-decoration: none; }
   .favorite-media img,
   .home-gallery-card img,
   .anime-detail-related-card,
-  .anime-detail-franchise-card {
+  .anime-detail-franchise-card,
+  .mobile-toggle span,
+  .mobile-panel a,
+  .collection-filters button::after {
     transition: none !important;
+  }
+  .home-gallery-loading {
+    animation: none !important;
   }
   .collection-card a:hover,
   .favorite-card a:hover {
