@@ -17,6 +17,18 @@ const isGhibli = Astro.url.pathname.startsWith("/ghibli");
 
     <p class="thanks">Gracias por visitar mi galería de Anime.</p>
 
+    <nav class="footer-nav" aria-label="Enlaces del pie de página">
+      <a href="/">Inicio</a>
+      <a href="/ren-collection/">Colección de Ren</a>
+      <a href="/favorites/">Favoritos</a>
+      <a href="/genres/">Géneros</a>
+      <a href="/search/">Buscar</a>
+      <a href="/pending/">Mi lista</a>
+      <a href="/collection/">Mi colección</a>
+      <a href="/profile/">Mi perfil</a>
+      <a href="/ghibli/">El secreto de Ren</a>
+    </nav>
+
     <div class="footer-meta">
       <span>Renanime</span>
       <span>© {year}</span>
@@ -88,6 +100,33 @@ const isGhibli = Astro.url.pathname.startsWith("/ghibli");
     text-align: center;
   }
 
+  :global(.footer-nav) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .6rem 1.2rem;
+    max-width: 58rem;
+    margin-top: 2.25rem;
+  }
+
+  :global(.footer-nav a) {
+    color: var(--color-muted-400);
+    font-family: var(--font-meta);
+    font-size: .52rem;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  :global(.footer-nav a:hover),
+  :global(.footer-nav a:focus-visible) {
+    color: var(--color-paper-50);
+  }
+
+  .site-footer--ghibli :global(.footer-nav a) { color: #59756b; }
+  .site-footer--ghibli :global(.footer-nav a:hover),
+  .site-footer--ghibli :global(.footer-nav a:focus-visible) { color: #18528a; }
+
   :global(.footer-meta) {
     display: flex;
     gap: var(--space-5);
@@ -114,8 +153,13 @@ const isGhibli = Astro.url.pathname.startsWith("/ghibli");
       margin-top: 1.75rem;
     }
 
+    :global(.footer-nav) {
+      gap: .65rem .9rem;
+      margin-top: 2rem;
+    }
+
     :global(.footer-meta) {
-      margin-top: 3rem;
+      margin-top: 2.5rem;
     }
   }
 </style>
