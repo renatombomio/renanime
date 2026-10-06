@@ -31,18 +31,21 @@ async function fetchMedia(entries: Entry[], resolveFallbackPosters = true): Prom
 
   for (const entry of entries) {
     const key = CACHE_PREFIX + entry.title.toLowerCase();
+    let cachedMedia: Media | null = null;
+
     try {
       const cached = sessionStorage.getItem(key);
-      if (cached) {
-        const media = JSON.parse(cached) as Media | null;
-        if (media?.coverImage?.extraLarge || media?.coverImage?.large) {
-          result[entry.animeId] = media;
-          continue;
-        }
-        sessionStorage.removeItem(key);
-      }
+      if (cached) cachedMedia = JSON.parse(cached) as Media | null;
     } catch {}
-    unresolved.push(entry);
+
+    if (cachedMedia?.coverImage?.extraLarge || cachedMedia?.coverImage?.large) {
+      result[entry.animeId] = cachedMedia;
+    } else {
+      try {
+        sessionStorage.removeItem(key);
+      } catch {}
+      unresolved.push(entry);
+    }
   }
 
   const chunks: Entry[][] = [];
