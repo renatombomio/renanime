@@ -62,14 +62,12 @@ import Layout from "../../layouts/Layout.astro";
           <p id="aka-message" class="message" aria-live="polite"></p>
         </div>
 
-        <div class="step" data-step="complete" hidden>
-          <p class="panel-eyebrow">PERFIL CREADO</p>
-          <h2>Bienvenido, <span id="welcome-name"></span>.</h2>
+        <div class="step complete-step" data-step="complete" hidden>
+          <h2 class="welcome-title">Bienvenido a Renanime, <span id="welcome-name"></span>.</h2>
           <p class="joke-result">
-            Ja, ja, ja. Es broma. A nadie le importa.<br />
-            No me puedo creer que lo hayas escrito.
+            Ja, ja, ja. Era broma. A nadie le importa tu AKA.<br />
+            No me puedo creer que lo hayas escrito. Mereces entrar a la web.
           </p>
-          <p>Bienvenido, anda. Bienvenido a RenAnime.</p>
 
           <p class="recovery-note">
             Tu código de recuperación es:
@@ -79,7 +77,7 @@ import Layout from "../../layouts/Layout.astro";
             Guárdalo. Lo necesitarás para entrar desde otro dispositivo.
           </p>
 
-          <button id="enter-renanime" type="button">Entrar a Renanime</button>
+          <button id="enter-renanime" type="button">Iniciar sesión</button>
         </div>
 
         <div class="step" data-step="recovery" hidden>
@@ -567,8 +565,15 @@ import Layout from "../../layouts/Layout.astro";
     text-decoration: underline;
   }
 
+  .welcome-title {
+    font-size: clamp(2.2rem, 8vw, 3.4rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+
   .joke-result {
     color: rgba(255,255,255,0.72) !important;
+    margin-top: 1.25rem !important;
   }
 
   .recovery-note {
