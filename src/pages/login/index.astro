@@ -154,6 +154,10 @@ import Layout from "../../layouts/Layout.astro";
     accessFailureIndex = (accessFailureIndex + 1) % accessFailureMessages.length;
     sessionStorage.setItem(accessFailureKey, String(accessFailureIndex));
 
+    if (accessMessage) {
+      accessMessage.textContent = message;
+    }
+
     const bubble = document.createElement("span");
     bubble.textContent = message;
     bubble.style.setProperty("--joke-index", "0");
