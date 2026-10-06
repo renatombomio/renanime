@@ -63,7 +63,10 @@ export default function PersonalLibraryActions({ animeId }: Props) {
 const styles = `
 .personal-actions{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:.9rem}
 .personal-actions button,.personal-status{min-height:2.25rem;padding:.55rem .75rem;border:1px solid var(--color-border);background:transparent;color:var(--color-paper-50);font-family:var(--font-meta);font-size:.52rem;letter-spacing:.06em;text-transform:uppercase}
-.personal-actions button{cursor:pointer}
+.personal-actions button{cursor:pointer;transition:background 180ms ease,color 180ms ease,border-color 180ms ease,transform 180ms ease}
 .personal-actions button:hover,.personal-actions button.is-active{background:var(--color-paper-50);color:var(--color-ink-950)}
+.personal-actions button:hover{transform:translateY(-1px)}
+.personal-actions button:focus-visible{outline:1px solid var(--color-paper-50);outline-offset:3px}
 .personal-status{display:inline-flex;align-items:center;color:var(--color-paper-200)}
+@media (prefers-reduced-motion:reduce){.personal-actions button{transition:none}.personal-actions button:hover{transform:none}}
 `;
