@@ -138,6 +138,12 @@ import Layout from "../../layouts/Layout.astro";
     "RenAnime dice: acceso denegado."
   ];
 
+  const accessFailureKey = "renanime-access-failure-index";
+  let accessFailureIndex = Number(sessionStorage.getItem(accessFailureKey) ?? "0");
+  if (!Number.isInteger(accessFailureIndex) || accessFailureIndex < 0 || accessFailureIndex >= accessFailureMessages.length) {
+    accessFailureIndex = 0;
+  }
+
   const showAccessFailure = () => {
     accessJokes.innerHTML = "";
     accessCard?.classList.remove("access-wrong");
@@ -185,12 +191,6 @@ import Layout from "../../layouts/Layout.astro";
 
   let accessPassword = "";
   let hasProfiles = false;
-
-  const accessFailureKey = "renanime-access-failure-index";
-  let accessFailureIndex = Number(sessionStorage.getItem(accessFailureKey) ?? "0");
-  if (!Number.isInteger(accessFailureIndex) || accessFailureIndex < 0 || accessFailureIndex >= accessFailureMessages.length) {
-    accessFailureIndex = 0;
-  }
 
   const showStep = (step: HTMLElement | null) => {
     [nameStep, akaStep, completeStep, recoveryStep].forEach((item) => {
