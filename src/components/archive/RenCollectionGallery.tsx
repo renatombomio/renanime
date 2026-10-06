@@ -116,7 +116,7 @@ export default function HomeGallery({ entries }: Props) {
   const [sortOpen, setSortOpen] = useState(false);
 
   useEffect(() => {
-    const needsCompleteMetadata = sort === "YEAR" || sort === "TITLE" || sort === "SCORE" || filter !== "ALL" || Boolean(query.trim());
+    const needsCompleteMetadata = sort === "YEAR" || sort === "TITLE" || filter !== "ALL" || Boolean(query.trim());
     const targetEntries = needsCompleteMetadata ? entries : entries.slice(0, visible);
     const missing = targetEntries.filter((entry) => !(entry.animeId in media));
 
