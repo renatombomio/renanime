@@ -409,7 +409,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
             {items.map((item) => {
               const recTitle=item.title?.romaji||item.title?.english||"Sin título";
               const recImage=item.coverImage?.extraLarge||item.coverImage?.large;
-              return <a className="anime-detail-recommendation" href={"/anime/search?id="+item.id+"&from=anime&back=/anime/"+entry.animeId} key={item.id}>
+              return <a className="anime-detail-recommendation" href={"/anime/" + item.id} key={item.id}>
                 <div className="anime-detail-recommendation-poster">{recImage&&<img src={recImage} alt={recTitle} loading="lazy" />}</div>
                 <span className="anime-detail-recommendation-title">{recTitle}</span>
                 <span className="anime-detail-recommendation-meta">{item.format==="MOVIE"?"Film":"Series"}{item.startDate?.year?" · "+item.startDate.year:""}</span>
