@@ -98,7 +98,6 @@ export default function HomeGallery({ entries }: Props) {
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(false);
-  const [metadataReady, setMetadataReady] = useState(false);
   const [filter, setFilter] = useState<Filter>("ALL");
   const [sort, setSort] = useState<Sort>("ADDED");
   const [query, setQuery] = useState("");
@@ -115,8 +114,6 @@ export default function HomeGallery({ entries }: Props) {
 
     let cancelled = false;
     setLoading(true);
-    if (needsCompleteMetadata) setMetadataReady(false);
-
     fetchMedia(missing).then((result) => {
       if (!cancelled) {
         setMedia((current) => ({ ...current, ...result }));
