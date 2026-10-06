@@ -25,7 +25,7 @@ type Sort = "ADDED" | "TITLE" | "YEAR" | "SCORE";
 const PAGE_SIZE = 15;
 const CACHE_PREFIX = "renanime:collection:v7:";
 
-async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null>> {
+async function fetchMedia(entries: Entry[], resolveFallbackPosters = true): Promise<Record<string, Media | null>> {
   const result: Record<string, Media | null> = {};
   const unresolved: Entry[] = [];
 
@@ -45,8 +45,12 @@ async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null
     unresolved.push(entry);
   }
 
-  for (let offset = 0; offset < unresolved.length; offset += 15) {
-    const chunk = unresolved.slice(offset, offset + 15);
+  const chunks: Entry[][] = [];
+  for (let offset = 0; offset < unresolved.length; offset += 40) {
+    chunks.push(unresolved.slice(offset, offset + 40));
+  }
+
+  await Promise.all(chunks.map(async (chunk) => {
     const variables: Record<string, string> = {};
     const fields = chunk.map((entry, index) => {
       const key = "s" + index;
@@ -70,19 +74,24 @@ async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null
         const candidates = payload.data?.["a" + index]?.media ?? [];
         result[entry.animeId] = selectBestAnimeCandidate(candidates, entry.title, entry.format);
       });
+      if (resolveFallbackPosters) {
+        await Promise.all(chunk.map(async (entry) => {
+          const current = result[entry.animeId];
+          if (!current?.coverImage?.extraLarge && !current?.coverImage?.large) {
+            const poster = await fetchFallbackPoster(entry.title, entry.format);
+            if (poster) result[entry.animeId] = { ...(current ?? {}), coverImage: { extraLarge: poster, large: poster } };
+          }
+        }));
+      }
+
       for (const entry of chunk) {
-        const current = result[entry.animeId];
-        if (!current?.coverImage?.extraLarge && !current?.coverImage?.large) {
-          const poster = await fetchFallbackPoster(entry.title, entry.format);
-          if (poster) result[entry.animeId] = { ...(current ?? {}), coverImage: { extraLarge: poster, large: poster } };
-        }
         try {
           sessionStorage.setItem(CACHE_PREFIX + entry.title.toLowerCase(), JSON.stringify(result[entry.animeId] ?? null));
         } catch {}
       }
     } catch {}
-  }
-
+  }));
+  
   return result;
 }
 
@@ -114,7 +123,8 @@ export default function HomeGallery({ entries }: Props) {
 
     let cancelled = false;
     setLoading(true);
-    fetchMedia(missing).then((result) => {
+    const needsCompleteMetadata = sort === "YEAR" || sort === "TITLE" || sort === "SCORE" || filter !== "ALL" || Boolean(query.trim());
+    fetchMedia(missing, !needsCompleteMetadata).then((result) => {
       if (!cancelled) {
         setMedia((current) => ({ ...current, ...result }));
         if (needsCompleteMetadata) setMetadataReady(true);
