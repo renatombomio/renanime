@@ -87,7 +87,7 @@ export default function PersonalLibraryView({mode}:Props){
         const image=item?.coverImage?.extraLarge||item?.coverImage?.large;
         const score=entry.state.personalScore;
         return <article className="personal-library-card" key={entry.animeId}>
-          <a href={`/anime/search?id=${entry.animeId}&from=personal-library`} className="personal-library-link" aria-label={`Ver ${title}`}>
+          <a href={`/anime/${entry.animeId}`} className="personal-library-link" aria-label={`Ver ${title}`}>
             <div className="personal-library-poster">
               {image?<img src={image} alt="" loading="lazy" onError={event=>{event.currentTarget.style.display="none";}}/>:<div className="personal-library-placeholder" aria-hidden="true"/>}
               <div className="personal-library-overlay">
