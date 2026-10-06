@@ -20,7 +20,7 @@ interface Props {
 }
 
 type Filter = "ALL" | "SERIES" | "MOVIES";
-type Sort = "ADDED" | "TITLE" | "YEAR" | "SCORE";
+type Sort = "ADDED" | "TITLE" | "YEAR";
 
 const PAGE_SIZE = 15;
 const CACHE_PREFIX = "renanime:collection:v7:";
@@ -110,6 +110,7 @@ export default function HomeGallery({ entries }: Props) {
   const [filter, setFilter] = useState<Filter>("ALL");
   const [sort, setSort] = useState<Sort>("ADDED");
   const [query, setQuery] = useState("");
+  const [sortOpen, setSortOpen] = useState(false);
 
   useEffect(() => {
     const needsCompleteMetadata = sort === "YEAR" || sort === "TITLE" || sort === "SCORE" || filter !== "ALL" || Boolean(query.trim());
@@ -147,7 +148,6 @@ export default function HomeGallery({ entries }: Props) {
         const bMedia = media[b.animeId];
         if (sort === "TITLE") return titleOf(a, aMedia).localeCompare(titleOf(b, bMedia), "es");
         if (sort === "YEAR") return (bMedia?.startDate?.year ?? 0) - (aMedia?.startDate?.year ?? 0);
-        if (sort === "SCORE") return (b.state?.personalScore ?? -1) - (a.state?.personalScore ?? -1);
         return entries.indexOf(a) - entries.indexOf(b);
       });
   }, [entries, media, filter, sort, query]);
@@ -172,13 +172,43 @@ export default function HomeGallery({ entries }: Props) {
         <div className="archive-tools">
           <label className="sr-only" htmlFor="archive-search">Buscar en este archivo</label>
           <input id="archive-search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar…" type="search" />
-          <label className="sr-only" htmlFor="archive-sort">Ordenar archivo</label>
-          <select id="archive-sort" value={sort} onChange={(event) => setSort(event.target.value as Sort)}>
-            <option value="ADDED">Añadidos</option>
-            <option value="TITLE">Título A–Z</option>
-            <option value="YEAR">Más recientes</option>
-            <option value="SCORE">Mi puntuación</option>
-          </select>
+          <div className="archive-sort">
+            <span className="sr-only" id="archive-sort-label">Ordenar archivo</span>
+            <button
+              type="button"
+              className="archive-sort-trigger"
+              aria-haspopup="listbox"
+              aria-expanded={sortOpen}
+              aria-labelledby="archive-sort-label"
+              onClick={() => setSortOpen((open) => !open)}
+            >
+              {sort === "ADDED" ? "Añadidos" : sort === "TITLE" ? "Título A–Z" : "Más recientes"}
+              <span aria-hidden="true">⌄</span>
+            </button>
+            {sortOpen && (
+              <div className="archive-sort-menu" role="listbox" aria-label="Ordenar archivo">
+                {([
+                  ["ADDED", "Añadidos"],
+                  ["TITLE", "Título A–Z"],
+                  ["YEAR", "Más recientes"],
+                ] as const).map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    role="option"
+                    aria-selected={sort === value}
+                    className={sort === value ? "is-selected" : ""}
+                    onClick={() => {
+                      setSort(value);
+                      setSortOpen(false);
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -226,14 +256,21 @@ export default function HomeGallery({ entries }: Props) {
         .archive-filters{display:flex;gap:1.15rem;overflow-x:auto;scrollbar-width:none}.archive-filters::-webkit-scrollbar{display:none}
         .archive-filters button{position:relative;flex:0 0 auto;padding:.65rem 0 .7rem;border:0;background:transparent;color:var(--color-muted-400);font:500 .65rem/1 var(--font-meta);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
         .archive-filters button::after{position:absolute;right:0;bottom:0;left:0;height:1px;background:var(--color-paper-50);content:"";transform:scaleX(0);transition:transform var(--duration-fast) var(--ease-out)}.archive-filters button:hover,.archive-filters button.is-active{color:var(--color-paper-50)}.archive-filters button.is-active::after{transform:scaleX(1)}
-        .archive-tools{display:flex;justify-content:flex-end;gap:.5rem}.archive-tools input,.archive-tools select{min-height:2.5rem;border:1px solid var(--color-border);border-radius:var(--radius-sm);background:var(--color-ink-900);color:var(--color-paper-50);padding:.65rem .8rem;font:400 .8rem/1 var(--font-body);outline:none}.archive-tools input{width:min(16rem,100%)}.archive-tools input:focus,.archive-tools select:focus{border-color:var(--color-border-strong)}
+        .archive-tools{display:flex;justify-content:flex-end;gap:.5rem}.archive-tools input{min-height:2.5rem;border:1px solid var(--color-border);border-radius:var(--radius-sm);background:var(--color-ink-900);color:var(--color-paper-50);padding:.65rem .8rem;font:400 .8rem/1 var(--font-body);outline:none}.archive-tools input{width:min(16rem,100%)}.archive-tools input:focus{border-color:var(--color-border-strong)}
+        .archive-sort{position:relative;min-width:9.5rem}
+        .archive-sort-trigger{display:flex;align-items:center;justify-content:space-between;gap:.8rem;width:100%;min-height:2.5rem;padding:.65rem .8rem;border:1px solid var(--color-border);border-radius:var(--radius-sm);background:var(--color-ink-900);color:var(--color-paper-50);font:400 .8rem/1 var(--font-body);cursor:pointer}
+        .archive-sort-trigger:hover,.archive-sort-trigger[aria-expanded="true"]{border-color:var(--color-border-strong)}
+        .archive-sort-trigger span{font-size:.8rem;opacity:.7}
+        .archive-sort-menu{position:absolute;right:0;top:calc(100% + .35rem);z-index:20;min-width:100%;padding:.3rem;border:1px solid var(--color-border-strong);border-radius:var(--radius-sm);background:var(--color-ink-900);box-shadow:0 14px 40px rgba(0,0,0,.45)}
+        .archive-sort-menu button{display:block;width:100%;padding:.65rem .7rem;border:0;border-radius:.3rem;background:transparent;color:var(--color-muted-400);font:500 .65rem/1 var(--font-meta);letter-spacing:.05em;text-align:left;cursor:pointer}
+        .archive-sort-menu button:hover,.archive-sort-menu button.is-selected{background:rgba(255,255,255,.07);color:var(--color-paper-50)}
         .archive-count{margin:1rem 0 2rem;color:var(--color-muted-400);font:500 .62rem/1 var(--font-meta);letter-spacing:.08em;text-transform:uppercase}
         .archive-card-caption{position:absolute;right:0;bottom:0;left:0;z-index:2;display:grid;gap:.2rem;padding:2.8rem .7rem .7rem;background:linear-gradient(180deg,transparent,rgba(0,0,0,.82));pointer-events:none}.archive-card-caption strong{color:#fff;font:500 .72rem/1.15 var(--font-body)}.archive-card-caption span{color:rgba(255,255,255,.65);font:500 .46rem/1 var(--font-meta);letter-spacing:.06em}
         .archive-card-badges{position:absolute;right:.55rem;top:.55rem;z-index:2;display:flex;flex-wrap:wrap;gap:.3rem;pointer-events:none}.archive-card-badges span{padding:.28rem .36rem;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.5);color:#fff;font:500 .43rem/1 var(--font-meta);letter-spacing:.05em;text-transform:uppercase}
         .archive-empty{display:grid;justify-items:center;gap:.5rem;padding:4rem 1rem;border:1px solid var(--color-border);text-align:center}.archive-empty strong{color:var(--color-paper-50)}.archive-empty span{color:var(--color-muted-400)}
         .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
         @media(max-width:800px){.archive-toolbar{grid-template-columns:1fr;align-items:stretch}.archive-tools{justify-content:stretch}.archive-tools input{flex:1;width:auto}}
-        @media(max-width:560px){.archive-tools{display:grid;grid-template-columns:minmax(0,1fr) auto}.archive-tools select{max-width:8rem}.archive-card-caption{padding:2.3rem .45rem .5rem}.archive-card-caption strong{font-size:.62rem}.archive-card-badges{right:.35rem;top:.35rem}.archive-card-badges span{padding:.23rem .28rem;font-size:.38rem}}
+        @media(max-width:560px){.archive-tools{display:grid;grid-template-columns:minmax(0,1fr) auto}.archive-sort{min-width:8rem}.archive-card-caption{padding:2.3rem .45rem .5rem}.archive-card-caption strong{font-size:.62rem}.archive-card-badges{right:.35rem;top:.35rem}.archive-card-badges span{padding:.23rem .28rem;font-size:.38rem}}
       `}</style>
     </div>
   );
