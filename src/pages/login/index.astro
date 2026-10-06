@@ -19,6 +19,16 @@ import Layout from "../../layouts/Layout.astro";
       <form id="login-form">
         <label for="access-password">Contraseña</label>
         <input
+          id="recovery-code"
+          name="recoveryCode"
+          type="text"
+          autocomplete="off"
+          placeholder="REN-XXXX-XXXX"
+          required
+        />
+
+        <label for="access-password">Contraseña de acceso</label>
+        <input
           id="access-password"
           name="accessPassword"
           type="password"
@@ -40,6 +50,7 @@ import Layout from "../../layouts/Layout.astro";
 <script>
   const form = document.querySelector<HTMLFormElement>("#login-form");
   const passwordInput = document.querySelector<HTMLInputElement>("#access-password");
+  const recoveryInput = document.querySelector<HTMLInputElement>("#recovery-code");
   const errorMessage = document.querySelector<HTMLParagraphElement>("#error-message");
 
   form?.addEventListener("submit", async (event) => {
@@ -50,7 +61,7 @@ import Layout from "../../layouts/Layout.astro";
     errorMessage.textContent = "";
 
     try {
-      const response = await fetch("/api/auth/login", {
+      const response = await fetch("/api/auth/recover", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ accessPassword: passwordInput.value }),
@@ -62,7 +73,9 @@ import Layout from "../../layouts/Layout.astro";
         errorMessage.textContent =
           data.error === "INVALID_ACCESS_PASSWORD"
             ? "Contraseña incorrecta."
-            : "No se ha podido iniciar sesión.";
+            : data.error === "INVALID_RECOVERY_CODE"
+              ? "Código de recuperación incorrecto."
+              : "No se ha podido iniciar sesión.";
         return;
       }
 
