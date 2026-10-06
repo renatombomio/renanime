@@ -50,18 +50,6 @@ const joinedDate = profile.created_at
         </p>
       </header>
 
-      <div class="profile-info">
-        <article class="info-card">
-          <span class="info-label">NOMBRE</span>
-          <strong>{profile.name}</strong>
-        </article>
-
-        <article class="info-card">
-          <span class="info-label">FECHA DE REGISTRO</span>
-          <strong>{joinedDate}</strong>
-        </article>
-      </div>
-
       <section class="library-section">
         <p class="section-label">MI RENANIME</p>
 
@@ -147,34 +135,15 @@ const joinedDate = profile.created_at
     font-weight: 600;
   }
 
-  .profile-info {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-
-  .info-card,
   .stat-card {
     border: 1px solid rgba(255, 255, 255, 0.09);
     border-radius: 18px;
     background: rgba(255, 255, 255, 0.025);
   }
 
-  .info-card {
-    padding: 1.35rem 1.4rem;
-  }
-
-  .info-label,
   .stat-label {
     display: block;
     margin-bottom: 0.65rem;
-  }
-
-  .info-card strong {
-    display: block;
-    font-size: 1rem;
-    font-weight: 500;
   }
 
   .library-section {
@@ -267,7 +236,6 @@ const joinedDate = profile.created_at
       padding-top: 100px;
     }
 
-    .profile-info,
     .stats {
       grid-template-columns: 1fr;
     }
