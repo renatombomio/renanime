@@ -4,7 +4,7 @@ import Layout from "../../layouts/Layout.astro";
 
 <Layout
   title="Acceso — Renanime's Gallery"
-  description="Accede a Renanime's Gallery."
+  description="Entra en tu espacio personal de Renanime's Gallery."
 >
   <main class="access-page">
     <section class="access-card" aria-labelledby="access-title">
@@ -14,78 +14,246 @@ import Layout from "../../layouts/Layout.astro";
 
       <p class="eyebrow">RENANIME'S GALLERY</p>
       <h1 id="access-title">Acceso</h1>
-      <p class="subtitle">Introduce tu código de recuperación y la contraseña para entrar a tu archivo personal.</p>
+      <p class="subtitle">La puerta de entrada a tu archivo personal de anime.</p>
 
-      <form id="login-form">
-        <label for="recovery-code">Código de recuperación</label>
-        <input
-          id="recovery-code"
-          name="recoveryCode"
-          type="text"
-          autocomplete="off"
-          placeholder="REN-XXXX-XXXX"
-          required
-        />
-
-        <label for="access-password">Contraseña de acceso</label>
+      <form id="access-form">
+        <label for="access-password">Código de acceso</label>
         <input
           id="access-password"
           name="accessPassword"
           type="password"
           autocomplete="current-password"
           required
+          autofocus
         />
 
         <button type="submit">Entrar</button>
-        <p id="error-message" class="message" aria-live="polite"></p>
+        <p id="access-message" class="message" aria-live="polite"></p>
       </form>
 
-      <p class="register-link">
-        ¿Es tu primera vez? <a href="/register">Crear perfil</a>
+      <section id="onboarding" class="panel" hidden>
+        <div class="step" data-step="profile">
+          <p class="panel-eyebrow">BIENVENIDO</p>
+          <h2>¿Cómo te llamas?</h2>
+          <p>Vamos a crear tu espacio personal.</p>
+
+          <label for="name">Tu nombre</label>
+          <input id="name" type="text" maxlength="80" autocomplete="name" />
+
+          <button id="continue-name" type="button">Continuar</button>
+          <p id="name-message" class="message" aria-live="polite"></p>
+        </div>
+
+        <div class="step" data-step="recovery" hidden>
+          <p class="panel-eyebrow">TU CUENTA</p>
+          <h2>¿Ya tienes una cuenta?</h2>
+          <p>Si ya creaste tu perfil desde otro dispositivo, entra con tu código de recuperación.</p>
+
+          <label for="recovery-code">Código de recuperación</label>
+          <input id="recovery-code" type="text" placeholder="REN-XXXX-XXXX" autocomplete="off" />
+
+          <button id="recover-account" type="button">Entrar en mi cuenta</button>
+          <button id="back-to-create" class="secondary" type="button">Crear un perfil nuevo</button>
+          <p id="recovery-message" class="message" aria-live="polite"></p>
+        </div>
+
+        <div class="step" data-step="aka" hidden>
+          <p class="panel-eyebrow">TU IDENTIDAD OTAKU</p>
+          <h2>¿Cuál es tu AKA?</h2>
+          <p>Ese será el nombre con el que vivirás tu archivo personal en Renanime.</p>
+
+          <label for="aka">AKA</label>
+          <input id="aka" type="text" maxlength="40" autocomplete="nickname" />
+
+          <button id="create-profile" type="button">Crear mi perfil</button>
+          <p id="aka-message" class="message" aria-live="polite"></p>
+        </div>
+
+        <div class="step" data-step="complete" hidden>
+          <p class="panel-eyebrow">PERFIL CREADO</p>
+          <h2>Bienvenido, <span id="welcome-name"></span>.</h2>
+          <p>Jajaja, en serio tienes un AKA otaku. Este sitio es definitivamente para ti.</p>
+          <p class="recovery-note">
+            Guarda este código. Es muy importante: lo necesitarás para entrar desde otro dispositivo.
+          </p>
+          <div id="recovery-display" class="recovery-display"></div>
+          <button id="enter-renanime" type="button">Entrar a Renanime</button>
+        </div>
+      </section>
+
+      <p id="existing-hint" class="existing-hint" hidden>
+        ¿Ya tienes una cuenta?
+        <button id="show-recovery" type="button">Usa tu código de recuperación</button>
       </p>
     </section>
   </main>
 </Layout>
 
 <script>
-  const form = document.querySelector<HTMLFormElement>("#login-form");
-  const passwordInput = document.querySelector<HTMLInputElement>("#access-password");
+  const accessForm = document.querySelector<HTMLFormElement>("#access-form");
+  const accessPasswordInput = document.querySelector<HTMLInputElement>("#access-password");
+  const accessMessage = document.querySelector<HTMLParagraphElement>("#access-message");
+  const onboarding = document.querySelector<HTMLElement>("#onboarding");
+  const existingHint = document.querySelector<HTMLElement>("#existing-hint");
+  const showRecovery = document.querySelector<HTMLButtonElement>("#show-recovery");
+  const nameStep = document.querySelector<HTMLElement>('[data-step="profile"]');
+  const recoveryStep = document.querySelector<HTMLElement>('[data-step="recovery"]');
+  const akaStep = document.querySelector<HTMLElement>('[data-step="aka"]');
+  const completeStep = document.querySelector<HTMLElement>('[data-step="complete"]');
+  const nameInput = document.querySelector<HTMLInputElement>("#name");
+  const akaInput = document.querySelector<HTMLInputElement>("#aka");
   const recoveryInput = document.querySelector<HTMLInputElement>("#recovery-code");
-  const errorMessage = document.querySelector<HTMLParagraphElement>("#error-message");
+  const nameMessage = document.querySelector<HTMLParagraphElement>("#name-message");
+  const akaMessage = document.querySelector<HTMLParagraphElement>("#aka-message");
+  const recoveryMessage = document.querySelector<HTMLParagraphElement>("#recovery-message");
+  const welcomeName = document.querySelector<HTMLSpanElement>("#welcome-name");
+  const recoveryDisplay = document.querySelector<HTMLDivElement>("#recovery-display");
+  const continueName = document.querySelector<HTMLButtonElement>("#continue-name");
+  const createProfile = document.querySelector<HTMLButtonElement>("#create-profile");
+  const recoverAccount = document.querySelector<HTMLButtonElement>("#recover-account");
+  const backToCreate = document.querySelector<HTMLButtonElement>("#back-to-create");
+  const enterRenanime = document.querySelector<HTMLButtonElement>("#enter-renanime");
 
-  form?.addEventListener("submit", async (event) => {
+  let accessPassword = "";
+  let hasProfiles = false;
+
+  const showStep = (step: HTMLElement | null) => {
+    [nameStep, recoveryStep, akaStep, completeStep].forEach((item) => {
+      if (item) item.hidden = item !== step;
+    });
+  };
+
+  accessForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (!accessPasswordInput || !accessMessage || !onboarding) return;
 
-    if (!passwordInput || !recoveryInput || !errorMessage) return;
-
-    errorMessage.textContent = "";
+    accessMessage.textContent = "";
+    accessPassword = accessPasswordInput.value;
 
     try {
-      const response = await fetch("/api/auth/recover", {
+      const response = await fetch("/api/auth/access", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          accessPassword: passwordInput.value,
-          recoveryCode: recoveryInput.value.trim(),
-        }),
+        body: JSON.stringify({ accessPassword }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        errorMessage.textContent =
+        accessMessage.textContent =
           data.error === "INVALID_ACCESS_PASSWORD"
-            ? "Contraseña incorrecta."
-            : data.error === "INVALID_RECOVERY_CODE"
-              ? "Código de recuperación incorrecto."
-              : "No se ha podido iniciar sesión.";
+            ? "Código de acceso incorrecto."
+            : "No se ha podido abrir Renanime.";
+        return;
+      }
+
+      hasProfiles = Boolean(data.hasProfiles);
+      onboarding.hidden = false;
+      accessForm.hidden = true;
+      existingHint.hidden = !hasProfiles;
+      showStep(nameStep);
+    } catch {
+      accessMessage.textContent = "No se ha podido conectar con Renanime.";
+    }
+  });
+
+  showRecovery?.addEventListener("click", () => {
+    showStep(recoveryStep);
+    existingHint.hidden = true;
+  });
+
+  backToCreate?.addEventListener("click", () => {
+    showStep(nameStep);
+    existingHint.hidden = !hasProfiles;
+  });
+
+  continueName?.addEventListener("click", () => {
+    if (!nameInput || !nameMessage) return;
+
+    const name = nameInput.value.trim();
+    nameMessage.textContent = "";
+
+    if (!name) {
+      nameMessage.textContent = "Escribe tu nombre.";
+      return;
+    }
+
+    showStep(akaStep);
+  });
+
+  createProfile?.addEventListener("click", async () => {
+    if (!nameInput || !akaInput || !akaMessage) return;
+
+    const name = nameInput.value.trim();
+    const aka = akaInput.value.trim();
+    akaMessage.textContent = "";
+
+    if (!aka || aka.length < 2) {
+      akaMessage.textContent = "Tu AKA debe tener al menos 2 caracteres.";
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accessPassword, name, aka }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        akaMessage.textContent =
+          data.error === "INVALID_PROFILE"
+            ? "Revisa tu nombre y tu AKA."
+            : "No se ha podido crear el perfil.";
+        return;
+      }
+
+      welcomeName!.textContent = data.user.name;
+      recoveryDisplay!.textContent = data.recoveryCode;
+      showStep(completeStep);
+    } catch {
+      akaMessage.textContent = "No se ha podido conectar con Renanime.";
+    }
+  });
+
+  recoverAccount?.addEventListener("click", async () => {
+    if (!recoveryInput || !recoveryMessage) return;
+
+    const recoveryCode = recoveryInput.value.trim();
+    recoveryMessage.textContent = "";
+
+    if (!recoveryCode) {
+      recoveryMessage.textContent = "Introduce tu código de recuperación.";
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/auth/recover", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accessPassword, recoveryCode }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        recoveryMessage.textContent =
+          data.error === "INVALID_RECOVERY_CODE"
+            ? "Código de recuperación incorrecto."
+            : "No se ha podido iniciar sesión.";
         return;
       }
 
       window.location.href = "/";
     } catch {
-      errorMessage.textContent = "No se ha podido conectar con Renanime.";
+      recoveryMessage.textContent = "No se ha podido conectar con Renanime.";
     }
+  });
+
+  enterRenanime?.addEventListener("click", () => {
+    window.location.href = "/";
   });
 </script>
 
@@ -108,15 +276,10 @@ import Layout from "../../layouts/Layout.astro";
     letter-spacing: -0.05em;
   }
 
-  .brand-ren {
-    color: var(--accent, #ff4f8b);
-  }
+  .brand-ren { color: var(--accent, #ff4f8b); }
+  .brand-anime { color: white; }
 
-  .brand-anime {
-    color: white;
-  }
-
-  .eyebrow {
+  .eyebrow, .panel-eyebrow {
     margin: 0 0 0.65rem;
     font-size: 0.7rem;
     letter-spacing: 0.18em;
@@ -129,16 +292,28 @@ import Layout from "../../layouts/Layout.astro";
     line-height: 0.95;
   }
 
-  .subtitle {
-    max-width: 360px;
+  h2 {
+    margin: 0;
+    font-size: clamp(1.9rem, 7vw, 2.8rem);
+    line-height: 1;
+  }
+
+  .subtitle, .panel p {
+    max-width: 390px;
     margin: 1rem 0 2rem;
     line-height: 1.6;
     opacity: 0.62;
   }
 
-  form {
+  form, .panel {
     display: grid;
     gap: 0.75rem;
+  }
+
+  .panel {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
   }
 
   label {
@@ -150,11 +325,12 @@ import Layout from "../../layouts/Layout.astro";
     width: 100%;
     min-height: 52px;
     padding: 0 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255,255,255,0.15);
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255,255,255,0.05);
     color: inherit;
     font: inherit;
+    box-sizing: border-box;
   }
 
   input:focus {
@@ -174,6 +350,12 @@ import Layout from "../../layouts/Layout.astro";
     cursor: pointer;
   }
 
+  button.secondary {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.14);
+    color: rgba(255,255,255,0.72);
+  }
+
   .message {
     min-height: 1.25rem;
     margin: 0.25rem 0 0;
@@ -181,15 +363,38 @@ import Layout from "../../layouts/Layout.astro";
     color: #ff7b9f;
   }
 
-  .register-link {
-    margin-top: 2rem;
+  .existing-hint {
+    margin: 1.5rem 0 0;
     text-align: center;
     font-size: 0.9rem;
     opacity: 0.7;
   }
 
-  .register-link a {
+  .existing-hint button {
+    display: inline;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    background: none;
     color: inherit;
     font-weight: 600;
+    text-decoration: underline;
+  }
+
+  .recovery-note {
+    margin-bottom: 0.75rem !important;
+  }
+
+  .recovery-display {
+    padding: 1rem;
+    border: 1px solid rgba(255,79,139,0.4);
+    border-radius: 12px;
+    background: rgba(255,79,139,0.08);
+    color: #ff4f8b;
+    font-family: monospace;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-align: center;
   }
 </style>
