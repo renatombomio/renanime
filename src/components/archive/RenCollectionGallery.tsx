@@ -98,24 +98,36 @@ export default function HomeGallery({ entries }: Props) {
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(false);
+  const [metadataReady, setMetadataReady] = useState(false);
   const [filter, setFilter] = useState<Filter>("ALL");
   const [sort, setSort] = useState<Sort>("ADDED");
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    const missing = entries.slice(0, visible).filter((entry) => !(entry.animeId in media));
-    if (!missing.length) return;
+    const needsCompleteMetadata = sort === "YEAR" || sort === "TITLE" || sort === "SCORE" || filter !== "ALL" || Boolean(query.trim());
+    const targetEntries = needsCompleteMetadata ? entries : entries.slice(0, visible);
+    const missing = targetEntries.filter((entry) => !(entry.animeId in media));
+
+    if (!missing.length) {
+      if (needsCompleteMetadata) setMetadataReady(true);
+      return;
+    }
 
     let cancelled = false;
     setLoading(true);
+    if (needsCompleteMetadata) setMetadataReady(false);
+
     fetchMedia(missing).then((result) => {
-      if (!cancelled) setMedia((current) => ({ ...current, ...result }));
+      if (!cancelled) {
+        setMedia((current) => ({ ...current, ...result }));
+        if (needsCompleteMetadata) setMetadataReady(true);
+      }
     }).finally(() => {
       if (!cancelled) setLoading(false);
     });
 
     return () => { cancelled = true; };
-  }, [entries, visible]);
+  }, [entries, visible, sort, filter, query]);
 
   const filteredEntries = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase("es");
