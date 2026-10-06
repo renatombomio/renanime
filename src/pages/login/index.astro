@@ -146,6 +146,7 @@ import Layout from "../../layouts/Layout.astro";
 
     const message = accessFailureMessages[accessFailureIndex];
     accessFailureIndex = (accessFailureIndex + 1) % accessFailureMessages.length;
+    sessionStorage.setItem(accessFailureKey, String(accessFailureIndex));
 
     const bubble = document.createElement("span");
     bubble.textContent = message;
@@ -184,7 +185,12 @@ import Layout from "../../layouts/Layout.astro";
 
   let accessPassword = "";
   let hasProfiles = false;
-  let accessFailureIndex = 0;
+
+  const accessFailureKey = "renanime-access-failure-index";
+  let accessFailureIndex = Number(sessionStorage.getItem(accessFailureKey) ?? "0");
+  if (!Number.isInteger(accessFailureIndex) || accessFailureIndex < 0 || accessFailureIndex >= accessFailureMessages.length) {
+    accessFailureIndex = 0;
+  }
 
   const showStep = (step: HTMLElement | null) => {
     [nameStep, akaStep, completeStep, recoveryStep].forEach((item) => {
