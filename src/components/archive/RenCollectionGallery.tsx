@@ -70,7 +70,7 @@ async function fetchMedia(entries: Entry[], resolveFallbackPosters = true): Prom
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({ query: `query HomeGallery(${definitions}) { ${fields} }`, variables }),
       });
-      if (!response.ok) continue;
+      if (!response.ok) return;
       const payload = await response.json();
 
       chunk.forEach((entry, index) => {
