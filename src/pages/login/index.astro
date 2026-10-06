@@ -32,14 +32,6 @@ import Layout from "../../layouts/Layout.astro";
       </form>
 
       <section id="onboarding" class="panel" hidden>
-        <div class="joke-bubbles" aria-hidden="true">
-          <span>Venga va.</span>
-          <span>Dame un AKA de anime.</span>
-          <span>Algo divertido, anda.</span>
-          <span>No seas aburrido.</span>
-          <span>Piensa en grande.</span>
-        </div>
-
         <div class="step" data-step="profile">
           <p class="panel-eyebrow">BIENVENIDO</p>
           <h2>¿Cómo te llamas?</h2>
@@ -123,7 +115,6 @@ import Layout from "../../layouts/Layout.astro";
   const accessMessage = document.querySelector<HTMLParagraphElement>("#access-message");
   const accessCard = document.querySelector<HTMLElement>(".access-card");
   const onboarding = document.querySelector<HTMLElement>("#onboarding");
-  const jokeBubbles = document.querySelector<HTMLElement>(".joke-bubbles");
 
   const accessJokes = document.createElement("div");
   accessJokes.id = "access-jokes";
@@ -202,14 +193,7 @@ import Layout from "../../layouts/Layout.astro";
       if (item) item.hidden = item !== step;
     });
 
-    if (jokeBubbles) {
-      jokeBubbles.hidden = step !== akaStep;
-    }
   };
-
-  if (jokeBubbles) {
-    jokeBubbles.hidden = true;
-  }
 
   accessForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -517,32 +501,6 @@ import Layout from "../../layouts/Layout.astro";
     background: #090909;
     box-shadow: 0 0 0 100vmax rgba(0,0,0,0.78), 0 24px 80px rgba(0,0,0,0.6);
   }
-
-  .joke-bubbles {
-    position: absolute;
-    inset: -30px;
-    z-index: -1;
-    pointer-events: none;
-  }
-
-  .joke-bubbles span {
-    position: absolute;
-    max-width: 150px;
-    padding: 0.5rem 0.7rem;
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 999px;
-    background: rgba(20,20,20,0.9);
-    color: rgba(255,255,255,0.65);
-    font-size: 0.68rem;
-    line-height: 1.2;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-  }
-
-  .joke-bubbles span:nth-child(1) { top: 2%; left: -5%; transform: rotate(-7deg); }
-  .joke-bubbles span:nth-child(2) { top: 22%; right: -13%; transform: rotate(5deg); }
-  .joke-bubbles span:nth-child(3) { bottom: 20%; left: -13%; transform: rotate(4deg); }
-  .joke-bubbles span:nth-child(4) { bottom: 4%; right: -4%; transform: rotate(-6deg); }
-  .joke-bubbles span:nth-child(5) { top: -7%; right: 12%; transform: rotate(3deg); }
 
   label {
     font-size: 0.85rem;
