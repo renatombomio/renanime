@@ -12,10 +12,12 @@ export interface HeroSlide {
 }
 
 interface Props {
-  slides: Array<{
-    id: string;
-    title: string;
-  }>;
+  slides: HeroSlide[];
+  kicker?: string;
+  title?: string;
+  copy?: string;
+  videoSrc?: string;
+  variant?: "default" | "ghibli";
 }
 
 export default function HeroCarousel({
