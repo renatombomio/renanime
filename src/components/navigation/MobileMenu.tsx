@@ -10,6 +10,7 @@ const links = [
   { label: "Buscar", href: "/search/" },
   { label: "Mi lista", href: "/pending/" },
   { label: "Mi colección", href: "/collection/" },
+  { label: "Mi perfil", href: "/profile/" },
   { label: "El secreto de Ren", href: "/ghibli/" }
 ];
 
