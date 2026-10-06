@@ -32,6 +32,14 @@ import Layout from "../../layouts/Layout.astro";
       </form>
 
       <section id="onboarding" class="panel" hidden>
+        <div class="joke-bubbles" aria-hidden="true">
+          <span>Venga va.</span>
+          <span>Dame un AKA de anime.</span>
+          <span>Algo divertido, anda.</span>
+          <span>No seas aburrido.</span>
+          <span>Piensa en grande.</span>
+        </div>
+
         <div class="step" data-step="profile">
           <p class="panel-eyebrow">BIENVENIDO</p>
           <h2>¿Cómo te llamas?</h2>
@@ -40,34 +48,64 @@ import Layout from "../../layouts/Layout.astro";
           <label for="name">Tu nombre</label>
           <input id="name" type="text" maxlength="80" autocomplete="name" />
 
-          <button id="create-profile" type="button">Continuar</button>
+          <button id="continue-name" type="button">Continuar</button>
           <p id="name-message" class="message" aria-live="polite"></p>
         </div>
 
-        <div class="step" data-step="recovery" hidden>
-          <p class="panel-eyebrow">TU CUENTA</p>
-          <h2>¿Ya tienes una cuenta?</h2>
-          <p>Si ya creaste tu perfil desde otro dispositivo, entra con tu código de recuperación.</p>
+        <div class="step" data-step="aka" hidden>
+          <p class="panel-eyebrow">UNA ÚLTIMA COSA</p>
+          <h2>¿Cuál es tu AKA de anime?</h2>
+          <p>Venga va. Dame un nombre divertido. Ya que hemos llegado hasta aquí.</p>
 
-          <label for="recovery-code">Código de recuperación</label>
-          <input id="recovery-code" type="text" placeholder="REN-XXXX-XXXX" autocomplete="off" />
+          <label for="aka">AKA de anime</label>
+          <input
+            id="aka"
+            type="text"
+            maxlength="40"
+            autocomplete="nickname"
+            placeholder="Ej. Ren-sama, Hokage, Goku..."
+          />
 
-          <button id="recover-account" type="button">Entrar en mi cuenta</button>
-          <button id="back-to-create" class="secondary" type="button">Crear un perfil nuevo</button>
-          <p id="recovery-message" class="message" aria-live="polite"></p>
+          <button id="create-profile" type="button">Vale, este es</button>
+          <p id="aka-message" class="message" aria-live="polite"></p>
         </div>
-
-
 
         <div class="step" data-step="complete" hidden>
           <p class="panel-eyebrow">PERFIL CREADO</p>
           <h2>Bienvenido, <span id="welcome-name"></span>.</h2>
-          <p>Jajaja, en serio tienes un AKA otaku. Este sitio es definitivamente para ti.</p>
+          <p class="joke-result">
+            Ja, ja, ja. Es broma. A nadie le importa.<br />
+            No me puedo creer que lo hayas escrito.
+          </p>
+          <p>Bienvenido, anda. Bienvenido a RenAnime.</p>
+
           <p class="recovery-note">
-            Guarda este código. Es muy importante: lo necesitarás para entrar desde otro dispositivo.
+            Tu código de recuperación es:
           </p>
           <div id="recovery-display" class="recovery-display"></div>
+          <p class="recovery-help">
+            Guárdalo. Lo necesitarás para entrar desde otro dispositivo.
+          </p>
+
           <button id="enter-renanime" type="button">Entrar a Renanime</button>
+        </div>
+
+        <div class="step" data-step="recovery" hidden>
+          <p class="panel-eyebrow">TU CUENTA</p>
+          <h2>Volvamos a casa.</h2>
+          <p>Introduce tu código de recuperación para entrar en tu perfil desde este dispositivo.</p>
+
+          <label for="recovery-code">Código de recuperación</label>
+          <input
+            id="recovery-code"
+            type="text"
+            placeholder="REN-XXXX-XXXX"
+            autocomplete="off"
+          />
+
+          <button id="recover-account" type="button">Entrar en mi cuenta</button>
+          <button id="back-to-create" class="secondary" type="button">Crear un perfil nuevo</button>
+          <p id="recovery-message" class="message" aria-live="polite"></p>
         </div>
       </section>
 
@@ -86,15 +124,24 @@ import Layout from "../../layouts/Layout.astro";
   const onboarding = document.querySelector<HTMLElement>("#onboarding");
   const existingHint = document.querySelector<HTMLElement>("#existing-hint");
   const showRecovery = document.querySelector<HTMLButtonElement>("#show-recovery");
+
   const nameStep = document.querySelector<HTMLElement>('[data-step="profile"]');
-  const recoveryStep = document.querySelector<HTMLElement>('[data-step="recovery"]');
+  const akaStep = document.querySelector<HTMLElement>('[data-step="aka"]');
   const completeStep = document.querySelector<HTMLElement>('[data-step="complete"]');
+  const recoveryStep = document.querySelector<HTMLElement>('[data-step="recovery"]');
+
   const nameInput = document.querySelector<HTMLInputElement>("#name");
+  const akaInput = document.querySelector<HTMLInputElement>("#aka");
   const recoveryInput = document.querySelector<HTMLInputElement>("#recovery-code");
+
   const nameMessage = document.querySelector<HTMLParagraphElement>("#name-message");
+  const akaMessage = document.querySelector<HTMLParagraphElement>("#aka-message");
   const recoveryMessage = document.querySelector<HTMLParagraphElement>("#recovery-message");
+
   const welcomeName = document.querySelector<HTMLSpanElement>("#welcome-name");
   const recoveryDisplay = document.querySelector<HTMLDivElement>("#recovery-display");
+
+  const continueName = document.querySelector<HTMLButtonElement>("#continue-name");
   const createProfile = document.querySelector<HTMLButtonElement>("#create-profile");
   const recoverAccount = document.querySelector<HTMLButtonElement>("#recover-account");
   const backToCreate = document.querySelector<HTMLButtonElement>("#back-to-create");
@@ -104,13 +151,14 @@ import Layout from "../../layouts/Layout.astro";
   let hasProfiles = false;
 
   const showStep = (step: HTMLElement | null) => {
-    [nameStep, recoveryStep, completeStep].forEach((item) => {
+    [nameStep, akaStep, completeStep, recoveryStep].forEach((item) => {
       if (item) item.hidden = item !== step;
     });
   };
 
   accessForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
+
     if (!accessPasswordInput || !accessMessage || !onboarding) return;
 
     accessMessage.textContent = "";
@@ -153,7 +201,7 @@ import Layout from "../../layouts/Layout.astro";
     existingHint.hidden = !hasProfiles;
   });
 
-  createProfile?.addEventListener("click", async () => {
+  continueName?.addEventListener("click", () => {
     if (!nameInput || !nameMessage) return;
 
     const name = nameInput.value.trim();
@@ -164,20 +212,42 @@ import Layout from "../../layouts/Layout.astro";
       return;
     }
 
+    showStep(akaStep);
+  });
+
+  createProfile?.addEventListener("click", async () => {
+    if (!nameInput || !akaInput || !akaMessage) return;
+
+    const name = nameInput.value.trim();
+    const aka = akaInput.value.trim();
+    akaMessage.textContent = "";
+
+    if (!aka) {
+      akaMessage.textContent = "Venga va. Dame un AKA.";
+      return;
+    }
+
+    if (name.toLocaleLowerCase() === aka.toLocaleLowerCase()) {
+      akaMessage.textContent = "Venga va. Ese es tu nombre, no tu AKA. Sé creativo.";
+      return;
+    }
+
     try {
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accessPassword, name, aka: name }),
+        body: JSON.stringify({ accessPassword, name, aka }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        nameMessage.textContent =
-          data.error === "INVALID_PROFILE"
-            ? "Revisa tu nombre."
-            : "No se ha podido crear el perfil.";
+        akaMessage.textContent =
+          data.error === "SAME_NAME_AKA"
+            ? "Venga va. Ese es tu nombre, no tu AKA. Sé creativo."
+            : data.error === "INVALID_PROFILE"
+              ? "Revisa tu nombre y tu AKA."
+              : "No se ha podido crear el perfil.";
         return;
       }
 
@@ -185,7 +255,7 @@ import Layout from "../../layouts/Layout.astro";
       recoveryDisplay!.textContent = data.recoveryCode;
       showStep(completeStep);
     } catch {
-      nameMessage.textContent = "No se ha podido conectar con Renanime.";
+      akaMessage.textContent = "No se ha podido conectar con Renanime.";
     }
   });
 
@@ -250,7 +320,8 @@ import Layout from "../../layouts/Layout.astro";
   .brand-ren { color: var(--accent, #ff4f8b); }
   .brand-anime { color: white; }
 
-  .eyebrow, .panel-eyebrow {
+  .eyebrow,
+  .panel-eyebrow {
     margin: 0 0 0.65rem;
     font-size: 0.7rem;
     letter-spacing: 0.18em;
@@ -269,14 +340,16 @@ import Layout from "../../layouts/Layout.astro";
     line-height: 1;
   }
 
-  .subtitle, .panel p {
+  .subtitle,
+  .panel p {
     max-width: 390px;
     margin: 1rem 0 2rem;
     line-height: 1.6;
     opacity: 0.62;
   }
 
-  form, .panel {
+  form,
+  .panel {
     display: grid;
     gap: 0.75rem;
   }
@@ -286,6 +359,8 @@ import Layout from "../../layouts/Layout.astro";
     inset: 50% auto auto 50%;
     z-index: 100;
     width: min(calc(100% - 2rem), 430px);
+    max-height: min(88vh, 720px);
+    overflow-y: auto;
     transform: translate(-50%, -50%);
     padding: 2rem;
     border: 1px solid rgba(255,255,255,0.12);
@@ -293,6 +368,32 @@ import Layout from "../../layouts/Layout.astro";
     background: #090909;
     box-shadow: 0 0 0 100vmax rgba(0,0,0,0.78), 0 24px 80px rgba(0,0,0,0.6);
   }
+
+  .joke-bubbles {
+    position: absolute;
+    inset: -30px;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .joke-bubbles span {
+    position: absolute;
+    max-width: 150px;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 999px;
+    background: rgba(20,20,20,0.9);
+    color: rgba(255,255,255,0.65);
+    font-size: 0.68rem;
+    line-height: 1.2;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+
+  .joke-bubbles span:nth-child(1) { top: 2%; left: -5%; transform: rotate(-7deg); }
+  .joke-bubbles span:nth-child(2) { top: 22%; right: -13%; transform: rotate(5deg); }
+  .joke-bubbles span:nth-child(3) { bottom: 20%; left: -13%; transform: rotate(4deg); }
+  .joke-bubbles span:nth-child(4) { bottom: 4%; right: -4%; transform: rotate(-6deg); }
+  .joke-bubbles span:nth-child(5) { top: -7%; right: 12%; transform: rotate(3deg); }
 
   label {
     font-size: 0.85rem;
@@ -359,8 +460,12 @@ import Layout from "../../layouts/Layout.astro";
     text-decoration: underline;
   }
 
+  .joke-result {
+    color: rgba(255,255,255,0.72) !important;
+  }
+
   .recovery-note {
-    margin-bottom: 0.75rem !important;
+    margin: 1.5rem 0 0.5rem !important;
   }
 
   .recovery-display {
@@ -374,5 +479,24 @@ import Layout from "../../layouts/Layout.astro";
     font-weight: 700;
     letter-spacing: 0.08em;
     text-align: center;
+  }
+
+  .recovery-help {
+    margin: 0.75rem 0 0.5rem !important;
+    font-size: 0.82rem;
+  }
+
+  @media (max-width: 560px) {
+    .joke-bubbles {
+      inset: -18px;
+    }
+
+    .joke-bubbles span {
+      font-size: 0.58rem;
+      max-width: 120px;
+    }
+
+    .joke-bubbles span:nth-child(2) { right: -7%; }
+    .joke-bubbles span:nth-child(3) { left: -7%; }
   }
 </style>
