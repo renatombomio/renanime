@@ -11,15 +11,16 @@ if (!user) {
   return Astro.redirect("/login");
 }
 
-const { data: profile } = await supabaseServer.rpc("renanime_profile", {
+const { data: libraryData, error: libraryError } = await supabaseServer.rpc("renanime_get_library", {
   p_token: token,
 });
 
-if (!profile) {
-  return Astro.redirect("/login");
+if (libraryError) {
+  console.error("Renanime profile library error:", libraryError.message);
 }
 
-const library = Array.isArray(profile.library) ? profile.library : [];
+const profile = user;
+const library = Array.isArray(libraryData) ? libraryData : [];
 const watched = library.filter((entry: any) => entry?.state?.status === "WATCHED");
 const pending = library.filter((entry: any) => entry?.state?.status === "PENDING");
 
