@@ -5,14 +5,14 @@ import Footer from "../../components/layout/Footer.astro";
 import AnimeDetail from "../../components/anime/AnimeDetail";
 import { getLibrary } from "../../data/library";
 
-export function getStaticPaths() {
-  return getLibrary().map((entry) => ({
-    params: { slug: entry.animeId },
-    props: { entry },
-  }));
-}
+export const prerender = false;
 
-const { entry } = Astro.props;
+const { slug } = Astro.params;
+const entry = getLibrary().find((item) => item.animeId === slug);
+
+if (!entry) {
+  return new Response("Anime no encontrado", { status: 404 });
+}
 ---
 
 <Layout title={`${entry.title} — Renanime's Gallery`} description={`Ficha de ${entry.title} en Renanime's Gallery.`}>
