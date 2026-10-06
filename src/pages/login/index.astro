@@ -14,7 +14,7 @@ import Layout from "../../layouts/Layout.astro";
 
       <p class="eyebrow">RENANIME'S GALLERY</p>
       <h1 id="access-title">Acceso</h1>
-      <p class="subtitle">Introduce la contraseña para entrar a tu archivo personal.</p>
+      <p class="subtitle">Introduce tu código de recuperación y la contraseña para entrar a tu archivo personal.</p>
 
       <form id="login-form">
         <label for="recovery-code">Código de recuperación</label>
@@ -56,7 +56,7 @@ import Layout from "../../layouts/Layout.astro";
   form?.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    if (!passwordInput || !errorMessage) return;
+    if (!passwordInput || !recoveryInput || !errorMessage) return;
 
     errorMessage.textContent = "";
 
@@ -64,7 +64,10 @@ import Layout from "../../layouts/Layout.astro";
       const response = await fetch("/api/auth/recover", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accessPassword: passwordInput.value }),
+        body: JSON.stringify({
+          accessPassword: passwordInput.value,
+          recoveryCode: recoveryInput.value.trim(),
+        }),
       });
 
       const data = await response.json();
