@@ -1,0 +1,181 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/layout/Navbar.astro";
+import { getRenanimeUser } from "../../lib/auth";
+import { supabaseServer } from "../../lib/supabase-server";
+
+const token = Astro.cookies.get("renanime_session")?.value;
+const user = await getRenanimeUser(token);
+
+if (!user) {
+  return Astro.redirect("/login");
+}
+
+const { data: profile } = await supabaseServer.rpc("renanime_profile", {
+  p_token: token,
+});
+
+if (!profile) {
+  return Astro.redirect("/login");
+}
+
+const library = Array.isArray(profile.library) ? profile.library : [];
+const watched = library.filter((entry: any) => entry?.state?.status === "WATCHED");
+const pending = library.filter((entry: any) => entry?.state?.status === "PENDING");
+---
+
+<Layout
+  title="Mi perfil — Renanime's Gallery"
+  description="Tu perfil personal y código de recuperación de Renanime."
+>
+  <Navbar />
+
+  <main class="profile-page">
+    <section class="profile-card">
+      <p class="eyebrow">MI PERFIL</p>
+      <h1>{profile.name}</h1>
+      <p class="aka">Tu espacio personal en Renanime.</p>
+
+      <div class="recovery-section">
+        <p class="label">Código de recuperación</p>
+        <div class="recovery-code">{profile.recovery_code}</div>
+        <p class="hint">
+          Guárdalo. Puedes abrir esta página desde tu móvil y usarlo para entrar desde otro dispositivo.
+        </p>
+      </div>
+
+      <div class="stats">
+        <article>
+          <strong>{watched.length}</strong>
+          <span>en mi colección</span>
+        </article>
+        <article>
+          <strong>{pending.length}</strong>
+          <span>en mi lista</span>
+        </article>
+      </div>
+
+      <div class="profile-actions">
+        <a href="/collection/">Ver mi colección</a>
+        <a href="/pending/">Ver mi lista</a>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .profile-page {
+    min-height: 100vh;
+    padding: 128px 1.25rem 4rem;
+  }
+
+  .profile-card {
+    width: min(100%, 760px);
+    margin: 0 auto;
+  }
+
+  .eyebrow {
+    margin: 0 0 0.75rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    opacity: 0.5;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2.8rem, 8vw, 5rem);
+    line-height: 0.95;
+  }
+
+  .aka {
+    margin: 1rem 0 3rem;
+    opacity: 0.55;
+  }
+
+  .recovery-section {
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 79, 139, 0.3);
+    border-radius: 18px;
+    background: rgba(255, 79, 139, 0.05);
+  }
+
+  .label {
+    margin: 0 0 0.75rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    opacity: 0.55;
+  }
+
+  .recovery-code {
+    padding: 1rem;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.35);
+    color: #ff4f8b;
+    font-family: monospace;
+    font-size: clamp(1rem, 4vw, 1.35rem);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  .hint {
+    margin: 0.9rem 0 0;
+    line-height: 1.5;
+    font-size: 0.85rem;
+    opacity: 0.58;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .stats article {
+    padding: 1.4rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+  }
+
+  .stats strong,
+  .stats span {
+    display: block;
+  }
+
+  .stats strong {
+    font-size: 2.2rem;
+  }
+
+  .stats span {
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    opacity: 0.55;
+  }
+
+  .profile-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .profile-actions a {
+    padding: 0.85rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    color: inherit;
+  }
+
+  @media (max-width: 520px) {
+    .profile-page {
+      padding-top: 100px;
+    }
+
+    .stats {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
