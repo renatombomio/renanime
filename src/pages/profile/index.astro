@@ -22,38 +22,70 @@ if (!profile) {
 const library = Array.isArray(profile.library) ? profile.library : [];
 const watched = library.filter((entry: any) => entry?.state?.status === "WATCHED");
 const pending = library.filter((entry: any) => entry?.state?.status === "PENDING");
+
+const joinedDate = profile.created_at
+  ? new Intl.DateTimeFormat("es-ES", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(new Date(profile.created_at))
+  : "—";
 ---
 
 <Layout
   title="Mi perfil — Renanime's Gallery"
-  description="Tu perfil personal y código de recuperación de Renanime."
+  description="Tu perfil personal en Renanime."
 >
   <Navbar />
 
   <main class="profile-page">
     <section class="profile-card">
-      <p class="eyebrow">MI PERFIL</p>
-      <h1>{profile.name}</h1>
-      <p class="aka">Tu espacio personal en Renanime.</p>
-
-      <div class="recovery-section">
-        <p class="label">Código de recuperación</p>
-        <div class="recovery-code">{profile.recovery_code}</div>
-        <p class="hint">
-          Guárdalo. Puedes abrir esta página desde tu móvil y usarlo para entrar desde otro dispositivo.
+      <header class="profile-header">
+        <p class="eyebrow">MI PERFIL</p>
+        <h1>{profile.name}</h1>
+        <p class="community-line">
+          Miembro de la comunidad otaku desde <strong>{joinedDate}</strong>.
         </p>
+      </header>
+
+      <div class="profile-info">
+        <article class="info-card">
+          <span class="info-label">NOMBRE</span>
+          <strong>{profile.name}</strong>
+        </article>
+
+        <article class="info-card">
+          <span class="info-label">FECHA DE REGISTRO</span>
+          <strong>{joinedDate}</strong>
+        </article>
       </div>
 
-      <div class="stats">
-        <article>
-          <strong>{watched.length}</strong>
-          <span>en mi colección</span>
-        </article>
-        <article>
-          <strong>{pending.length}</strong>
-          <span>en mi lista</span>
-        </article>
-      </div>
+      <section class="library-section">
+        <p class="section-label">MI RENANIME</p>
+
+        <div class="stats">
+          <article class="stat-card">
+            <span class="stat-number">{pending.length}</span>
+            <span class="stat-label">ANIMES EN MI LISTA</span>
+          </article>
+
+          <article class="stat-card">
+            <span class="stat-number">{watched.length}</span>
+            <span class="stat-label">ANIMES EN MI COLECCIÓN</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="recovery-section">
+        <div>
+          <p class="section-label">CÓDIGO DE RECUPERACIÓN</p>
+          <p class="recovery-description">
+            Guárdalo en un lugar seguro. Lo necesitarás para recuperar tu acceso desde otro dispositivo.
+          </p>
+        </div>
+
+        <div class="recovery-code">{profile.recovery_code}</div>
+      </section>
 
       <div class="profile-actions">
         <a href="/collection/">Ver mi colección</a>
@@ -66,50 +98,137 @@ const pending = library.filter((entry: any) => entry?.state?.status === "PENDING
 <style>
   .profile-page {
     min-height: 100vh;
-    padding: 128px 1.25rem 4rem;
+    padding: 128px 1.25rem 5rem;
   }
 
   .profile-card {
-    width: min(100%, 760px);
+    width: min(100%, 860px);
     margin: 0 auto;
   }
 
-  .eyebrow {
-    margin: 0 0 0.75rem;
-    font-size: 0.7rem;
+  .profile-header {
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  }
+
+  .eyebrow,
+  .section-label,
+  .info-label,
+  .stat-label {
+    font-size: 0.68rem;
     letter-spacing: 0.18em;
-    opacity: 0.5;
+    text-transform: uppercase;
+    opacity: 0.48;
+  }
+
+  .eyebrow {
+    margin: 0 0 0.8rem;
   }
 
   h1 {
     margin: 0;
-    font-size: clamp(2.8rem, 8vw, 5rem);
-    line-height: 0.95;
+    font-size: clamp(3rem, 9vw, 6.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.045em;
   }
 
-  .aka {
-    margin: 1rem 0 3rem;
-    opacity: 0.55;
+  .community-line {
+    margin: 1.5rem 0 0;
+    max-width: 620px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    opacity: 0.62;
+  }
+
+  .community-line strong {
+    color: #ff4f8b;
+    font-weight: 600;
+  }
+
+  .profile-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .info-card,
+  .stat-card {
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  .info-card {
+    padding: 1.35rem 1.4rem;
+  }
+
+  .info-label,
+  .stat-label {
+    display: block;
+    margin-bottom: 0.65rem;
+  }
+
+  .info-card strong {
+    display: block;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .library-section {
+    margin-top: 3rem;
+  }
+
+  .section-label {
+    margin: 0 0 1rem;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .stat-card {
+    padding: 1.5rem;
+  }
+
+  .stat-number {
+    display: block;
+    font-size: clamp(3rem, 7vw, 4.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+
+  .stat-label {
+    margin: 1rem 0 0;
   }
 
   .recovery-section {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 3rem;
     padding: 1.5rem;
-    border: 1px solid rgba(255, 79, 139, 0.3);
-    border-radius: 18px;
-    background: rgba(255, 79, 139, 0.05);
+    border: 1px solid rgba(255, 79, 139, 0.28);
+    border-radius: 20px;
+    background: rgba(255, 79, 139, 0.045);
   }
 
-  .label {
-    margin: 0 0 0.75rem;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
+  .recovery-section .section-label {
+    margin-bottom: 0.5rem;
+  }
+
+  .recovery-description {
+    max-width: 620px;
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
     opacity: 0.55;
   }
 
   .recovery-code {
-    padding: 1rem;
-    border-radius: 12px;
+    padding: 1.1rem 1.25rem;
+    border-radius: 13px;
     background: rgba(0, 0, 0, 0.35);
     color: #ff4f8b;
     font-family: monospace;
@@ -118,41 +237,6 @@ const pending = library.filter((entry: any) => entry?.state?.status === "PENDING
     letter-spacing: 0.1em;
     text-align: center;
     overflow-wrap: anywhere;
-  }
-
-  .hint {
-    margin: 0.9rem 0 0;
-    line-height: 1.5;
-    font-size: 0.85rem;
-    opacity: 0.58;
-  }
-
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-
-  .stats article {
-    padding: 1.4rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-  }
-
-  .stats strong,
-  .stats span {
-    display: block;
-  }
-
-  .stats strong {
-    font-size: 2.2rem;
-  }
-
-  .stats span {
-    margin-top: 0.25rem;
-    font-size: 0.85rem;
-    opacity: 0.55;
   }
 
   .profile-actions {
@@ -167,6 +251,13 @@ const pending = library.filter((entry: any) => entry?.state?.status === "PENDING
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 12px;
     color: inherit;
+    text-decoration: none;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .profile-actions a:hover {
+    border-color: rgba(255, 79, 139, 0.45);
+    background: rgba(255, 79, 139, 0.06);
   }
 
   @media (max-width: 520px) {
@@ -174,8 +265,13 @@ const pending = library.filter((entry: any) => entry?.state?.status === "PENDING
       padding-top: 100px;
     }
 
+    .profile-info,
     .stats {
       grid-template-columns: 1fr;
+    }
+
+    .profile-header {
+      padding-bottom: 2rem;
     }
   }
 </style>
