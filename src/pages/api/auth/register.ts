@@ -3,7 +3,7 @@ import { supabaseServer } from '../../../lib/supabase-server'
 
 export const prerender = false
 
-export const POST: APIRoute = async ({ request, cookies }) => {
+export const POST: APIRoute = async ({ request, cookies, response }) => {
   try {
     const rawBody = await request.text()
 
@@ -85,6 +85,10 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       path: '/',
       maxAge: 60 * 60 * 24 * 30,
     })
+
+    for (const setCookie of cookies.headers()) {
+      response.headers.append('Set-Cookie', setCookie)
+    }
 
     return new Response(JSON.stringify({
       ok: true,
