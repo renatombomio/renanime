@@ -1,13 +1,14 @@
 import type { APIRoute } from 'astro'
 import { supabaseServer } from '../../../lib/supabase-server'
 
+export const prerender = false
+
 export const POST: APIRoute = async ({ request, cookies }) => {
   try {
     const body = await request.json()
-    const accessPassword = String(body.accessPassword ?? '')
     const recoveryCode = String(body.recoveryCode ?? '').trim()
 
-    if (!accessPassword || !recoveryCode) {
+    if (!recoveryCode) {
       return new Response(
         JSON.stringify({ ok: false, error: 'MISSING_FIELDS' }),
         {
@@ -18,21 +19,10 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     }
 
     const { data, error } = await supabaseServer.rpc('renanime_recover', {
-      p_access_password: accessPassword,
       p_recovery_code: recoveryCode,
     })
 
     if (error) {
-      if (error.message.includes('INVALID_ACCESS_PASSWORD')) {
-        return new Response(
-          JSON.stringify({ ok: false, error: 'INVALID_ACCESS_PASSWORD' }),
-          {
-            status: 401,
-            headers: { 'Content-Type': 'application/json' },
-          }
-        )
-      }
-
       if (error.message.includes('INVALID_RECOVERY_CODE')) {
         return new Response(
           JSON.stringify({ ok: false, error: 'INVALID_RECOVERY_CODE' }),
@@ -72,6 +62,14 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       maxAge: 60 * 60 * 24 * 30,
     })
 
+    const headers = new Headers({
+      'Content-Type': 'application/json',
+    })
+
+    for (const setCookie of cookies.headers()) {
+      headers.append('Set-Cookie', setCookie)
+    }
+
     return new Response(
       JSON.stringify({
         ok: true,
@@ -83,7 +81,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       }),
       {
         status: 200,
-        headers: { 'Content-Type': 'application/json' },
+        headers,
       }
     )
   } catch (error) {
