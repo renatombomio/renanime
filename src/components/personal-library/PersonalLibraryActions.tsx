@@ -15,13 +15,33 @@ interface Props {
 export default function PersonalLibraryActions({ animeId }: Props) {
   const id = String(animeId);
   const [status, setStatus] = useState(() => getPersonalEntry(id)?.state.status ?? "NOT_IN_COLLECTION");
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    void hydratePersonalLibrary();
+    let active = true;
     const sync = () => setStatus(getPersonalEntry(id)?.state.status ?? "NOT_IN_COLLECTION");
-    sync();
-    return subscribeToPersonalLibrary(sync);
+
+    void hydratePersonalLibrary().then(() => {
+      if (!active) return;
+      sync();
+      setReady(true);
+    });
+
+    const unsubscribe = subscribeToPersonalLibrary(sync);
+    return () => {
+      active = false;
+      unsubscribe();
+    };
   }, [id]);
+
+  if (!ready) {
+    return (
+      <div className="personal-actions">
+        <span className="personal-status" role="status" aria-live="polite">Cargando tu biblioteca…</span>
+        <style>{styles}</style>
+      </div>
+    );
+  }
 
   if (status === "WATCHED") {
     return (
