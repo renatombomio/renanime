@@ -88,7 +88,7 @@ const joinedDate = profile.created_at
 <style>
   .profile-page {
     min-height: 100vh;
-    padding: 128px 1.25rem 5rem;
+    padding: 108px 1.25rem 2.5rem;
   }
 
   .profile-card {
@@ -97,7 +97,7 @@ const joinedDate = profile.created_at
   }
 
   .profile-header {
-    padding-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.09);
   }
 
@@ -117,13 +117,13 @@ const joinedDate = profile.created_at
 
   h1 {
     margin: 0;
-    font-size: clamp(3rem, 9vw, 6.5rem);
+    font-size: clamp(2.75rem, 7vw, 5.5rem);
     line-height: 0.9;
     letter-spacing: -0.045em;
   }
 
   .community-line {
-    margin: 1.5rem 0 0;
+    margin: .65rem 0 0;
     max-width: 620px;
     font-size: 0.95rem;
     line-height: 1.6;
@@ -147,7 +147,7 @@ const joinedDate = profile.created_at
   }
 
   .library-section {
-    margin-top: 3rem;
+    margin-top: 2rem;
   }
 
   .section-label {
@@ -161,12 +161,12 @@ const joinedDate = profile.created_at
   }
 
   .stat-card {
-    padding: 1.5rem;
+    padding: 1.15rem 1.35rem;
   }
 
   .stat-number {
     display: block;
-    font-size: clamp(3rem, 7vw, 4.5rem);
+    font-size: clamp(2.6rem, 6vw, 4rem);
     line-height: 0.9;
     letter-spacing: -0.04em;
   }
@@ -177,9 +177,9 @@ const joinedDate = profile.created_at
 
   .recovery-section {
     display: grid;
-    gap: 1.25rem;
-    margin-top: 3rem;
-    padding: 1.5rem;
+    gap: .75rem;
+    margin-top: 2rem;
+    padding: 1.15rem 1.25rem;
     border: 1px solid rgba(255, 79, 139, 0.28);
     border-radius: 20px;
     background: rgba(255, 79, 139, 0.045);
@@ -213,12 +213,12 @@ const joinedDate = profile.created_at
   .profile-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 1.5rem;
+    gap: 0.5rem;
+    margin-top: 1rem;
   }
 
   .profile-actions a {
-    padding: 0.85rem 1rem;
+    padding: 0.65rem .85rem;
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 12px;
     color: inherit;
@@ -254,15 +254,70 @@ const joinedDate = profile.created_at
 
   @media (max-width: 520px) {
     .profile-page {
-      padding-top: 100px;
+      padding: 88px .9rem 1.5rem;
+    }
+
+    .profile-card {
+      width: min(100%, 560px);
     }
 
     .stats {
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
+      gap: .65rem;
+    }
+
+    .stat-card {
+      padding: 1rem;
+      border-radius: 15px;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+    }
+
+    .stat-label {
+      font-size: .58rem;
+      line-height: 1.25;
     }
 
     .profile-header {
-      padding-bottom: 2rem;
+      padding-bottom: 1.15rem;
+    }
+
+    .eyebrow,
+    .section-label {
+      font-size: .58rem;
+    }
+
+    .community-line {
+      font-size: .78rem;
+      line-height: 1.45;
+    }
+
+    .recovery-section {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      border-radius: 16px;
+    }
+
+    .recovery-description {
+      font-size: .76rem;
+      line-height: 1.4;
+    }
+
+    .recovery-code {
+      padding: .8rem 1rem;
+      font-size: 1rem;
+    }
+
+    .profile-actions {
+      margin-top: .75rem;
+    }
+
+    .profile-actions a,
+    .profile-actions button {
+      padding: .6rem .75rem;
+      font-size: .8rem;
     }
   }
 </style>
