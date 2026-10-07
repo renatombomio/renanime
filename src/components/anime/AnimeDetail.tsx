@@ -30,6 +30,18 @@ const FRANCHISE_MEDIA_ALIASES: Record<string, number> = {
   "movie-063": 178788,
 };
 
+function normalizeAnimeTitle(value:string){
+  return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g," ").trim();
+}
+
+function getInternalAnimeEntry(id:number,title?:{romaji?:string|null;english?:string|null}){
+  const library=getLibrary();
+  const direct=library.find(entry=>entry.animeId===String(id));
+  if(direct) return direct;
+  const titles=[title?.romaji,title?.english].filter(Boolean).map((value)=>normalizeAnimeTitle(value as string));
+  return library.find(entry=>titles.includes(normalizeAnimeTitle(entry.title)));
+}
+
 function cleanDescription(text:string){
   return text
     .replace(/<br\s*\/?>/gi, "\n")
@@ -400,6 +412,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
           .map((node) => node.mediaRecommendation)
           .filter((item): item is NonNullable<typeof item> => Boolean(item))
           .filter((item) => item.id !== media?.id && !seen.has(item.id) && seen.add(item.id))
+          .filter((item) => Boolean(getInternalAnimeEntry(item.id,item.title)))
           .slice(0, 8);
         return items.length ? <section className="anime-detail-recommendations" aria-label="Recomendaciones">
           <div className="anime-detail-recommendations-head">
@@ -409,7 +422,7 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
             {items.map((item) => {
               const recTitle=item.title?.romaji||item.title?.english||"Sin título";
               const recImage=item.coverImage?.extraLarge||item.coverImage?.large;
-              return <a className="anime-detail-recommendation" href={"/anime/" + item.id} key={item.id}>
+              return <a className="anime-detail-recommendation" href={"/anime/" + (getInternalAnimeEntry(item.id,item.title)?.animeId ?? "")} key={item.id}>
                 <div className="anime-detail-recommendation-poster">{recImage&&<img src={recImage} alt={recTitle} loading="lazy" />}</div>
                 <span className="anime-detail-recommendation-title">{recTitle}</span>
                 <span className="anime-detail-recommendation-meta">{item.format==="MOVIE"?"Film":"Series"}{item.startDate?.year?" · "+item.startDate.year:""}</span>
@@ -444,9 +457,9 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
    <div className="anime-detail-related-grid">
     {relations.slice(0,12).map((relation,index)=>{
       const node=relation.node;
-      if(!node) return null;
+      if(!node || !getInternalAnimeEntry(node.id,node.title)) return null;
       const label=relation.relationType==="SEQUEL"?"Secuela":relation.relationType==="PREQUEL"?"Precuela":relation.relationType==="SIDE_STORY"?"Historia paralela":relation.relationType==="SPIN_OFF"?"Spin-off":relation.relationType==="ALTERNATIVE"?"Alternativa":relation.relationType==="PARENT"?"Principal":relation.relationType==="ADAPTATION"?"Adaptación":"Relacionado";
-      return <a className="anime-detail-related-card" href={"/anime/" + node.id} key={node.id+"-"+index}>
+      return <a className="anime-detail-related-card" href={"/anime/" + (getInternalAnimeEntry(node.id,node.title)?.animeId ?? "")} key={node.id+"-"+index}>
         <div className="anime-detail-related-poster">{node.coverImage?.extraLarge||node.coverImage?.large?<img src={node.coverImage.extraLarge||node.coverImage.large||""} alt=""/>:<div/>}</div>
         <div className="anime-detail-related-copy"><strong>{node.title?.romaji||node.title?.english||"Sin título"}</strong><span>{label} · {node.format==="MOVIE"?"Film":node.format==="OVA"?"OVA":node.format==="SPECIAL"?"Especial":"Series"}</span></div>
       </a>;
