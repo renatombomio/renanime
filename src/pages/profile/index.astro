@@ -3,15 +3,11 @@ export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/layout/Navbar.astro";
 import Footer from "../../components/layout/Footer.astro";
-import { getRenanimeUser } from "../../lib/auth";
 import { supabaseServer } from "../../lib/supabase-server";
 
+const user = Astro.locals.renanimeUser;
+if (!user) return Astro.redirect("/login/");
 const token = Astro.cookies.get("renanime_session")?.value;
-const user = await getRenanimeUser(token);
-
-if (!user) {
-  return Astro.redirect("/login");
-}
 
 const { data: libraryData, error: libraryError } = await supabaseServer.rpc("renanime_get_library", {
   p_token: token,
