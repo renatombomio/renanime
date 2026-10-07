@@ -15,7 +15,7 @@ if (user) {
   title="Acceso — Renanime's Gallery"
   description="Entra en tu espacio personal de Renanime's Gallery."
 >
-  <main class="access-page">
+  <main class="access-page auth-login">
     <section class="access-card" aria-labelledby="access-title">
       <div class="brand" aria-label="Renanime">
         <span class="brand-ren">Ren</span><span class="brand-anime">anime</span>
@@ -99,6 +99,7 @@ if (user) {
   const accessCard = document.querySelector<HTMLElement>(".access-card");
   const onboarding = document.querySelector<HTMLElement>("#onboarding");
   const memberEntry = document.querySelector<HTMLElement>(".member-entry");
+  const accessPage = document.querySelector<HTMLElement>(".access-page");
 
   const accessJokes = document.createElement("div");
   accessJokes.className = "access-jokes";
@@ -171,9 +172,19 @@ if (user) {
     [nameStep, akaStep, completeStep, recoveryStep].forEach((item) => {
       if (item) item.hidden = item !== step;
     });
+
+    accessPage?.classList.remove("auth-login", "auth-register", "auth-recovery");
+
+    if (step === recoveryStep) {
+      accessPage?.classList.add("auth-recovery");
+    } else {
+      accessPage?.classList.add("auth-register");
+    }
   };
 
   const openRecovery = () => {
+    accessPage?.classList.remove("auth-login", "auth-register");
+    accessPage?.classList.add("auth-recovery");
     if (onboarding) onboarding.hidden = false;
     if (accessForm) accessForm.hidden = true;
     if (memberEntry) memberEntry.hidden = true;
@@ -327,10 +338,46 @@ if (user) {
 
 <style>
   .access-page {
+    position: relative;
     min-height: 100vh;
     display: grid;
     place-items: center;
     padding: 2rem 1.25rem;
+    overflow: hidden;
+    background-color: #050505;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-image 0.5s ease;
+  }
+
+  .access-page::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(90deg, rgba(4,4,6,0.94) 0%, rgba(4,4,6,0.76) 48%, rgba(4,4,6,0.38) 100%);
+    pointer-events: none;
+  }
+
+  .access-page.auth-login {
+    background-image: url("/images/auth/login-bg.svg");
+  }
+
+  .access-page.auth-register {
+    background-image: url("/images/auth/register-bg.svg");
+  }
+
+  .access-page.auth-recovery {
+    background-image: url("/images/auth/recovery-bg.svg");
+  }
+
+  .access-card {
+    z-index: 1;
+  }
+
+  .panel {
+    z-index: 2;
   }
 
   .access-card {
@@ -404,6 +451,7 @@ if (user) {
   }
 
   .member-entry button {
+    width: auto;
     min-height: 0;
     margin: 0;
     padding: 0;
@@ -448,6 +496,7 @@ if (user) {
   }
 
   button {
+    width: 100%;
     min-height: 52px;
     margin-top: 0.5rem;
     border: 0;
@@ -460,12 +509,14 @@ if (user) {
   }
 
   button.secondary {
+    width: 100%;
     background: transparent;
     border: 1px solid rgba(255,255,255,0.14);
     color: rgba(255,255,255,0.72);
   }
 
   .message {
+    width: 100%;
     min-height: 1.25rem;
     margin: 0.25rem 0 0;
     font-size: 0.85rem;
