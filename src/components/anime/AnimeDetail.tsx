@@ -425,15 +425,15 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
    <div><span className="anime-detail-label">Información</span><strong>{media?.studios?.nodes?.map(s=>s.name).join(" · ")||"Estudio no disponible"}</strong></div>
    <div><span className="anime-detail-label">Mi estado</span><strong>{personal.status==="WATCHED"?"He visto este anime":personal.status==="PENDING"?"Quiero verlo":"Parte de mi archivo"}</strong></div>
   </section>
-  {franchiseEntries.length>1&&<section className="anime-detail-franchise">
+  {franchiseEntries.filter((candidate)=>candidate.animeId!==entry.animeId).length>0&&<section className="anime-detail-franchise">
    <div className="anime-detail-related-header"><span className="anime-detail-label">Mi colección</span><h2>Películas</h2></div>
    <div className="anime-detail-franchise-grid">
-    {franchiseEntries.map((candidate,index)=>{
+    {franchiseEntries.filter((candidate)=>candidate.animeId!==entry.animeId).map((candidate,index)=>{
       const item=franchiseMedia[candidate.animeId];
       const image=item?.coverImage?.extraLarge||item?.coverImage?.large;
       const candidateTitle=FRANCHISE_MEDIA_ALIASES[candidate.animeId]?candidate.title:(item?.title?.romaji||item?.title?.english||candidate.title);
-      return <a className={"anime-detail-franchise-card"+(candidate.animeId===entry.animeId?" is-current":"")} href={"/anime/"+candidate.animeId} key={candidate.animeId}>
-       <div className="anime-detail-franchise-poster">{image?<img src={image} alt=""/>:<div/>}{candidate.animeId===entry.animeId&&<span>Estás aquí</span>}</div>
+      return <a className={"anime-detail-franchise-card"+} href={"/anime/"+candidate.animeId} key={candidate.animeId}>
+       <div className="anime-detail-franchise-poster">{image?<img src={image} alt=""/>:<div/>}</div>
        <div className="anime-detail-franchise-copy"><strong>{candidateTitle}</strong><span>{candidate.format==="MOVIE"||item?.format==="MOVIE"?"Film":"Series"} · {candidate.state.status==="WATCHED"?"Vista":"Pendiente"}</span></div>
       </a>;
     })}
