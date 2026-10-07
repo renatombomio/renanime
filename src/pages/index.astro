@@ -6,15 +6,6 @@ import Footer from "../components/layout/Footer.astro";
 import Hero from "../components/hero/Hero.astro";
 import HomeGallery from "../components/home/HomeGallery";
 import { getWatchedLibrary } from "../data/library";
-import { getRenanimeUser } from "../lib/auth";
-
-const token = Astro.cookies.get("renanime_session")?.value;
-const user = await getRenanimeUser(token);
-
-if (!user) {
-  return Astro.redirect("/login");
-}
-
 const collectionEntries = getWatchedLibrary();
 ---
 
