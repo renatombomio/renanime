@@ -29,7 +29,7 @@ if (!entry && slug && /^\d+$/.test(slug)) {
         entry = {
           animeId: slug,
           title: media.title?.romaji || media.title?.english || "Anime",
-          state: { status: "PENDING", favorite: false, recommended: false },
+          state: { status: "NOT_IN_COLLECTION", favorite: false, recommended: false },
         };
       }
     }
