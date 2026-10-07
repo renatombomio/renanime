@@ -11,7 +11,10 @@ const { slug } = Astro.params;
 const entry = getLibrary().find((item) => item.animeId === slug);
 
 if (!entry) {
-  return new Response("Anime no encontrado", { status: 404 });
+  return new Response(
+    `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Anime no encontrado — Renanime's Gallery</title></head><body style="margin:0;background:#090909;color:#f5f2ec;font-family:system-ui,sans-serif"><main style="min-height:100vh;display:grid;place-items:center;padding:2rem;text-align:center"><div><p style="font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;opacity:.55">404 · Archivo</p><h1 style="font-size:clamp(2rem,6vw,4rem);font-weight:500;margin:.5rem 0 1rem">Anime no encontrado.</h1><p style="opacity:.65;margin:0 0 1.5rem">Esta ficha no existe o ya no forma parte del archivo.</p><a href="/" style="color:#f5f2ec;text-decoration:underline;text-underline-offset:4px">Volver al inicio →</a></div></main></body></html>`,
+    { status: 404, headers: { "Content-Type": "text/html; charset=utf-8" } },
+  );
 }
 ---
 
