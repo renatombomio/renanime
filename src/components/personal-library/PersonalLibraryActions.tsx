@@ -5,6 +5,7 @@ import {
   markPersonalWatched,
   removeFromPersonalLibrary,
   subscribeToPersonalLibrary,
+  hydratePersonalLibrary,
 } from "../../data/personal-library";
 
 interface Props {
@@ -16,6 +17,7 @@ export default function PersonalLibraryActions({ animeId }: Props) {
   const [status, setStatus] = useState(() => getPersonalEntry(id)?.state.status ?? "NOT_IN_COLLECTION");
 
   useEffect(() => {
+    void hydratePersonalLibrary();
     const sync = () => setStatus(getPersonalEntry(id)?.state.status ?? "NOT_IN_COLLECTION");
     sync();
     return subscribeToPersonalLibrary(sync);
