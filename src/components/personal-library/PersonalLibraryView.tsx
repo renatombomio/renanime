@@ -49,6 +49,7 @@ export default function PersonalLibraryView({mode}:Props){
   const [entries,setEntries]=useState<PersonalAnimeEntry[]>([]);
   const [media,setMedia]=useState<Record<string,Media|null>>({});
   const [loading,setLoading]=useState(true);
+  const [loadError,setLoadError]=useState(false);
   const [visible,setVisible]=useState(PAGE_SIZE);
 
   useEffect(()=>{
@@ -66,19 +67,27 @@ export default function PersonalLibraryView({mode}:Props){
     const missing=entries.map(entry=>entry.animeId).filter(id=>!(id in media));
     if(!missing.length){setLoading(false);return;}
     setLoading(true);
-    fetchMedia(missing).then(result=>{if(!cancelled)setMedia(current=>({...current,...result}));}).finally(()=>{if(!cancelled)setLoading(false);});
+    setLoadError(false);
+    fetchMedia(missing).then(result=>{
+      if(cancelled)return;
+      setMedia(current=>({...current,...result}));
+      const failed=missing.some(id=>result[id]===null);
+      setLoadError(failed);
+    }).catch(()=>{if(!cancelled)setLoadError(true);}).finally(()=>{if(!cancelled)setLoading(false);});
     return()=>{cancelled=true;};
   },[entries.map(entry=>entry.animeId).join("|")]);
 
   const visibleEntries=entries.slice(0,visible);
   const hasMore=visible<entries.length;
 
-  if(loading&&!entries.length)return <p className="personal-library-status">Cargando mi biblioteca…</p>;
+  if(loading&&!entries.length)return <p className="personal-library-status" role="status" aria-live="polite">Cargando mi biblioteca…</p>;
 
   return <div className="personal-library-view">
     <div className="personal-library-intro"><span>{mode==="WATCHED"?"Tu recorrido":"Guardado para después"}</span><div className="personal-library-count" aria-live="polite">
       {entries.length} {entries.length===1?"anime":"animes"}
     </div></div>
+
+    {loadError&&<p className="personal-library-status" role="status" aria-live="polite">Algunas fichas no están disponibles ahora mismo. La biblioteca no se ha modificado.</p>}
 
     {visibleEntries.length?<div className="personal-library-grid">
       {visibleEntries.map(entry=>{
