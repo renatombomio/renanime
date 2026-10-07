@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { PersonalAnimeEntry } from "../../types/personal";
-import { getPersonalLibrary, subscribeToPersonalLibrary } from "../../data/personal-library";
+import { getPersonalLibrary, subscribeToPersonalLibrary, hydratePersonalLibrary } from "../../data/personal-library";
 
 type Mode = "WATCHED" | "PENDING";
 interface Props { mode: Mode; }
@@ -53,6 +53,7 @@ export default function PersonalLibraryView({mode}:Props){
   const [visible,setVisible]=useState(PAGE_SIZE);
 
   useEffect(()=>{
+    void hydratePersonalLibrary();
     const sync=()=>setEntries(getPersonalLibrary().filter(entry=>entry.state.status===mode));
     sync();
     return subscribeToPersonalLibrary(sync);
