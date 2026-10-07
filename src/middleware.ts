@@ -10,7 +10,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
     PUBLIC_PATHS.has(pathname) ||
     pathname.startsWith("/api/auth/") ||
     pathname.startsWith("/_astro/") ||
-    pathname === "/favicon.svg"
+    pathname.startsWith("/audio/") ||
+    pathname.startsWith("/videos/") ||
+    pathname === "/favicon.svg" ||
+    pathname === "/favicon.ico" ||
+    pathname.startsWith("/api/")
   ) {
     return next();
   }
