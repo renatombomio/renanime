@@ -130,7 +130,10 @@ if (user) {
     accessFailureIndex = (accessFailureIndex + 1) % accessFailureMessages.length;
     sessionStorage.setItem(accessFailureKey, String(accessFailureIndex));
 
-    if (accessMessage) accessMessage.textContent = message;
+    if (accessMessage) {
+      accessMessage.textContent = message;
+      accessMessage.hidden = false;
+    }
 
     const bubble = document.createElement("span");
     bubble.textContent = message;
@@ -198,35 +201,52 @@ if (user) {
     if (!accessPasswordInput || !accessMessage || !onboarding) return;
 
     accessMessage.textContent = "";
-    accessPassword = accessPasswordInput.value;
+    accessPassword = accessPasswordInput.value.trim();
+
+    if (!accessPassword) {
+      accessMessage.textContent = "Introduce el código de acceso.";
+      accessMessage.hidden = false;
+      return;
+    }
 
     try {
       const response = await fetch("/api/auth/access", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
         body: JSON.stringify({ accessPassword }),
       });
 
-      const data = await response.json();
+      const raw = await response.text();
+      let data: { ok?: boolean; error?: string } = {};
 
-      if (!response.ok) {
+      try {
+        data = JSON.parse(raw);
+      } catch {
+        data = {};
+      }
+
+      if (!response.ok || data.ok !== true) {
         accessMessage.textContent =
           data.error === "INVALID_ACCESS_PASSWORD"
             ? "Código de acceso incorrecto."
-            : "Código incorrecto. La puerta sigue cerrada.";
+            : "No se ha podido abrir la puerta de Renanime.";
+        accessMessage.hidden = false;
         showAccessFailure();
         return;
       }
 
+      // El código de acceso solo abre la puerta.
+      // Nunca identifica a un usuario existente.
       onboarding.hidden = false;
       accessForm.hidden = true;
       memberEntry!.hidden = true;
-
-      // El código de acceso nunca identifica a un usuario.
-      // Siempre abre el flujo de creación de perfil.
       showStep(nameStep);
-    } catch {
+      nameInput?.focus();
+    } catch (error) {
+      console.error("Renanime access request failed:", error);
       accessMessage.textContent = "No se ha podido conectar con Renanime.";
+      accessMessage.hidden = false;
     }
   });
 
@@ -528,6 +548,10 @@ if (user) {
 
   #access-message:empty {
     display: none;
+  }
+
+  #access-message:not(:empty) {
+    display: block;
   }
 
   .welcome-title {
