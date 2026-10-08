@@ -166,7 +166,6 @@ if (user) {
   const enterRenanime = document.querySelector<HTMLButtonElement>("#enter-renanime");
 
   let accessPassword = "";
-  let hasProfiles = false;
 
   const showStep = (step: HTMLElement | null) => {
     [nameStep, akaStep, completeStep, recoveryStep].forEach((item) => {
@@ -219,16 +218,13 @@ if (user) {
         return;
       }
 
-      hasProfiles = Boolean(data.hasProfiles);
       onboarding.hidden = false;
       accessForm.hidden = true;
       memberEntry!.hidden = true;
 
-      if (hasProfiles) {
-        showStep(recoveryStep);
-      } else {
-        showStep(nameStep);
-      }
+      // El código de acceso nunca identifica a un usuario.
+      // Siempre abre el flujo de creación de perfil.
+      showStep(nameStep);
     } catch {
       accessMessage.textContent = "No se ha podido conectar con Renanime.";
     }
