@@ -176,6 +176,7 @@ if (user) {
     });
 
     accessPage?.classList.remove("auth-login", "auth-register", "auth-recovery");
+    accessCard?.classList.add("panel-open");
 
     if (step === recoveryStep) {
       accessPage?.classList.add("auth-recovery");
@@ -402,6 +403,15 @@ if (user) {
     width: min(100%, 430px);
   }
 
+  .access-card.panel-open > .brand,
+  .access-card.panel-open > .eyebrow,
+  .access-card.panel-open > h1,
+  .access-card.panel-open > .subtitle,
+  .access-card.panel-open > #access-form,
+  .access-card.panel-open > .member-entry {
+    visibility: hidden;
+  }
+
   .access-wrong { animation: access-shake 0.42s ease; }
 
   .access-jokes {
@@ -489,10 +499,10 @@ if (user) {
     padding: 2rem;
     border: 1px solid rgba(255,255,255,0.12);
     border-radius: 20px;
-    background: rgba(9,9,9,0.18);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-    box-shadow: 0 0 0 100vmax rgba(0,0,0,0.12), 0 24px 80px rgba(0,0,0,0.45);
+    background: rgba(8,8,10,0.10);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 0 0 100vmax rgba(0,0,0,0.04), 0 24px 80px rgba(0,0,0,0.45);
   }
 
   label { font-size: 0.85rem; opacity: 0.75; }
