@@ -356,7 +356,7 @@ if (user) {
     position: absolute;
     inset: 0;
     z-index: 0;
-    background: linear-gradient(90deg, rgba(4,4,6,0.94) 0%, rgba(4,4,6,0.76) 48%, rgba(4,4,6,0.38) 100%);
+    background: linear-gradient(90deg, rgba(4,4,6,0.68) 0%, rgba(4,4,6,0.48) 52%, rgba(4,4,6,0.2) 100%);
     pointer-events: none;
   }
 
@@ -403,7 +403,7 @@ if (user) {
     padding: 0.7rem 0.9rem;
     border: 1px solid rgba(255,255,255,0.16);
     border-radius: 999px;
-    background: rgba(12,12,12,0.94);
+    background: rgba(12,12,12,0.96);
     color: rgba(255,255,255,0.82);
     font-size: 0.72rem;
     line-height: 1.25;
@@ -472,8 +472,10 @@ if (user) {
     padding: 2rem;
     border: 1px solid rgba(255,255,255,0.12);
     border-radius: 20px;
-    background: #090909;
-    box-shadow: 0 0 0 100vmax rgba(0,0,0,0.78), 0 24px 80px rgba(0,0,0,0.6);
+    background: rgba(9,9,9,0.72);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    box-shadow: 0 0 0 100vmax rgba(0,0,0,0.58), 0 24px 80px rgba(0,0,0,0.6);
   }
 
   label { font-size: 0.85rem; opacity: 0.75; }
@@ -519,8 +521,17 @@ if (user) {
     width: 100%;
     min-height: 1.25rem;
     margin: 0.25rem 0 0;
+    padding: 0.45rem 0.65rem;
+    box-sizing: border-box;
+    border-radius: 8px;
+    background: rgba(255,79,139,0.08);
     font-size: 0.85rem;
-    color: #ff7b9f;
+    line-height: 1.35;
+    color: #ff9cbb;
+  }
+
+  #access-message:empty {
+    display: none;
   }
 
   .welcome-title {
