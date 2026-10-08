@@ -364,6 +364,7 @@ if (user) {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    background-attachment: fixed;
     transition: background-image 0.5s ease;
   }
 
@@ -372,7 +373,7 @@ if (user) {
     position: absolute;
     inset: 0;
     z-index: 0;
-    background: linear-gradient(90deg, rgba(4,4,6,0.68) 0%, rgba(4,4,6,0.48) 52%, rgba(4,4,6,0.2) 100%);
+    background: linear-gradient(90deg, rgba(4,4,6,0.42) 0%, rgba(4,4,6,0.24) 52%, rgba(4,4,6,0.08) 100%);
     pointer-events: none;
   }
 
@@ -488,10 +489,10 @@ if (user) {
     padding: 2rem;
     border: 1px solid rgba(255,255,255,0.12);
     border-radius: 20px;
-    background: rgba(9,9,9,0.72);
+    background: rgba(9,9,9,0.56);
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
-    box-shadow: 0 0 0 100vmax rgba(0,0,0,0.58), 0 24px 80px rgba(0,0,0,0.6);
+    box-shadow: 0 0 0 100vmax rgba(0,0,0,0.38), 0 24px 80px rgba(0,0,0,0.6);
   }
 
   label { font-size: 0.85rem; opacity: 0.75; }
@@ -599,5 +600,19 @@ if (user) {
     22% { scale: 1; }
     78% { opacity: 1; }
     100% { opacity: 0; scale: 0.9; translate: 0 12px; }
+  }
+</style>
+
+
+<style>
+  @media (max-width: 640px) {
+    .access-page {
+      background-attachment: scroll;
+      background-position: 58% center;
+    }
+
+    .access-page.auth-login { background-position: 62% center; }
+    .access-page.auth-register { background-position: 50% center; }
+    .access-page.auth-recovery { background-position: 54% center; }
   }
 </style>
