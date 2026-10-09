@@ -404,6 +404,16 @@ if (user) {
   .access-card {
     position: relative;
     width: min(100%, 430px);
+    justify-self: stretch;
+    margin-inline: 0;
+  }
+
+  .access-card > .brand {
+    display: block;
+    width: fit-content;
+    margin-left: 0;
+    margin-right: auto;
+    justify-self: start;
   }
 
   .access-card.panel-open > .brand,
