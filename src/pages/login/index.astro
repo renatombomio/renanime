@@ -17,7 +17,7 @@ if (user) {
 >
   <main class="access-page auth-login" data-auth-screen="login">
     <div class="auth-backgrounds" aria-hidden="true">
-      <img id="auth-background" class="auth-background" src="/images/loginM.jpg" alt="" />
+      <img id="auth-background" class="auth-background" src="/images/login2.jpg" alt="" />
     </div>
     <section class="access-card" aria-labelledby="access-title">
       <div class="brand" aria-label="Renanime">
@@ -185,7 +185,7 @@ if (user) {
     accessPage?.classList.add(screen === "recovery" ? "auth-recovery" : "auth-register");
 
     if (authBackground) {
-      authBackground.src = screen === "recovery" ? "/images/login2.jpg" : "/images/login1.jpg";
+      authBackground.src = screen === "recovery" ? "/images/login2.jpg" : "/images/loginM.jpg";
     }
 
     accessCard?.classList.add("panel-open");
