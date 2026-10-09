@@ -12,6 +12,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     pathname.startsWith("/_astro/") ||
     pathname.startsWith("/audio/") ||
     pathname.startsWith("/videos/") ||
+    pathname.startsWith("/images/") ||
     pathname === "/favicon.svg" ||
     pathname === "/favicon.ico" ||
     pathname.startsWith("/api/")
