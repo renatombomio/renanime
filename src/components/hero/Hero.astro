@@ -104,7 +104,11 @@ const slides: HeroSlide[] = (
     text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45);
   }
 
-  :global(.hero-accent) {
+  :global(.hero:not(.hero--ghibli) .hero-accent) {
+    color: #ec4899;
+  }
+
+  :global(.hero--ghibli .hero-accent) {
     color: var(--color-accent);
   }
 
