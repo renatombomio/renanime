@@ -173,6 +173,7 @@ if (user) {
   const enterRenanime = document.querySelector<HTMLButtonElement>("#enter-renanime");
 
   let accessPassword = "";
+  let profileName = "";
 
   const showStep = (step: HTMLElement | null) => {
     [nameStep, akaStep, completeStep, recoveryStep].forEach((item) => {
@@ -274,13 +275,14 @@ if (user) {
       return;
     }
 
+    profileName = name;
     showStep(akaStep);
   });
 
   createProfile?.addEventListener("click", async () => {
     if (!nameInput || !akaInput || !akaMessage) return;
 
-    const name = nameInput.value.trim();
+    const name = profileName || nameInput.value.trim();
     const aka = akaInput.value.trim();
     akaMessage.textContent = "";
 
@@ -311,7 +313,7 @@ if (user) {
           data.error === "SAME_NAME_AKA"
             ? "¡Sé más creativo, tú puedes! ¡Gambare!"
             : data.error === "INVALID_PROFILE"
-              ? "Revisa tu nombre y tu AKA."
+              ? (!name ? "No encuentro tu nombre. Vuelve atrás y escríbelo de nuevo." : !aka ? "Escribe tu mote otaku." : "No se han podido validar los datos. Prueba otro mote.")
               : "No se ha podido crear el perfil.";
         return;
       }
