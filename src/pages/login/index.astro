@@ -15,7 +15,12 @@ if (user) {
   title="Acceso — Renanime's Gallery"
   description="Entra en tu espacio personal de Renanime's Gallery."
 >
-  <main class="access-page auth-login">
+  <main class="access-page auth-login" data-auth-screen="login">
+    <div class="auth-backgrounds" aria-hidden="true">
+      <img class="auth-background auth-background-login is-active" src="/images/loginM.jpg" alt="" />
+      <img class="auth-background auth-background-register" src="/images/login1.jpg" alt="" />
+      <img class="auth-background auth-background-recovery" src="/images/login2.jpg" alt="" />
+    </div>
     <section class="access-card" aria-labelledby="access-title">
       <div class="brand" aria-label="Renanime">
         <span class="brand-ren">Ren</span><span class="brand-anime">anime</span>
@@ -101,12 +106,6 @@ if (user) {
   const memberEntry = document.querySelector<HTMLElement>(".member-entry");
   const accessPage = document.querySelector<HTMLElement>(".access-page");
 
-  const AUTH_BACKGROUNDS = {
-    login: "url(\"/images/loginM.jpg\")",
-    register: "url(\"/images/login1.jpg\")",
-    recovery: "url(\"/images/login2.jpg\")",
-  };
-
   const accessJokes = document.createElement("div");
   accessJokes.className = "access-jokes";
   accessJokes.setAttribute("aria-live", "polite");
@@ -181,22 +180,17 @@ if (user) {
       if (item) item.hidden = item !== step;
     });
 
+    const screen = step === recoveryStep ? "recovery" : "register";
+    accessPage?.setAttribute("data-auth-screen", screen);
     accessPage?.classList.remove("auth-login", "auth-register", "auth-recovery");
+    accessPage?.classList.add(screen === "recovery" ? "auth-recovery" : "auth-register");
     accessCard?.classList.add("panel-open");
-
-    if (step === recoveryStep) {
-      accessPage?.classList.add("auth-recovery");
-      if (accessPage) accessPage.style.backgroundImage = AUTH_BACKGROUNDS.recovery;
-    } else {
-      accessPage?.classList.add("auth-register");
-      if (accessPage) accessPage.style.backgroundImage = AUTH_BACKGROUNDS.register;
-    }
   };
 
   const openRecovery = () => {
     accessPage?.classList.remove("auth-login", "auth-register");
     accessPage?.classList.add("auth-recovery");
-    if (accessPage) accessPage.style.backgroundImage = AUTH_BACKGROUNDS.recovery;
+
     if (onboarding) onboarding.hidden = false;
     if (accessForm) accessForm.hidden = true;
     if (memberEntry) memberEntry.hidden = true;
@@ -204,8 +198,6 @@ if (user) {
   };
 
   showRecovery?.addEventListener("click", openRecovery);
-
-  if (accessPage) accessPage.style.backgroundImage = AUTH_BACKGROUNDS.login;
 
   accessForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -380,25 +372,34 @@ if (user) {
     transition: background-image 0.5s ease;
   }
 
-  .access-page::before {
-    content: "";
+  .auth-backgrounds {
     position: absolute;
     inset: 0;
     z-index: 0;
-    background: transparent;
-    pointer-events: none;
+    overflow: hidden;
+    background: #050505;
   }
 
-  .access-page.auth-login {
-    background-image: url("/images/loginM.jpg");
+  .auth-background {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0;
+    transition: opacity 0.25s ease;
   }
 
-  .access-page.auth-register {
-    background-image: url("/images/login1.jpg");
+  .auth-background.is-active {
+    opacity: 1;
   }
 
-  .access-page.auth-recovery {
-    background-image: url("/images/login2.jpg");
+  .access-page[data-auth-screen="login"] .auth-background-login,
+  .access-page[data-auth-screen="register"] .auth-background-register,
+  .access-page[data-auth-screen="recovery"] .auth-background-recovery {
+    opacity: 1;
   }
 
   .access-card {
