@@ -58,11 +58,11 @@ if (user) {
         </div>
 
         <div class="step" data-step="aka" hidden>
-          <p class="panel-eyebrow">UNA ÚLTIMA COSA</p>
-          <h2>¿Cuál es tu AKA de anime?</h2>
-          <p>Venga va. Dame un nombre divertido. Ya que hemos llegado hasta aquí.</p>
-          <label for="aka">AKA de anime</label>
-          <input id="aka" type="text" maxlength="40" autocomplete="nickname" placeholder="Ej. Ren-sama, Hokage, Goku..." />
+          <p class="panel-eyebrow">¡SUBE DE RANGO, NAKAMA!</p>
+          <h2>¿Cuál es tu mote otaku?</h2>
+          <p>¿Cómo te llamarían tus nakamas en el mundo del anime?</p>
+          <label for="aka">Tu apodo legendario</label>
+          <input id="aka" type="text" maxlength="40" autocomplete="nickname" placeholder="Ren-sama · Hokage · Goku" />
           <button id="create-profile" type="button">Vale, este es</button>
           <p id="aka-message" class="message" aria-live="polite"></p>
         </div>
@@ -528,10 +528,15 @@ if (user) {
     padding: 0 1rem;
     border: 1px solid rgba(255,255,255,0.15);
     border-radius: 12px;
-    background: rgba(255,255,255,0.05);
-    color: inherit;
+    background: rgba(15,15,22,0.42);
+    color: #fff;
     font: inherit;
     box-sizing: border-box;
+  }
+
+  input::placeholder {
+    color: rgba(255,255,255,0.82);
+    opacity: 1;
   }
 
   input:focus {
