@@ -101,6 +101,12 @@ if (user) {
   const memberEntry = document.querySelector<HTMLElement>(".member-entry");
   const accessPage = document.querySelector<HTMLElement>(".access-page");
 
+  const AUTH_BACKGROUNDS = {
+    login: "url(\"/images/loginM.jpg\")",
+    register: "url(\"/images/login1.jpg\")",
+    recovery: "url(\"/images/login2.jpg\")",
+  };
+
   const accessJokes = document.createElement("div");
   accessJokes.className = "access-jokes";
   accessJokes.setAttribute("aria-live", "polite");
@@ -180,14 +186,17 @@ if (user) {
 
     if (step === recoveryStep) {
       accessPage?.classList.add("auth-recovery");
+      if (accessPage) accessPage.style.backgroundImage = AUTH_BACKGROUNDS.recovery;
     } else {
       accessPage?.classList.add("auth-register");
+      if (accessPage) accessPage.style.backgroundImage = AUTH_BACKGROUNDS.register;
     }
   };
 
   const openRecovery = () => {
     accessPage?.classList.remove("auth-login", "auth-register");
     accessPage?.classList.add("auth-recovery");
+    if (accessPage) accessPage.style.backgroundImage = AUTH_BACKGROUNDS.recovery;
     if (onboarding) onboarding.hidden = false;
     if (accessForm) accessForm.hidden = true;
     if (memberEntry) memberEntry.hidden = true;
@@ -195,6 +204,8 @@ if (user) {
   };
 
   showRecovery?.addEventListener("click", openRecovery);
+
+  if (accessPage) accessPage.style.backgroundImage = AUTH_BACKGROUNDS.login;
 
   accessForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
