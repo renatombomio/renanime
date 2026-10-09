@@ -289,7 +289,7 @@ if (user) {
     }
 
     if (name.toLocaleLowerCase() === aka.toLocaleLowerCase()) {
-      akaMessage.textContent = "Venga va. Ese es tu nombre, no tu AKA. Sé creativo.";
+      akaMessage.textContent = "Sé más creativo, vamos, ¡tú puedes! ¡Gambare!";
       return;
     }
 
@@ -568,13 +568,16 @@ if (user) {
     width: 100%;
     min-height: 1.25rem;
     margin: 0.25rem 0 0;
-    padding: 0.45rem 0.65rem;
+    padding: 0.55rem 0.7rem;
     box-sizing: border-box;
+    border: 1px solid rgba(255,255,255,0.22);
     border-radius: 8px;
-    background: rgba(255,79,139,0.08);
-    font-size: 0.85rem;
-    line-height: 1.35;
-    color: #ff9cbb;
+    background: rgba(12,14,28,0.82);
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.45;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
   }
 
   .message:empty {
