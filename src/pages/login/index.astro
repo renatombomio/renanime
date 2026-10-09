@@ -166,6 +166,7 @@ if (user) {
 
   const continueName = document.querySelector<HTMLButtonElement>("#continue-name");
   const createProfile = document.querySelector<HTMLButtonElement>("#create-profile");
+  let sameNameAkaAttempts = 0;
   const recoverAccount = document.querySelector<HTMLButtonElement>("#recover-account");
   const backToCreate = document.querySelector<HTMLButtonElement>("#back-to-create");
   const showRecovery = document.querySelector<HTMLButtonElement>("#show-recovery");
@@ -289,7 +290,10 @@ if (user) {
     }
 
     if (name.toLocaleLowerCase() === aka.toLocaleLowerCase()) {
-      akaMessage.textContent = "Sé más creativo, vamos, ¡tú puedes! ¡Gambare!";
+      sameNameAkaAttempts += 1;
+      akaMessage.textContent = sameNameAkaAttempts % 2 === 1
+        ? "¡Sé más creativo, tú puedes! ¡Gambare!"
+        : "Gambare Gambare Senpai";
       return;
     }
 
@@ -305,7 +309,7 @@ if (user) {
       if (!response.ok) {
         akaMessage.textContent =
           data.error === "SAME_NAME_AKA"
-            ? "Venga va. Ese es tu nombre, no tu AKA. Sé creativo."
+            ? "¡Sé más creativo, tú puedes! ¡Gambare!"
             : data.error === "INVALID_PROFILE"
               ? "Revisa tu nombre y tu AKA."
               : "No se ha podido crear el perfil.";
@@ -409,11 +413,14 @@ if (user) {
   }
 
   .access-card > .brand {
+    position: fixed;
+    top: 1.5rem;
+    left: 1.25rem;
+    z-index: 3;
     display: block;
     width: fit-content;
-    margin-left: 0;
-    margin-right: auto;
-    justify-self: start;
+    margin: 0;
+    text-align: left;
   }
 
   .access-card.panel-open > .brand,
@@ -570,14 +577,14 @@ if (user) {
     margin: 0.25rem 0 0;
     padding: 0.55rem 0.7rem;
     box-sizing: border-box;
-    border: 1px solid rgba(255,255,255,0.22);
+    border: 1px solid rgba(255,79,139,0.7);
     border-radius: 8px;
-    background: rgba(12,14,28,0.82);
+    background: rgba(125,12,45,0.92);
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 700;
     line-height: 1.45;
     color: #fff;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.65);
   }
 
   .message:empty {
