@@ -70,10 +70,10 @@ if (user) {
         <div class="step complete-step" data-step="complete" hidden>
           <h2 class="welcome-title">Bienvenido a Renanime, <span id="welcome-name"></span>.</h2>
           <p class="joke-result">
-            Ja, ja, ja. Era broma. A nadie le importa tu AKA.<br />
-            No me puedo creer que lo hayas escrito. Mereces entrar a la web.
+            Ja, ja, ja… era broma. A nadie le importa tu mote, <strong>kono baka</strong>.<br />
+            No me puedo creer que lo hayas escrito… aunque tampoco tenías otra alternativa. Aquí yo soy <strong>Kami</strong>.
           </p>
-          <p class="recovery-note">Tu código de recuperación es:</p>
+          <p class="recovery-note">Apunta tu código de recuperación:</p>
           <div id="recovery-display" class="recovery-display"></div>
           <p class="recovery-help">Guárdalo. Lo necesitarás para entrar desde otro dispositivo.</p>
           <button id="enter-renanime" type="button">Iniciar sesión</button>
@@ -608,11 +608,24 @@ if (user) {
   }
 
   .joke-result {
-    color: rgba(255,255,255,0.72) !important;
-    margin-top: 1.25rem !important;
+    color: rgba(255,255,255,0.96) !important;
+    margin-top: 1rem !important;
+    font-size: 0.96rem;
+    font-weight: 600;
+    line-height: 1.6;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.65);
   }
 
-  .recovery-note { margin: 1.5rem 0 0.5rem !important; }
+  .joke-result strong {
+    color: #fff;
+    font-weight: 800;
+  }
+
+  .recovery-note {
+    margin: 1.1rem 0 0.5rem !important;
+    color: rgba(255,255,255,0.96) !important;
+    font-weight: 700;
+  }
 
   .recovery-display {
     padding: 1rem;
@@ -629,7 +642,11 @@ if (user) {
 
   .recovery-help {
     margin: 0.75rem 0 0.5rem !important;
-    font-size: 0.82rem;
+    font-size: 0.86rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.92) !important;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.65);
   }
 
   @keyframes access-shake {
