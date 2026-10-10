@@ -34,6 +34,8 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
       </ul>
     </nav>
 
+    <button class="language-toggle" type="button" data-language-toggle aria-label="Switch language to English" title="Switch to English">ES · EN</button>
+
     <div class="mobile-menu">
       <MobileMenu variant={variant} client:load />
     </div>
@@ -157,6 +159,39 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
   .site-header--ghibli .desktop-nav a:focus-visible { color: var(--ghibli-blue, #18528a); }
   .site-header--ghibli .desktop-nav a::after { background: var(--ghibli-coral, #f45164); }
 
+  .language-toggle {
+    flex: 0 0 auto;
+    margin-left: clamp(1rem, 2vw, 1.75rem);
+    padding: 0.55rem 0.65rem;
+    border: 1px solid rgba(245, 242, 236, 0.24);
+    border-radius: 999px;
+    background: transparent;
+    color: #f5f2ec;
+    font-family: var(--font-meta);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .language-toggle:hover,
+  .language-toggle:focus-visible {
+    border-color: #ec4899;
+    outline-color: #ec4899;
+  }
+
+  .site-header--ghibli .language-toggle {
+    color: var(--ghibli-ink, #19362f);
+    border-color: rgba(25, 54, 47, 0.25);
+  }
+
+  .site-header--ghibli .language-toggle:hover,
+  .site-header--ghibli .language-toggle:focus-visible {
+    border-color: var(--ghibli-coral, #f45164);
+    outline-color: var(--ghibli-coral, #f45164);
+  }
+
   .mobile-menu {
     display: none;
     margin-left: auto;
@@ -176,11 +211,16 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
       display: none;
     }
 
+    .language-toggle {
+      margin-left: auto;
+      margin-right: 0.65rem;
+    }
+
     .mobile-menu {
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      margin-left: auto;
+      margin-left: 0;
     }
   }
 
