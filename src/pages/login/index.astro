@@ -74,7 +74,9 @@ if (user) {
             No me puedo creer que lo hayas escrito… aunque tampoco tenías otra alternativa. Aquí yo soy <strong>Kami</strong>.
           </p>
           <p class="recovery-note">Apunta tu código de recuperación:</p>
-          <div id="recovery-display" class="recovery-display"></div>
+          <div id="recovery-display" class="recovery-display" role="button" tabindex="0" aria-label="Copiar código de recuperación" title="Haz clic para copiar"></div>
+          <button id="copy-recovery-code" class="secondary recovery-copy-button" type="button">Copiar código</button>
+          <p id="recovery-copy-message" class="recovery-help" role="status" aria-live="polite">Haz clic en el código o en el botón para copiarlo.</p>
           <p class="recovery-help">Guárdalo. Lo necesitarás para entrar desde otro dispositivo.</p>
           <button id="enter-renanime" type="button">Iniciar sesión</button>
         </div>
@@ -163,6 +165,8 @@ if (user) {
 
   const welcomeName = document.querySelector<HTMLSpanElement>("#welcome-name");
   const recoveryDisplay = document.querySelector<HTMLDivElement>("#recovery-display");
+  const copyRecoveryCode = document.querySelector<HTMLButtonElement>("#copy-recovery-code");
+  const recoveryCopyMessage = document.querySelector<HTMLParagraphElement>("#recovery-copy-message");
 
   const continueName = document.querySelector<HTMLButtonElement>("#continue-name");
   const createProfile = document.querySelector<HTMLButtonElement>("#create-profile");
@@ -201,6 +205,37 @@ if (user) {
     if (memberEntry) memberEntry.hidden = true;
     showStep(recoveryStep);
   };
+
+  const copyRecoveryCodeToClipboard = async () => {
+    const code = recoveryDisplay?.textContent?.trim();
+    if (!code || !recoveryCopyMessage) return;
+
+    try {
+      await navigator.clipboard.writeText(code);
+      recoveryCopyMessage.textContent = "¡Código copiado! Guárdalo en un lugar seguro.";
+    } catch {
+      // Fallback for browsers where the Clipboard API is unavailable.
+      const selection = window.getSelection();
+      const range = document.createRange();
+      if (recoveryDisplay) {
+        range.selectNodeContents(recoveryDisplay);
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+        recoveryCopyMessage.textContent = "Código seleccionado. Pulsa Ctrl+C o ⌘C para copiarlo.";
+      } else {
+        recoveryCopyMessage.textContent = "No se ha podido copiar automáticamente. Selecciona el código y cópialo.";
+      }
+    }
+  };
+
+  copyRecoveryCode?.addEventListener("click", copyRecoveryCodeToClipboard);
+  recoveryDisplay?.addEventListener("click", copyRecoveryCodeToClipboard);
+  recoveryDisplay?.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      void copyRecoveryCodeToClipboard();
+    }
+  });
 
   showRecovery?.addEventListener("click", openRecovery);
 
@@ -638,6 +673,19 @@ if (user) {
     font-weight: 700;
     letter-spacing: 0.08em;
     text-align: center;
+    cursor: pointer;
+    user-select: all;
+    -webkit-user-select: all;
+    overflow-wrap: anywhere;
+  }
+
+  .recovery-display:focus-visible {
+    outline: 2px solid #ff4f8b;
+    outline-offset: 3px;
+  }
+
+  .recovery-copy-button {
+    margin-top: 0;
   }
 
   .recovery-help {
