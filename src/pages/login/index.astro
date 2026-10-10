@@ -16,6 +16,7 @@ if (user) {
   description="Entra en tu espacio personal de Renanime's Gallery."
 >
   <main class="access-page auth-login" data-auth-screen="login">
+    <button class="language-toggle-auth" type="button" data-language-toggle aria-label="Switch language to English" title="Switch to English">ES · EN</button>
     <div class="auth-backgrounds" aria-hidden="true">
       <img id="auth-background" class="auth-background" src="/images/login2.jpg" alt="" />
     </div>
@@ -401,6 +402,29 @@ if (user) {
 </script>
 
 <style>
+  .language-toggle-auth {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.25rem;
+    z-index: 130;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 999px;
+    background: rgba(8,8,10,0.6);
+    color: #fff;
+    font: 600 0.68rem/1 var(--font-meta, monospace);
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+  }
+
+  .language-toggle-auth:hover,
+  .language-toggle-auth:focus-visible {
+    border-color: #ff4f8b;
+    outline: 2px solid #ff4f8b;
+    outline-offset: 2px;
+  }
+
   .access-page {
     position: relative;
     min-height: 100vh;
