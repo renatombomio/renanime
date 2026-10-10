@@ -159,7 +159,10 @@ function translateDocument(language: Language) {
     const parent = node.parentElement;
     if (!parent || parent.closest("script, style, noscript, textarea, input, [data-no-translate], [data-language-toggle]")) continue;
     const value = node.nodeValue;
-    if (value) node.nodeValue = translateValue(value, language);
+    if (value) {
+      const translated = translateValue(value, language);
+      if (translated !== value) node.nodeValue = translated;
+    }
   }
 
   document.querySelectorAll<HTMLElement>("input[placeholder], textarea[placeholder], [aria-label], [title]").forEach((element) => {
