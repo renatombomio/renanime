@@ -157,6 +157,7 @@ const translations: Record<string, string> = {
   "Añadir a favoritos": "Add to favorites",
   "Quitar de favoritos": "Remove from favorites",
   "Ver detalles": "View details",
+  "Ver ": "View ",
   "Sinopsis": "Synopsis",
   "Recomendaciones": "Recommendations",
   "Año": "Year",
@@ -244,7 +245,7 @@ document.addEventListener("click", (event) => {
 const observer = new MutationObserver(() => {
   translateDocument(currentLanguage);
 });
-observer.observe(document.body, { childList: true, subtree: true });
+observer.observe(document.body, { childList: true, characterData: true, subtree: true });
 
 document.addEventListener("astro:page-load", () => translateDocument(currentLanguage));
 translateDocument(currentLanguage);
