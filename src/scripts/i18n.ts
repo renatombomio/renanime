@@ -272,39 +272,60 @@ function translateValue(value: string, language: Language): string {
   return result;
 }
 
+const originalText = new WeakMap<Text, string>();
+const originalAttributes = new WeakMap<Element, Map<string, string>>();
+let translating = false;
+
 function translateDocument(language: Language) {
-  document.documentElement.lang = language;
-  document.querySelectorAll<HTMLElement>("[data-language-toggle]").forEach((button) => {
-    const toggleLabel = language === "es" ? "ES · EN" : "EN · ES";
-    if (button.textContent !== toggleLabel) button.textContent = toggleLabel;
-    button.setAttribute("aria-label", language === "es" ? "Switch language to English" : "Cambiar idioma a español");
-    button.setAttribute("title", language === "es" ? "Switch to English" : "Cambiar a español");
-    button.setAttribute("aria-pressed", String(language === "en"));
-  });
+  if (translating || !document.body) return;
+  translating = true;
+  try {
+    document.documentElement.lang = language;
+    document.querySelectorAll<HTMLElement>("[data-language-toggle]").forEach((button) => {
+      const toggleLabel = language === "es" ? "ES · EN" : "EN · ES";
+      if (button.textContent !== toggleLabel) button.textContent = toggleLabel;
+      button.setAttribute("aria-label", language === "es" ? "Cambiar idioma a inglés" : "Switch language to Spanish");
+      button.setAttribute("title", language === "es" ? "Cambiar a inglés" : "Switch to Spanish");
+      button.setAttribute("aria-pressed", String(language === "en"));
+    });
 
-  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-  let node: Node | null;
-  while ((node = walker.nextNode())) {
-    const parent = node.parentElement;
-    if (!parent || parent.closest("script, style, noscript, textarea, input, [data-no-translate], [data-language-toggle]")) continue;
-    const value = node.nodeValue;
-    if (value) {
-      const translated = translateValue(value, language);
-      if (translated !== value) node.nodeValue = translated;
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    let node: Node | null;
+    while ((node = walker.nextNode())) {
+      const textNode = node as Text;
+      const parent = textNode.parentElement;
+      if (!parent || parent.closest("script, style, noscript, textarea, input, [data-no-translate], [data-language-toggle]")) continue;
+      const visibleText = textNode.nodeValue ?? "";
+      if (!originalText.has(textNode)) originalText.set(textNode, visibleText);
+      const sourceText = originalText.get(textNode) ?? visibleText;
+      const translatedText = translateValue(sourceText, language);
+      if (textNode.nodeValue !== translatedText) textNode.nodeValue = translatedText;
     }
+
+    document.querySelectorAll<HTMLElement>("input[placeholder], textarea[placeholder], [aria-label], [title]").forEach((element) => {
+      let originals = originalAttributes.get(element);
+      if (!originals) {
+        originals = new Map<string, string>();
+        originalAttributes.set(element, originals);
+      }
+      for (const attribute of Object.keys(attributeTranslations)) {
+        const value = element.getAttribute(attribute);
+        if (value && !originals.has(attribute)) originals.set(attribute, value);
+        const sourceValue = originals.get(attribute);
+        if (sourceValue) {
+          const translated = translateValue(sourceValue, language);
+          if (value !== translated) element.setAttribute(attribute, translated);
+        }
+      }
+    });
+
+    const title = document.querySelector("title");
+    if (title) title.textContent = translateValue(title.textContent ?? "", language);
+    const description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+    if (description?.content) description.content = translateValue(description.content, language);
+  } finally {
+    translating = false;
   }
-
-  document.querySelectorAll<HTMLElement>("input[placeholder], textarea[placeholder], [aria-label], [title]").forEach((element) => {
-    for (const attribute of Object.keys(attributeTranslations)) {
-      const value = element.getAttribute(attribute);
-      if (value) element.setAttribute(attribute, translateValue(value, language));
-    }
-  });
-
-  const title = document.querySelector("title");
-  if (title) title.textContent = translateValue(title.textContent ?? "", language);
-  const description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
-  if (description?.content) description.content = translateValue(description.content, language);
 }
 
 let currentLanguage: Language = "es";
@@ -328,15 +349,30 @@ document.addEventListener("click", (event) => {
   }
 });
 
-const observer = new MutationObserver(() => {
-  translateDocument(currentLanguage);
+let scheduled = false;
+const observer = new MutationObserver((mutations) => {
+  if (translating || scheduled) return;
+  const hasRelevantChange = mutations.some((mutation) => {
+    const target = mutation.target instanceof Element ? mutation.target : mutation.target.parentElement;
+    return !target?.closest("script, style, noscript, textarea, input, [data-language-toggle]");
+  });
+  if (!hasRelevantChange) return;
+  scheduled = true;
+  queueMicrotask(() => {
+    scheduled = false;
+    translateDocument(currentLanguage);
+  });
 });
 observer.observe(document.body, { childList: true, characterData: true, subtree: true });
 
-document.addEventListener("astro:page-load", () => {
+const restoreLanguage = () => {
   try {
     currentLanguage = localStorage.getItem("renanime-language") === "en" ? "en" : "es";
   } catch {}
   translateDocument(currentLanguage);
-});
+};
+
+document.addEventListener("astro:page-load", restoreLanguage);
+document.addEventListener("astro:after-swap", restoreLanguage);
+window.addEventListener("pageshow", restoreLanguage);
 translateDocument(currentLanguage);
