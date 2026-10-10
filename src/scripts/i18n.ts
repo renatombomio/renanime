@@ -146,7 +146,8 @@ function translateValue(value: string, language: Language): string {
 function translateDocument(language: Language) {
   document.documentElement.lang = language;
   document.querySelectorAll<HTMLElement>("[data-language-toggle]").forEach((button) => {
-    button.textContent = language === "es" ? "ES · EN" : "EN · ES";
+    const toggleLabel = language === "es" ? "ES · EN" : "EN · ES";
+    if (button.textContent !== toggleLabel) button.textContent = toggleLabel;
     button.setAttribute("aria-label", language === "es" ? "Switch language to English" : "Cambiar idioma a español");
     button.setAttribute("title", language === "es" ? "Switch to English" : "Cambiar a español");
     button.setAttribute("aria-pressed", String(language === "en"));
@@ -198,7 +199,7 @@ document.addEventListener("click", (event) => {
 const observer = new MutationObserver(() => {
   translateDocument(currentLanguage);
 });
-observer.observe(document.documentElement, { childList: true, subtree: true });
+observer.observe(document.body, { childList: true, subtree: true });
 
 document.addEventListener("astro:page-load", () => translateDocument(currentLanguage));
 translateDocument(currentLanguage);
