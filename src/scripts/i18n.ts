@@ -166,7 +166,25 @@ const translations: Record<string, string> = {
   "Episodios": "Episodes",
   "Puntuación": "Rating",
   "Cargando detalles del anime…": "Loading anime details…",
-  "No se ha podido cargar este anime.": "Couldn't load this anime."
+  "No se ha podido cargar este anime.": "Couldn't load this anime.",
+  "La primera película de anime que vi. Sin saberlo todavía, aquí empezó mi puerta de entrada a un mundo que acabaría formando parte de mí.": "The first anime film I ever watched. Without realizing it, this was the doorway into a world that would become part of me.",
+  "Otra cara de Ghibli: belleza, amor y fantasía conviviendo con un mundo roto. Es de esas historias que parecen escapar de la realidad mientras hablan de ella.": "Another side of Ghibli: beauty, love, and fantasy coexisting with a broken world. One of those stories that seem to escape reality while talking about it.",
+  "Información": "Information",
+  "Traducir al inglés": "Translate into English",
+  "Desliza para descubrir": "Scroll to discover",
+  "Desliza para explorar": "Scroll to explore",
+  "Ver anime": "View anime",
+  "Explorar colección": "Explore collection",
+  "Volver": "Back",
+  "Volver al inicio": "Back to home",
+  "Sin resultados": "No results",
+  "No hay resultados para tu búsqueda.": "No results for your search.",
+  "Buscar en AniList": "Search AniList",
+  "Busca un anime por su título.": "Search for an anime by title.",
+  "Selecciona un género": "Select a genre",
+  "No hay animes en este género.": "There are no anime in this genre.",
+  "Todavía no hay animes en tu colección.": "There are no anime in your collection yet.",
+  "Todavía no has añadido animes a tu lista.": "You haven't added any anime to your list yet."
 };
 
 const attributeTranslations: Record<string, string> = {
