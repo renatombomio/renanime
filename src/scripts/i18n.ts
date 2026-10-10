@@ -76,6 +76,22 @@ const translations: Record<string, string> = {
   "Cerrar menú": "Close menu",
   "Abrir menú": "Open menu",
   "Galería personal de anime.": "Personal anime gallery.",
+  "Anime a través de mis ojos.": "Anime through my eyes.",
+  "Este es mi regalo para ti.": "This is my gift to you.",
+  "Renanime's Gallery": "Renanime's Gallery",
+  "MI HISTORIA CON GHIBLI": "MY STORY WITH GHIBLI",
+  "EL SECRETO DE REN": "REN'S SECRET",
+  "COLECCIÓN DE REN": "REN'S COLLECTION",
+  "FAVORITOS DE REN": "REN'S FAVORITES",
+  "GÉNEROS DE REN": "REN'S GENRES",
+  "MI LISTA": "MY LIST",
+  "MI COLECCIÓN": "MY COLLECTION",
+  "MI PERFIL": "MY PROFILE",
+  "INICIO": "HOME",
+  "BUSCAR": "SEARCH",
+  "El viaje de Chihiro fue la primera película de anime que vi.": "Spirited Away was the first anime film I watched.",
+  "La primera película de anime que vi.": "The first anime film I watched.",
+  "Desde entonces, Ghibli se convirtió en una forma de mirar el anime: naturaleza, imaginación, música y pequeñas historias que se quedan contigo.": "Since then, Ghibli has become a way of seeing anime: nature, imagination, music, and little stories that stay with you.",
   "Renanime's Gallery — Mi archivo personal de anime": "Renanime's Gallery — My Personal Anime Archive",
   "Galería personal de anime: favoritos, colección, géneros, pendientes.": "Personal anime gallery: favorites, collection, genres, and watchlist.",
   "Mi colección — Renanime's Gallery": "My Collection — Renanime's Gallery",
@@ -317,5 +333,10 @@ const observer = new MutationObserver(() => {
 });
 observer.observe(document.body, { childList: true, characterData: true, subtree: true });
 
-document.addEventListener("astro:page-load", () => translateDocument(currentLanguage));
+document.addEventListener("astro:page-load", () => {
+  try {
+    currentLanguage = localStorage.getItem("renanime-language") === "en" ? "en" : "es";
+  } catch {}
+  translateDocument(currentLanguage);
+});
 translateDocument(currentLanguage);
