@@ -185,8 +185,7 @@ export default function FavoritesView({ entries, recommendations, lang = "es" }:
             className="favorites-load-more"
             onClick={() => setVisibleFavorites((count) => count + 10)}
           >
-            Cargar más
-            <span>{Math.min(visibleFavorites + 10, entries.length)} / {entries.length}</span>
+            {t("favorites.loadMoreCount").replace("{shown}", String(Math.min(visibleFavorites + 10, entries.length))).replace("{total}", String(entries.length))}
           </button>
         )}
       </section>
@@ -221,8 +220,7 @@ export default function FavoritesView({ entries, recommendations, lang = "es" }:
             className="favorites-load-more"
             onClick={() => setVisibleRecommendations((count) => count + 10)}
           >
-            Cargar más
-            <span>{Math.min(visibleRecommendations + 10, recommendations.length)} / {recommendations.length}</span>
+            {t("favorites.loadMoreCount").replace("{shown}", String(Math.min(visibleRecommendations + 10, recommendations.length))).replace("{total}", String(recommendations.length))}
           </button>
         )}
       </section>
