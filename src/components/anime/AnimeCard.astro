@@ -3,17 +3,17 @@ import AnimePoster from "./AnimePoster.astro";
 import AnimeMeta from "./AnimeMeta.astro";
 import AnimeBadge from "./AnimeBadge.astro";
 import AnimeRating from "./AnimeRating.astro";
-interface Props { title:string; image?:string; href?:string; type?:string; year?:string|number; genres?:string[]; score?:number|null; status?:string; badge?:string; }
-const {title,image,href="#",type,year,genres=[],score=null,status,badge}=Astro.props;
+interface Props { title:string; image?:string; href?:string; type?:string; year?:string|number; genres?:string[]; score?:number|null; status?:string; badge?:string; lang?:"es"|"en"; }
+const {title,image,href="#",type,year,genres=[],score=null,status,badge,lang="es"}=Astro.props;
 ---
 <article class="anime-card">
-  <a class="card-link" href={href} aria-label={`Ver ${title}`}>
+  <a class="card-link" href={href} aria-label={`${lang === "en" ? "View" : "Ver"} ${title}`}>
     <div class="poster-wrap">
       <AnimePoster src={image} alt={title}/>
       {(badge||status)&&<div class="badges">{badge&&<AnimeBadge tone="accent">{badge}</AnimeBadge>}{status&&<AnimeBadge>{status}</AnimeBadge>}</div>}
     </div>
     <div class="card-content">
-      <div class="title-row"><h3>{title}</h3><AnimeRating score={score}/></div>
+      <div class="title-row"><h3>{title}</h3><AnimeRating score={score} lang={lang}/></div>
       <AnimeMeta type={type} year={year} genres={genres}/>
     </div>
   </a>
