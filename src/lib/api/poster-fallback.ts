@@ -90,21 +90,54 @@ async function requestWithTimeout(url: URL, headers?: HeadersInit): Promise<Resp
   }
 }
 
-async function requestAniList(query: string, format?: PosterFormat): Promise<Candidate | null> {
-  const gql = `query PosterSearch($search:String!,$perPage:Int!,$format:MediaFormat){Page(page:1,perPage:$perPage){media(search:$search,type:ANIME,format:$format,sort:SEARCH_MATCH){idMal title{romaji english native} synonyms format coverImage{extraLarge large}}}}`;
-  try {
-    const response = await fetch(ANILIST_BASE, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ query: gql, variables: { search: query, perPage: 10, format: format === "MOVIE" ? "MOVIE" : undefined } }),
-    });
-    if (!response.ok) return null;
-    const payload = await response.json();
-    const items = Array.isArray(payload?.data?.Page?.media) ? payload.data.Page.media : [];
-    return selectBestAnimeCandidate(items, query, format);
-  } catch {
+const ANILIST_MIN_REQUEST_INTERVAL = 2200;
+let lastAniListRequestAt = 0;
+let aniListQueue = Promise.resolve();
+const aniListCache = new Map<string, Candidate | null>();
+const aniListPending = new Map<string, Promise<Candidate | null>>();
+
+function requestAniList(query: string, format?: PosterFormat): Promise<Candidate | null> {
+  const key = normalizeTitle(query) + "::" + (format || "");
+  if (aniListCache.has(key)) return Promise.resolve(aniListCache.get(key) ?? null);
+  const existing = aniListPending.get(key);
+  if (existing) return existing;
+
+  const task = aniListQueue.then(async () => {
+    const elapsed = Date.now() - lastAniListRequestAt;
+    if (elapsed < ANILIST_MIN_REQUEST_INTERVAL) await wait(ANILIST_MIN_REQUEST_INTERVAL - elapsed);
+    lastAniListRequestAt = Date.now();
+    const gql = "query PosterSearch($search:String!,$perPage:Int!,$format:MediaFormat){Page(page:1,perPage:$perPage){media(search:$search,type:ANIME,format:$format,sort:SEARCH_MATCH){idMal title{romaji english native} synonyms format coverImage{extraLarge large}}}}";
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 4500);
+    try {
+      const response = await fetch(ANILIST_BASE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ query: gql, variables: { search: query, perPage: 10, format: format === "MOVIE" ? "MOVIE" : undefined } }),
+        signal: controller.signal,
+      });
+      if (!response.ok) return null;
+      const payload = await response.json();
+      const items = Array.isArray(payload?.data?.Page?.media) ? payload.data.Page.media : [];
+      return selectBestAnimeCandidate(items, query, format);
+    } catch {
+      return null;
+    } finally {
+      clearTimeout(timeout);
+    }
+  }).then((candidate) => {
+    aniListCache.set(key, candidate);
+    return candidate;
+  }).catch(() => {
+    aniListCache.set(key, null);
     return null;
-  }
+  }).finally(() => {
+    aniListPending.delete(key);
+  });
+
+  aniListPending.set(key, task);
+  aniListQueue = task.then(() => undefined, () => undefined);
+  return task;
 }
 
 async function requestJikanByMalId(idMal: number): Promise<string | null> {
