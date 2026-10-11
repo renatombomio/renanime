@@ -37,6 +37,7 @@
   "player.space": "SPACE play/pause",
   "player.seek": "← → ±10s",
   "player.m": "M mute",
+  "detail.format": "Format",
   "detail.favorite": "Favorite",
   "detail.release": "RELEASED",
   "detail.episodes": "EPISODES",
