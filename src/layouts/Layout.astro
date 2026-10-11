@@ -4,12 +4,11 @@ interface Props {
   description?: string;
 }
 
+const { lang, basePath } = Astro.locals;
 const {
   title = "Renanime's Gallery",
-  description = "Galería personal de anime."
+  description = lang === "en" ? "Personal anime gallery." : "Galería personal de anime."
 } = Astro.props;
-
-const { lang, basePath } = Astro.locals;
 const isGhibli = basePath.startsWith("/ghibli");
 const isAuth = basePath === "/login" || basePath === "/login/";
 
@@ -31,7 +30,7 @@ import SoundtrackPlayer from "../components/audio/SoundtrackPlayer";
   </head>
 
   <body class:list={["texture-grain", isGhibli && "theme-ghibli"]}>
-    <a class="skip-link" href="#main-content">Saltar al contenido</a>
+    <a class="skip-link" href="#main-content">{lang === "en" ? "Skip to content" : "Saltar al contenido"}</a>
     <slot />
     {!isAuth && <SoundtrackPlayer client:load transition:persist lang={lang} />}
   </body>
