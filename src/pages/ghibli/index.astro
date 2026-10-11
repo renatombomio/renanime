@@ -9,17 +9,18 @@ import "../../styles/ghibli-tokens.css";
 
 const films = getGhibliFilms();
 const { lang } = Astro.locals;
+const t = (es: string, en: string) => lang === "en" ? en : es;
 ---
 
-<Layout title="El secreto de Ren — Renanime's Gallery">
+<Layout title={t("El secreto de Ren — Renanime's Gallery", "Ren's Secret — Renanime's Gallery")} description={t("Mi viaje personal por el universo de Studio Ghibli.", "My personal journey through the world of Studio Ghibli.")}>
   <div class="ghibli-shell">
     <Navbar variant="ghibli" />
 
     <main id="main-content" class="ghibli-page">
       <Hero
-        kicker="Bienvenidos a"
-        title="Mi inicio en el anime."
-        copy="Mi rincón favorito del anime. Aquí escapo para conectar con la naturaleza, la música, la comida, lo simple, la VIDA."
+        kicker={t("Bienvenidos a", "Welcome to")}
+        title={t("Mi inicio en el anime.", "Where my anime journey began.")}
+        copy={t("Mi rincón favorito del anime. Aquí escapo para conectar con la naturaleza, la música, la comida, lo simple, la VIDA.", "My favourite corner of anime. A place to reconnect with nature, music, food, simple things, and LIFE.")}
         videoSrc="/videos/hero2.mp4"
         variant="ghibli"
       />
@@ -27,7 +28,7 @@ const { lang } = Astro.locals;
       <section id="archivo" class="ghibli-content" aria-labelledby="archive-title">
 
 
-        <GhibliStory entries={ghibliStory} totalFilms={films.length} watchedFilms={films.filter((film) => film.watched).length} client:load />
+        <GhibliStory entries={ghibliStory} totalFilms={films.length} watchedFilms={films.filter((film) => film.watched).length} lang={lang} client:load />
 
         <GhibliView films={films} lang={lang} client:load />
       </section>
@@ -37,9 +38,9 @@ const { lang } = Astro.locals;
       <div class="ghibli-footer-mark">
         <span>Ren</span>anime
       </div>
-      <p>Hecho de recuerdos, viento y películas.</p>
+      <p>{t("Hecho de recuerdos, viento y películas.", "Made of memories, wind, and films.")}</p>
       <div class="ghibli-footer-line" aria-hidden="true"></div>
-      <small>El secreto de Ren · Mi viaje con Ghibli</small>
+      <small>{t("El secreto de Ren · Mi viaje con Ghibli", "Ren's Secret · My journey with Ghibli")}</small>
     </footer>
   </div>
 </Layout>
