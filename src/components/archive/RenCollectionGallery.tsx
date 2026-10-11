@@ -108,7 +108,8 @@ function isMovie(entry: Entry, media?: Media | null) {
   return (media?.format || entry.format) === "MOVIE";
 }
 
-export default function HomeGallery({ entries, lang = "es" }: Props) {\n  const t = useT(lang);
+export default function HomeGallery({ entries, lang = "es" }: Props) {
+  const t = useT(lang);
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(false);
