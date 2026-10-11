@@ -74,7 +74,7 @@ if (user) {
           <h2 class="welcome-title">{isEnglish ? "Welcome to Renanime, " : "Bienvenido a Renanime, "}<span id="welcome-name"></span>.</h2>
           <p class="joke-result">
             {isEnglish ? "Ha, ha, ha… just kidding. Nobody cares about your nickname, " : "Ja, ja, ja… era broma. A nadie le importa tu mote, "}<strong>kono baka</strong>.<br />
-            {isEnglish ? "I can't believe you actually wrote it… though you didn't have much choice. Around here, I'm <strong>Kami</strong>." : "No me puedo creer que lo hayas escrito… aunque tampoco tenías otra alternativa. Aquí yo soy <strong>Kami</strong>."}
+            {isEnglish ? <>I can't believe you actually wrote it… though you didn't have much choice. Around here, I'm <strong>Kami</strong>.</> : <>No me puedo creer que lo hayas escrito… aunque tampoco tenías otra alternativa. Aquí yo soy <strong>Kami</strong>.</>}
           </p>
           <p class="recovery-note">{isEnglish ? "Write down your recovery code:" : "Apunta tu código de recuperación:"}</p>
           <div id="recovery-display" class="recovery-display" role="button" tabindex="0" aria-label={isEnglish ? "Copy recovery code" : "Copiar código de recuperación"} title={isEnglish ? "Click to copy" : "Haz clic para copiar"}></div>
@@ -97,6 +97,23 @@ if (user) {
       </section>
     </section>
   </main>
+
+  <style is:global>
+    .auth-login p {
+      font-size: 1rem;
+      line-height: 1.65;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, .72);
+    }
+    .auth-login .subtitle { font-size: 1.05rem; }
+    .auth-login .joke-result { font-size: 1rem; line-height: 1.7; }
+    .auth-login .recovery-note { font-size: 1rem; }
+    .auth-login .recovery-help { font-size: .95rem; line-height: 1.6; }
+    .auth-login .message { font-size: 1rem; font-weight: 600; }
+    @media (max-width: 480px) {
+      .auth-login p { font-size: 1rem; line-height: 1.65; }
+      .auth-login .recovery-help { font-size: .95rem; }
+    }
+  </style>
 </Layout>
 
 <script>
