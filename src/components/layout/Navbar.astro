@@ -1,43 +1,47 @@
 ---
 import MobileMenu from "../navigation/MobileMenu";
+import { localizedPath, useT } from "../../i18n";
 
 interface Props { variant?: "default" | "ghibli"; }
 
 const { variant = "default" } = Astro.props;
+const { lang, basePath } = Astro.locals;
+const t = useT(lang);
 
 const links = [
-  { label: "Inicio", href: "/" },
-  { label: "Colección de Ren", href: "/ren-collection/" },
-  { label: "Favoritos de Ren", href: "/favorites/" },
-  { label: "Géneros de Ren", href: "/genres/" },
-  { label: "Buscar", href: "/search/" },
-  { label: "Mi lista", href: "/pending/" },
-  { label: "Mi colección", href: "/collection/" },
-  { label: "Mi perfil", href: "/profile/" },
-  { label: "El secreto de Ren", href: "/ghibli/" }
-];
+  { key: "nav.home", href: "/" },
+  { key: "nav.renCollection", href: "/ren-collection/" },
+  { key: "nav.renFavorites", href: "/favorites/" },
+  { key: "nav.renGenres", href: "/genres/" },
+  { key: "nav.search", href: "/search/" },
+  { key: "nav.myList", href: "/pending/" },
+  { key: "nav.myCollection", href: "/collection/" },
+  { key: "nav.profile", href: "/profile/" },
+  { key: "nav.renSecret", href: "/ghibli/" }
+] as const;
 
-const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
+const currentPath = basePath.replace(/\/$/, "") || "/";
+const otherLang = lang === "es" ? "en" : "es";
 ---
 
 <header class:list={["site-header", variant === "ghibli" && "site-header--ghibli"]}>
   <div class="header-inner">
-    <a class="brand" href="/" aria-label="Inicio de Renanime">
+    <a class="brand" href={localizedPath(lang, "/")} aria-label={t("nav.homeLabel")}>
       <span class="brand-accent">Ren</span>anime
     </a>
 
-    <nav class="desktop-nav" aria-label="Navegación principal">
+    <nav class="desktop-nav" aria-label={t("nav.main")}>
       <ul>
         {links.map((link) => (
-          <li><a href={link.href} aria-current={currentPath === (link.href.replace(/\/$/, "") || "/") ? "page" : undefined}>{link.label}</a></li>
+          <li><a href={localizedPath(lang, link.href)} aria-current={currentPath === (link.href.replace(/\/$/, "") || "/") ? "page" : undefined}>{t(link.key)}</a></li>
         ))}
       </ul>
     </nav>
 
-    <button class="language-toggle" type="button" data-language-toggle aria-label="Switch language to English" title="Switch to English">ES · EN</button>
+    <a class="language-toggle" href={localizedPath(otherLang, basePath)} data-astro-reload hreflang={otherLang} aria-label={lang === "es" ? t("language.switchToEnglish") : t("language.switchToSpanish")} title={lang === "es" ? t("language.switchToEnglish") : t("language.switchToSpanish")}><span aria-current={lang === "en" ? "true" : undefined}>EN</span> · <span aria-current={lang === "es" ? "true" : undefined}>ES</span></a>
 
     <div class="mobile-menu">
-      <MobileMenu variant={variant} client:load />
+      <MobileMenu variant={variant} lang={lang} client:load />
     </div>
   </div>
 </header>
@@ -173,6 +177,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
     letter-spacing: 0.08em;
     cursor: pointer;
     white-space: nowrap;
+    text-decoration: none;
   }
 
   .language-toggle:hover,
