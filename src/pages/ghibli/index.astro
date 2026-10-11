@@ -8,6 +8,7 @@ import { getGhibliFilms, ghibliStory } from "../../data/ghibli";
 import "../../styles/ghibli-tokens.css";
 
 const films = getGhibliFilms();
+const { lang } = Astro.locals;
 ---
 
 <Layout title="El secreto de Ren — Renanime's Gallery">
@@ -28,7 +29,7 @@ const films = getGhibliFilms();
 
         <GhibliStory entries={ghibliStory} totalFilms={films.length} watchedFilms={films.filter((film) => film.watched).length} client:load />
 
-        <GhibliView films={films} client:load />
+        <GhibliView films={films} lang={lang} client:load />
       </section>
     </main>
 
