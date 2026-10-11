@@ -24,7 +24,8 @@ interface Props {
 
 const ANILIST_BATCH_SIZE = 20;
 
-export default function FavoritesView({ entries, recommendations, lang = "es" }: Props) {\n  const t = useT(lang);
+export default function FavoritesView({ entries, recommendations, lang = "es" }: Props) {
+  const t = useT(lang);
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(true);
   const [visibleFavorites, setVisibleFavorites] = useState(10);
