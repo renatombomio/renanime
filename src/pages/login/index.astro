@@ -71,9 +71,9 @@ if (user) {
         </div>
 
         <div class="step complete-step" data-step="complete" hidden>
-          <h2 class="welcome-title">Bienvenido a Renanime, <span id="welcome-name"></span>.</h2>
+          <h2 class="welcome-title">{isEnglish ? "Welcome to Renanime, " : "Bienvenido a Renanime, "}<span id="welcome-name"></span>.</h2>
           <p class="joke-result">
-            Ja, ja, ja… era broma. A nadie le importa tu mote, <strong>kono baka</strong>.<br />
+            {isEnglish ? <>Ha, ha, ha… just kidding. Nobody cares about your nickname, <strong>kono baka</strong>.</> : <>Ja, ja, ja… era broma. A nadie le importa tu mote, <strong>kono baka</strong>.</>}<br />
             {isEnglish ? "I can't believe you actually wrote it… though you didn't have much choice. Around here, I'm <strong>Kami</strong>." : "No me puedo creer que lo hayas escrito… aunque tampoco tenías otra alternativa. Aquí yo soy <strong>Kami</strong>."}
           </p>
           <p class="recovery-note">{isEnglish ? "Write down your recovery code:" : "Apunta tu código de recuperación:"}</p>
