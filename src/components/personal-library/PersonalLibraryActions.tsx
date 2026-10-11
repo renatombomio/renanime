@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";\nimport { useT, type Lang } from "../../i18n";
 import {
   addToPersonalList,
   getPersonalEntry,
@@ -12,7 +12,7 @@ interface Props {
   animeId: number | string;
 }
 
-export default function PersonalLibraryActions({ animeId }: Props) {
+export default function PersonalLibraryActions({ animeId, lang = "es" }: Props) {\n  const t = useT(lang);
   const id = String(animeId);
   const [status, setStatus] = useState(() => getPersonalEntry(id)?.state.status ?? "NOT_IN_COLLECTION");
   const [ready, setReady] = useState(false);
@@ -37,7 +37,7 @@ export default function PersonalLibraryActions({ animeId }: Props) {
   if (!ready) {
     return (
       <div className="personal-actions">
-        <span className="personal-status" role="status" aria-live="polite">Cargando tu biblioteca…</span>
+        <span className="personal-status" role="status" aria-live="polite">{t("actions.loading")}</span>
         <style>{styles}</style>
       </div>
     );
@@ -46,7 +46,7 @@ export default function PersonalLibraryActions({ animeId }: Props) {
   if (status === "WATCHED") {
     return (
       <div className="personal-actions">
-        <span className="personal-status">✓ Ya lo has visto</span>
+        <span className="personal-status">{t("actions.watched")}</span>
         <button type="button" onClick={() => removeFromPersonalLibrary(id)}>
           Quitar
         </button>
