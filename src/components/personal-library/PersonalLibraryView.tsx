@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import type { PersonalAnimeEntry } from "../../types/personal";
+import type { Lang } from "../../i18n";
 import { getPersonalLibrary, subscribeToPersonalLibrary, hydratePersonalLibrary } from "../../data/personal-library";
 
 type Mode = "WATCHED" | "PENDING";
-interface Props { mode: Mode; }
+interface Props { mode: Mode; lang?: Lang; }
 interface Media {
   id:number;
   title?:{romaji?:string|null;english?:string|null};
@@ -45,7 +46,7 @@ function formatDate(date:Media["startDate"]){
 function titleOf(media?:Media|null){return media?.title?.romaji||media?.title?.english||"Anime";}
 function isMovie(media?:Media|null){return media?.format === "MOVIE";}
 
-export default function PersonalLibraryView({mode}:Props){
+export default function PersonalLibraryView({mode,lang="es"}:Props){
   const [entries,setEntries]=useState<PersonalAnimeEntry[]>([]);
   const [media,setMedia]=useState<Record<string,Media|null>>({});
   const [loading,setLoading]=useState(true);
@@ -97,7 +98,7 @@ export default function PersonalLibraryView({mode}:Props){
         const image=item?.coverImage?.extraLarge||item?.coverImage?.large;
         const score=entry.state.personalScore;
         return <article className="personal-library-card" key={entry.animeId}>
-          <a href={`/anime/${entry.animeId}`} className="personal-library-link" aria-label={`Ver ${title}`}>
+          <a href={`${lang === "en" ? "/en" : ""}/anime/${entry.animeId}`} className="personal-library-link" aria-label={`Ver ${title}`}>
             <div className="personal-library-poster">
               {image?<img src={image} alt="" loading="lazy" onError={event=>{event.currentTarget.style.display="none";}}/>:<div className="personal-library-placeholder" aria-hidden="true"/>}
               <div className="personal-library-overlay">
@@ -116,7 +117,7 @@ export default function PersonalLibraryView({mode}:Props){
     </div>:<div className="personal-library-empty">
       <strong>{mode==="WATCHED"?"¿Qué, todavía no has visto anime?":"Esto está igual de vacío que tu corazón."}</strong>
       <span>{mode==="WATCHED"?"¿No sabes lo que te estás perdiendo? Venga, anímate, que me hace falta más gente friki por aquí. 😂":"Venga va, dame cariño y mete algún anime en la lista. Gracias. No leo lloros. 🫶"}</span>
-      <a className="personal-library-empty-cta" href="/search/">{mode==="WATCHED"?"Explorar anime →":"Buscar algo que ver →"}</a>
+      <a className="personal-library-empty-cta" href={lang === "en" ? "/en/search/" : "/search/"}>{mode==="WATCHED"?"Explorar anime →":"Buscar algo que ver →"}</a>
     </div>}
 
     {hasMore&&<button type="button" className="personal-library-load-more" onClick={()=>setVisible(value=>Math.min(value+PAGE_SIZE,entries.length))}>Cargar más · {entries.length-visible} restantes</button>}
