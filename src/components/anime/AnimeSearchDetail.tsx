@@ -237,7 +237,7 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
       {lang!=="en"&&hasSynopsis&&media.description&&<button type="button" className="anime-detail-translate" onClick={translateSynopsis} disabled={translating}>{translating?t("detail.translating"):translated?t("detail.translated"):t("detail.translate")}</button>}
      </div>
 
-     {media.trailer?.id&&media.trailer.site==="youtube"&&<section className="anime-detail-trailer"><span className="anime-detail-label">{t("detail.trailer")}</span><div className="anime-detail-video"><iframe src={"https://www.youtube.com/embed/"+media.trailer.id+"?rel=0"} title={"Tráiler de "+title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div></section>}
+     {media.trailer?.id&&media.trailer.site==="youtube"&&<section className="anime-detail-trailer"><span className="anime-detail-label">{t("detail.trailer")}</span><div className="anime-detail-video"><iframe src={"https://www.youtube.com/embed/"+media.trailer.id+"?rel=0"} title={(lang==="en"?"Trailer for ":"Tráiler de ")+title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div></section>}
 
      {(() => {
        const seen = new Set<number>();
@@ -268,7 +268,7 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
   </section>
   <section className="anime-detail-info">
    <div><span className="anime-detail-label">{t("detail.information")}</span><strong>{media.studios?.nodes?.map(studio=>studio.name).join(" · ")||t("detail.studioUnavailable")}</strong></div>
-   <div><span className="anime-detail-label">{t("detail.format")}</span><strong>{media.format==="MOVIE"?"Película":"Serie"}</strong></div>
+   <div><span className="anime-detail-label">{t("detail.format")}</span><strong>{media.format==="MOVIE"?t("detail.film"):t("detail.series")}</strong></div>
   </section>
  </div>;
 }
