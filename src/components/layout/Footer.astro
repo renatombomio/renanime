@@ -1,8 +1,11 @@
 ---
 import Container from "../ui/Container.astro";
+import { localizedPath, useT } from "../../i18n";
 
 const year = new Date().getFullYear();
-const isGhibli = Astro.url.pathname.startsWith("/ghibli");
+const { lang, basePath } = Astro.locals;
+const t = useT(lang);
+const isGhibli = basePath.startsWith("/ghibli");
 ---
 
 <footer class:list={["site-footer", isGhibli && "site-footer--ghibli"]}>
@@ -10,23 +13,21 @@ const isGhibli = Astro.url.pathname.startsWith("/ghibli");
 
   <Container class="footer-inner">
     <p class="closing">
-      Todas las historias tienen un final.<br />
-      A veces amargo, otras placentero,<br />
-      pero cada final solo trae nuevos comienzos.
+      {lang === "en" ? <>Every story has an ending.<br />Sometimes bitter, sometimes sweet,<br />but every ending brings new beginnings.</> : <>Todas las historias tienen un final.<br />A veces amargo, otras placentero,<br />pero cada final solo trae nuevos comienzos.</>}
     </p>
 
-    <p class="thanks">Gracias por visitar mi galería de Anime.</p>
+    <p class="thanks">{lang === "en" ? "Thanks for visiting my anime gallery." : "Gracias por visitar mi galería de Anime."}</p>
 
-    <nav class="footer-nav" aria-label="Enlaces del pie de página">
-      <a href="/">Inicio</a>
-      <a href="/ren-collection/">Colección de Ren</a>
-      <a href="/favorites/">Favoritos</a>
-      <a href="/genres/">Géneros</a>
-      <a href="/search/">Buscar</a>
-      <a href="/pending/">Mi lista</a>
-      <a href="/collection/">Mi colección</a>
-      <a href="/profile/">Mi perfil</a>
-      <a href="/ghibli/">El secreto de Ren</a>
+    <nav class="footer-nav" aria-label={lang === "en" ? "Footer links" : "Enlaces del pie de página"}>
+      <a href={localizedPath(lang, "/")}>{lang === "en" ? "Home" : "Inicio"}</a>
+      <a href={localizedPath(lang, "/ren-collection/")}>{lang === "en" ? "Ren's Collection" : "Colección de Ren"}</a>
+      <a href={localizedPath(lang, "/favorites/")}>{lang === "en" ? "Favorites" : "Favoritos"}</a>
+      <a href={localizedPath(lang, "/genres/")}>{lang === "en" ? "Genres" : "Géneros"}</a>
+      <a href={localizedPath(lang, "/search/")}>{lang === "en" ? "Search" : "Buscar"}</a>
+      <a href={localizedPath(lang, "/pending/")}>{lang === "en" ? "My List" : "Mi lista"}</a>
+      <a href={localizedPath(lang, "/collection/")}>{lang === "en" ? "My Collection" : "Mi colección"}</a>
+      <a href={localizedPath(lang, "/profile/")}>{lang === "en" ? "My Profile" : "Mi perfil"}</a>
+      <a href={localizedPath(lang, "/ghibli/")}>{lang === "en" ? "Ren's Secret" : "El secreto de Ren"}</a>
     </nav>
 
     <div class="footer-meta">
