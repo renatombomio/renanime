@@ -12,6 +12,7 @@ interface Media {
 
 interface Props {
   entries: Entry[];
+  lang?: "es" | "en";
 }
 
 const PAGE_SIZE = 9;
@@ -70,7 +71,7 @@ async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null
   return result;
 }
 
-export default function HomeGallery({ entries }: Props) {
+export default function HomeGallery({ entries, lang = "es" }: Props) {
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(false);
@@ -107,7 +108,7 @@ export default function HomeGallery({ entries }: Props) {
           return (
             <a
               className="home-gallery-card"
-              href={`/anime/${entry.animeId}`}
+              href={`${lang === "en" ? "/en" : ""}/anime/${entry.animeId}`}
               aria-label={`Ver ${item?.title?.romaji || item?.title?.english || entry.title}`}
               key={entry.animeId}
             >
