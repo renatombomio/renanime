@@ -165,5 +165,8 @@
   "genres.resultsLabel": "Anime in the {genre} genre",
   "genres.unknownDate": "Unknown date",
   "genres.error": "We couldn't retrieve the genres from your collection.",
-  "favorites.loadMoreCount": "Load more · {shown} / {total}"
+  "favorites.loadMoreCount": "Load more · {shown} / {total}",
+  "ghibli.loading": "Opening the archive…",
+  "ghibli.openFilm": "Open {title}",
+  "ghibli.watched": "WATCHED"
 }
