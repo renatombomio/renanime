@@ -12,6 +12,15 @@ const accents = ["pink", "blue", "lime", "coral", "teal", "red", "sky"];
 
 export default function GhibliStory({ entries, totalFilms, watchedFilms, lang = "es" }: { entries: GhibliStoryEntry[]; totalFilms: number; watchedFilms: number; lang?: Lang }) {
   const t = useT(lang);
+  const englishStory: Record<string, { chapter: string; renText: string; creatorContext: string }> = {
+    "spirited-away": { chapter: "The beginning", renText: "The first anime film I ever watched. Without knowing it yet, this was the doorway into a world that would become part of me.", creatorContext: "Miyazaki conceived the film with five ten-year-old daughters of his friends in mind. He wanted to tell them a story in which an ordinary girl could recognize herself and discover a strength she already carried within." },
+    "my-neighbor-totoro": { chapter: "Childhood and nature", renText: "More films followed, and I discovered that Ghibli was more than fantasy: it was also a different way of seeing nature, family, and the little things.", creatorContext: "Miyazaki said he wanted to express his love and appreciation for nature, drawing on landscapes and memories from his own childhood to create the world of Satsuki and Mei." },
+    "princess-mononoke": { chapter: "Nature is not a backdrop", renText: "The journey grew deeper here. Ghibli could explore humanity and nature without turning the world into a simple story of good versus evil.", creatorContext: "Miyazaki wanted to move beyond a simplistic view of humans against nature. The film brings people, living beings, earth, water, and air into conflict, leaving open the question of how we can live with our own contradictions." },
+    "howl-s-moving-castle": { chapter: "Love in wartime", renText: "Another side of Ghibli: beauty, love, and fantasy sharing a world that is broken. These are stories that seem to escape reality while speaking about it.", creatorContext: "Miyazaki adapted Diana Wynne Jones's novel, and the film was deeply shaped by his opposition to the Iraq War and his concern about destruction and violence." },
+    "ponyo": { chapter: "Seeing like a child again", renText: "Ponyo reminds me that Ghibli can also be pure emotion: water, colour, movement, and an imagination that doesn't need to explain everything.", creatorContext: "Miyazaki wanted to make a film especially for young children. The initial inspiration came from an image connected to the sea, and Tomonoura, where he spent time during development, became part of the film's world." },
+    "arrietty": { chapter: "The little things", renText: "A more intimate story. The world grows smaller, and precisely because of that, every detail begins to matter more.", creatorContext: "Arrietty grew out of a project Miyazaki and Isao Takahata had considered decades earlier, based on Mary Norton's The Borrowers. Miyazaki eventually championed the adaptation, which Yonebayashi directed as his first feature film." },
+    "the-boy-and-the-heron": { chapter: "So far", renText: "And this is where I've arrived. The Boy and the Heron is, for now, the latest Ghibli film to become part of my journey. It closes this first chapter, but not the journey.", creatorContext: "Miyazaki set out to tell his own story in a way he had never done before. Through a male protagonist, he revisited childhood, war, family, and the people who shaped his life, turning those memories into fantasy." },
+  };
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(true);
 
@@ -182,15 +191,15 @@ export default function GhibliStory({ entries, totalFilms, watchedFilms, lang = 
                 <span className="ghs-year">{entry.year}</span>
               </div>
               <div className="ghs-copy">
-                <p className="ghs-chapter">{entry.chapter}</p>
+                <p className="ghs-chapter">{lang === "en" ? englishStory[entry.id]?.chapter ?? entry.chapter : entry.chapter}</p>
                 <h3>{entry.title}</h3>
-                <p className="ghs-ren">{entry.renText}</p>
+                <p className="ghs-ren">{lang === "en" ? englishStory[entry.id]?.renText ?? entry.renText : entry.renText}</p>
                 <div className="ghs-creator">
                   <div className="ghs-creator-label">
                     <span>{lang === "en" ? "The film" : "La película"}</span>
                     <b>{lang === "en" ? "Through the eyes of " + entry.director : "Desde la mirada de " + entry.director}</b>
                   </div>
-                  <p>{entry.creatorContext}</p>
+                  <p>{lang === "en" ? englishStory[entry.id]?.creatorContext ?? entry.creatorContext : entry.creatorContext}</p>
                 </div>
               </div>
             </article>
