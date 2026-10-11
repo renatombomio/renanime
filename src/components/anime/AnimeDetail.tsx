@@ -4,6 +4,7 @@ import { getLibrary } from "../../data/library";
 import { getPersonalFranchiseEntries } from "../../data/franchise";
 import PersonalLibraryActions from "../personal-library/PersonalLibraryActions";
 import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
+import { useT, type Lang } from "../../i18n";
 
 interface Media {
   id: number;
@@ -312,15 +313,16 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
   return result;
 }
 
-function date(value:Media["startDate"]){
-  if(!value?.year) return "Fecha desconocida";
+function date(value:Media["startDate"],lang:Lang="es"){
+  if(!value?.year) return lang==="en"?"Unknown date":"Fecha desconocida";
   if(!value.month||!value.day) return String(value.year);
-  return new Date(value.year,value.month-1,value.day).toLocaleDateString("es-ES",{day:"numeric",month:"long",year:"numeric"});
+  return new Date(value.year,value.month-1,value.day).toLocaleDateString(lang==="en"?"en-GB":"es-ES",{day:"numeric",month:"long",year:"numeric"});
 }
 
 function format(value:string|null|undefined){return value==="MOVIE"?"Película":value==="TV"?"Serie":value||"Anime";}
 
-export default function AnimeDetail({entry}:{entry:LibraryEntry}){
+export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:Lang}){
+ const t=useT(lang);
  const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translatedSynopsis,setTranslatedSynopsis]=useState(""),[translating,setTranslating]=useState(false),[franchiseMedia,setFranchiseMedia]=useState<Record<string,Media|null>>({});
  const cleanSynopsis=media?.description?cleanDescription(media.description):"";
  const hasSynopsis=cleanSynopsis.replace(/[\s\\n\\r]+/g,"").length>0;
@@ -342,8 +344,8 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
   }
   return()=>{cancelled=true};
  },[entry.animeId]);
- const translateSynopsis=async()=>{if(!media?.description||translating)return;setTranslating(true);const value=await translateToSpanish(media.description);setTranslatedSynopsis(value);setTranslating(false)};
- const title=FRANCHISE_MEDIA_ALIASES[entry.animeId]?entry.title:(media?.title?.romaji||media?.title?.english||entry.title);
+ const translateSynopsis=async()=>{if(lang==="en"||!media?.description||translating)return;setTranslating(true);const value=await translateToSpanish(media.description);setTranslatedSynopsis(value);setTranslating(false)};
+ const title=FRANCHISE_MEDIA_ALIASES[entry.animeId]?entry.title:(lang==="en"?(media?.title?.english||media?.title?.romaji||entry.title):(media?.title?.romaji||media?.title?.english||entry.title));
  const poster=media?.coverImage?.extraLarge||media?.coverImage?.large;
  const banner=media?.bannerImage||poster;
  const personal=entry.state;
@@ -373,25 +375,25 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
       </div>
       <div className="anime-detail-copy">
        <div className="anime-detail-copy-main">
-       {personal.favorite&&<span className="anime-detail-eyebrow">Favorito</span>}
+       {personal.favorite&&<span className="anime-detail-eyebrow">{t("detail.favorite")}</span>}
        <h1>{title}</h1>
        <div className="anime-detail-meta">
   <span className="anime-detail-meta-type"><strong>{format(entry.format||media?.format)}</strong></span>
-  <span><small>LANZAMIENTO</small><strong>{date(media?.startDate)}</strong></span>
-  {media?.format!=="MOVIE"&&media?.episodes&&<span><small>EPISODIOS</small><strong>{media.episodes}</strong></span>}
-  {media?.duration&&<span><small>{media?.format==="MOVIE"?"DURACIÓN":"DURACIÓN / EPISODIO"}</small><strong>{media.duration} min</strong></span>}
-  {media?.format!=="MOVIE"&&getSeasonCount(media)&&<span><small>TEMPORADAS</small><strong>{getSeasonCount(media)}</strong></span>}
+  <span><small>{t("detail.release")}</small><strong>{date(media?.startDate,lang)}</strong></span>
+  {media?.format!=="MOVIE"&&media?.episodes&&<span><small>{t("detail.episodes")}</small><strong>{media.episodes}</strong></span>}
+  {media?.duration&&<span><small>{media?.format==="MOVIE"?t("detail.duration"):t("detail.durationEpisode")}</small><strong>{media.duration} min</strong></span>}
+  {media?.format!=="MOVIE"&&getSeasonCount(media)&&<span><small>{t("detail.seasons")}</small><strong>{getSeasonCount(media)}</strong></span>}
 </div>
        {media?.genres?.length&&<div className="anime-detail-genres">{media.genres.slice(0,5).map((genre)=><span key={genre}>{genre}</span>)}</div>}
        </div>
       </div>
        <div className="anime-detail-synopsis-wrap">
-        <span className="anime-detail-label">Sinopsis</span>
-        <p className="anime-detail-synopsis">{loading?"Cargando ficha…":translatedSynopsis||cleanSynopsis||"Todavía no hay una sinopsis disponible para este título."}</p>
-        {hasSynopsis&&media?.description&&<button type="button" className="anime-detail-translate" onClick={translateSynopsis} disabled={translating}>{translating?"Traduciendo…":translatedSynopsis?"Traducido al español":"Traducir al español"}</button>}
+        <span className="anime-detail-label">{t("detail.synopsis")}</span>
+        <p className="anime-detail-synopsis">{loading?t("detail.loading"):(lang==="es"&&translatedSynopsis)||cleanSynopsis||t("detail.noSynopsis")}</p>
+        {lang==="es"&&hasSynopsis&&media?.description&&<button type="button" className="anime-detail-translate" onClick={translateSynopsis} disabled={translating}>{translating?t("detail.translating"):translatedSynopsis?t("detail.translated"):t("detail.translate")}</button>}
        </div>
        {media?.trailer?.id&&media.trailer.site==="youtube"&&<section className="anime-detail-trailer">
-        <span className="anime-detail-label">Tráiler</span>
+        <span className="anime-detail-label">{t("detail.trailer")}</span>
         <div className="anime-detail-video"><iframe src={"https://www.youtube.com/embed/"+media.trailer.id+"?rel=0"} title={"Tráiler de "+title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
        </section>}
        {(() => {
@@ -401,18 +403,18 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
           .filter((item): item is NonNullable<typeof item> => Boolean(item))
           .filter((item) => item.id !== media?.id && !seen.has(item.id) && seen.add(item.id))
           .slice(0, 8);
-        return items.length ? <section className="anime-detail-recommendations" aria-label="Recomendaciones">
+        return items.length ? <section className="anime-detail-recommendations" aria-label={t("detail.recommendations")}>
           <div className="anime-detail-recommendations-head">
-            <span className="anime-detail-label">Si te gusta este anime, te puede gustar…</span>
+            <span className="anime-detail-label">{t("detail.recommendedNext")}</span>
           </div>
           <div className="anime-detail-recommendations-track">
             {items.map((item) => {
               const recTitle=item.title?.romaji||item.title?.english||"Sin título";
               const recImage=item.coverImage?.extraLarge||item.coverImage?.large;
-              return <a className="anime-detail-recommendation" href={"/anime/" + item.id} key={item.id}>
+              return <a className="anime-detail-recommendation" href={(lang==="en"?"/en":"") + "/anime/" + item.id} key={item.id}>
                 <div className="anime-detail-recommendation-poster">{recImage&&<img src={recImage} alt={recTitle} loading="lazy" />}</div>
                 <span className="anime-detail-recommendation-title">{recTitle}</span>
-                <span className="anime-detail-recommendation-meta">{item.format==="MOVIE"?"Film":"Series"}{item.startDate?.year?" · "+item.startDate.year:""}</span>
+                <span className="anime-detail-recommendation-meta">{item.format==="MOVIE"?t("detail.film"):t("detail.series")}{item.startDate?.year?" · "+item.startDate.year:""}</span>
               </a>;
             })}
           </div>
@@ -422,17 +424,17 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
    </div>
   </section>
   <section className="anime-detail-info">
-   <div><span className="anime-detail-label">Información</span><strong>{media?.studios?.nodes?.map(s=>s.name).join(" · ")||"Estudio no disponible"}</strong></div>
-   <div><span className="anime-detail-label">Mi estado</span><strong>{personal.status==="WATCHED"?"He visto este anime":personal.status==="PENDING"?"Quiero verlo":"Parte de mi archivo"}</strong></div>
+   <div><span className="anime-detail-label">{t("detail.information")}</span><strong>{media?.studios?.nodes?.map(s=>s.name).join(" · ")||t("detail.studioUnavailable")}</strong></div>
+   <div><span className="anime-detail-label">{t("detail.myStatus")}</span><strong>{personal.status==="WATCHED"?t("detail.watched"):personal.status==="PENDING"?t("detail.wantToWatch"):t("detail.archive")}</strong></div>
   </section>
   {franchiseEntries.filter((candidate)=>candidate.animeId!==entry.animeId).length>0&&<section className="anime-detail-franchise">
-   <div className="anime-detail-related-header"><span className="anime-detail-label">Mi colección</span><h2>Películas</h2></div>
+   <div className="anime-detail-related-header"><span className="anime-detail-label">{t("detail.myCollection")}</span><h2>{t("detail.movies")}</h2></div>
    <div className="anime-detail-franchise-grid">
     {franchiseEntries.filter((candidate)=>candidate.animeId!==entry.animeId).map((candidate,index)=>{
       const item=franchiseMedia[candidate.animeId];
       const image=item?.coverImage?.extraLarge||item?.coverImage?.large;
       const candidateTitle=FRANCHISE_MEDIA_ALIASES[candidate.animeId]?candidate.title:(item?.title?.romaji||item?.title?.english||candidate.title);
-      return <a className="anime-detail-franchise-card" href={"/anime/"+candidate.animeId} key={candidate.animeId}>
+      return <a className="anime-detail-franchise-card" href={(lang==="en"?"/en":"") + "/anime/"+candidate.animeId} key={candidate.animeId}>
        <div className="anime-detail-franchise-poster">{image?<img src={image} alt=""/>:<div/>}</div>
        <div className="anime-detail-franchise-copy"><strong>{candidateTitle}</strong><span>{candidate.format==="MOVIE"||item?.format==="MOVIE"?"Film":"Series"} · {candidate.state.status==="WATCHED"?"Vista":"Pendiente"}</span></div>
       </a>;
@@ -440,15 +442,15 @@ export default function AnimeDetail({entry}:{entry:LibraryEntry}){
    </div>
   </section>}
   {relations.length>0&&<section className="anime-detail-related">
-   <div className="anime-detail-related-header"><span className="anime-detail-label">Universo</span><h2>Contenido relacionado</h2></div>
+   <div className="anime-detail-related-header"><span className="anime-detail-label">{t("detail.universe")}</span><h2>{t("detail.related")}</h2></div>
    <div className="anime-detail-related-grid">
     {relations.slice(0,12).map((relation,index)=>{
       const node=relation.node;
       if(!node) return null;
-      const label=relation.relationType==="SEQUEL"?"Secuela":relation.relationType==="PREQUEL"?"Precuela":relation.relationType==="SIDE_STORY"?"Historia paralela":relation.relationType==="SPIN_OFF"?"Spin-off":relation.relationType==="ALTERNATIVE"?"Alternativa":relation.relationType==="PARENT"?"Principal":relation.relationType==="ADAPTATION"?"Adaptación":"Relacionado";
-      return <a className="anime-detail-related-card" href={"/anime/" + node.id} key={node.id+"-"+index}>
+      const label=relation.relationType==="SEQUEL"?t("detail.sequel"):relation.relationType==="PREQUEL"?t("detail.prequel"):relation.relationType==="SIDE_STORY"?t("detail.sideStory"):relation.relationType==="SPIN_OFF"?t("detail.spinOff"):relation.relationType==="ALTERNATIVE"?t("detail.alternative"):relation.relationType==="PARENT"?t("detail.main"):relation.relationType==="ADAPTATION"?t("detail.adaptation"):t("detail.relatedLabel");
+      return <a className="anime-detail-related-card" href={(lang==="en"?"/en":"") + "/anime/" + node.id} key={node.id+"-"+index}>
         <div className="anime-detail-related-poster">{node.coverImage?.extraLarge||node.coverImage?.large?<img src={node.coverImage.extraLarge||node.coverImage.large||""} alt=""/>:<div/>}</div>
-        <div className="anime-detail-related-copy"><strong>{node.title?.romaji||node.title?.english||"Sin título"}</strong><span>{label} · {node.format==="MOVIE"?"Film":node.format==="OVA"?"OVA":node.format==="SPECIAL"?"Especial":"Series"}</span></div>
+        <div className="anime-detail-related-copy"><strong>{node.title?.romaji||node.title?.english||"Sin título"}</strong><span>{label} · {node.format==="MOVIE"?t("detail.film"):node.format==="OVA"?"OVA":node.format==="SPECIAL"?t("detail.special"):t("detail.series")}</span></div>
       </a>;
     })}
    </div>
