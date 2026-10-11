@@ -22,7 +22,7 @@ const collectionEntries = getWatchedLibrary();
     </div>
 
     <section class="ren-collection-content" aria-label="Colección de Ren">
-      <RenCollectionGallery entries={collectionEntries} client:load />
+      <RenCollectionGallery entries={collectionEntries} lang={Astro.locals.lang} client:load />
     </section>
   </main>
 
