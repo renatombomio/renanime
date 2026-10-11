@@ -37,6 +37,7 @@
   "player.space": "ESPACIO reproducir/pausar",
   "player.seek": "← → ±10 s",
   "player.m": "M silenciar",
+  "detail.format": "Formato",
   "detail.favorite": "Favorito",
   "detail.release": "LANZAMIENTO",
   "detail.episodes": "EPISODIOS",
