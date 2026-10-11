@@ -38,7 +38,7 @@ const otherLang = lang === "es" ? "en" : "es";
       </ul>
     </nav>
 
-    <a class="language-toggle" href={localizedPath(otherLang, basePath)} data-astro-reload hreflang={otherLang} aria-label={lang === "es" ? t("language.switchToEnglish") : t("language.switchToSpanish")} title={lang === "es" ? t("language.switchToEnglish") : t("language.switchToSpanish")}><span aria-current={lang === "en" ? "true" : undefined}>EN</span> · <span aria-current={lang === "es" ? "true" : undefined}>ES</span></a>
+    <a class="language-toggle" href={localizedPath(otherLang, basePath) + Astro.url.search} data-astro-reload hreflang={otherLang} aria-label={lang === "es" ? t("language.switchToEnglish") : t("language.switchToSpanish")} title={lang === "es" ? t("language.switchToEnglish") : t("language.switchToSpanish")}><span aria-current={lang === "en" ? "true" : undefined}>EN</span> · <span aria-current={lang === "es" ? "true" : undefined}>ES</span></a>
 
     <div class="mobile-menu">
       <MobileMenu variant={variant} lang={lang} client:load />
@@ -180,7 +180,7 @@ const otherLang = lang === "es" ? "en" : "es";
     text-decoration: none;
   }
 
-  .language-toggle:hover,
+  .language-toggle span[aria-current="true"] { font-weight: 800; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; color: #ec4899; }\n\n  .site-header--ghibli .language-toggle span[aria-current="true"] { color: var(--ghibli-coral, #f45164); }\n\n  .language-toggle:hover,
   .language-toggle:focus-visible {
     border-color: #ec4899;
     outline-color: #ec4899;
