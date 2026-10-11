@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";\nimport { useT, type Lang } from "../../i18n";
+import { useEffect, useState } from "react";
+import { useT, type Lang } from "../../i18n";
 import {
   addToPersonalList,
   getPersonalEntry,
