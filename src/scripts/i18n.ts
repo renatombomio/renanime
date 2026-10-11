@@ -368,7 +368,7 @@ function translateDocument(language: Language) {
     document.querySelectorAll<HTMLElement>("input[placeholder], textarea[placeholder], [aria-label], [title]").forEach((element) => {
       let originals = originalAttributes.get(element);
       if (!originals) {
-        originals = new Map<string, string>();
+        originals = new Map<string, { source: string; translated: string }>();
         originalAttributes.set(element, originals);
       }
       for (const attribute of Object.keys(attributeTranslations)) {
@@ -428,7 +428,7 @@ const observer = new MutationObserver((mutations) => {
     translateDocument(currentLanguage);
   });
 });
-observer.observe(document.body, { childList: true, characterData: true, subtree: true });
+observer.observe(document.documentElement, { childList: true, characterData: true, subtree: true });
 
 const restoreLanguage = () => {
   try {
@@ -438,6 +438,4 @@ const restoreLanguage = () => {
 };
 
 document.addEventListener("astro:page-load", restoreLanguage);
-document.addEventListener("astro:after-swap", restoreLanguage);
 window.addEventListener("pageshow", restoreLanguage);
-translateDocument(currentLanguage);
