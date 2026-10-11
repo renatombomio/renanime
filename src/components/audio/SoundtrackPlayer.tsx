@@ -41,7 +41,8 @@ const STORAGE_KEY = "renanime:soundtrack:v2";
 const DEFAULT_VOLUME = 0.12;
 
 function getPlaylistKey() {
-  return window.location.pathname.startsWith("/ghibli") ? "ghibli" : "hero";
+  const pathname = window.location.pathname.replace(/^\/en(?=\/|$)/, "") || "/";
+  return pathname === "/ghibli" || pathname.startsWith("/ghibli/") ? "ghibli" : "hero";
 }
 
 function getSavedState(): SavedState {
