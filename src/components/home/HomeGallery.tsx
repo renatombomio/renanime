@@ -109,7 +109,7 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
             <a
               className="home-gallery-card"
               href={`${lang === "en" ? "/en" : ""}/anime/${entry.animeId}`}
-              aria-label={`${lang === "en" ? "View" : "Ver"} ${item?.title?.romaji || item?.title?.english || entry.title}`}
+              aria-label={`${lang === "en" ? "View" : "Ver"} ${lang === "en" ? (item?.title?.english || item?.title?.romaji || entry.title) : (item?.title?.romaji || item?.title?.english || entry.title)}`}
               key={entry.animeId}
             >
               {image ? (
