@@ -27,20 +27,36 @@ export default function GhibliView({ films, lang = "es" }: { films: Film[]; lang
       body: JSON.stringify({ query: "query Ghibli(" + definitions + "){" + fields + "}", variables }),
     })
       .then((response) => response.ok ? response.json() : Promise.reject())
-      .then(async (payload) => {
+      .then((payload) => {
         if (cancelled) return;
         const result: Record<string, Media | null> = {};
         films.forEach((film, index) => {
           result[film.id] = payload.data?.["a" + index]?.media?.[0] ?? null;
         });
-        for (const film of films) {
-          const item = result[film.id];
-          if (!item?.coverImage?.extraLarge && !item?.coverImage?.large) {
-            const poster = await fetchFallbackPoster(film.searchTitle || film.title);
-            if (poster) result[film.id] = { ...(item ?? { id: 0 }), coverImage: { extraLarge: poster, large: poster } };
-          }
-        }
+
+        // Render titles and available AniList posters immediately; never block the whole grid on fallbacks.
         setMedia(result);
+        setLoading(false);
+
+        // Missing posters are independent work, so resolve them concurrently in the background.
+        void Promise.all(films.filter((film) => {
+          const item = result[film.id];
+          return !item?.coverImage?.extraLarge && !item?.coverImage?.large;
+        }).map(async (film) => {
+          try {
+            const poster = await fetchFallbackPoster(film.searchTitle || film.title);
+            if (!poster || cancelled) return;
+            setMedia((current) => ({
+              ...current,
+              [film.id]: {
+                ...(current[film.id] ?? { id: 0 }),
+                coverImage: { extraLarge: poster, large: poster },
+              },
+            }));
+          } catch {
+            // A missing fallback poster must not prevent the rest of the grid from rendering.
+          }
+        }));
       })
       .catch(() => {})
       .finally(() => { if (!cancelled) setLoading(false); });
