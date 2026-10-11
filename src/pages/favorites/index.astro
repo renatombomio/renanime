@@ -21,7 +21,7 @@ const recommendations = getRecommendedLibrary().filter((entry) => !entry.state.f
         description="No son simplemente los que más me gustan. Son los que dejaron algo detrás: una escena, un personaje, una idea o una sensación a la que siempre termino volviendo."
       />
       <div class="favorites-page-content">
-        <FavoritesView entries={entries} recommendations={recommendations} client:load />
+        <FavoritesView entries={entries} recommendations={recommendations} lang={Astro.locals.lang} client:load />
       </div>
     </Container>
   </main>
