@@ -47,7 +47,7 @@ if (!entry) {
 <Layout title={`${entry.title} — Renanime's Gallery`} description={`Ficha de ${entry.title} en Renanime's Gallery.`}>
   <Navbar />
   <main id="main-content" class="anime-detail-page">
-    <AnimeDetail entry={entry} client:load />
+    <AnimeDetail entry={entry} lang={Astro.locals.lang} client:load />
   </main>
   <Footer />
 </Layout>
