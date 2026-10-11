@@ -11,6 +11,7 @@ import {
 
 interface Props {
   animeId: number | string;
+  lang?: Lang;
 }
 
 export default function PersonalLibraryActions({ animeId, lang = "es" }: Props) {
@@ -50,7 +51,7 @@ export default function PersonalLibraryActions({ animeId, lang = "es" }: Props) 
       <div className="personal-actions">
         <span className="personal-status">{t("actions.watched")}</span>
         <button type="button" onClick={() => removeFromPersonalLibrary(id)}>
-          Quitar
+          {t("actions.remove")}
         </button>
         <style>{styles}</style>
       </div>
@@ -61,10 +62,10 @@ export default function PersonalLibraryActions({ animeId, lang = "es" }: Props) 
     return (
       <div className="personal-actions">
         <button type="button" className="is-active" onClick={() => markPersonalWatched(id)}>
-          ✓ Ya lo he visto
+          {t("actions.markWatched")}
         </button>
         <button type="button" onClick={() => removeFromPersonalLibrary(id)}>
-          Quitar de mi lista
+          {t("actions.removeFromList")}
         </button>
         <style>{styles}</style>
       </div>
@@ -74,7 +75,7 @@ export default function PersonalLibraryActions({ animeId, lang = "es" }: Props) 
   return (
     <div className="personal-actions">
       <button type="button" onClick={() => addToPersonalList(id)}>
-        ＋ Añadir a mi lista
+        {t("actions.add")}
       </button>
       <button type="button" onClick={() => markPersonalWatched(id)}>
         ✓ Ya lo he visto
