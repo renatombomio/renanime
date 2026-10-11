@@ -166,6 +166,8 @@
   "genres.unknownDate": "Fecha desconocida",
   "genres.error": "No hemos podido recuperar los géneros de tu colección.",
   "favorites.loadMoreCount": "Cargar más · {shown} / {total}",
+  "renCollection.pageTitle": "Colección de Ren",
+  "renCollection.heading": "La colección de Ren",
   "ghibli.loading": "Abriendo el archivo…",
   "ghibli.openFilm": "Abrir {title}",
   "ghibli.watched": "VISTA",
