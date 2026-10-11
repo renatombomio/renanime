@@ -78,7 +78,7 @@ export default function PersonalLibraryActions({ animeId, lang = "es" }: Props) 
         {t("actions.add")}
       </button>
       <button type="button" onClick={() => markPersonalWatched(id)}>
-        ✓ Ya lo he visto
+        ✓ {lang === "en" ? "I have watched it" : "Ya lo he visto"}
       </button>
       <style>{styles}</style>
     </div>
