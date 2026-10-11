@@ -155,5 +155,15 @@
   "library.pageDescription": "An archive of stories that are already part of your journey. This isn't Ren's space: it becomes yours from the first anime you watch.",
   "pending.pageTitle": "My List",
   "pending.pageHeading": "My List",
-  "pending.pageDescription": "Stories you've saved for later. This space is yours: discover something, save it, and come back when the time is right."
+  "pending.pageDescription": "Stories you've saved for later. This space is yours: discover something, save it, and come back when the time is right.",
+  "genres.loadingMap": "Building genre map…",
+  "genres.count": "{count} genres",
+  "genres.titlesSeen": "{count} titles watched",
+  "genres.titleCount": "{count} titles",
+  "genres.archive": "Ren's archive",
+  "genres.loadingTitles": "Loading titles…",
+  "genres.resultsLabel": "Anime in the {genre} genre",
+  "genres.unknownDate": "Unknown date",
+  "genres.error": "We couldn't retrieve the genres from your collection.",
+  "favorites.loadMoreCount": "Load more · {shown} / {total}"
 }
