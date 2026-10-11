@@ -3,8 +3,10 @@ import SectionHeader from "../ui/SectionHeader.astro";
 import AnimeGrid from "../anime/AnimeGrid.astro";
 import AnimeCard from "../anime/AnimeCard.astro";
 import { getWatchedLibrary } from "../../data/library";
+import { localizedPath } from "../../i18n";
 
 const collection = getWatchedLibrary();
+const { lang } = Astro.locals;
 const preview = collection.slice(0, 12);
 ---
 
@@ -28,7 +30,7 @@ const preview = collection.slice(0, 12);
       <AnimeCard
         title={anime.title}
         image=""
-        href="/collection/"
+        href={localizedPath(lang, "/collection/")}
         badge={anime.state.recommended ? "RECOMENDADO" : undefined}
       />
     ))}
