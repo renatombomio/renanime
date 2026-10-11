@@ -433,7 +433,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
     {franchiseEntries.filter((candidate)=>candidate.animeId!==entry.animeId).map((candidate,index)=>{
       const item=franchiseMedia[candidate.animeId];
       const image=item?.coverImage?.extraLarge||item?.coverImage?.large;
-      const candidateTitle=FRANCHISE_MEDIA_ALIASES[candidate.animeId]?candidate.title:(item?.title?.romaji||item?.title?.english||candidate.title);
+      const candidateTitle=FRANCHISE_MEDIA_ALIASES[candidate.animeId]?candidate.title:(lang==="en"?(item?.title?.english||item?.title?.romaji||candidate.title):(item?.title?.romaji||item?.title?.english||candidate.title));
       return <a className="anime-detail-franchise-card" href={(lang==="en"?"/en":"") + "/anime/"+candidate.animeId} key={candidate.animeId}>
        <div className="anime-detail-franchise-poster">{image?<img src={image} alt=""/>:<div/>}</div>
        <div className="anime-detail-franchise-copy"><strong>{candidateTitle}</strong><span>{candidate.format==="MOVIE"||item?.format==="MOVIE"?(lang==="en"?"Film":"Película"):(lang==="en"?"Series":"Serie")} · {candidate.state.status==="WATCHED"?(lang==="en"?"Watched":"Vista"):(lang==="en"?"Pending":"Pendiente")}</span></div>
