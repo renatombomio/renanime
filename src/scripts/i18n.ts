@@ -222,6 +222,29 @@ const translations: Record<string, string> = {
   "Buscando…": "Searching…",
   "No encontramos resultados para ": "No results found for ",
   " restantes": " remaining",
+  "Mi historia con Ghibli": "My story with Ghibli",
+  "El comienzo": "The beginning",
+  "La infancia y la naturaleza": "Childhood and nature",
+  "La naturaleza no es un decorado": "Nature is not a backdrop",
+  "Amor en tiempos de guerra": "Love in times of war",
+  "Volver a mirar como un niño": "Seeing through a child's eyes again",
+  "Las cosas pequeñas": "Little things",
+  "Hasta ahora": "So far",
+  "La película": "The film",
+  "Desde la mirada de ": "Through the eyes of ",
+  "El viaje continúa": "The journey continues",
+  "Algunas ya son recuerdos.": "Some are already memories.",
+  "Otras todavía me esperan.": "Others are still waiting for me.",
+  "películas": "films",
+  "vistas": "watched",
+  "por descubrir": "left to discover",
+  "2001 — ahora": "2001 — now",
+  "Mi viaje": "My journey",
+  "Recordando el viaje…": "Remembering the journey…",
+  "Abriendo el archivo…": "Opening the archive…",
+  "VISTA": "WATCHED",
+  "Abrir ": "Open ",
+  "Nausicaä": "Nausicaä",
   "Mi viaje": "My journey",
   "MI HISTORIA CON GHIBLI": "MY STORY WITH GHIBLI",
   "El viaje de Chihiro": "Spirited Away",
@@ -306,8 +329,8 @@ function translateValue(value: string, language: Language): string {
   return result;
 }
 
-const originalText = new WeakMap<Text, string>();
-const originalAttributes = new WeakMap<Element, Map<string, string>>();
+const originalText = new WeakMap<Text, { source: string; translated: string }>();
+const originalAttributes = new WeakMap<Element, Map<string, { source: string; translated: string }>>();
 let translating = false;
 
 function translateDocument(language: Language) {
@@ -330,10 +353,16 @@ function translateDocument(language: Language) {
       const parent = textNode.parentElement;
       if (!parent || parent.closest("script, style, noscript, textarea, input, [data-no-translate], [data-language-toggle]")) continue;
       const visibleText = textNode.nodeValue ?? "";
-      if (!originalText.has(textNode)) originalText.set(textNode, visibleText);
-      const sourceText = originalText.get(textNode) ?? visibleText;
-      const translatedText = translateValue(sourceText, language);
-      if (textNode.nodeValue !== translatedText) textNode.nodeValue = translatedText;
+      let record = originalText.get(textNode);
+      // React/Astro may reuse a text node for new content. If its current value
+      // is not the last translation we applied, treat it as fresh source text.
+      if (!record || visibleText !== record.translated) {
+        record = { source: visibleText, translated: visibleText };
+        originalText.set(textNode, record);
+      }
+      const translatedText = translateValue(record.source, language);
+      record.translated = translatedText;
+      if (visibleText !== translatedText) textNode.nodeValue = translatedText;
     }
 
     document.querySelectorAll<HTMLElement>("input[placeholder], textarea[placeholder], [aria-label], [title]").forEach((element) => {
@@ -344,10 +373,12 @@ function translateDocument(language: Language) {
       }
       for (const attribute of Object.keys(attributeTranslations)) {
         const value = element.getAttribute(attribute);
-        if (value && !originals.has(attribute)) originals.set(attribute, value);
+        const prior = originals.get(attribute);
+        if (value && (!prior || value !== prior.translated)) originals.set(attribute, { source: value, translated: value });
         const sourceValue = originals.get(attribute);
         if (sourceValue) {
-          const translated = translateValue(sourceValue, language);
+          const translated = translateValue(sourceValue.source, language);
+          sourceValue.translated = translated;
           if (value !== translated) element.setAttribute(attribute, translated);
         }
       }
