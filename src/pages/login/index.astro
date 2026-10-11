@@ -74,13 +74,13 @@ if (user) {
           <h2 class="welcome-title">Bienvenido a Renanime, <span id="welcome-name"></span>.</h2>
           <p class="joke-result">
             Ja, ja, ja… era broma. A nadie le importa tu mote, <strong>kono baka</strong>.<br />
-            No me puedo creer que lo hayas escrito… aunque tampoco tenías otra alternativa. Aquí yo soy <strong>Kami</strong>.
+            {isEnglish ? "I can't believe you actually wrote it… though you didn't have much choice. Around here, I'm <strong>Kami</strong>." : "No me puedo creer que lo hayas escrito… aunque tampoco tenías otra alternativa. Aquí yo soy <strong>Kami</strong>."}
           </p>
           <p class="recovery-note">{isEnglish ? "Write down your recovery code:" : "Apunta tu código de recuperación:"}</p>
-          <div id="recovery-display" class="recovery-display" role="button" tabindex="0" aria-label="Copiar código de recuperación" title="Haz clic para copiar"></div>
+          <div id="recovery-display" class="recovery-display" role="button" tabindex="0" aria-label={isEnglish ? "Copy recovery code" : "Copiar código de recuperación"} title={isEnglish ? "Click to copy" : "Haz clic para copiar"}></div>
           <button id="copy-recovery-code" class="secondary recovery-copy-button" type="button">{isEnglish ? "Copy code" : "Copiar código"}</button>
-          <p id="recovery-copy-message" class="recovery-help" role="status" aria-live="polite">Haz clic en el código o en el botón para copiarlo.</p>
-          <p class="recovery-help">Guárdalo. Lo necesitarás para entrar desde otro dispositivo.</p>
+          <p id="recovery-copy-message" class="recovery-help" role="status" aria-live="polite">{isEnglish ? "Click the code or button to copy it." : "Haz clic en el código o en el botón para copiarlo."}</p>
+          <p class="recovery-help">{isEnglish ? "Keep it safe. You'll need it to sign in from another device." : "Guárdalo. Lo necesitarás para entrar desde otro dispositivo."}</p>
           <button id="enter-renanime" type="button">{isEnglish ? "Sign in" : "Iniciar sesión"}</button>
         </div>
 
@@ -216,7 +216,7 @@ if (user) {
 
     try {
       await navigator.clipboard.writeText(code);
-      recoveryCopyMessage.textContent = "¡Código copiado! Guárdalo en un lugar seguro.";
+      recoveryCopyMessage.textContent = isEnglish ? "Code copied! Keep it somewhere safe." : "¡Código copiado! Guárdalo en un lugar seguro.";
     } catch {
       // Fallback for browsers where the Clipboard API is unavailable.
       const selection = window.getSelection();
@@ -225,9 +225,9 @@ if (user) {
         range.selectNodeContents(recoveryDisplay);
         selection?.removeAllRanges();
         selection?.addRange(range);
-        recoveryCopyMessage.textContent = "Código seleccionado. Pulsa Ctrl+C o ⌘C para copiarlo.";
+        recoveryCopyMessage.textContent = isEnglish ? "Code selected. Press Ctrl+C or ⌘C to copy it." : "Código seleccionado. Pulsa Ctrl+C o ⌘C para copiarlo.";
       } else {
-        recoveryCopyMessage.textContent = "No se ha podido copiar automáticamente. Selecciona el código y cópialo.";
+        recoveryCopyMessage.textContent = isEnglish ? "Could not copy automatically. Select the code and copy it." : "No se ha podido copiar automáticamente. Selecciona el código y cópialo.";
       }
     }
   };
@@ -350,9 +350,9 @@ if (user) {
       if (!response.ok) {
         akaMessage.textContent =
           data.error === "SAME_NAME_AKA"
-            ? "¡Sé más creativo, tú puedes! ¡Gambare!"
+            ? isEnglish ? "Be more creative, you can do it! Gambare!" : "¡Sé más creativo, tú puedes! ¡Gambare!"
             : data.error === "INVALID_PROFILE"
-              ? (!name ? "No encuentro tu nombre. Vuelve atrás y escríbelo de nuevo." : !aka ? "Escribe tu mote otaku." : "No se han podido validar los datos. Prueba otro mote.")
+              ? (isEnglish ? (!name ? "I can't find your name. Go back and enter it again." : !aka ? "Enter your otaku nickname." : "Couldn't validate those details. Try another nickname.") : (!name ? "No encuentro tu nombre. Vuelve atrás y escríbelo de nuevo." : !aka ? "Escribe tu mote otaku." : "No se han podido validar los datos. Prueba otro mote."))
               : "No se ha podido crear el perfil.";
         return;
       }
@@ -361,7 +361,7 @@ if (user) {
       recoveryDisplay!.textContent = data.recoveryCode;
       showStep(completeStep);
     } catch {
-      akaMessage.textContent = "No se ha podido conectar con Renanime.";
+      akaMessage.textContent = isEnglish ? "Could not connect to Renanime." : "No se ha podido conectar con Renanime.";
     }
   });
 
@@ -395,7 +395,7 @@ if (user) {
 
       window.location.href = document.documentElement.lang === "en" ? "/en/" : "/";
     } catch {
-      recoveryMessage.textContent = "No se ha podido conectar con Renanime.";
+      recoveryMessage.textContent = isEnglish ? "Could not connect to Renanime." : "No se ha podido conectar con Renanime.";
     }
   });
 
