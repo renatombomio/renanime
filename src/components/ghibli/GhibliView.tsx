@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { fetchFallbackPoster } from "../../lib/api/poster-fallback";
+import { useT, type Lang } from "../../i18n";
 
 interface Film { id: string; title: string; year: number; watched: boolean; searchTitle?: string; }
 interface Media { id: number; title?: { romaji?: string | null; english?: string | null }; coverImage?: { extraLarge?: string | null; large?: string | null }; }
 
-export default function GhibliView({ films }: { films: Film[] }) {
+export default function GhibliView({ films, lang = "es" }: { films: Film[]; lang?: Lang }) {
+  const t = useT(lang);
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(true);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -148,7 +150,7 @@ export default function GhibliView({ films }: { films: Film[] }) {
         }
       `}</style>
       {loading ? (
-        <div className="ghibli-loading" role="status" aria-live="polite">Abriendo el archivo…</div>
+        <div className="ghibli-loading" role="status" aria-live="polite">{t("ghibli.loading")}</div>
       ) : (
         <div ref={gridRef} className="ghibli-grid">
           {films.map((film, index) => {
@@ -157,12 +159,12 @@ export default function GhibliView({ films }: { films: Film[] }) {
             const fallbackImage = film.id === "the-red-turtle" ? "https://www.ghibli.jp/images/red-turtle.jpg" : null;
             const posterImage = image || fallbackImage;
             const href = item
-              ? "/ghibli/anime?id=" + item.id
-              : "/ghibli/anime?film=" + encodeURIComponent(film.id);
+              ? `${lang === "en" ? "/en" : ""}/ghibli/anime?id=${item.id}`
+              : `${lang === "en" ? "/en" : ""}/ghibli/anime?film=${encodeURIComponent(film.id)}`;
 
             return (
               <article className={"ghibli-card" + (film.watched ? " is-watched" : "")} key={film.id}>
-                <a href={href} aria-label={"Abrir " + film.title}>
+                <a href={href} aria-label={t("ghibli.openFilm").replace("{title}", film.title)}>
                   <div className="ghibli-poster">
                     {posterImage ? (
                       <img src={posterImage} alt="" loading={index < 6 ? "eager" : "lazy"} decoding="async" />
@@ -171,7 +173,7 @@ export default function GhibliView({ films }: { films: Film[] }) {
                         <strong>{film.title}</strong>
                       </div>
                     )}
-                    {film.watched && <span className="ghibli-badge">VISTA</span>}
+                    {film.watched && <span className="ghibli-badge">{t("ghibli.watched")}</span>}
                   </div>
                   <div className="ghibli-info">
                     <h3>{film.title}</h3>
