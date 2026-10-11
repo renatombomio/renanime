@@ -165,5 +165,8 @@
   "genres.resultsLabel": "Animes del género {genre}",
   "genres.unknownDate": "Fecha desconocida",
   "genres.error": "No hemos podido recuperar los géneros de tu colección.",
-  "favorites.loadMoreCount": "Cargar más · {shown} / {total}"
+  "favorites.loadMoreCount": "Cargar más · {shown} / {total}",
+  "ghibli.loading": "Abriendo el archivo…",
+  "ghibli.openFilm": "Abrir {title}",
+  "ghibli.watched": "VISTA"
 }
