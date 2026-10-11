@@ -13,23 +13,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.lang = isEnglish ? "en" : "es";
   context.locals.basePath = basePath;
 
-  if (isEnglish) {
-    context.cookies.set("lang", "en", {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 365,
-      sameSite: "lax",
-      httpOnly: true,
-      secure: context.url.protocol === "https:",
-    });
-  } else if (!context.cookies.has("lang")) {
-    context.cookies.set("lang", "es", {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 365,
-      sameSite: "lax",
-      httpOnly: true,
-      secure: context.url.protocol === "https:",
-    });
-  }
+  context.cookies.set("lang", context.locals.lang, {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "lax",
+    httpOnly: true,
+    secure: context.url.protocol === "https:",
+  });
 
   const isPublicAssetOrApi =
     routePath.startsWith("/api/") ||
