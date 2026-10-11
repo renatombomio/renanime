@@ -14,8 +14,8 @@ if (user) {
 ---
 
 <Layout
-  title="Acceso — Renanime's Gallery"
-  description="Entra en tu espacio personal de Renanime's Gallery."
+  title={isEnglish ? "Access — Renanime's Gallery" : "Acceso — Renanime's Gallery"}
+  description={isEnglish ? "Enter your personal space in Renanime's Gallery." : "Entra en tu espacio personal de Renanime's Gallery."}
 >
   <main class="access-page auth-login" data-auth-screen="login">
     <a class="language-toggle-auth" href={localizedPath(Astro.locals.lang === "es" ? "en" : "es", "/login/")} data-astro-reload hreflang={Astro.locals.lang === "es" ? "en" : "es"} aria-label={Astro.locals.lang === "es" ? "Switch language to English" : "Cambiar idioma a español"} title={Astro.locals.lang === "es" ? "Switch to English" : "Cambiar a español"}>{Astro.locals.lang === "es" ? "ES · EN" : "EN · ES"}</a>
@@ -116,11 +116,11 @@ if (user) {
   document.body.appendChild(accessJokes);
 
   const accessFailureMessages = [
-    "Alguien se ha olvidado del código de acceso.",
-    "Renato no te quiere por aquí.",
-    "¿Seguro que sabes dónde estás?",
-    "Ese código no abre ni la nevera.",
-    "RenAnime dice: acceso denegado."
+    isEnglish ? "Someone forgot the access code." : "Alguien se ha olvidado del código de acceso.",
+    isEnglish ? "Renato does not want you here." : "Renato no te quiere por aquí.",
+    isEnglish ? "Are you sure you know where you are?" : "¿Seguro que sabes dónde estás?",
+    isEnglish ? "That code would not even open the fridge." : "Ese código no abre ni la nevera.",
+    isEnglish ? "RenAnime says: access denied." : "RenAnime dice: acceso denegado."
   ];
 
   const accessFailureKey = "renanime-access-failure-index";
@@ -252,7 +252,7 @@ if (user) {
     accessPassword = accessPasswordInput.value.trim();
 
     if (!accessPassword) {
-      accessMessage.textContent = "Introduce el código de acceso.";
+      accessMessage.textContent = isEnglish ? "Enter the access code." : "Introduce el código de acceso.";
       accessMessage.hidden = false;
       return;
     }
@@ -277,8 +277,8 @@ if (user) {
       if (!response.ok || data.ok !== true) {
         accessMessage.textContent =
           data.error === "INVALID_ACCESS_PASSWORD"
-            ? "Código de acceso incorrecto."
-            : "No se ha podido abrir la puerta de Renanime.";
+            ? isEnglish ? "Incorrect access code." : "Código de acceso incorrecto."
+            : isEnglish ? "Could not open the door to Renanime." : "No se ha podido abrir la puerta de Renanime.";
         accessMessage.hidden = false;
         showAccessFailure();
         return;
@@ -293,7 +293,7 @@ if (user) {
       nameInput?.focus();
     } catch (error) {
       console.error("Renanime access request failed:", error);
-      accessMessage.textContent = "No se ha podido conectar con Renanime.";
+      accessMessage.textContent = isEnglish ? "Could not connect to Renanime." : "No se ha podido conectar con Renanime.";
       accessMessage.hidden = false;
     }
   });
@@ -310,7 +310,7 @@ if (user) {
     nameMessage.textContent = "";
 
     if (!name) {
-      nameMessage.textContent = "Escribe tu nombre.";
+      nameMessage.textContent = isEnglish ? "Enter your name." : "Escribe tu nombre.";
       return;
     }
 
@@ -326,15 +326,15 @@ if (user) {
     akaMessage.textContent = "";
 
     if (!aka) {
-      akaMessage.textContent = "Venga va. Dame un AKA.";
+      akaMessage.textContent = isEnglish ? "Come on, give me an AKA." : "Venga va. Dame un AKA.";
       return;
     }
 
     if (name.toLocaleLowerCase() === aka.toLocaleLowerCase()) {
       sameNameAkaAttempts += 1;
       akaMessage.textContent = sameNameAkaAttempts % 2 === 1
-        ? "¡Sé más creativo, tú puedes! ¡Gambare!"
-        : "Gambare Gambare Senpai";
+        ? isEnglish ? "Be more creative, you can do it! Gambare!" : "¡Sé más creativo, tú puedes! ¡Gambare!"
+        : isEnglish ? "Gambare, gambare, senpai." : "Gambare Gambare Senpai";
       return;
     }
 
@@ -372,7 +372,7 @@ if (user) {
     recoveryMessage.textContent = "";
 
     if (!recoveryCode) {
-      recoveryMessage.textContent = "Introduce tu código de recuperación.";
+      recoveryMessage.textContent = isEnglish ? "Enter your recovery code." : "Introduce tu código de recuperación.";
       return;
     }
 
@@ -388,8 +388,8 @@ if (user) {
       if (!response.ok) {
         recoveryMessage.textContent =
           data.error === "INVALID_RECOVERY_CODE"
-            ? "Código de recuperación incorrecto."
-            : "No se ha podido iniciar sesión.";
+            ? isEnglish ? "Incorrect recovery code." : "Código de recuperación incorrecto."
+            : isEnglish ? "Could not sign in." : "No se ha podido iniciar sesión.";
         return;
       }
 
