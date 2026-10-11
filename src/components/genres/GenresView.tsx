@@ -227,7 +227,7 @@ export default function GenresView({ entries, lang = "es" }: Props) {
                       )}
                     </div>
                     <div className="genre-anime-info">
-                      <strong>{media?.title?.romaji || media?.title?.english || entry.title}</strong>
+                      <strong>{lang === "en" ? (media?.title?.english || media?.title?.romaji || entry.title) : (media?.title?.romaji || media?.title?.english || entry.title)}</strong>
                       <span>{media?.startDate?.year ? media.startDate.month && media.startDate.day ? new Date(media.startDate.year, media.startDate.month - 1, media.startDate.day).toLocaleDateString(lang === "en" ? "en-GB" : "es-ES", { day: "numeric", month: "long", year: "numeric" }) : String(media.startDate.year) : t("genres.unknownDate")} · {entry.format === "MOVIE" || media?.format === "MOVIE" ? t("detail.film") : t("detail.series")}</span>
                     </div>
                   </a>
