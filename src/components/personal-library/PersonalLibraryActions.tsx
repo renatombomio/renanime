@@ -13,7 +13,8 @@ interface Props {
   animeId: number | string;
 }
 
-export default function PersonalLibraryActions({ animeId, lang = "es" }: Props) {\n  const t = useT(lang);
+export default function PersonalLibraryActions({ animeId, lang = "es" }: Props) {
+  const t = useT(lang);
   const id = String(animeId);
   const [status, setStatus] = useState(() => getPersonalEntry(id)?.state.status ?? "NOT_IN_COLLECTION");
   const [ready, setReady] = useState(false);
