@@ -409,7 +409,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
           </div>
           <div className="anime-detail-recommendations-track">
             {items.map((item) => {
-              const recTitle=item.title?.english||item.title?.romaji||t("detail.noTitle");
+              const recTitle=lang==="en"?(item.title?.english||item.title?.romaji||t("detail.noTitle")):(item.title?.romaji||item.title?.english||t("detail.noTitle"));
               const recImage=item.coverImage?.extraLarge||item.coverImage?.large;
               return <a className="anime-detail-recommendation" href={(lang==="en"?"/en":"") + "/anime/" + item.id} key={item.id}>
                 <div className="anime-detail-recommendation-poster">{recImage&&<img src={recImage} alt={recTitle} loading="lazy" />}</div>
@@ -450,7 +450,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
       const label=relation.relationType==="SEQUEL"?t("detail.sequel"):relation.relationType==="PREQUEL"?t("detail.prequel"):relation.relationType==="SIDE_STORY"?t("detail.sideStory"):relation.relationType==="SPIN_OFF"?t("detail.spinOff"):relation.relationType==="ALTERNATIVE"?t("detail.alternative"):relation.relationType==="PARENT"?t("detail.main"):relation.relationType==="ADAPTATION"?t("detail.adaptation"):t("detail.relatedLabel");
       return <a className="anime-detail-related-card" href={(lang==="en"?"/en":"") + "/anime/" + node.id} key={node.id+"-"+index}>
         <div className="anime-detail-related-poster">{node.coverImage?.extraLarge||node.coverImage?.large?<img src={node.coverImage.extraLarge||node.coverImage.large||""} alt=""/>:<div/>}</div>
-        <div className="anime-detail-related-copy"><strong>{node.title?.english||node.title?.romaji||t("detail.noTitle")}</strong><span>{label} · {node.format==="MOVIE"?t("detail.film"):node.format==="OVA"?"OVA":node.format==="SPECIAL"?t("detail.special"):t("detail.series")}</span></div>
+        <div className="anime-detail-related-copy"><strong>{(lang==="en"?(node.title?.english||node.title?.romaji):(node.title?.romaji||node.title?.english))||t("detail.noTitle")}</strong><span>{label} · {node.format==="MOVIE"?t("detail.film"):node.format==="OVA"?"OVA":node.format==="SPECIAL"?t("detail.special"):t("detail.series")}</span></div>
       </a>;
     })}
    </div>
