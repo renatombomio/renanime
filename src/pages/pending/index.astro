@@ -14,7 +14,7 @@ import PersonalLibraryView from "../../components/personal-library/PersonalLibra
       <SectionHeader variant="ren" title="Mi lista" description="Las historias que has guardado para después. Este espacio es tuyo: descubre algo, guárdalo y vuelve cuando sea el momento." />
     </div>
     <section class="pending-content" aria-label="Anime pendiente">
-      <PersonalLibraryView mode="PENDING" client:load />
+      <PersonalLibraryView mode="PENDING" lang={Astro.locals.lang} client:load />
     </section>
   </main>
   <Footer />
