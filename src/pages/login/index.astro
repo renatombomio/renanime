@@ -4,6 +4,7 @@ import Layout from "../../layouts/Layout.astro";
 import { getRenanimeUser } from "../../lib/auth";
 import { localizedPath } from "../../i18n";
 
+const isEnglish = Astro.locals.lang === "en";
 const token = Astro.cookies.get("renanime_session")?.value;
 const user = await getRenanimeUser(token);
 
@@ -26,11 +27,11 @@ if (user) {
         <span class="brand-ren">Ren</span><span class="brand-anime">anime</span>
       </div>
 
-      <h1 id="access-title">Acceso</h1>
-      <p class="subtitle">Entra en tu espacio personal de anime.</p>
+      <h1 id="access-title">{isEnglish ? "Access" : "Acceso"}</h1>
+      <p class="subtitle">{isEnglish ? "Enter your personal anime space." : "Entra en tu espacio personal de anime."}</p>
 
       <form id="access-form">
-        <label for="access-password">Código de acceso</label>
+        <label for="access-password">{isEnglish ? "Access code" : "Código de acceso"}</label>
         <input
           id="access-password"
           name="accessPassword"
@@ -39,33 +40,33 @@ if (user) {
           required
           autofocus
         />
-        <button type="submit">Entrar</button>
+        <button type="submit">{isEnglish ? "Enter" : "Entrar"}</button>
         <p id="access-message" class="message" aria-live="polite"></p>
       </form>
 
       <div class="member-entry">
-        <span>¿Eres miembro de Renanime?</span>
-        <button id="show-recovery" type="button">Entra con tu código de recuperación</button>
+        <span>{isEnglish ? "Already a Renanime member?" : "¿Eres miembro de Renanime?"}</span>
+        <button id="show-recovery" type="button">{isEnglish ? "Enter with your recovery code" : "Entra con tu código de recuperación"}</button>
       </div>
 
       <section id="onboarding" class="panel" hidden>
         <div class="step" data-step="profile">
-          <p class="panel-eyebrow">BIENVENIDO</p>
-          <h2>¿Cómo te llamas?</h2>
-          <p>Vamos a crear tu espacio personal.</p>
-          <label for="name">Tu nombre</label>
+          <p class="panel-eyebrow">{isEnglish ? "WELCOME" : "BIENVENIDO"}</p>
+          <h2>{isEnglish ? "What is your name?" : "¿Cómo te llamas?"}</h2>
+          <p>{isEnglish ? "Let’s create your personal space." : "Vamos a crear tu espacio personal."}</p>
+          <label for="name">{isEnglish ? "Your name" : "Tu nombre"}</label>
           <input id="name" type="text" maxlength="80" autocomplete="name" />
-          <button id="continue-name" type="button">Continuar</button>
+          <button id="continue-name" type="button">{isEnglish ? "Continue" : "Continuar"}</button>
           <p id="name-message" class="message" aria-live="polite"></p>
         </div>
 
         <div class="step" data-step="aka" hidden>
-          <p class="panel-eyebrow">¡SUBE DE RANGO, NAKAMA!</p>
-          <h2>¿Cuál es tu mote otaku?</h2>
-          <p>¿Cómo te llamarían tus nakamas en el mundo del anime?</p>
-          <label for="aka">Tu apodo legendario</label>
+          <p class="panel-eyebrow">{isEnglish ? "LEVEL UP, NAKAMA!" : "¡SUBE DE RANGO, NAKAMA!"}</p>
+          <h2>{isEnglish ? "What is your otaku nickname?" : "¿Cuál es tu mote otaku?"}</h2>
+          <p>{isEnglish ? "What would your nakamas call you in the anime world?" : "¿Cómo te llamarían tus nakamas en el mundo del anime?"}</p>
+          <label for="aka">{isEnglish ? "Your legendary nickname" : "Tu apodo legendario"}</label>
           <input id="aka" type="text" maxlength="40" autocomplete="nickname" placeholder="Ren-sama · Hokage · Goku" />
-          <button id="create-profile" type="button">Vale, este es</button>
+          <button id="create-profile" type="button">{isEnglish ? "That’s the one" : "Vale, este es"}</button>
           <p id="aka-message" class="message" aria-live="polite"></p>
         </div>
 
@@ -75,22 +76,22 @@ if (user) {
             Ja, ja, ja… era broma. A nadie le importa tu mote, <strong>kono baka</strong>.<br />
             No me puedo creer que lo hayas escrito… aunque tampoco tenías otra alternativa. Aquí yo soy <strong>Kami</strong>.
           </p>
-          <p class="recovery-note">Apunta tu código de recuperación:</p>
+          <p class="recovery-note">{isEnglish ? "Write down your recovery code:" : "Apunta tu código de recuperación:"}</p>
           <div id="recovery-display" class="recovery-display" role="button" tabindex="0" aria-label="Copiar código de recuperación" title="Haz clic para copiar"></div>
-          <button id="copy-recovery-code" class="secondary recovery-copy-button" type="button">Copiar código</button>
+          <button id="copy-recovery-code" class="secondary recovery-copy-button" type="button">{isEnglish ? "Copy code" : "Copiar código"}</button>
           <p id="recovery-copy-message" class="recovery-help" role="status" aria-live="polite">Haz clic en el código o en el botón para copiarlo.</p>
           <p class="recovery-help">Guárdalo. Lo necesitarás para entrar desde otro dispositivo.</p>
-          <button id="enter-renanime" type="button">Iniciar sesión</button>
+          <button id="enter-renanime" type="button">{isEnglish ? "Sign in" : "Iniciar sesión"}</button>
         </div>
 
         <div class="step" data-step="recovery" hidden>
-          <p class="panel-eyebrow">MIEMBRO DE RENANIME</p>
-          <h2>Volvamos a casa.</h2>
-          <p>Introduce tu código de recuperación. No necesitas registrarte otra vez.</p>
-          <label for="recovery-code">Código de recuperación</label>
+          <p class="panel-eyebrow">{isEnglish ? "RENANIME MEMBER" : "MIEMBRO DE RENANIME"}</p>
+          <h2>{isEnglish ? "Let’s come home." : "Volvamos a casa."}</h2>
+          <p>{isEnglish ? "Enter your recovery code. You do not need to register again." : "Introduce tu código de recuperación. No necesitas registrarte otra vez."}</p>
+          <label for="recovery-code">{isEnglish ? "Recovery code" : "Código de recuperación"}</label>
           <input id="recovery-code" type="text" placeholder="REN-XXXX-XXXX" autocomplete="off" />
-          <button id="recover-account" type="button">Entrar en mi cuenta</button>
-          <button id="back-to-create" class="secondary" type="button">Soy nuevo, crear un perfil</button>
+          <button id="recover-account" type="button">{isEnglish ? "Access my account" : "Entrar en mi cuenta"}</button>
+          <button id="back-to-create" class="secondary" type="button">{isEnglish ? "I’m new, create a profile" : "Soy nuevo, crear un perfil"}</button>
           <p id="recovery-message" class="message" aria-live="polite"></p>
         </div>
       </section>
@@ -99,6 +100,7 @@ if (user) {
 </Layout>
 
 <script>
+  const isEnglish = document.documentElement.lang === "en";
   const accessForm = document.querySelector<HTMLFormElement>("#access-form");
   const accessPasswordInput = document.querySelector<HTMLInputElement>("#access-password");
   const accessMessage = document.querySelector<HTMLParagraphElement>("#access-message");
