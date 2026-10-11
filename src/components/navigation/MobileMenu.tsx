@@ -15,12 +15,14 @@ const links = [
   { key: "nav.renSecret", href: "/ghibli/" }
 ] as const;
 
-export default function MobileMenu({ variant = "default", lang }: Props) {\n  const t = useT(lang);
+export default function MobileMenu({ variant = "default", lang }: Props) {
+  const t = useT(lang);
   const [open, setOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState<string | null>(null);
 
   useEffect(() => {
-    const pathname = window.location.pathname.replace(/^\/en(?=\/|$)/, "") || "/";\n    setCurrentPath(pathname.replace(/\/$/, "") || "/");
+    const pathname = window.location.pathname.replace(/^\/en(?=\/|$)/, "") || "/";
+    setCurrentPath(pathname.replace(/\/$/, "") || "/");
   }, []);
 
   useEffect(() => {
@@ -137,7 +139,10 @@ export default function MobileMenu({ variant = "default", lang }: Props) {\n  co
           opacity: 1; transform: translateY(0);
           transition-delay: calc(70ms + (var(--menu-index) * 48ms));
         }
-        .mobile-link:active { color: #f5f2ec; }\n        .mobile-link[aria-current="page"] { color: #f5f2ec; }\n        .mobile-link[aria-current="page"]::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: #a48a68; }\n        .mobile-link--secret i {
+        .mobile-link:active { color: #f5f2ec; }
+        .mobile-link[aria-current="page"] { color: #f5f2ec; }
+        .mobile-link[aria-current="page"]::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: #a48a68; }
+        .mobile-link--secret i {
           color: #c2ae91;
           font-family: Georgia,serif;
           font-size: 17px;
@@ -145,10 +150,14 @@ export default function MobileMenu({ variant = "default", lang }: Props) {\n  co
           margin-left: 8px;
         }
 
-        .mobile-nav--ghibli .mobile-toggle { color: #19362f; }\n        .mobile-nav--ghibli .mobile-backdrop { background: rgba(25,54,47,.16); }
+        .mobile-nav--ghibli .mobile-toggle { color: #19362f; }
+        .mobile-nav--ghibli .mobile-backdrop { background: rgba(25,54,47,.16); }
         .mobile-nav--ghibli .mobile-panel { background: #fffdf8; color: #19362f; }
         .mobile-nav--ghibli .mobile-link { color: #527066; border-bottom-color: rgba(25,54,47,.12); }
-        .mobile-nav--ghibli .mobile-link:active { color: #18528a; }\n        .mobile-nav--ghibli .mobile-link[aria-current="page"] { color: #18528a; }\n        .mobile-nav--ghibli .mobile-link[aria-current="page"]::after { background: #f45164; }\n        .mobile-nav--ghibli .mobile-link--secret i { color: #f45164; }
+        .mobile-nav--ghibli .mobile-link:active { color: #18528a; }
+        .mobile-nav--ghibli .mobile-link[aria-current="page"] { color: #18528a; }
+        .mobile-nav--ghibli .mobile-link[aria-current="page"]::after { background: #f45164; }
+        .mobile-nav--ghibli .mobile-link--secret i { color: #f45164; }
 
         @media (min-width: 521px) and (max-width: 1120px) {
           .mobile-panel {
