@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { LibraryEntry } from "../../types/personal";
 import { buildGenreCatalog } from "../../lib/anime/genre-catalog";
 import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
-import type { Lang } from "../../i18n";
+import { useT, type Lang } from "../../i18n";
 
 interface Props {
   entries: LibraryEntry[];
@@ -95,6 +95,7 @@ async function fetchMediaMetadata(entries: LibraryEntry[], includeImages = false
 }
 
 export default function GenresView({ entries, lang = "es" }: Props) {
+  const t = useT(lang);
   const [metadata, setMetadata] = useState<Record<string, GenreMedia>>({});
   const [selected, setSelected] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -172,8 +173,8 @@ export default function GenresView({ entries, lang = "es" }: Props) {
       {!selectedGenre ? (
         <>
           <div className="genres-meta">
-            <span>{loading ? "Construyendo mapa…" : catalog.length + " géneros"}</span>
-            <span>{entries.length} títulos vistos</span>
+            <span>{loading ? t("genres.loadingMap") : t("genres.count").replace("{count}", String(catalog.length))}</span>
+            <span>{t("genres.titlesSeen").replace("{count}", String(entries.length))}</span>
           </div>
 
           <div className="genres-grid">
@@ -191,23 +192,23 @@ export default function GenresView({ entries, lang = "es" }: Props) {
                 }}
               >
                 <span className="genre-name">{genre.name}</span>
-                <span className="genre-count">{genre.entries.length} títulos</span>
+                <span className="genre-count">{t("genres.titleCount").replace("{count}", String(genre.entries.length))}</span>
               </button>
             ))}
           </div>
         </>
       ) : (
-        <section className="genre-results" aria-label={"Animes de género " + selectedGenre.name}>
+        <section className="genre-results" aria-label={t("genres.resultsLabel").replace("{genre}", selectedGenre.name)}>
           <div className="genre-results-head">
             <div>
-              <span className="genre-results-kicker">Archivo de Ren</span>
+              <span className="genre-results-kicker">{t("genres.archive")}</span>
               <span className="genre-results-title">{selectedGenre.name}</span>
             </div>
-            <span>{selectedGenre.entries.length} títulos</span>
+            <span>{t("genres.titleCount").replace("{count}", String(selectedGenre.entries.length))}</span>
           </div>
 
           {resultsLoading ? (
-            <div className="genre-results-loading" role="status" aria-live="polite">Cargando títulos…</div>
+            <div className="genre-results-loading" role="status" aria-live="polite">{t("genres.loadingTitles")}</div>
           ) : (
             <div className="genre-results-grid">
               {selectedGenre.entries.map((entry, index) => {
@@ -227,7 +228,7 @@ export default function GenresView({ entries, lang = "es" }: Props) {
                     </div>
                     <div className="genre-anime-info">
                       <strong>{media?.title?.romaji || media?.title?.english || entry.title}</strong>
-                      <span>{media?.startDate?.year ? media.startDate.month && media.startDate.day ? new Date(media.startDate.year, media.startDate.month - 1, media.startDate.day).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" }) : String(media.startDate.year) : "Fecha desconocida"} · {entry.format === "MOVIE" || media?.format === "MOVIE" ? "Film" : "Series"}</span>
+                      <span>{media?.startDate?.year ? media.startDate.month && media.startDate.day ? new Date(media.startDate.year, media.startDate.month - 1, media.startDate.day).toLocaleDateString(lang === "en" ? "en-GB" : "es-ES", { day: "numeric", month: "long", year: "numeric" }) : String(media.startDate.year) : t("genres.unknownDate")} · {entry.format === "MOVIE" || media?.format === "MOVIE" ? t("detail.film") : t("detail.series")}</span>
                     </div>
                   </a>
                 );
@@ -238,7 +239,7 @@ export default function GenresView({ entries, lang = "es" }: Props) {
       )}
 
       {!loading && catalog.length === 0 && (
-        <p className="genres-empty">No hemos podido recuperar los géneros de tu colección.</p>
+        <p className="genres-empty">{t("genres.error")}</p>
       )}
 
       <style>{`
