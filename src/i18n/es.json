@@ -168,5 +168,6 @@
   "favorites.loadMoreCount": "Cargar más · {shown} / {total}",
   "ghibli.loading": "Abriendo el archivo…",
   "ghibli.openFilm": "Abrir {title}",
-  "ghibli.watched": "VISTA"
+  "ghibli.watched": "VISTA",
+  "ghibli.storyLoading": "Recordando el viaje…"
 }
