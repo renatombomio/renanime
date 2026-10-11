@@ -327,6 +327,7 @@ const joinedDate = profile.created_at
 
 
 <script>
+  const isEnglish = document.documentElement.lang === "en";
   const logoutButton = document.querySelector<HTMLButtonElement>("#logout-button");
 
   logoutButton?.addEventListener("click", async () => {
