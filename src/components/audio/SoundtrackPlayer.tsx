@@ -94,7 +94,8 @@ function formatTime(value: number) {
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
-export default function SoundtrackPlayer({ lang }: { lang: Lang }) {\n  const t = useT(lang);
+export default function SoundtrackPlayer({ lang }: { lang: Lang }) {
+  const t = useT(lang);
   const audioRef = useRef<HTMLAudioElement>(null);
   const saveTimerRef = useRef<number | null>(null);
   const settingsRef = useRef({ enabled: false, volume: DEFAULT_VOLUME, muted: false, shuffle: false, repeat: "all" as RepeatMode });
