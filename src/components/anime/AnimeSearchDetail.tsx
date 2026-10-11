@@ -70,7 +70,8 @@ interface Props {
 
 const RED_TURTLE_LIBRARY_ID = "ghibli-red-turtle";
 
-export default function AnimeSearchDetail({ variant = "default", lang = "es" }: Props){\n const t=useT(lang);
+export default function AnimeSearchDetail({ variant = "default", lang = "es" }: Props){
+ const t=useT(lang);
  const params=new URLSearchParams(typeof window!=="undefined" ? window.location.search : "");
  const idParam=params.get("id");
  const id=idParam ? Number(idParam) : NaN;
@@ -133,7 +134,7 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
  const banner=media.bannerImage||image;
  const synopsis=media.description?cleanDescription(media.description):"";
  const hasSynopsis=synopsis.replace(/[\s\\n]+/g,"").length>0;
- const translateSynopsis=async()=>{if(!media.description||translating)return;setTranslating(true);setTranslated(await translate(media.description));setTranslating(false)};
+ const translateSynopsis=async()=>{if(lang==="en"||!media.description||translating)return;setTranslating(true);setTranslated(await translate(media.description,lang));setTranslating(false)};
 
  return <div className={"anime-detail" + (from === "ghibli" ? " anime-detail--ghibli" : "")}>
   <style>{`
