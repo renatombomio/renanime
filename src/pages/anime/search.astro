@@ -23,11 +23,11 @@ const detailEntry = localEntry ?? (id && Number.isInteger(numericId) && numericI
   <Navbar variant={isGhibli ? "ghibli" : "default"} />
   <main id="main-content" class="anime-detail-page">
     {isGhibli ? (
-      <AnimeSearchDetail variant="ghibli" client:load />
+      <AnimeSearchDetail variant="ghibli" lang={Astro.locals.lang} client:load />
     ) : detailEntry ? (
-      <AnimeDetail entry={detailEntry} client:load />
+      <AnimeDetail entry={detailEntry} lang={Astro.locals.lang} client:load />
     ) : (
-      <AnimeSearchDetail client:load />
+      <AnimeSearchDetail lang={Astro.locals.lang} client:load />
     )}
   </main>
   <Footer />
