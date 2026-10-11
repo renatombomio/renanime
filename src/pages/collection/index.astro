@@ -21,7 +21,7 @@ const t = useT(Astro.locals.lang);
       />
     </div>
 
-    <section class="collection-content" aria-label="Mi colección de anime">
+    <section class="collection-content" aria-label={Astro.locals.lang === "en" ? "My anime collection" : "Mi colección de anime"}>
       <PersonalLibraryView mode="WATCHED" lang={Astro.locals.lang} client:load />
     </section>
   </main>
