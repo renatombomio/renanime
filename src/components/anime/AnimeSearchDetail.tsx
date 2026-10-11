@@ -268,7 +268,7 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
   </section>
   <section className="anime-detail-info">
    <div><span className="anime-detail-label">{t("detail.information")}</span><strong>{media.studios?.nodes?.map(studio=>studio.name).join(" · ")||t("detail.studioUnavailable")}</strong></div>
-   <div><span className="anime-detail-label">{t("detail.format")}</span><strong>{media.format==="MOVIE"?"Película":"Serie"}</strong></div>
+   <div><span className="anime-detail-label">{t("detail.format")}</span><strong>{media.format==="MOVIE"?t("detail.film"):t("detail.series")}</strong></div>
   </section>
  </div>;
 }
