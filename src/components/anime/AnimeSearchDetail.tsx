@@ -213,7 +213,7 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
     <div className={"anime-detail-layout"+(title.length>24?" has-long-title":"")}>
      <div className="anime-detail-poster-column">
       <div className="anime-detail-poster">{image?<img src={image} alt={title}/>:<div className="anime-detail-placeholder">RENANIME</div>}</div>
-      <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id > 0 ? media.id : RED_TURTLE_LIBRARY_ID} /></div>
+      <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id > 0 ? media.id : RED_TURTLE_LIBRARY_ID} lang={lang} /></div>
      </div>
 
      <div className="anime-detail-copy">
