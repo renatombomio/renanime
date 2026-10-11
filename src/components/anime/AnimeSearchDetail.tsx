@@ -23,7 +23,8 @@ interface Media{
 
 const ENDPOINT="https://graphql.anilist.co";
 
-async function translate(text:string,lang:Lang="es"){\n if(lang==="en") return cleanDescription(text);
+async function translate(text:string,lang:Lang="es"){
+ if(lang==="en") return cleanDescription(text);
  const clean=cleanDescription(text);
  if(!clean)return clean;
  try{
@@ -64,6 +65,7 @@ function getSeasonCount(media: Media){
 
 interface Props {
  variant?: "default" | "ghibli";
+ lang?: Lang;
 }
 
 const RED_TURTLE_LIBRARY_ID = "ghibli-red-turtle";
