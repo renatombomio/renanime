@@ -19,7 +19,7 @@ const collectionEntries = getWatchedLibrary();
     <Hero />
 
     <section class="home-gallery-section" aria-label="Colección de Ren">
-      <HomeGallery entries={collectionEntries} client:load />
+      <HomeGallery entries={collectionEntries} lang={Astro.locals.lang} client:load />
     </section>
   </main>
 
