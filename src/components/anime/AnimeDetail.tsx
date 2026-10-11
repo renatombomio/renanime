@@ -319,7 +319,7 @@ function date(value:Media["startDate"],lang:Lang="es"){
   return new Date(value.year,value.month-1,value.day).toLocaleDateString(lang==="en"?"en-GB":"es-ES",{day:"numeric",month:"long",year:"numeric"});
 }
 
-function format(value:string|null|undefined){return value==="MOVIE"?"Película":value==="TV"?"Serie":value||"Anime";}
+function format(value:string|null|undefined,lang:Lang){if(value==="MOVIE")return lang==="en"?"Movie":"Película";if(value==="TV")return lang==="en"?"Series":"Serie";return value||"Anime";}
 
 export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:Lang}){
  const t=useT(lang);
@@ -378,7 +378,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
        {personal.favorite&&<span className="anime-detail-eyebrow">{t("detail.favorite")}</span>}
        <h1>{title}</h1>
        <div className="anime-detail-meta">
-  <span className="anime-detail-meta-type"><strong>{format(entry.format||media?.format)}</strong></span>
+  <span className="anime-detail-meta-type"><strong>{format(entry.format||media?.format,lang)}</strong></span>
   <span><small>{t("detail.release")}</small><strong>{date(media?.startDate,lang)}</strong></span>
   {media?.format!=="MOVIE"&&media?.episodes&&<span><small>{t("detail.episodes")}</small><strong>{media.episodes}</strong></span>}
   {media?.duration&&<span><small>{media?.format==="MOVIE"?t("detail.duration"):t("detail.durationEpisode")}</small><strong>{media.duration} min</strong></span>}
@@ -394,7 +394,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
        </div>
        {media?.trailer?.id&&media.trailer.site==="youtube"&&<section className="anime-detail-trailer">
         <span className="anime-detail-label">{t("detail.trailer")}</span>
-        <div className="anime-detail-video"><iframe src={"https://www.youtube.com/embed/"+media.trailer.id+"?rel=0"} title={"Tráiler de "+title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
+        <div className="anime-detail-video"><iframe src={"https://www.youtube.com/embed/"+media.trailer.id+"?rel=0"} title={(lang==="en"?"Trailer for ":"Tráiler de ")+title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
        </section>}
        {(() => {
         const seen = new Set<number>();
@@ -409,7 +409,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
           </div>
           <div className="anime-detail-recommendations-track">
             {items.map((item) => {
-              const recTitle=item.title?.romaji||item.title?.english||"Sin título";
+              const recTitle=item.title?.english||item.title?.romaji||t("detail.noTitle");
               const recImage=item.coverImage?.extraLarge||item.coverImage?.large;
               return <a className="anime-detail-recommendation" href={(lang==="en"?"/en":"") + "/anime/" + item.id} key={item.id}>
                 <div className="anime-detail-recommendation-poster">{recImage&&<img src={recImage} alt={recTitle} loading="lazy" />}</div>
@@ -436,7 +436,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
       const candidateTitle=FRANCHISE_MEDIA_ALIASES[candidate.animeId]?candidate.title:(item?.title?.romaji||item?.title?.english||candidate.title);
       return <a className="anime-detail-franchise-card" href={(lang==="en"?"/en":"") + "/anime/"+candidate.animeId} key={candidate.animeId}>
        <div className="anime-detail-franchise-poster">{image?<img src={image} alt=""/>:<div/>}</div>
-       <div className="anime-detail-franchise-copy"><strong>{candidateTitle}</strong><span>{candidate.format==="MOVIE"||item?.format==="MOVIE"?"Film":"Series"} · {candidate.state.status==="WATCHED"?"Vista":"Pendiente"}</span></div>
+       <div className="anime-detail-franchise-copy"><strong>{candidateTitle}</strong><span>{candidate.format==="MOVIE"||item?.format==="MOVIE"?(lang==="en"?"Film":"Película"):(lang==="en"?"Series":"Serie")} · {candidate.state.status==="WATCHED"?(lang==="en"?"Watched":"Vista"):(lang==="en"?"Pending":"Pendiente")}</span></div>
       </a>;
     })}
    </div>
@@ -450,7 +450,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
       const label=relation.relationType==="SEQUEL"?t("detail.sequel"):relation.relationType==="PREQUEL"?t("detail.prequel"):relation.relationType==="SIDE_STORY"?t("detail.sideStory"):relation.relationType==="SPIN_OFF"?t("detail.spinOff"):relation.relationType==="ALTERNATIVE"?t("detail.alternative"):relation.relationType==="PARENT"?t("detail.main"):relation.relationType==="ADAPTATION"?t("detail.adaptation"):t("detail.relatedLabel");
       return <a className="anime-detail-related-card" href={(lang==="en"?"/en":"") + "/anime/" + node.id} key={node.id+"-"+index}>
         <div className="anime-detail-related-poster">{node.coverImage?.extraLarge||node.coverImage?.large?<img src={node.coverImage.extraLarge||node.coverImage.large||""} alt=""/>:<div/>}</div>
-        <div className="anime-detail-related-copy"><strong>{node.title?.romaji||node.title?.english||"Sin título"}</strong><span>{label} · {node.format==="MOVIE"?t("detail.film"):node.format==="OVA"?"OVA":node.format==="SPECIAL"?t("detail.special"):t("detail.series")}</span></div>
+        <div className="anime-detail-related-copy"><strong>{node.title?.english||node.title?.romaji||t("detail.noTitle")}</strong><span>{label} · {node.format==="MOVIE"?t("detail.film"):node.format==="OVA"?"OVA":node.format==="SPECIAL"?t("detail.special"):t("detail.series")}</span></div>
       </a>;
     })}
    </div>
