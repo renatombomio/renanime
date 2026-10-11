@@ -158,7 +158,7 @@ export default function GhibliStory({ entries, totalFilms, watchedFilms, lang = 
         <div className="ghs-intro-copy">
           <p className="ghs-kicker">{lang === "en" ? "01 / My story with Ghibli" : "01 / Mi historia con Ghibli"}</p>
           <p>
-            <strong>{lang === "en" ? "Spirited Away was the first anime film I ever watched. Since then, Ghibli has become a way of seeing anime: nature, imagination, music, and small stories that stay with you." : "El viaje de Chihiro fue la primera película de anime que vi. Desde entonces, Ghibli se convirtió en una forma de mirar el anime: naturaleza, imaginación, música y pequeñas historias que se quedan contigo."}
+            <strong>{lang === "en" ? "Spirited Away was the first anime film I ever watched. Since then, Ghibli has become a way of seeing anime: nature, imagination, music, and small stories that stay with you." : "El viaje de Chihiro fue la primera película de anime que vi. Desde entonces, Ghibli se convirtió en una forma de mirar el anime: naturaleza, imaginación, música y pequeñas historias que se quedan contigo."}</strong>
           </p>
         </div>
         <div className="ghs-intro-art">
