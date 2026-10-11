@@ -127,7 +127,7 @@ export default function FavoritesView({ entries, recommendations, lang = "es" }:
 
   const renderCard = (entry: FavoriteEntry, index: number, compact = false) => {
     const item = media[entry.animeId];
-    const title = item?.title.romaji || item?.title.english || entry.title;
+    const title = lang === "en" ? (item?.title.english || item?.title.romaji || entry.title) : (item?.title.romaji || item?.title.english || entry.title);
     const year = item?.startDate?.year;
 
     return (
