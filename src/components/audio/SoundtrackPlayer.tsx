@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./SoundtrackPlayer.css";
+import { useT, type Lang } from "../../i18n";
 
 type PlaylistKey = "hero" | "ghibli";
 type RepeatMode = "off" | "all" | "one";
@@ -93,7 +94,7 @@ function formatTime(value: number) {
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
-export default function SoundtrackPlayer() {
+export default function SoundtrackPlayer({ lang }: { lang: Lang }) {\n  const t = useT(lang);
   const audioRef = useRef<HTMLAudioElement>(null);
   const saveTimerRef = useRef<number | null>(null);
   const settingsRef = useRef({ enabled: false, volume: DEFAULT_VOLUME, muted: false, shuffle: false, repeat: "all" as RepeatMode });
@@ -465,7 +466,7 @@ export default function SoundtrackPlayer() {
   return (
     <aside
       className={`soundtrack-player ${playing ? "is-playing" : ""} ${open ? "is-open" : ""}`}
-      aria-label="Banda sonora de Renanime"
+      aria-label={t("player.label")}
     >
       <audio ref={audioRef} preload="metadata" aria-hidden="true" />
 
@@ -475,7 +476,7 @@ export default function SoundtrackPlayer() {
             className="soundtrack-player__main-button"
             type="button"
             onClick={togglePlayback}
-            aria-label={playing ? "Pausar música" : "Reproducir música"}
+            aria-label={playing ? t("player.pause") : t("player.play")}
             aria-pressed={playing}
           >
             <span className="soundtrack-player__glyph" aria-hidden="true">
@@ -483,7 +484,7 @@ export default function SoundtrackPlayer() {
                 <span className="soundtrack-player__bars"><i /><i /><i /><i /></span>
               ) : "♪"}
             </span>
-            <span className="soundtrack-player__status">{playing ? "MUSIC ON" : "MUSIC OFF"}</span>
+            <span className="soundtrack-player__status">{playing ? t("player.musicOn") : t("player.musicOff")}</span>
           </button>
 
           <button
@@ -493,14 +494,14 @@ export default function SoundtrackPlayer() {
             aria-expanded={open}
             aria-controls="renanime-soundtrack-panel"
           >
-            <span className="soundtrack-player__track-label">NOW PLAYING</span>
+            <span className="soundtrack-player__track-label">{t("player.nowPlaying")}</span>
             <span className="soundtrack-player__track-title">{track.title}</span>
           </button>
 
           <div className="soundtrack-player__quick">
-            <button type="button" onClick={() => changeTrack(-1)} aria-label="Canción anterior">←</button>
-            <button type="button" onClick={() => changeTrack(1)} aria-label="Siguiente canción">→</button>
-            <button type="button" onClick={() => setOpen((value) => !value)} aria-label={open ? "Cerrar reproductor" : "Abrir reproductor"} aria-expanded={open}>
+            <button type="button" onClick={() => changeTrack(-1)} aria-label={t("player.previous")}>←</button>
+            <button type="button" onClick={() => changeTrack(1)} aria-label={t("player.next")}>→</button>
+            <button type="button" onClick={() => setOpen((value) => !value)} aria-label={open ? t("player.close") : t("player.open")} aria-expanded={open}>
               {open ? "×" : "☰"}
             </button>
           </div>
@@ -515,7 +516,7 @@ export default function SoundtrackPlayer() {
             step="0.1"
             value={Math.min(position, duration || 0)}
             onChange={(event) => seekTo(Number(event.target.value))}
-            aria-label="Posición de la canción"
+            aria-label={t("player.position")}
             style={{ "--soundtrack-progress": `${progress}%` } as React.CSSProperties}
           />
           <span>{formatTime(duration)}</span>
@@ -526,13 +527,13 @@ export default function SoundtrackPlayer() {
             <div className="soundtrack-player__panel-head">
               <div>
                 <span className="soundtrack-player__eyebrow">
-                  {playlistKey === "ghibli" ? "GHIBLI SOUNDTRACK" : "RENANIME SOUNDTRACK"}
+                  {playlistKey === "ghibli" ? t("player.ghibli") : t("player.renanime")}
                 </span>
-                <strong>{tracks.length} tracks</strong>
+                <strong>{tracks.length} {t("player.tracks")}</strong>
               </div>
               <div className="soundtrack-player__modes">
-                <button className={shuffle ? "is-active" : ""} type="button" onClick={toggleShuffle} aria-pressed={shuffle} aria-label="Activar reproducción aleatoria">🔀</button>
-                <button className={repeat !== "off" ? "is-active" : ""} type="button" onClick={cycleRepeat} aria-label={`Repetición: ${repeat}`}>
+                <button className={shuffle ? "is-active" : ""} type="button" onClick={toggleShuffle} aria-pressed={shuffle} aria-label={t("player.shuffle")}>🔀</button>
+                <button className={repeat !== "off" ? "is-active" : ""} type="button" onClick={cycleRepeat} aria-label={`${t("player.repeat")}: ${repeat}`}>
                   {repeat === "one" ? "1" : "↻"}
                 </button>
               </div>
@@ -554,7 +555,7 @@ export default function SoundtrackPlayer() {
             </div>
 
             <div className="soundtrack-player__footer">
-              <button type="button" onClick={toggleMute} aria-label={muted ? "Activar sonido" : "Silenciar"}>
+              <button type="button" onClick={toggleMute} aria-label={muted ? t("player.unmute") : t("player.mute")}>
                 {muted || volume === 0 ? "MUTE" : "VOL"}
               </button>
               <input
@@ -564,16 +565,16 @@ export default function SoundtrackPlayer() {
                 step="0.01"
                 value={muted ? 0 : volume}
                 onChange={(event) => changeVolume(Number(event.target.value))}
-                aria-label="Volumen"
+                aria-label={t("player.volume")}
                 style={{ "--soundtrack-volume": `${(muted ? 0 : volume) * 100}%` } as React.CSSProperties}
               />
               <span>{Math.round((muted ? 0 : volume) * 100)}%</span>
             </div>
 
             <div className="soundtrack-player__shortcuts">
-              <span>SPACE play/pause</span>
-              <span>← → ±10s</span>
-              <span>M mute</span>
+              <span>{t("player.space")}</span>
+              <span>{t("player.seek")}</span>
+              <span>{t("player.m")}</span>
             </div>
           </div>
         )}
