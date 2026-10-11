@@ -129,7 +129,7 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
  if(!media)return <div className="anime-search-detail-state">{t("detail.notFound")}</div>;
 
  const from=variant === "ghibli" ? "ghibli" : params.get("from");
- const title=idParam==="movie-063" ? "Kimetsu no Yaiba: Mugen-jō-hen" : from==="ghibli" ? (media.title?.english||media.title?.romaji||t("detail.noTitle")) : (media.title?.romaji||media.title?.english||localEntry?.title||"Sin título");
+ const title=idParam==="movie-063" ? "Kimetsu no Yaiba: Mugen-jō-hen" : from==="ghibli" ? (media.title?.english||media.title?.romaji||t("detail.noTitle")) : (media.title?.romaji||media.title?.english||localEntry?.title||t("detail.noTitle"));
  const image=media.coverImage?.extraLarge||media.coverImage?.large;
  const banner=media.bannerImage||image;
  const synopsis=media.description?cleanDescription(media.description):"";
@@ -252,7 +252,7 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
         </div>
         <div className="anime-detail-recommendations-track">
          {items.map((item) => {
-          const recTitle=item.title?.romaji||item.title?.english||"Sin título";
+          const recTitle=item.title?.romaji||item.title?.english||t("detail.noTitle");
           const recImage=item.coverImage?.extraLarge||item.coverImage?.large;
           return <a className="anime-detail-recommendation" href={`${lang === "en" ? "/en" : ""}/anime/search?id=${item.id}&from=${from==="ghibli"?"ghibli":"anime"}`} key={item.id}>
            <div className="anime-detail-recommendation-poster">{recImage&&<img src={recImage} alt={recTitle} loading="lazy" />}</div>
