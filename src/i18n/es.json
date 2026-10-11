@@ -155,5 +155,15 @@
   "library.pageDescription": "El archivo de las historias que ya forman parte de tu recorrido. Aquí no está Ren: este espacio empieza a ser tuyo desde el primer anime que ves.",
   "pending.pageTitle": "Mi lista",
   "pending.pageHeading": "Mi lista",
-  "pending.pageDescription": "Las historias que has guardado para después. Este espacio es tuyo: descubre algo, guárdalo y vuelve cuando sea el momento."
+  "pending.pageDescription": "Las historias que has guardado para después. Este espacio es tuyo: descubre algo, guárdalo y vuelve cuando sea el momento.",
+  "genres.loadingMap": "Construyendo mapa…",
+  "genres.count": "{count} géneros",
+  "genres.titlesSeen": "{count} títulos vistos",
+  "genres.titleCount": "{count} títulos",
+  "genres.archive": "Archivo de Ren",
+  "genres.loadingTitles": "Cargando títulos…",
+  "genres.resultsLabel": "Animes del género {genre}",
+  "genres.unknownDate": "Fecha desconocida",
+  "genres.error": "No hemos podido recuperar los géneros de tu colección.",
+  "favorites.loadMoreCount": "Cargar más · {shown} / {total}"
 }
