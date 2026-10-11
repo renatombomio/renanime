@@ -8,6 +8,6 @@ const pageTitle = lang === "en" ? "Ghibli film — Renanime's Gallery" : "Pelíc
 ---
 <Layout title={pageTitle} description={lang === "en" ? "Discover the story, details and recommendations behind a Studio Ghibli film." : "Descubre la historia, los detalles y las recomendaciones de una película de Studio Ghibli."}>
   <Navbar variant="ghibli" />
-  <main id="main-content" class="anime-detail-page"><AnimeSearchDetail variant="ghibli" client:load /></main>
+  <main id="main-content" class="anime-detail-page"><AnimeSearchDetail variant="ghibli" lang={lang} client:load /></main>
   <Footer />
 </Layout>
