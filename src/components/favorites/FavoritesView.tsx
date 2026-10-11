@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
-import type { Lang } from "../../i18n";
+import { useT, type Lang } from "../../i18n";
 
 interface FavoriteEntry {
   animeId: string;
@@ -24,7 +24,7 @@ interface Props {
 
 const ANILIST_BATCH_SIZE = 20;
 
-export default function FavoritesView({ entries, recommendations, lang = "es" }: Props) {
+export default function FavoritesView({ entries, recommendations, lang = "es" }: Props) {\n  const t = useT(lang);
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(true);
   const [visibleFavorites, setVisibleFavorites] = useState(10);
@@ -131,7 +131,7 @@ export default function FavoritesView({ entries, recommendations, lang = "es" }:
 
     return (
       <article className={"favorite-card" + (compact ? " favorite-card--recommendation" : "")} key={entry.animeId}>
-        <a href={`${lang === "en" ? "/en" : ""}/anime/${entry.animeId}`} aria-label={"Ver " + title}>
+        <a href={`${lang === "en" ? "/en" : ""}/anime/${entry.animeId}`} aria-label={t("favorites.view").replace("{title}", title)}>
           <div className="favorite-media">
             {item?.coverImage?.extraLarge || item?.coverImage?.large ? (
               <img
@@ -161,12 +161,12 @@ export default function FavoritesView({ entries, recommendations, lang = "es" }:
       <section className="favorites-section" aria-labelledby="absolute-favorites-title">
         <div className="favorites-intro">
           <div>
-            <span className="favorites-note">Favoritos absolutos</span>
-            <h2 id="absolute-favorites-title">Los que siempre vuelven.</h2>
+            <span className="favorites-note">{t("favorites.absolute")}</span>
+            <h2 id="absolute-favorites-title">{t("favorites.returning")}</h2>
           </div>
-          <div className="favorites-controls" role="group" aria-label="Navegar favoritos">
-            <button type="button" onClick={() => scroll(favoriteTrackRef, "prev")} aria-label="Favoritos anteriores">←</button>
-            <button type="button" onClick={() => scroll(favoriteTrackRef, "next")} aria-label="Siguientes favoritos">→</button>
+          <div className="favorites-controls" role="group" aria-label={t("favorites.navigate")}>
+            <button type="button" onClick={() => scroll(favoriteTrackRef, "prev")} aria-label={t("favorites.previous")}>←</button>
+            <button type="button" onClick={() => scroll(favoriteTrackRef, "next")} aria-label={t("favorites.next")}>→</button>
           </div>
         </div>
 
@@ -175,7 +175,7 @@ export default function FavoritesView({ entries, recommendations, lang = "es" }:
             {entries.slice(0, visibleFavorites).map((entry, index) => renderCard(entry, index))}
           </div>
         ) : (
-          <div className="favorites-empty" role="status">Todavía no hay favoritos en este archivo.</div>
+          <div className="favorites-empty" role="status">{t("favorites.empty")}</div>
         )}
 
         {visibleFavorites < entries.length && (
@@ -193,17 +193,17 @@ export default function FavoritesView({ entries, recommendations, lang = "es" }:
       <section className="favorites-section favorites-section--recommendations" aria-labelledby="recommended-title">
         <div className="favorites-intro">
           <div>
-            <span className="favorites-note">Mi selección para ti</span>
-            <h2 id="recommended-title">Recomendados.</h2>
+            <span className="favorites-note">{t("favorites.forYou")}</span>
+            <h2 id="recommended-title">{t("favorites.recommended")}</h2>
           </div>
-          <div className="favorites-controls" role="group" aria-label="Navegar recomendaciones">
-            <button type="button" onClick={() => scroll(recommendationTrackRef, "prev")} aria-label="Recomendaciones anteriores">←</button>
-            <button type="button" onClick={() => scroll(recommendationTrackRef, "next")} aria-label="Siguientes recomendaciones">→</button>
+          <div className="favorites-controls" role="group" aria-label={t("favorites.navigateRecommendations")}>
+            <button type="button" onClick={() => scroll(recommendationTrackRef, "prev")} aria-label={t("favorites.previousRecommendations")}>←</button>
+            <button type="button" onClick={() => scroll(recommendationTrackRef, "next")} aria-label={t("favorites.nextRecommendations")}>→</button>
           </div>
         </div>
 
         <p className="favorites-recommendation-copy">
-          Historias que forman parte de mi recorrido y que quiero que descubras.
+          {t("favorites.copy")}
         </p>
 
         {recommendations.length ? (
@@ -211,7 +211,7 @@ export default function FavoritesView({ entries, recommendations, lang = "es" }:
             {recommendations.slice(0, visibleRecommendations).map((entry, index) => renderCard(entry, index, true))}
           </div>
         ) : (
-          <div className="favorites-empty" role="status">Todavía no hay recomendaciones en este archivo.</div>
+          <div className="favorites-empty" role="status">{t("favorites.emptyRecommendations")}</div>
         )}
 
         {visibleRecommendations < recommendations.length && (
@@ -226,7 +226,7 @@ export default function FavoritesView({ entries, recommendations, lang = "es" }:
         )}
       </section>
 
-      {loading && <span className="favorites-loading">Cargando archivo…</span>}
+      {loading && <span className="favorites-loading">{t("favorites.loading")}</span>}
 
       <style>{`
         .favorites-empty {
