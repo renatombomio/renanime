@@ -46,7 +46,8 @@ function formatDate(date:Media["startDate"]){
 function titleOf(media?:Media|null){return media?.title?.romaji||media?.title?.english||"Anime";}
 function isMovie(media?:Media|null){return media?.format === "MOVIE";}
 
-export default function PersonalLibraryView({mode,lang="es"}:Props){\n  const t=useT(lang);
+export default function PersonalLibraryView({mode,lang="es"}:Props){
+  const t=useT(lang);
   const [entries,setEntries]=useState<PersonalAnimeEntry[]>([]);
   const [media,setMedia]=useState<Record<string,Media|null>>({});
   const [loading,setLoading]=useState(true);
