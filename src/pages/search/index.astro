@@ -14,7 +14,7 @@ import SearchView from "../../components/search/SearchView";
         <h1>Buscar anime</h1>
         <p>Encuentra una historia y entra en su ficha.</p>
       </div>
-      <SearchView client:load />
+      <SearchView lang={Astro.locals.lang} client:load />
     </div>
   </main>
   <Footer />
