@@ -1,6 +1,7 @@
 import {useEffect,useState} from "react";
 import PersonalLibraryActions from "../personal-library/PersonalLibraryActions";
 import { getLibrary } from "../../data/library";
+import { useT, type Lang } from "../../i18n";
 
 interface Media{
  id:number;
@@ -22,7 +23,7 @@ interface Media{
 
 const ENDPOINT="https://graphql.anilist.co";
 
-async function translate(text:string){
+async function translate(text:string,lang:Lang="es"){\n if(lang==="en") return cleanDescription(text);
  const clean=cleanDescription(text);
  if(!clean)return clean;
  try{
@@ -44,10 +45,10 @@ function cleanDescription(text:string){
    .replace(/\n{3,}/g,"\n\n")
    .trim();
 }
-function date(value:Media["startDate"]){
- if(!value?.year)return "Fecha desconocida";
+function date(value:Media["startDate"],lang:Lang="es"){
+ if(!value?.year)return lang==="en"?"Unknown date":"Fecha desconocida";
  if(!value.month||!value.day)return String(value.year);
- return new Date(value.year,value.month-1,value.day).toLocaleDateString("es-ES",{day:"numeric",month:"long",year:"numeric"});
+ return new Date(value.year,value.month-1,value.day).toLocaleDateString(lang==="en"?"en-GB":"es-ES",{day:"numeric",month:"long",year:"numeric"});
 }
 
 
@@ -67,7 +68,7 @@ interface Props {
 
 const RED_TURTLE_LIBRARY_ID = "ghibli-red-turtle";
 
-export default function AnimeSearchDetail({ variant = "default" }: Props){
+export default function AnimeSearchDetail({ variant = "default", lang = "es" }: Props){\n const t=useT(lang);
  const params=new URLSearchParams(typeof window!=="undefined" ? window.location.search : "");
  const idParam=params.get("id");
  const id=idParam ? Number(idParam) : NaN;
