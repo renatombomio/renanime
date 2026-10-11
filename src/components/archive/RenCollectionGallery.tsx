@@ -192,11 +192,11 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
               <span aria-hidden="true">⌄</span>
             </button>
             {sortOpen && (
-              <div className="archive-sort-menu" role="listbox" aria-label="Ordenar archivo">
+              <div className="archive-sort-menu" role="listbox" aria-label={t("archive.sortLabel")}>
                 {([
-                  ["ADDED", "Añadidos"],
-                  ["TITLE", "Título A–Z"],
-                  ["YEAR", "Más recientes"],
+                  ["ADDED", t("archive.added")],
+                  ["TITLE", t("archive.titleSort")],
+                  ["YEAR", t("archive.recent")],
                 ] as const).map(([value, label]) => (
                   <button
                     key={value}
@@ -245,8 +245,8 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
 
       {!page.length && !loading && (
         <div className="archive-empty">
-          <strong>No hay resultados en este filtro.</strong>
-          <span>Prueba otra búsqueda o cambia el filtro.</span>
+          <strong>{t("archive.emptyTitle")}</strong>
+          <span>{t("archive.emptyCopy")}</span>
         </div>
       )}
 
