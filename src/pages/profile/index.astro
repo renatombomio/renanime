@@ -76,8 +76,8 @@ const joinedDate = profile.created_at
       </section>
 
       <div class="profile-actions">
-        <a href="/collection/">Ver mi colección</a>
-        <a href="/pending/">Ver mi lista</a>
+        <a href={localizedPath(Astro.locals.lang, "/collection/")}>Ver mi colección</a>
+        <a href={localizedPath(Astro.locals.lang, "/pending/")}>Ver mi lista</a>
         <button id="logout-button" type="button">Cerrar sesión</button>
       </div>
     </section>
