@@ -168,5 +168,6 @@
   "favorites.loadMoreCount": "Load more · {shown} / {total}",
   "ghibli.loading": "Opening the archive…",
   "ghibli.openFilm": "Open {title}",
-  "ghibli.watched": "WATCHED"
+  "ghibli.watched": "WATCHED",
+  "ghibli.storyLoading": "Remembering the journey…"
 }
