@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { GhibliStoryEntry } from "../../data/ghibli";
+import { useT, type Lang } from "../../i18n";
 
 interface Media {
   id: number;
@@ -9,7 +10,8 @@ interface Media {
 
 const accents = ["pink", "blue", "lime", "coral", "teal", "red", "sky"];
 
-export default function GhibliStory({ entries, totalFilms, watchedFilms }: { entries: GhibliStoryEntry[]; totalFilms: number; watchedFilms: number }) {
+export default function GhibliStory({ entries, totalFilms, watchedFilms, lang = "es" }: { entries: GhibliStoryEntry[]; totalFilms: number; watchedFilms: number; lang?: Lang }) {
+  const t = useT(lang);
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(true);
 
@@ -67,7 +69,7 @@ export default function GhibliStory({ entries, totalFilms, watchedFilms }: { ent
   }, [loading]);
 
   if (loading) {
-    return <div className="ghs-loading" role="status" aria-live="polite">Recordando el viaje…</div>;
+    return <div className="ghs-loading" role="status" aria-live="polite">{t("ghibli.storyLoading")}</div>;
   }
 
   return (
@@ -145,26 +147,24 @@ export default function GhibliStory({ entries, totalFilms, watchedFilms }: { ent
 
       <header className="ghs-intro">
         <div className="ghs-intro-copy">
-          <p className="ghs-kicker">01 / Mi historia con Ghibli</p>
+          <p className="ghs-kicker">{lang === "en" ? "01 / My story with Ghibli" : "01 / Mi historia con Ghibli"}</p>
           <p>
-            <strong>El viaje de Chihiro</strong> fue la primera película de anime que vi.
-            Desde entonces, Ghibli se convirtió en una forma de mirar el anime: naturaleza,
-            imaginación, música y pequeñas historias que se quedan contigo.
+            <strong>{lang === "en" ? "Spirited Away was the first anime film I ever watched. Since then, Ghibli has become a way of seeing anime: nature, imagination, music, and small stories that stay with you." : "El viaje de Chihiro fue la primera película de anime que vi. Desde entonces, Ghibli se convirtió en una forma de mirar el anime: naturaleza, imaginación, música y pequeñas historias que se quedan contigo."}
           </p>
         </div>
         <div className="ghs-intro-art">
           <img
             src="https://www.ghibli.jp/gallery/chihiro001.jpg"
-            alt="Escena de Spirited Away"
+            alt={lang === "en" ? "Scene from Spirited Away" : "Escena de El viaje de Chihiro"}
             loading="eager"
             decoding="async"
           />
           <span className="ghs-index"><b>01</b> / 07</span>
-          <span className="ghs-intro-note">2001 — ahora</span>
+          <span className="ghs-intro-note">{lang === "en" ? "2001 — present" : "2001 — ahora"}</span>
         </div>
       </header>
 
-      <div className="ghs-route" aria-hidden="true"><span>Mi viaje</span><i /><span>2001 — ahora</span></div>
+      <div className="ghs-route" aria-hidden="true"><span>{lang === "en" ? "My journey" : "Mi viaje"}</span><i /><span>{lang === "en" ? "2001 — present" : "2001 — ahora"}</span></div>
 
       <div className="ghs-entries">
         {entries.map((entry, index) => {
@@ -187,8 +187,8 @@ export default function GhibliStory({ entries, totalFilms, watchedFilms }: { ent
                 <p className="ghs-ren">{entry.renText}</p>
                 <div className="ghs-creator">
                   <div className="ghs-creator-label">
-                    <span>La película</span>
-                    <b>Desde la mirada de {entry.director}</b>
+                    <span>{lang === "en" ? "The film" : "La película"}</span>
+                    <b>{lang === "en" ? "Through the eyes of " + entry.director : "Desde la mirada de " + entry.director}</b>
                   </div>
                   <p>{entry.creatorContext}</p>
                 </div>
@@ -199,9 +199,9 @@ export default function GhibliStory({ entries, totalFilms, watchedFilms }: { ent
       </div>
 
       <footer className="ghs-end">
-        <span>El viaje continúa</span>
-        <p>Algunas ya son recuerdos.<br /><em>Otras todavía me esperan.</em></p>
-        <small>{totalFilms} películas · {watchedFilms} vistas · {totalFilms - watchedFilms} por descubrir</small>
+        <span>{lang === "en" ? "The journey continues" : "El viaje continúa"}</span>
+        <p>{lang === "en" ? <>Some are already memories.<br /><em>Others are still waiting for me.</em></> : <>Algunas ya son recuerdos.<br /><em>Otras todavía me esperan.</em></>}</p>
+        <small>{lang === "en" ? totalFilms + " films · " + watchedFilms + " watched · " + (totalFilms - watchedFilms) + " to discover" : totalFilms + " películas · " + watchedFilms + " vistas · " + (totalFilms - watchedFilms) + " por descubrir"}</small>
       </footer>
     </section>
   );
