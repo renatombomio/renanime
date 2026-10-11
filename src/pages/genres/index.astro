@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import { useT } from "../../i18n";
 import Navbar from "../../components/layout/Navbar.astro";
 import Footer from "../../components/layout/Footer.astro";
 import Container from "../../components/ui/Container.astro";
@@ -8,16 +9,17 @@ import GenresView from "../../components/genres/GenresView";
 import { getWatchedLibrary } from "../../data/library";
 
 const entries = getWatchedLibrary();
+const t = useT(Astro.locals.lang);
 ---
 
-<Layout title="Géneros de Ren — Renanime's Gallery">
+<Layout title={`${t("genres.pageTitle")} — Renanime's Gallery`}>
   <Navbar />
   <main id="main-content" class="genres-page">
     <Container>
       <SectionHeader
         variant="ren"
-        title="Géneros de Ren"
-        description="Un mapa de lo que he visto. No es una lista universal de géneros: cada palabra aquí existe porque forma parte de mi colección."
+        title={t("genres.heading")}
+        description={t("genres.description")}
       />
       <div class="genres-page-content">
         <GenresView entries={entries} lang={Astro.locals.lang} client:load />

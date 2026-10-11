@@ -3,16 +3,18 @@ import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/layout/Navbar.astro";
 import Footer from "../../components/layout/Footer.astro";
 import SearchView from "../../components/search/SearchView";
+import { useT } from "../../i18n";
+const t = useT(Astro.locals.lang);
 ---
 
-<Layout title="Buscar — Renanime's Gallery">
+<Layout title={`${t("search.pageTitle")} — Renanime's Gallery`}>
   <Navbar />
   <main id="main-content" class="search-page">
     <div class="search-page-inner">
       <div class="search-header">
-        <span>Explorar</span>
-        <h1>Buscar anime</h1>
-        <p>Encuentra una historia y entra en su ficha.</p>
+        <span>{t("search.eyebrow")}</span>
+        <h1>{t("search.heading")}</h1>
+        <p>{t("search.description")}</p>
       </div>
       <SearchView lang={Astro.locals.lang} client:load />
     </div>

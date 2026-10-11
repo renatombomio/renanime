@@ -1,5 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import { useT } from "../../i18n";
 import Navbar from "../../components/layout/Navbar.astro";
 import Footer from "../../components/layout/Footer.astro";
 import Container from "../../components/ui/Container.astro";
@@ -9,16 +10,17 @@ import { getFavoritesLibrary, getRecommendedLibrary } from "../../data/library";
 
 const entries = getFavoritesLibrary();
 const recommendations = getRecommendedLibrary().filter((entry) => !entry.state.favorite);
+const t = useT(Astro.locals.lang);
 ---
 
-<Layout title="Favoritos de Ren — Renanime's Gallery">
+<Layout title={`${t("favorites.pageTitle")} — Renanime's Gallery`}>
   <Navbar />
   <main id="main-content" class="favorites-page">
     <Container>
       <SectionHeader
         variant="ren"
-        title="Favoritos de Ren"
-        description="No son simplemente los que más me gustan. Son los que dejaron algo detrás: una escena, un personaje, una idea o una sensación a la que siempre termino volviendo."
+        title={t("favorites.pageHeading")}
+        description={t("favorites.pageDescription")}
       />
       <div class="favorites-page-content">
         <FavoritesView entries={entries} recommendations={recommendations} lang={Astro.locals.lang} client:load />

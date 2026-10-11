@@ -1,17 +1,19 @@
 ---
 export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
+import { useT } from "../../i18n";
 import Navbar from "../../components/layout/Navbar.astro";
 import Footer from "../../components/layout/Footer.astro";
 import SectionHeader from "../../components/ui/SectionHeader.astro";
 import PersonalLibraryView from "../../components/personal-library/PersonalLibraryView";
+const t = useT(Astro.locals.lang);
 ---
 
-<Layout title="Mi lista — Renanime's Gallery">
+<Layout title={`${t("pending.pageTitle")} — Renanime's Gallery`}>
   <Navbar />
   <main id="main-content" class="pending-page">
     <div class="pending-header">
-      <SectionHeader variant="ren" title="Mi lista" description="Las historias que has guardado para después. Este espacio es tuyo: descubre algo, guárdalo y vuelve cuando sea el momento." />
+      <SectionHeader variant="ren" title={t("pending.pageHeading")} description={t("pending.pageDescription")} />
     </div>
     <section class="pending-content" aria-label="Anime pendiente">
       <PersonalLibraryView mode="PENDING" lang={Astro.locals.lang} client:load />

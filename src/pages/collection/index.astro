@@ -1,21 +1,23 @@
 ---
 export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
+import { useT } from "../../i18n";
 import Navbar from "../../components/layout/Navbar.astro";
 import Footer from "../../components/layout/Footer.astro";
 import SectionHeader from "../../components/ui/SectionHeader.astro";
 import PersonalLibraryView from "../../components/personal-library/PersonalLibraryView";
+const t = useT(Astro.locals.lang);
 ---
 
-<Layout title="Mi colección — Renanime's Gallery">
+<Layout title={`${t("library.pageTitle")} — Renanime's Gallery`}>
   <Navbar />
 
   <main id="main-content" class="collection-page">
     <div class="collection-header">
       <SectionHeader
         variant="ren"
-        title="Mi colección"
-        description="El archivo de las historias que ya forman parte de tu recorrido. Aquí no está Ren: este espacio empieza a ser tuyo desde el primer anime que ves."
+        title={t("library.pageHeading")}
+        description={t("library.pageDescription")}
       />
     </div>
 

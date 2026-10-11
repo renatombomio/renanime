@@ -3,7 +3,8 @@ import { useT, type Lang } from "../../i18n";
 interface Media { id:number; title?:{romaji?:string|null;english?:string|null}; startDate?:{year?:number|null;month?:number|null;day?:number|null}|null; coverImage?:{extraLarge?:string|null;large?:string|null}; format?:string|null; }
 const PAGE_SIZE=12;
 function formatDate(date:Media["startDate"],lang:Lang){if(!date?.year)return lang==="en"?"Unknown date":"Fecha desconocida";if(!date.month||!date.day)return String(date.year);return new Date(date.year,date.month-1,date.day).toLocaleDateString(lang==="en"?"en-GB":"es-ES",{day:"numeric",month:"long",year:"numeric"});}
-export default function SearchView({lang="es"}:{lang?:Lang}){\n const t=useT(lang);
+export default function SearchView({lang="es"}:{lang?:Lang}){
+ const t=useT(lang);
  const [query,setQuery]=useState(""),[submitted,setSubmitted]=useState(""),[results,setResults]=useState<Media[]>([]),[page,setPage]=useState(1),[hasNext,setHasNext]=useState(false),[loading,setLoading]=useState(false);
  useEffect(()=>{if(!submitted.trim()){setResults([]);setHasNext(false);return;}let cancelled=false;setLoading(true);
  fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query:"query Search($search:String!,$page:Int!,$perPage:Int!){Page(page:$page,perPage:$perPage){pageInfo{hasNextPage} media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} startDate{year month day} coverImage{extraLarge large} format}}}",variables:{search:submitted,page,perPage:PAGE_SIZE}})})
