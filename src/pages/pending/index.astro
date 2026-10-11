@@ -15,7 +15,7 @@ const t = useT(Astro.locals.lang);
     <div class="pending-header">
       <SectionHeader variant="ren" title={t("pending.pageHeading")} description={t("pending.pageDescription")} />
     </div>
-    <section class="pending-content" aria-label="Anime pendiente">
+    <section class="pending-content" aria-label={Astro.locals.lang === "en" ? "Anime on my list" : "Anime pendiente"}>
       <PersonalLibraryView mode="PENDING" lang={Astro.locals.lang} client:load />
     </section>
   </main>
