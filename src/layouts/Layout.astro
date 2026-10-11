@@ -9,8 +9,9 @@ const {
   description = "Galería personal de anime."
 } = Astro.props;
 
-const isGhibli = Astro.url.pathname.startsWith("/ghibli");
-const isAuth = Astro.url.pathname === "/login" || Astro.url.pathname === "/login/";
+const { lang, basePath } = Astro.locals;
+const isGhibli = basePath.startsWith("/ghibli");
+const isAuth = basePath === "/login" || basePath === "/login/";
 
 import "../styles/global.css";
 import { ClientRouter } from "astro:transitions";
@@ -18,7 +19,7 @@ import SoundtrackPlayer from "../components/audio/SoundtrackPlayer";
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
@@ -26,16 +27,13 @@ import SoundtrackPlayer from "../components/audio/SoundtrackPlayer";
     <meta name="theme-color" content={isGhibli ? "#FFF7E8" : "#090909"} />
     <meta name="generator" content={Astro.generator} />
     <ClientRouter />
-    <script>
-      import "../scripts/i18n";
-    </script>
     <title>{title}</title>
   </head>
 
   <body class:list={["texture-grain", isGhibli && "theme-ghibli"]}>
     <a class="skip-link" href="#main-content">Saltar al contenido</a>
     <slot />
-    {!isAuth && <SoundtrackPlayer client:load transition:persist />}
+    {!isAuth && <SoundtrackPlayer client:load transition:persist lang={lang} />}
   </body>
 </html>
 
