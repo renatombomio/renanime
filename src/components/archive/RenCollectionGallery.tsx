@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
-import type { Lang } from "../../i18n";
+import { useT, type Lang } from "../../i18n";
 
 interface Entry {
   animeId: string;
@@ -108,7 +108,7 @@ function isMovie(entry: Entry, media?: Media | null) {
   return (media?.format || entry.format) === "MOVIE";
 }
 
-export default function HomeGallery({ entries, lang = "es" }: Props) {
+export default function HomeGallery({ entries, lang = "es" }: Props) {\n  const t = useT(lang);
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(false);
@@ -138,20 +138,20 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
   }, [entries, visible, sort, filter, query]);
 
   const filteredEntries = useMemo(() => {
-    const normalized = query.trim().toLocaleLowerCase("es");
+    const normalized = query.trim().toLocaleLowerCase(lang);
 
     return entries
       .filter((entry) => {
         const item = media[entry.animeId];
         if (filter === "MOVIES" && !isMovie(entry, item)) return false;
         if (filter === "SERIES" && isMovie(entry, item)) return false;
-        if (normalized && !titleOf(entry, item).toLocaleLowerCase("es").includes(normalized)) return false;
+        if (normalized && !titleOf(entry, item).toLocaleLowerCase(lang).includes(normalized)) return false;
         return true;
       })
       .sort((a, b) => {
         const aMedia = media[a.animeId];
         const bMedia = media[b.animeId];
-        if (sort === "TITLE") return titleOf(a, aMedia).localeCompare(titleOf(b, bMedia), "es");
+        if (sort === "TITLE") return titleOf(a, aMedia).localeCompare(titleOf(b, bMedia), lang);
         if (sort === "YEAR") return (bMedia?.startDate?.year ?? 0) - (aMedia?.startDate?.year ?? 0);
         return entries.indexOf(a) - entries.indexOf(b);
       });
@@ -167,18 +167,18 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
   return (
     <div className="home-gallery">
       <div className="archive-toolbar">
-        <div className="archive-filters" role="tablist" aria-label="Filtrar archivo">
+        <div className="archive-filters" role="tablist" aria-label={t("archive.filter")}>
           {(["ALL", "SERIES", "MOVIES"] as Filter[]).map((value) => (
             <button key={value} type="button" className={filter === value ? "is-active" : ""} aria-selected={filter === value} role="tab" onClick={() => setFilter(value)}>
-              {value === "ALL" ? "Todos" : value === "SERIES" ? "Series" : "Películas"}
+              {value === "ALL" ? t("archive.all") : value === "SERIES" ? t("archive.series") : t("archive.movies")}
             </button>
           ))}
         </div>
         <div className="archive-tools">
-          <label className="sr-only" htmlFor="archive-search">Buscar en este archivo</label>
-          <input id="archive-search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar…" type="search" />
+          <label className="sr-only" htmlFor="archive-search">{t("archive.searchLabel")}</label>
+          <input id="archive-search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("archive.searchPlaceholder")} type="search" />
           <div className="archive-sort">
-            <span className="sr-only" id="archive-sort-label">Ordenar archivo</span>
+            <span className="sr-only" id="archive-sort-label">{t("archive.sortLabel")}</span>
             <button
               type="button"
               className="archive-sort-trigger"
@@ -187,7 +187,7 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
               aria-labelledby="archive-sort-label"
               onClick={() => setSortOpen((open) => !open)}
             >
-              {sort === "ADDED" ? "Añadidos" : sort === "TITLE" ? "Título A–Z" : "Más recientes"}
+              {sort === "ADDED" ? t("archive.added") : sort === "TITLE" ? t("archive.titleSort") : t("archive.recent")}
               <span aria-hidden="true">⌄</span>
             </button>
             {sortOpen && (
@@ -225,13 +225,13 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
             <a
               className="home-gallery-card"
               href={`${lang === "en" ? "/en" : ""}/anime/${entry.animeId}`}
-              aria-label={`Ver ${titleOf(entry, item)}`}
+              aria-label={t("archive.view").replace("{title}", titleOf(entry, item))}
               key={entry.animeId}
             >
               {image ? <img src={image} alt="" loading={index < 3 ? "eager" : "lazy"} /> : <div className="home-gallery-placeholder" aria-hidden="true" />}
               <div className="archive-card-badges" aria-hidden="true">
-                {entry.state?.favorite && <span>Favorito</span>}
-                {entry.state?.recommended && <span>Recomendado</span>}
+                {entry.state?.favorite && <span>{t("archive.favorite")}</span>}
+                {entry.state?.recommended && <span>{t("archive.recommended")}</span>}
               </div>
               <div className="archive-card-caption">
                 <strong>{titleOf(entry, item)}</strong>
@@ -252,7 +252,7 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
       {loading && <div className="home-gallery-loading" aria-hidden="true" />}
       {hasMore && (
         <button type="button" className="home-gallery-load-more" onClick={() => setVisible((current) => Math.min(current + PAGE_SIZE, filteredEntries.length))} disabled={loading}>
-          {loading ? "Cargando…" : `Cargar más · ${filteredEntries.length - visible} restantes`}
+          {loading ? t("archive.loading") : t("archive.loadMore").replace("{count}", String(filteredEntries.length - visible))}
         </button>
       )}
 
