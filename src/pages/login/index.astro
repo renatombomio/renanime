@@ -353,7 +353,7 @@ if (user) {
             ? isEnglish ? "Be more creative, you can do it! Gambare!" : "¡Sé más creativo, tú puedes! ¡Gambare!"
             : data.error === "INVALID_PROFILE"
               ? (isEnglish ? (!name ? "I can't find your name. Go back and enter it again." : !aka ? "Enter your otaku nickname." : "Couldn't validate those details. Try another nickname.") : (!name ? "No encuentro tu nombre. Vuelve atrás y escríbelo de nuevo." : !aka ? "Escribe tu mote otaku." : "No se han podido validar los datos. Prueba otro mote."))
-              : "No se ha podido crear el perfil.";
+              : isEnglish ? "Could not create the profile." : "No se ha podido crear el perfil.";
         return;
       }
 
