@@ -1,3 +1,4 @@
 ---
-return Astro.redirect("/login");
+import { localizedPath } from "../../i18n";
+return Astro.redirect(localizedPath(Astro.locals.lang, "/login/"));
 ---
