@@ -4,9 +4,10 @@ import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/layout/Navbar.astro";
 import Footer from "../../components/layout/Footer.astro";
 import { supabaseServer } from "../../lib/supabase-server";
+import { localizedPath } from "../../i18n";
 
 const user = Astro.locals.renanimeUser;
-if (!user) return Astro.redirect("/login/");
+if (!user) return Astro.redirect(localizedPath(Astro.locals.lang, "/login/"));
 const token = Astro.cookies.get("renanime_session")?.value;
 
 const { data: libraryData, error: libraryError } = await supabaseServer.rpc("renanime_get_library", {
@@ -333,7 +334,7 @@ const joinedDate = profile.created_at
     try {
       const response = await fetch("/api/auth/logout", { method: "POST" });
       if (!response.ok) throw new Error("logout_failed");
-      window.location.href = "/login/";
+      window.location.href = document.documentElement.lang === "en" ? "/en/login/" : "/login/";
     } catch {
       logoutButton.disabled = false;
       logoutButton.textContent = "Cerrar sesión";
