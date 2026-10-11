@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { PersonalAnimeEntry } from "../../types/personal";
-import type { Lang } from "../../i18n";
+import { useT, type Lang } from "../../i18n";
 import { getPersonalLibrary, subscribeToPersonalLibrary, hydratePersonalLibrary } from "../../data/personal-library";
 
 type Mode = "WATCHED" | "PENDING";
@@ -46,7 +46,7 @@ function formatDate(date:Media["startDate"]){
 function titleOf(media?:Media|null){return media?.title?.romaji||media?.title?.english||"Anime";}
 function isMovie(media?:Media|null){return media?.format === "MOVIE";}
 
-export default function PersonalLibraryView({mode,lang="es"}:Props){
+export default function PersonalLibraryView({mode,lang="es"}:Props){\n  const t=useT(lang);
   const [entries,setEntries]=useState<PersonalAnimeEntry[]>([]);
   const [media,setMedia]=useState<Record<string,Media|null>>({});
   const [loading,setLoading]=useState(true);
@@ -82,14 +82,14 @@ export default function PersonalLibraryView({mode,lang="es"}:Props){
   const visibleEntries=entries.slice(0,visible);
   const hasMore=visible<entries.length;
 
-  if(loading&&!entries.length)return <p className="personal-library-status" role="status" aria-live="polite">Cargando mi biblioteca…</p>;
+  if(loading&&!entries.length)return <p className="personal-library-status" role="status" aria-live="polite">{t("library.loading")}</p>;
 
   return <div className="personal-library-view">
-    <div className="personal-library-intro"><span>{mode==="WATCHED"?"Tu recorrido":"Guardado para después"}</span><div className="personal-library-count" aria-live="polite">
-      {entries.length} {entries.length===1?"anime":"animes"}
+    <div className="personal-library-intro"><span>{mode==="WATCHED"?t("library.journey"):t("library.saved")}</span><div className="personal-library-count" aria-live="polite">
+      {entries.length} {entries.length===1?t("library.anime"):t("library.animePlural")}
     </div></div>
 
-    {loadError&&<p className="personal-library-status" role="status" aria-live="polite">Algunas fichas no están disponibles ahora mismo. La biblioteca no se ha modificado.</p>}
+    {loadError&&<p className="personal-library-status" role="status" aria-live="polite">{t("library.unavailable")}</p>}
 
     {visibleEntries.length?<div className="personal-library-grid">
       {visibleEntries.map(entry=>{
@@ -98,7 +98,7 @@ export default function PersonalLibraryView({mode,lang="es"}:Props){
         const image=item?.coverImage?.extraLarge||item?.coverImage?.large;
         const score=entry.state.personalScore;
         return <article className="personal-library-card" key={entry.animeId}>
-          <a href={`${lang === "en" ? "/en" : ""}/anime/${entry.animeId}`} className="personal-library-link" aria-label={`Ver ${title}`}>
+          <a href={`${lang === "en" ? "/en" : ""}/anime/${entry.animeId}`} className="personal-library-link" aria-label={t("library.view").replace("{title}",title)}>
             <div className="personal-library-poster">
               {image?<img src={image} alt="" loading="lazy" onError={event=>{event.currentTarget.style.display="none";}}/>:<div className="personal-library-placeholder" aria-hidden="true"/>}
               <div className="personal-library-overlay">
@@ -106,8 +106,8 @@ export default function PersonalLibraryView({mode,lang="es"}:Props){
                 <span>{item?.startDate?.year||"—"}</span>
               </div>
               <div className="personal-library-badges" aria-hidden="true">
-                {entry.state.favorite&&<span>Favorito</span>}
-                {entry.state.recommended&&<span>Recomendado</span>}
+                {entry.state.favorite&&<span>{t("library.favorite")}</span>}
+                {entry.state.recommended&&<span>{t("library.recommended")}</span>}
                 {score!=null&&<span>★ {score}</span>}
               </div>
             </div>
@@ -115,12 +115,12 @@ export default function PersonalLibraryView({mode,lang="es"}:Props){
         </article>;
       })}
     </div>:<div className="personal-library-empty">
-      <strong>{mode==="WATCHED"?"¿Qué, todavía no has visto anime?":"Esto está igual de vacío que tu corazón."}</strong>
-      <span>{mode==="WATCHED"?"¿No sabes lo que te estás perdiendo? Venga, anímate, que me hace falta más gente friki por aquí. 😂":"Venga va, dame cariño y mete algún anime en la lista. Gracias. No leo lloros. 🫶"}</span>
-      <a className="personal-library-empty-cta" href={lang === "en" ? "/en/search/" : "/search/"}>{mode==="WATCHED"?"Explorar anime →":"Buscar algo que ver →"}</a>
+      <strong>{mode==="WATCHED"?t("library.emptyWatchedTitle"):t("library.emptyPendingTitle")}</strong>
+      <span>{mode==="WATCHED"?t("library.emptyWatchedCopy"):t("library.emptyPendingCopy")}</span>
+      <a className="personal-library-empty-cta" href={lang === "en" ? "/en/search/" : "/search/"}>{mode==="WATCHED"?t("library.explore"):t("library.findSomething")}</a>
     </div>}
 
-    {hasMore&&<button type="button" className="personal-library-load-more" onClick={()=>setVisible(value=>Math.min(value+PAGE_SIZE,entries.length))}>Cargar más · {entries.length-visible} restantes</button>}
+    {hasMore&&<button type="button" className="personal-library-load-more" onClick={()=>setVisible(value=>Math.min(value+PAGE_SIZE,entries.length))}>{t("library.loadMore").replace("{count}",String(entries.length-visible))}</button>}
 
     <style>{`
       .personal-library-view{width:100%}
