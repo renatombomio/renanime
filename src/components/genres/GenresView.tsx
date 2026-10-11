@@ -2,9 +2,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { LibraryEntry } from "../../types/personal";
 import { buildGenreCatalog } from "../../lib/anime/genre-catalog";
 import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
+import type { Lang } from "../../i18n";
 
 interface Props {
   entries: LibraryEntry[];
+  lang?: Lang;
 }
 
 interface GenreMedia {
@@ -92,7 +94,7 @@ async function fetchMediaMetadata(entries: LibraryEntry[], includeImages = false
   return result;
 }
 
-export default function GenresView({ entries }: Props) {
+export default function GenresView({ entries, lang = "es" }: Props) {
   const [metadata, setMetadata] = useState<Record<string, GenreMedia>>({});
   const [selected, setSelected] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -213,7 +215,7 @@ export default function GenresView({ entries }: Props) {
                 const image = media?.coverImage?.extraLarge ?? media?.coverImage?.large;
 
                 return (
-                  <a className="genre-anime-card" href={"/anime/" + entry.animeId} key={entry.animeId}>
+                  <a className="genre-anime-card" href={`${lang === "en" ? "/en" : ""}/anime/${entry.animeId}`} key={entry.animeId}>
                     <div className="genre-anime-poster">
                       {image ? (
                         <img src={image} alt="" loading={index < 6 ? "eager" : "lazy"} />
