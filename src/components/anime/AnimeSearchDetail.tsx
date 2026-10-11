@@ -1,6 +1,7 @@
 import {useEffect,useState} from "react";
 import PersonalLibraryActions from "../personal-library/PersonalLibraryActions";
 import { getLibrary } from "../../data/library";
+import { getGhibliFilms } from "../../data/ghibli";
 import { useT, type Lang } from "../../i18n";
 
 interface Media{
@@ -101,7 +102,8 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
   }
 
   const directId = idParam === "movie-063" ? 178788 : Number.isFinite(id) ? id : null;
-  const searchTitle = localEntry?.title ?? null;
+  const ghibliFilm = variant === "ghibli" ? getGhibliFilms().find((entry) => entry.id === film) : undefined;
+  const searchTitle = localEntry?.title ?? ghibliFilm?.searchTitle ?? ghibliFilm?.title ?? null;
 
   const request = directId
     ? {
@@ -121,9 +123,40 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
     .then(r=>r.ok?r.json():Promise.reject())
     .then(async p=>{
       const found=directId ? (p.data?.Media??null) : (p.data?.Page?.media?.[0]??null);
-      if(!found)return;
-      setMedia(found);
-    }).catch(()=>{}).finally(()=>setLoading(false));
+      if(found) {
+        setMedia(found);
+        return;
+      }
+      if(ghibliFilm) {
+        setMedia({
+          id: 0,
+          title: { english: ghibliFilm.title, romaji: ghibliFilm.title },
+          startDate: { year: ghibliFilm.year },
+          format: "MOVIE",
+          status: "FINISHED",
+          episodes: 1,
+          studios: { nodes: [{ name: "Studio Ghibli" }] },
+          coverImage: ghibliFilm.id === "the-red-turtle"
+            ? { extraLarge: "https://www.ghibli.jp/images/red-turtle.jpg", large: "https://www.ghibli.jp/images/red-turtle.jpg" }
+            : undefined,
+        });
+      }
+    }).catch(()=>{
+      if(ghibliFilm) {
+        setMedia({
+          id: 0,
+          title: { english: ghibliFilm.title, romaji: ghibliFilm.title },
+          startDate: { year: ghibliFilm.year },
+          format: "MOVIE",
+          status: "FINISHED",
+          episodes: 1,
+          studios: { nodes: [{ name: "Studio Ghibli" }] },
+          coverImage: ghibliFilm.id === "the-red-turtle"
+            ? { extraLarge: "https://www.ghibli.jp/images/red-turtle.jpg", large: "https://www.ghibli.jp/images/red-turtle.jpg" }
+            : undefined,
+        });
+      }
+    }).finally(()=>setLoading(false));
  },[]);
  if(loading)return <div className="anime-search-detail-state">{t("detail.loading")}</div>;
  if(!media)return <div className="anime-search-detail-state">{t("detail.notFound")}</div>;
