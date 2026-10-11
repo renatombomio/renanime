@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { GhibliStoryEntry } from "../../data/ghibli";
+import { fetchGhibliAniList } from "../../lib/api/ghibli-anilist";
 import { useT, type Lang } from "../../i18n";
 
 interface Media {
@@ -33,18 +34,11 @@ export default function GhibliStory({ entries, totalFilms, watchedFilms, lang = 
     }).join("\n");
     const definitions = entries.map((_, index) => "$s" + index + ":String!").join(",");
 
-    fetch("https://graphql.anilist.co", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ query: "query GhibliStory(" + definitions + "){" + fields + "}", variables }),
-    })
-      .then((response) => response.ok ? response.json() : Promise.reject())
+    fetchGhibliAniList("story", "query GhibliStory(" + definitions + "){" + fields + "}", variables)
       .then((payload) => {
         if (cancelled) return;
         const result: Record<string, Media | null> = {};
-        entries.forEach((entry, index) => {
-          result[entry.id] = payload.data?.["a" + index]?.media?.[0] ?? null;
-        });
+        entries.forEach((entry, index) => { result[entry.id] = payload["a" + index]?.media?.[0] ?? null; });
         setMedia(result);
       })
       .catch(() => {})
