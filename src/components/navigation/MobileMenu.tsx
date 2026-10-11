@@ -1,25 +1,26 @@
 import { useEffect, useState } from "react";
+import { localizedPath, useT, type Lang } from "../../i18n";
 
-interface Props { variant?: "default" | "ghibli"; }
+interface Props { variant?: "default" | "ghibli"; lang: Lang; }
 
 const links = [
-  { label: "Inicio", href: "/" },
-  { label: "Colección de Ren", href: "/ren-collection/" },
-  { label: "Favoritos de Ren", href: "/favorites/" },
-  { label: "Géneros de Ren", href: "/genres/" },
-  { label: "Buscar", href: "/search/" },
-  { label: "Mi lista", href: "/pending/" },
-  { label: "Mi colección", href: "/collection/" },
-  { label: "Mi perfil", href: "/profile/" },
-  { label: "El secreto de Ren", href: "/ghibli/" }
-];
+  { key: "nav.home", href: "/" },
+  { key: "nav.renCollection", href: "/ren-collection/" },
+  { key: "nav.renFavorites", href: "/favorites/" },
+  { key: "nav.renGenres", href: "/genres/" },
+  { key: "nav.search", href: "/search/" },
+  { key: "nav.myList", href: "/pending/" },
+  { key: "nav.myCollection", href: "/collection/" },
+  { key: "nav.profile", href: "/profile/" },
+  { key: "nav.renSecret", href: "/ghibli/" }
+] as const;
 
-export default function MobileMenu({ variant = "default" }: Props) {
+export default function MobileMenu({ variant = "default", lang }: Props) {\n  const t = useT(lang);
   const [open, setOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState<string | null>(null);
 
   useEffect(() => {
-    setCurrentPath(window.location.pathname.replace(/\/$/, "") || "/");
+    const pathname = window.location.pathname.replace(/^\/en(?=\/|$)/, "") || "/";\n    setCurrentPath(pathname.replace(/\/$/, "") || "/");
   }, []);
 
   useEffect(() => {
@@ -42,7 +43,7 @@ export default function MobileMenu({ variant = "default" }: Props) {
         type="button"
         aria-expanded={open}
         aria-controls="mobile-navigation"
-        aria-label={open ? "Cerrar menú" : "Abrir menú"}
+        aria-label={open ? t("nav.closeMenu") : t("nav.openMenu")}
         onClick={() => setOpen((value) => !value)}
       >
         <span />
@@ -52,18 +53,18 @@ export default function MobileMenu({ variant = "default" }: Props) {
       <button
         className="mobile-backdrop"
         type="button"
-        aria-label="Cerrar menú"
+        aria-label={t("nav.closeMenu")}
         tabIndex={open ? 0 : -1}
         onClick={() => setOpen(false)}
       />
 
       <div className="mobile-panel" id="mobile-navigation" aria-hidden={!open}>
-        <nav aria-label="Navegación móvil">
+        <nav aria-label={t("nav.mobile")}>
           {links.map((link, index) => (
             <a
               key={link.href}
               className="mobile-link"
-              href={link.href}
+              href={localizedPath(lang, link.href)}
               aria-current={currentPath === (link.href.replace(/\/$/, "") || "/") ? "page" : undefined}
               tabIndex={open ? 0 : -1}
               onClick={() => setOpen(false)}
