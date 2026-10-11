@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
+import type { Lang } from "../../i18n";
 
 interface Entry {
   animeId: string;
@@ -17,6 +18,7 @@ interface Media {
 
 interface Props {
   entries: Entry[];
+  lang?: Lang;
 }
 
 type Filter = "ALL" | "SERIES" | "MOVIES";
@@ -106,7 +108,7 @@ function isMovie(entry: Entry, media?: Media | null) {
   return (media?.format || entry.format) === "MOVIE";
 }
 
-export default function HomeGallery({ entries }: Props) {
+export default function HomeGallery({ entries, lang = "es" }: Props) {
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(false);
@@ -222,7 +224,7 @@ export default function HomeGallery({ entries }: Props) {
           return (
             <a
               className="home-gallery-card"
-              href={`/anime/${entry.animeId}`}
+              href={`${lang === "en" ? "/en" : ""}/anime/${entry.animeId}`}
               aria-label={`Ver ${titleOf(entry, item)}`}
               key={entry.animeId}
             >
