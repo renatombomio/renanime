@@ -158,25 +158,26 @@ export default function GhibliView({ films, lang = "es" }: { films: Film[]; lang
             const image = item?.coverImage?.extraLarge || item?.coverImage?.large;
             const fallbackImage = film.id === "the-red-turtle" ? "https://www.ghibli.jp/images/red-turtle.jpg" : null;
             const posterImage = image || fallbackImage;
+            const title = lang === "en" ? (item?.title?.english || item?.title?.romaji || film.title) : film.title;
             const href = item
               ? `${lang === "en" ? "/en" : ""}/ghibli/anime?id=${item.id}`
               : `${lang === "en" ? "/en" : ""}/ghibli/anime?film=${encodeURIComponent(film.id)}`;
 
             return (
               <article className={"ghibli-card" + (film.watched ? " is-watched" : "")} key={film.id}>
-                <a href={href} aria-label={t("ghibli.openFilm").replace("{title}", film.title)}>
+                <a href={href} aria-label={t("ghibli.openFilm").replace("{title}", title)}>
                   <div className="ghibli-poster">
                     {posterImage ? (
                       <img src={posterImage} alt="" loading={index < 6 ? "eager" : "lazy"} decoding="async" />
                     ) : (
                       <div className="ghibli-placeholder" aria-hidden="true">
-                        <strong>{film.title}</strong>
+                        <strong>{title}</strong>
                       </div>
                     )}
                     {film.watched && <span className="ghibli-badge">{t("ghibli.watched")}</span>}
                   </div>
                   <div className="ghibli-info">
-                    <h3>{film.title}</h3>
+                    <h3>{title}</h3>
                     <span className="ghibli-year">{film.year}</span>
                   </div>
                 </a>
