@@ -70,7 +70,7 @@ export default function MobileMenu({ variant = "default", lang }: Props) {\n  co
               onClick={() => setOpen(false)}
               style={{ "--menu-index": index } as React.CSSProperties}
             >
-              <span>{link.label}</span>
+              <span>{t(link.key)}</span>
             </a>
           ))}
         </nav>
