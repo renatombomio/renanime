@@ -125,11 +125,11 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
       setMedia(found);
     }).catch(()=>{}).finally(()=>setLoading(false));
  },[]);
- if(loading)return <div className="anime-search-detail-state">Cargando ficha…</div>;
- if(!media)return <div className="anime-search-detail-state">No se ha encontrado este anime.</div>;
+ if(loading)return <div className="anime-search-detail-state">{t("detail.loading")}</div>;
+ if(!media)return <div className="anime-search-detail-state">{t("detail.notFound")}</div>;
 
  const from=variant === "ghibli" ? "ghibli" : params.get("from");
- const title=idParam==="movie-063" ? "Kimetsu no Yaiba: Mugen-jō-hen" : from==="ghibli" ? (media.title?.english||media.title?.romaji||"Sin título") : (media.title?.romaji||media.title?.english||localEntry?.title||"Sin título");
+ const title=idParam==="movie-063" ? "Kimetsu no Yaiba: Mugen-jō-hen" : from==="ghibli" ? (media.title?.english||media.title?.romaji||t("detail.noTitle")) : (media.title?.romaji||media.title?.english||localEntry?.title||"Sin título");
  const image=media.coverImage?.extraLarge||media.coverImage?.large;
  const banner=media.bannerImage||image;
  const synopsis=media.description?cleanDescription(media.description):"";
@@ -220,10 +220,10 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
       <div className="anime-detail-copy-main">
        <h1>{title}</h1>
        <div className="anime-detail-meta">
-        <span className="anime-detail-meta-type"><strong>{media.format==="MOVIE"?"Película":"Serie"}</strong></span>
+        <span className="anime-detail-meta-type"><strong>{media.format==="MOVIE"?t("detail.film"):t("detail.series")}</strong></span>
         <span><small>LANZAMIENTO</small><strong>{date(media.startDate)}</strong></span>
         {media.format!=="MOVIE"&&media.episodes&&<span><small>EPISODIOS</small><strong>{media.episodes}</strong></span>}
-        {media.duration&&<span><small>{media.format==="MOVIE"?"DURACIÓN":"DURACIÓN / EPISODIO"}</small><strong>{media.duration} min</strong></span>}
+        {media.duration&&<span><small>{media.format==="MOVIE"?t("detail.duration"):t("detail.durationEpisode")}</small><strong>{media.duration} min</strong></span>}
         {media.format!=="MOVIE"&&getSeasonCount(media)&&<span><small>TEMPORADAS</small><strong>{getSeasonCount(media)}</strong></span>}
        </div>
 
@@ -233,8 +233,8 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
 
      <div className="anime-detail-synopsis-wrap">
       <span className="anime-detail-label">Sinopsis</span>
-      <p className="anime-detail-synopsis">{translated||synopsis||(hasSynopsis?"":"Todavía no hay una sinopsis disponible.")}</p>
-      {hasSynopsis&&media.description&&<button type="button" className="anime-detail-translate" onClick={translateSynopsis} disabled={translating}>{translating?"Traduciendo…":translated?"Traducido al español":"Traducir al español"}</button>}
+      <p className="anime-detail-synopsis">{translated||synopsis||(hasSynopsis?"":t("detail.noSynopsis"))}</p>
+      {lang!=="en"&&hasSynopsis&&media.description&&<button type="button" className="anime-detail-translate" onClick={translateSynopsis} disabled={translating}>{translating?t("detail.translating"):translated?t("detail.translated"):t("detail.translate")}</button>}
      </div>
 
      {media.trailer?.id&&media.trailer.site==="youtube"&&<section className="anime-detail-trailer"><span className="anime-detail-label">Tráiler</span><div className="anime-detail-video"><iframe src={"https://www.youtube.com/embed/"+media.trailer.id+"?rel=0"} title={"Tráiler de "+title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div></section>}
@@ -246,9 +246,9 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
         .filter((item): item is NonNullable<typeof item> => Boolean(item))
         .filter((item) => item.id !== media.id && !seen.has(item.id) && seen.add(item.id))
         .slice(0, 8);
-       return items.length ? <section className="anime-detail-recommendations" aria-label="Recomendaciones">
+       return items.length ? <section className="anime-detail-recommendations" aria-label={t("detail.recommendations")}>
         <div className="anime-detail-recommendations-head">
-         <span className="anime-detail-label">Si has visto este anime, tal vez te guste…</span>
+         <span className="anime-detail-label">{t("detail.recommendedNext")}</span>
         </div>
         <div className="anime-detail-recommendations-track">
          {items.map((item) => {
@@ -257,7 +257,7 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
           return <a className="anime-detail-recommendation" href={`${lang === "en" ? "/en" : ""}/anime/search?id=${item.id}&from=${from==="ghibli"?"ghibli":"anime"}`} key={item.id}>
            <div className="anime-detail-recommendation-poster">{recImage&&<img src={recImage} alt={recTitle} loading="lazy" />}</div>
            <span className="anime-detail-recommendation-title">{recTitle}</span>
-           <span className="anime-detail-recommendation-meta">{item.format==="MOVIE"?"Film":"Series"}{item.startDate?.year?" · "+item.startDate.year:""}</span>
+           <span className="anime-detail-recommendation-meta">{item.format==="MOVIE"?t("detail.film"):t("detail.series")}{item.startDate?.year?" · "+item.startDate.year:""}</span>
           </a>;
          })}
         </div>
@@ -267,8 +267,8 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
    </div>
   </section>
   <section className="anime-detail-info">
-   <div><span className="anime-detail-label">Información</span><strong>{media.studios?.nodes?.map(studio=>studio.name).join(" · ")||"Estudio no disponible"}</strong></div>
-   <div><span className="anime-detail-label">Formato</span><strong>{media.format==="MOVIE"?"Película":"Serie"}</strong></div>
+   <div><span className="anime-detail-label">{t("detail.information")}</span><strong>{media.studios?.nodes?.map(studio=>studio.name).join(" · ")||t("detail.studioUnavailable")}</strong></div>
+   <div><span className="anime-detail-label">{t("detail.format")}</span><strong>{media.format==="MOVIE"?"Película":"Serie"}</strong></div>
   </section>
  </div>;
 }
