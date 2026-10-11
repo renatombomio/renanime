@@ -16,6 +16,7 @@ interface Props {
   kicker?: string;
   title?: string;
   copy?: string;
+  ariaLabel?: string;
   videoSrc?: string;
   variant?: "default" | "ghibli";
 }
@@ -25,6 +26,7 @@ export default function HeroCarousel({
   kicker = "Renanime's",
   title = "Gallery.",
   copy = "Anime a través de mis ojos.\nEste es mi regalo para ti.",
+  ariaLabel = "Renanime's Gallery",
   videoSrc = "/videos/hero.mp4",
   variant = "default",
 }: Props) {
@@ -60,7 +62,7 @@ export default function HeroCarousel({
   }, []);
 
   return (
-    <section className={variant === "ghibli" ? "hero hero--ghibli" : "hero"} aria-label="Renanime's Gallery">
+    <section className={variant === "ghibli" ? "hero hero--ghibli" : "hero"} aria-label={ariaLabel}>
       <div className="hero-media" aria-hidden="true">
         <video
           className="hero-video"

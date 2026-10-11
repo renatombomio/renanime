@@ -6,6 +6,8 @@ import Footer from "../../components/layout/Footer.astro";
 import { supabaseServer } from "../../lib/supabase-server";
 import { localizedPath } from "../../i18n";
 
+const lang = Astro.locals.lang;
+const isEnglish = lang === "en";
 const user = Astro.locals.renanimeUser;
 if (!user) return Astro.redirect(localizedPath(Astro.locals.lang, "/login/"));
 const token = Astro.cookies.get("renanime_session")?.value;
@@ -24,7 +26,7 @@ const watched = library.filter((entry: any) => entry?.state?.status === "WATCHED
 const pending = library.filter((entry: any) => entry?.state?.status === "PENDING");
 
 const joinedDate = profile.created_at
-  ? new Intl.DateTimeFormat("es-ES", {
+  ? new Intl.DateTimeFormat(isEnglish ? "en-GB" : "es-ES", {
       day: "numeric",
       month: "long",
       year: "numeric",
@@ -33,42 +35,42 @@ const joinedDate = profile.created_at
 ---
 
 <Layout
-  title="Mi perfil — Renanime's Gallery"
-  description="Tu perfil personal en Renanime."
+  title={`${isEnglish ? "My Profile" : "Mi perfil"} — Renanime's Gallery`}
+  description={isEnglish ? "Your personal profile on Renanime." : "Tu perfil personal en Renanime."}
 >
   <Navbar />
 
   <main class="profile-page">
     <section class="profile-card">
       <header class="profile-header">
-        <p class="eyebrow">MI PERFIL</p>
+        <p class="eyebrow">{isEnglish ? "MY PROFILE" : "MI PERFIL"}</p>
         <h1>{profile.name}</h1>
         <p class="community-line">
-          Miembro de la comunidad otaku desde <strong>{joinedDate}</strong>.
+          {isEnglish ? "Part of the otaku community since" : "Miembro de la comunidad otaku desde"} <strong>{joinedDate}</strong>.
         </p>
       </header>
 
       <section class="library-section">
-        <p class="section-label">MI RENANIME</p>
+        <p class="section-label">{isEnglish ? "MY RENANIME" : "MI RENANIME"}</p>
 
         <div class="stats">
           <article class="stat-card">
             <span class="stat-number" data-personal-count="PENDING">{pending.length}</span>
-            <span class="stat-label">ANIMES EN MI LISTA</span>
+            <span class="stat-label">{isEnglish ? "ANIME ON MY LIST" : "ANIMES EN MI LISTA"}</span>
           </article>
 
           <article class="stat-card">
             <span class="stat-number" data-personal-count="WATCHED">{watched.length}</span>
-            <span class="stat-label">ANIMES EN MI COLECCIÓN</span>
+            <span class="stat-label">{isEnglish ? "ANIME IN MY COLLECTION" : "ANIMES EN MI COLECCIÓN"}</span>
           </article>
         </div>
       </section>
 
       <section class="recovery-section">
         <div>
-          <p class="section-label">CÓDIGO DE RECUPERACIÓN</p>
+          <p class="section-label">{isEnglish ? "RECOVERY CODE" : "CÓDIGO DE RECUPERACIÓN"}</p>
           <p class="recovery-description">
-            Guárdalo en un lugar seguro. Lo necesitarás para recuperar tu acceso desde otro dispositivo.
+            {isEnglish ? "Keep it somewhere safe. You will need it to recover access from another device." : "Guárdalo en un lugar seguro. Lo necesitarás para recuperar tu acceso desde otro dispositivo."}
           </p>
         </div>
 
@@ -76,9 +78,9 @@ const joinedDate = profile.created_at
       </section>
 
       <div class="profile-actions">
-        <a href={localizedPath(Astro.locals.lang, "/collection/")}>Ver mi colección</a>
-        <a href={localizedPath(Astro.locals.lang, "/pending/")}>Ver mi lista</a>
-        <button id="logout-button" type="button">Cerrar sesión</button>
+        <a href={localizedPath(Astro.locals.lang, "/collection/")}>{isEnglish ? "View my collection" : "Ver mi colección"}</a>
+        <a href={localizedPath(Astro.locals.lang, "/pending/")}>{isEnglish ? "View my list" : "Ver mi lista"}</a>
+        <button id="logout-button" type="button">{isEnglish ? "Log out" : "Cerrar sesión"}</button>
       </div>
     </section>
   </main>
@@ -325,11 +327,12 @@ const joinedDate = profile.created_at
 
 
 <script>
+  const isEnglish = document.documentElement.lang === "en";
   const logoutButton = document.querySelector<HTMLButtonElement>("#logout-button");
 
   logoutButton?.addEventListener("click", async () => {
     logoutButton.disabled = true;
-    logoutButton.textContent = "Cerrando sesión…";
+    logoutButton.textContent = isEnglish ? "Logging out…" : "Cerrando sesión…";
 
     try {
       const response = await fetch("/api/auth/logout", { method: "POST" });
@@ -337,7 +340,7 @@ const joinedDate = profile.created_at
       window.location.href = document.documentElement.lang === "en" ? "/en/login/" : "/login/";
     } catch {
       logoutButton.disabled = false;
-      logoutButton.textContent = "Cerrar sesión";
+      logoutButton.textContent = isEnglish ? "Log out" : "Cerrar sesión";
     }
   });
 </script>

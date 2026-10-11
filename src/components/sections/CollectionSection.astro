@@ -12,16 +12,16 @@ const preview = collection.slice(0, 12);
 
 <section id="collection" class="collection-section section-space">
   <SectionHeader
-    title="Colección"
-    description="Aquí están todos los animes que he visto. Son muchos, pero nunca parece suficiente. Porque esa es la magia del anime: terminas una historia y, de alguna manera, ya estás buscando la siguiente."
+    title={lang === "en" ? "Collection" : "Colección"}
+    description={lang === "en" ? "Every anime I have watched lives here. There are many, yet it never feels like enough. That is the magic of anime: you finish one story and somehow you are already looking for the next." : "Aquí están todos los animes que he visto. Son muchos, pero nunca parece suficiente. Porque esa es la magia del anime: terminas una historia y, de alguna manera, ya estás buscando la siguiente."}
   />
 
-  <div class="collection-toolbar" aria-label="Filtros de colección">
-    <span class="collection-count">{collection.length} historias</span>
+  <div class="collection-toolbar" aria-label={lang === "en" ? "Collection filters" : "Filtros de colección"}>
+    <span class="collection-count">{collection.length} {lang === "en" ? "titles" : "historias"}</span>
     <div class="collection-filters">
-      <button class="filter is-active" type="button">Todo</button>
+      <button class="filter is-active" type="button">{lang === "en" ? "All" : "Todo"}</button>
       <button class="filter" type="button">Series</button>
-      <button class="filter" type="button">Películas</button>
+      <button class="filter" type="button">{lang === "en" ? "Movies" : "Películas"}</button>
     </div>
   </div>
 
@@ -31,12 +31,13 @@ const preview = collection.slice(0, 12);
         title={anime.title}
         image=""
         href={localizedPath(lang, "/collection/")}
-        badge={anime.state.recommended ? "RECOMENDADO" : undefined}
+        lang={lang}
+        badge={anime.state.recommended ? (lang === "en" ? "RECOMMENDED" : "RECOMENDADO") : undefined}
       />
     ))}
   </AnimeGrid>
 
-  <a class="view-all" href="/collection/">Ver toda la colección →</a>
+  <a class="view-all" href={localizedPath(lang, "/collection/")}>{lang === "en" ? "View full collection →" : "Ver toda la colección →"}</a>
 </section>
 
 <style>

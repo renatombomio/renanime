@@ -4,6 +4,7 @@ import Layout from "../../layouts/Layout.astro";
 import { getRenanimeUser } from "../../lib/auth";
 import { localizedPath } from "../../i18n";
 
+const isEnglish = Astro.locals.lang === "en";
 const token = Astro.cookies.get("renanime_session")?.value;
 const user = await getRenanimeUser(token);
 
@@ -13,8 +14,8 @@ if (user) {
 ---
 
 <Layout
-  title="Acceso — Renanime's Gallery"
-  description="Entra en tu espacio personal de Renanime's Gallery."
+  title={isEnglish ? "Access — Renanime's Gallery" : "Acceso — Renanime's Gallery"}
+  description={isEnglish ? "Enter your personal space in Renanime's Gallery." : "Entra en tu espacio personal de Renanime's Gallery."}
 >
   <main class="access-page auth-login" data-auth-screen="login">
     <a class="language-toggle-auth" href={localizedPath(Astro.locals.lang === "es" ? "en" : "es", "/login/")} data-astro-reload hreflang={Astro.locals.lang === "es" ? "en" : "es"} aria-label={Astro.locals.lang === "es" ? "Switch language to English" : "Cambiar idioma a español"} title={Astro.locals.lang === "es" ? "Switch to English" : "Cambiar a español"}>{Astro.locals.lang === "es" ? "ES · EN" : "EN · ES"}</a>
@@ -26,11 +27,11 @@ if (user) {
         <span class="brand-ren">Ren</span><span class="brand-anime">anime</span>
       </div>
 
-      <h1 id="access-title">Acceso</h1>
-      <p class="subtitle">Entra en tu espacio personal de anime.</p>
+      <h1 id="access-title">{isEnglish ? "Access" : "Acceso"}</h1>
+      <p class="subtitle">{isEnglish ? "Enter your personal anime space." : "Entra en tu espacio personal de anime."}</p>
 
       <form id="access-form">
-        <label for="access-password">Código de acceso</label>
+        <label for="access-password">{isEnglish ? "Access code" : "Código de acceso"}</label>
         <input
           id="access-password"
           name="accessPassword"
@@ -39,66 +40,109 @@ if (user) {
           required
           autofocus
         />
-        <button type="submit">Entrar</button>
+        <button type="submit">{isEnglish ? "Enter" : "Entrar"}</button>
         <p id="access-message" class="message" aria-live="polite"></p>
       </form>
 
       <div class="member-entry">
-        <span>¿Eres miembro de Renanime?</span>
-        <button id="show-recovery" type="button">Entra con tu código de recuperación</button>
+        <span>{isEnglish ? "Already a Renanime member?" : "¿Eres miembro de Renanime?"}</span>
+        <button id="show-recovery" type="button">{isEnglish ? "Enter with your recovery code" : "Entra con tu código de recuperación"}</button>
       </div>
 
       <section id="onboarding" class="panel" hidden>
         <div class="step" data-step="profile">
-          <p class="panel-eyebrow">BIENVENIDO</p>
-          <h2>¿Cómo te llamas?</h2>
-          <p>Vamos a crear tu espacio personal.</p>
-          <label for="name">Tu nombre</label>
+          <p class="panel-eyebrow">{isEnglish ? "WELCOME" : "BIENVENIDO"}</p>
+          <h2>{isEnglish ? "What is your name?" : "¿Cómo te llamas?"}</h2>
+          <p>{isEnglish ? "Let’s create your personal space." : "Vamos a crear tu espacio personal."}</p>
+          <label for="name">{isEnglish ? "Your name" : "Tu nombre"}</label>
           <input id="name" type="text" maxlength="80" autocomplete="name" />
-          <button id="continue-name" type="button">Continuar</button>
+          <button id="continue-name" type="button">{isEnglish ? "Continue" : "Continuar"}</button>
           <p id="name-message" class="message" aria-live="polite"></p>
         </div>
 
         <div class="step" data-step="aka" hidden>
-          <p class="panel-eyebrow">¡SUBE DE RANGO, NAKAMA!</p>
-          <h2>¿Cuál es tu mote otaku?</h2>
-          <p>¿Cómo te llamarían tus nakamas en el mundo del anime?</p>
-          <label for="aka">Tu apodo legendario</label>
+          <p class="panel-eyebrow">{isEnglish ? "LEVEL UP, NAKAMA!" : "¡SUBE DE RANGO, NAKAMA!"}</p>
+          <h2>{isEnglish ? "What is your otaku nickname?" : "¿Cuál es tu mote otaku?"}</h2>
+          <p>{isEnglish ? "What would your nakamas call you in the anime world?" : "¿Cómo te llamarían tus nakamas en el mundo del anime?"}</p>
+          <label for="aka">{isEnglish ? "Your legendary nickname" : "Tu apodo legendario"}</label>
           <input id="aka" type="text" maxlength="40" autocomplete="nickname" placeholder="Ren-sama · Hokage · Goku" />
-          <button id="create-profile" type="button">Vale, este es</button>
+          <button id="create-profile" type="button">{isEnglish ? "That’s the one" : "Vale, este es"}</button>
           <p id="aka-message" class="message" aria-live="polite"></p>
         </div>
 
         <div class="step complete-step" data-step="complete" hidden>
-          <h2 class="welcome-title">Bienvenido a Renanime, <span id="welcome-name"></span>.</h2>
+          <h2 class="welcome-title">{isEnglish ? "Welcome to Renanime, " : "Bienvenido a Renanime, "}<span id="welcome-name"></span>.</h2>
           <p class="joke-result">
-            Ja, ja, ja… era broma. A nadie le importa tu mote, <strong>kono baka</strong>.<br />
-            No me puedo creer que lo hayas escrito… aunque tampoco tenías otra alternativa. Aquí yo soy <strong>Kami</strong>.
+            {isEnglish ? "Ha, ha, ha… just kidding. Nobody cares about your nickname, " : "Ja, ja, ja… era broma. A nadie le importa tu mote, "}<strong>kono baka</strong>.<br />
+            {isEnglish ? <>I can't believe you actually wrote it… though you didn't have much choice. Around here, I'm <strong>Kami</strong>.</> : <>No me puedo creer que lo hayas escrito… aunque tampoco tenías otra alternativa. Aquí yo soy <strong>Kami</strong>.</>}
           </p>
-          <p class="recovery-note">Apunta tu código de recuperación:</p>
-          <div id="recovery-display" class="recovery-display" role="button" tabindex="0" aria-label="Copiar código de recuperación" title="Haz clic para copiar"></div>
-          <button id="copy-recovery-code" class="secondary recovery-copy-button" type="button">Copiar código</button>
-          <p id="recovery-copy-message" class="recovery-help" role="status" aria-live="polite">Haz clic en el código o en el botón para copiarlo.</p>
-          <p class="recovery-help">Guárdalo. Lo necesitarás para entrar desde otro dispositivo.</p>
-          <button id="enter-renanime" type="button">Iniciar sesión</button>
+          <p class="recovery-note">{isEnglish ? "Write down your recovery code:" : "Apunta tu código de recuperación:"}</p>
+          <div id="recovery-display" class="recovery-display" role="button" tabindex="0" aria-label={isEnglish ? "Copy recovery code" : "Copiar código de recuperación"} title={isEnglish ? "Click to copy" : "Haz clic para copiar"}></div>
+          <button id="copy-recovery-code" class="secondary recovery-copy-button" type="button">{isEnglish ? "Copy code" : "Copiar código"}</button>
+          <p id="recovery-copy-message" class="recovery-help" role="status" aria-live="polite">{isEnglish ? "Click the code or button to copy it." : "Haz clic en el código o en el botón para copiarlo."}</p>
+          <p class="recovery-help">{isEnglish ? "Keep it safe. You'll need it to sign in from another device." : "Guárdalo. Lo necesitarás para entrar desde otro dispositivo."}</p>
+          <button id="enter-renanime" type="button">{isEnglish ? "Sign in" : "Iniciar sesión"}</button>
         </div>
 
         <div class="step" data-step="recovery" hidden>
-          <p class="panel-eyebrow">MIEMBRO DE RENANIME</p>
-          <h2>Volvamos a casa.</h2>
-          <p>Introduce tu código de recuperación. No necesitas registrarte otra vez.</p>
-          <label for="recovery-code">Código de recuperación</label>
+          <p class="panel-eyebrow">{isEnglish ? "RENANIME MEMBER" : "MIEMBRO DE RENANIME"}</p>
+          <h2>{isEnglish ? "Let’s come home." : "Volvamos a casa."}</h2>
+          <p>{isEnglish ? "Enter your recovery code. You do not need to register again." : "Introduce tu código de recuperación. No necesitas registrarte otra vez."}</p>
+          <label for="recovery-code">{isEnglish ? "Recovery code" : "Código de recuperación"}</label>
           <input id="recovery-code" type="text" placeholder="REN-XXXX-XXXX" autocomplete="off" />
-          <button id="recover-account" type="button">Entrar en mi cuenta</button>
-          <button id="back-to-create" class="secondary" type="button">Soy nuevo, crear un perfil</button>
+          <button id="recover-account" type="button">{isEnglish ? "Access my account" : "Entrar en mi cuenta"}</button>
+          <button id="back-to-create" class="secondary" type="button">{isEnglish ? "I’m new, create a profile" : "Soy nuevo, crear un perfil"}</button>
           <p id="recovery-message" class="message" aria-live="polite"></p>
         </div>
       </section>
     </section>
   </main>
+
+  <style is:global>
+    .auth-login {
+      --auth-copy: #fff;
+      --auth-copy-shadow: 0 2px 10px rgba(0, 0, 0, .95), 0 1px 3px rgba(0, 0, 0, .9);
+    }
+    .auth-login p,
+    .auth-login .subtitle,
+    .auth-login .member-entry,
+    .auth-login .member-entry span,
+    .auth-login label,
+    .auth-login .panel-eyebrow,
+    .auth-login .recovery-help,
+    .auth-login .recovery-note,
+    .auth-login .message {
+      color: var(--auth-copy) !important;
+      font-size: 1.05rem;
+      line-height: 1.65;
+      text-shadow: var(--auth-copy-shadow);
+    }
+    .auth-login .subtitle { font-size: 1.1rem; }
+    .auth-login .member-entry button { font-size: 1rem; text-shadow: var(--auth-copy-shadow); }
+    .auth-login .joke-result { font-size: 1.05rem; line-height: 1.75; }
+    .auth-login .recovery-help { font-size: 1rem; }
+    .auth-login .message { font-weight: 700; }
+    .auth-login input { color: #fff; text-shadow: var(--auth-copy-shadow); }
+    .auth-login .access-card { text-shadow: var(--auth-copy-shadow); }
+    .auth-login .access-card h1,
+    .auth-login .access-card h2,
+    .auth-login .access-card .welcome-title { text-shadow: 0 2px 12px rgba(0, 0, 0, .8); }
+    @media (max-width: 480px) {
+      .auth-login p,
+      .auth-login .subtitle,
+      .auth-login .member-entry,
+      .auth-login .member-entry span,
+      .auth-login label,
+      .auth-login .panel-eyebrow,
+      .auth-login .recovery-help,
+      .auth-login .recovery-note,
+      .auth-login .message { font-size: 1rem; line-height: 1.65; }
+    }
+  </style>
 </Layout>
 
 <script>
+  const isEnglish = document.documentElement.lang === "en";
   const accessForm = document.querySelector<HTMLFormElement>("#access-form");
   const accessPasswordInput = document.querySelector<HTMLInputElement>("#access-password");
   const accessMessage = document.querySelector<HTMLParagraphElement>("#access-message");
@@ -114,11 +158,11 @@ if (user) {
   document.body.appendChild(accessJokes);
 
   const accessFailureMessages = [
-    "Alguien se ha olvidado del código de acceso.",
-    "Renato no te quiere por aquí.",
-    "¿Seguro que sabes dónde estás?",
-    "Ese código no abre ni la nevera.",
-    "RenAnime dice: acceso denegado."
+    isEnglish ? "Someone forgot the access code." : "Alguien se ha olvidado del código de acceso.",
+    isEnglish ? "Renato does not want you here." : "Renato no te quiere por aquí.",
+    isEnglish ? "Are you sure you know where you are?" : "¿Seguro que sabes dónde estás?",
+    isEnglish ? "That code would not even open the fridge." : "Ese código no abre ni la nevera.",
+    isEnglish ? "RenAnime says: access denied." : "RenAnime dice: acceso denegado."
   ];
 
   const accessFailureKey = "renanime-access-failure-index";
@@ -214,7 +258,7 @@ if (user) {
 
     try {
       await navigator.clipboard.writeText(code);
-      recoveryCopyMessage.textContent = "¡Código copiado! Guárdalo en un lugar seguro.";
+      recoveryCopyMessage.textContent = isEnglish ? "Code copied! Keep it somewhere safe." : "¡Código copiado! Guárdalo en un lugar seguro.";
     } catch {
       // Fallback for browsers where the Clipboard API is unavailable.
       const selection = window.getSelection();
@@ -223,9 +267,9 @@ if (user) {
         range.selectNodeContents(recoveryDisplay);
         selection?.removeAllRanges();
         selection?.addRange(range);
-        recoveryCopyMessage.textContent = "Código seleccionado. Pulsa Ctrl+C o ⌘C para copiarlo.";
+        recoveryCopyMessage.textContent = isEnglish ? "Code selected. Press Ctrl+C or ⌘C to copy it." : "Código seleccionado. Pulsa Ctrl+C o ⌘C para copiarlo.";
       } else {
-        recoveryCopyMessage.textContent = "No se ha podido copiar automáticamente. Selecciona el código y cópialo.";
+        recoveryCopyMessage.textContent = isEnglish ? "Could not copy automatically. Select the code and copy it." : "No se ha podido copiar automáticamente. Selecciona el código y cópialo.";
       }
     }
   };
@@ -250,7 +294,7 @@ if (user) {
     accessPassword = accessPasswordInput.value.trim();
 
     if (!accessPassword) {
-      accessMessage.textContent = "Introduce el código de acceso.";
+      accessMessage.textContent = isEnglish ? "Enter the access code." : "Introduce el código de acceso.";
       accessMessage.hidden = false;
       return;
     }
@@ -275,8 +319,8 @@ if (user) {
       if (!response.ok || data.ok !== true) {
         accessMessage.textContent =
           data.error === "INVALID_ACCESS_PASSWORD"
-            ? "Código de acceso incorrecto."
-            : "No se ha podido abrir la puerta de Renanime.";
+            ? isEnglish ? "Incorrect access code." : "Código de acceso incorrecto."
+            : isEnglish ? "Could not open the door to Renanime." : "No se ha podido abrir la puerta de Renanime.";
         accessMessage.hidden = false;
         showAccessFailure();
         return;
@@ -291,7 +335,7 @@ if (user) {
       nameInput?.focus();
     } catch (error) {
       console.error("Renanime access request failed:", error);
-      accessMessage.textContent = "No se ha podido conectar con Renanime.";
+      accessMessage.textContent = isEnglish ? "Could not connect to Renanime." : "No se ha podido conectar con Renanime.";
       accessMessage.hidden = false;
     }
   });
@@ -308,7 +352,7 @@ if (user) {
     nameMessage.textContent = "";
 
     if (!name) {
-      nameMessage.textContent = "Escribe tu nombre.";
+      nameMessage.textContent = isEnglish ? "Enter your name." : "Escribe tu nombre.";
       return;
     }
 
@@ -324,15 +368,15 @@ if (user) {
     akaMessage.textContent = "";
 
     if (!aka) {
-      akaMessage.textContent = "Venga va. Dame un AKA.";
+      akaMessage.textContent = isEnglish ? "Come on, give me an AKA." : "Venga va. Dame un AKA.";
       return;
     }
 
     if (name.toLocaleLowerCase() === aka.toLocaleLowerCase()) {
       sameNameAkaAttempts += 1;
       akaMessage.textContent = sameNameAkaAttempts % 2 === 1
-        ? "¡Sé más creativo, tú puedes! ¡Gambare!"
-        : "Gambare Gambare Senpai";
+        ? isEnglish ? "Be more creative, you can do it! Gambare!" : "¡Sé más creativo, tú puedes! ¡Gambare!"
+        : isEnglish ? "Gambare, gambare, senpai." : "Gambare Gambare Senpai";
       return;
     }
 
@@ -348,10 +392,10 @@ if (user) {
       if (!response.ok) {
         akaMessage.textContent =
           data.error === "SAME_NAME_AKA"
-            ? "¡Sé más creativo, tú puedes! ¡Gambare!"
+            ? isEnglish ? "Be more creative, you can do it! Gambare!" : "¡Sé más creativo, tú puedes! ¡Gambare!"
             : data.error === "INVALID_PROFILE"
-              ? (!name ? "No encuentro tu nombre. Vuelve atrás y escríbelo de nuevo." : !aka ? "Escribe tu mote otaku." : "No se han podido validar los datos. Prueba otro mote.")
-              : "No se ha podido crear el perfil.";
+              ? (isEnglish ? (!name ? "I can't find your name. Go back and enter it again." : !aka ? "Enter your otaku nickname." : "Couldn't validate those details. Try another nickname.") : (!name ? "No encuentro tu nombre. Vuelve atrás y escríbelo de nuevo." : !aka ? "Escribe tu mote otaku." : "No se han podido validar los datos. Prueba otro mote."))
+              : isEnglish ? "Could not create the profile." : "No se ha podido crear el perfil.";
         return;
       }
 
@@ -359,7 +403,7 @@ if (user) {
       recoveryDisplay!.textContent = data.recoveryCode;
       showStep(completeStep);
     } catch {
-      akaMessage.textContent = "No se ha podido conectar con Renanime.";
+      akaMessage.textContent = isEnglish ? "Could not connect to Renanime." : "No se ha podido conectar con Renanime.";
     }
   });
 
@@ -370,7 +414,7 @@ if (user) {
     recoveryMessage.textContent = "";
 
     if (!recoveryCode) {
-      recoveryMessage.textContent = "Introduce tu código de recuperación.";
+      recoveryMessage.textContent = isEnglish ? "Enter your recovery code." : "Introduce tu código de recuperación.";
       return;
     }
 
@@ -386,14 +430,14 @@ if (user) {
       if (!response.ok) {
         recoveryMessage.textContent =
           data.error === "INVALID_RECOVERY_CODE"
-            ? "Código de recuperación incorrecto."
-            : "No se ha podido iniciar sesión.";
+            ? isEnglish ? "Incorrect recovery code." : "Código de recuperación incorrecto."
+            : isEnglish ? "Could not sign in." : "No se ha podido iniciar sesión.";
         return;
       }
 
       window.location.href = document.documentElement.lang === "en" ? "/en/" : "/";
     } catch {
-      recoveryMessage.textContent = "No se ha podido conectar con Renanime.";
+      recoveryMessage.textContent = isEnglish ? "Could not connect to Renanime." : "No se ha podido conectar con Renanime.";
     }
   });
 

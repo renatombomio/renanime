@@ -38,10 +38,10 @@ async function fetchMedia(ids:string[]):Promise<Record<string,Media|null>>{
   return result;
 }
 
-function formatDate(date:Media["startDate"]){
-  if(!date?.year)return "Fecha desconocida";
+function formatDate(date:Media["startDate"],lang:Lang){
+  if(!date?.year)return lang === "en" ? "Unknown date" : "Fecha desconocida";
   if(!date.month||!date.day)return String(date.year);
-  return new Date(date.year,date.month-1,date.day).toLocaleDateString("es-ES",{day:"numeric",month:"long",year:"numeric"});
+  return new Date(date.year,date.month-1,date.day).toLocaleDateString(lang === "en" ? "en-GB" : "es-ES",{day:"numeric",month:"long",year:"numeric"});
 }
 function titleOf(media?:Media|null){return media?.title?.romaji||media?.title?.english||"Anime";}
 function isMovie(media?:Media|null){return media?.format === "MOVIE";}

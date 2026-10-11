@@ -41,7 +41,8 @@ const STORAGE_KEY = "renanime:soundtrack:v2";
 const DEFAULT_VOLUME = 0.12;
 
 function getPlaylistKey() {
-  return window.location.pathname.startsWith("/ghibli") ? "ghibli" : "hero";
+  const pathname = window.location.pathname.replace(/^\/en(?=\/|$)/, "") || "/";
+  return pathname === "/ghibli" || pathname.startsWith("/ghibli/") ? "ghibli" : "hero";
 }
 
 function getSavedState(): SavedState {
@@ -534,7 +535,7 @@ export default function SoundtrackPlayer({ lang }: { lang: Lang }) {
               </div>
               <div className="soundtrack-player__modes">
                 <button className={shuffle ? "is-active" : ""} type="button" onClick={toggleShuffle} aria-pressed={shuffle} aria-label={t("player.shuffle")}>🔀</button>
-                <button className={repeat !== "off" ? "is-active" : ""} type="button" onClick={cycleRepeat} aria-label={`${t("player.repeat")}: ${repeat}`}>
+                <button className={repeat !== "off" ? "is-active" : ""} type="button" onClick={cycleRepeat} aria-label={`${t("player.repeat")}: ${lang === "en" ? (repeat === "off" ? "off" : repeat === "one" ? "one track" : "all tracks") : (repeat === "off" ? "desactivado" : repeat === "one" ? "una pista" : "todas las pistas")}`}>
                   {repeat === "one" ? "1" : "↻"}
                 </button>
               </div>

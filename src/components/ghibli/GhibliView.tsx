@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { fetchFallbackPoster } from "../../lib/api/poster-fallback";
+import { fetchGhibliAniList } from "../../lib/api/ghibli-anilist";
+import { useT, type Lang } from "../../i18n";
 
 interface Film { id: string; title: string; year: number; watched: boolean; searchTitle?: string; }
 interface Media { id: number; title?: { romaji?: string | null; english?: string | null }; coverImage?: { extraLarge?: string | null; large?: string | null }; }
 
-export default function GhibliView({ films }: { films: Film[] }) {
+export default function GhibliView({ films, lang = "es" }: { films: Film[]; lang?: Lang }) {
+  const t = useT(lang);
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(true);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -19,26 +22,23 @@ export default function GhibliView({ films }: { films: Film[] }) {
     }).join("\n");
     const definitions = films.map((_, index) => "$s" + index + ":String!").join(",");
 
-    fetch("https://graphql.anilist.co", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ query: "query Ghibli(" + definitions + "){" + fields + "}", variables }),
-    })
-      .then((response) => response.ok ? response.json() : Promise.reject())
-      .then(async (payload) => {
+    fetchGhibliAniList("films", "query Ghibli(" + definitions + "){" + fields + "}", variables)
+      .then((payload) => {
         if (cancelled) return;
         const result: Record<string, Media | null> = {};
-        films.forEach((film, index) => {
-          result[film.id] = payload.data?.["a" + index]?.media?.[0] ?? null;
-        });
-        for (const film of films) {
-          const item = result[film.id];
-          if (!item?.coverImage?.extraLarge && !item?.coverImage?.large) {
-            const poster = await fetchFallbackPoster(film.searchTitle || film.title);
-            if (poster) result[film.id] = { ...(item ?? { id: 0 }), coverImage: { extraLarge: poster, large: poster } };
-          }
-        }
+        films.forEach((film, index) => { result[film.id] = payload["a" + index]?.media?.[0] ?? null; });
         setMedia(result);
+        setLoading(false);
+        void Promise.all(films.filter((film) => {
+          const item = result[film.id];
+          return !item?.coverImage?.extraLarge && !item?.coverImage?.large;
+        }).map(async (film) => {
+          try {
+            const poster = await fetchFallbackPoster(film.searchTitle || film.title);
+            if (!poster || cancelled) return;
+            setMedia((current) => ({ ...current, [film.id]: { ...(current[film.id] ?? { id: 0 }), coverImage: { extraLarge: poster, large: poster } } }));
+          } catch { /* A missing fallback poster must not block the grid. */ }
+        }));
       })
       .catch(() => {})
       .finally(() => { if (!cancelled) setLoading(false); });
@@ -148,7 +148,7 @@ export default function GhibliView({ films }: { films: Film[] }) {
         }
       `}</style>
       {loading ? (
-        <div className="ghibli-loading" role="status" aria-live="polite">Abriendo el archivo…</div>
+        <div className="ghibli-loading" role="status" aria-live="polite">{t("ghibli.loading")}</div>
       ) : (
         <div ref={gridRef} className="ghibli-grid">
           {films.map((film, index) => {
@@ -156,25 +156,26 @@ export default function GhibliView({ films }: { films: Film[] }) {
             const image = item?.coverImage?.extraLarge || item?.coverImage?.large;
             const fallbackImage = film.id === "the-red-turtle" ? "https://www.ghibli.jp/images/red-turtle.jpg" : null;
             const posterImage = image || fallbackImage;
+            const title = lang === "en" ? (item?.title?.english || item?.title?.romaji || film.title) : film.title;
             const href = item
-              ? "/ghibli/anime?id=" + item.id
-              : "/ghibli/anime?film=" + encodeURIComponent(film.id);
+              ? `${lang === "en" ? "/en" : ""}/ghibli/anime?id=${item.id}`
+              : `${lang === "en" ? "/en" : ""}/ghibli/anime?film=${encodeURIComponent(film.id)}`;
 
             return (
               <article className={"ghibli-card" + (film.watched ? " is-watched" : "")} key={film.id}>
-                <a href={href} aria-label={"Abrir " + film.title}>
+                <a href={href} aria-label={t("ghibli.openFilm").replace("{title}", title)}>
                   <div className="ghibli-poster">
                     {posterImage ? (
                       <img src={posterImage} alt="" loading={index < 6 ? "eager" : "lazy"} decoding="async" />
                     ) : (
                       <div className="ghibli-placeholder" aria-hidden="true">
-                        <strong>{film.title}</strong>
+                        <strong>{title}</strong>
                       </div>
                     )}
-                    {film.watched && <span className="ghibli-badge">VISTA</span>}
+                    {film.watched && <span className="ghibli-badge">{t("ghibli.watched")}</span>}
                   </div>
                   <div className="ghibli-info">
-                    <h3>{film.title}</h3>
+                    <h3>{title}</h3>
                     <span className="ghibli-year">{film.year}</span>
                   </div>
                 </a>

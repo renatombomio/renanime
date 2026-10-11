@@ -37,6 +37,7 @@
   "player.space": "SPACE play/pause",
   "player.seek": "← → ±10s",
   "player.m": "M mute",
+  "detail.format": "Format",
   "detail.favorite": "Favorite",
   "detail.release": "RELEASED",
   "detail.episodes": "EPISODES",
@@ -165,5 +166,11 @@
   "genres.resultsLabel": "Anime in the {genre} genre",
   "genres.unknownDate": "Unknown date",
   "genres.error": "We couldn't retrieve the genres from your collection.",
-  "favorites.loadMoreCount": "Load more · {shown} / {total}"
+  "favorites.loadMoreCount": "Load more · {shown} / {total}",
+  "renCollection.pageTitle": "Ren\u2019s Collection",
+  "renCollection.heading": "Ren\u2019s Collection",
+  "ghibli.loading": "Opening the archive…",
+  "ghibli.openFilm": "Open {title}",
+  "ghibli.watched": "WATCHED",
+  "ghibli.storyLoading": "Remembering the journey…"
 }

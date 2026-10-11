@@ -7,18 +7,25 @@ import Hero from "../components/hero/Hero.astro";
 import HomeGallery from "../components/home/HomeGallery";
 import { getWatchedLibrary } from "../data/library";
 const collectionEntries = getWatchedLibrary();
+const lang = Astro.locals.lang;
+const isEnglish = lang === "en";
 ---
 
 <Layout
-  title="Renanime's Gallery — Mi archivo personal de anime"
-  description="Galería personal de anime: favoritos, colección, géneros, pendientes."
+  title={isEnglish ? "Renanime's Gallery — My personal anime archive" : "Renanime's Gallery — Mi archivo personal de anime"}
+  description={isEnglish ? "Personal anime gallery: favorites, collection, genres and watchlist." : "Galería personal de anime: favoritos, colección, géneros, pendientes."}
 >
   <Navbar />
 
   <main id="main-content">
-    <Hero />
+    <Hero
+      kicker="Renanime's"
+      title="Gallery."
+      copy={isEnglish ? "Anime through my eyes.\nThis is my gift to you." : "Anime a través de mis ojos.\nEste es mi regalo para ti."}
+      ariaLabel={isEnglish ? "Renanime's Gallery" : "Galería de Renanime"}
+    />
 
-    <section class="home-gallery-section" aria-label="Colección de Ren">
+    <section class="home-gallery-section" aria-label={isEnglish ? "Ren's collection" : "Colección de Ren"}>
       <HomeGallery entries={collectionEntries} lang={Astro.locals.lang} client:load />
     </section>
   </main>

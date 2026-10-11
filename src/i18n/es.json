@@ -37,6 +37,7 @@
   "player.space": "ESPACIO reproducir/pausar",
   "player.seek": "← → ±10 s",
   "player.m": "M silenciar",
+  "detail.format": "Formato",
   "detail.favorite": "Favorito",
   "detail.release": "LANZAMIENTO",
   "detail.episodes": "EPISODIOS",
@@ -165,5 +166,11 @@
   "genres.resultsLabel": "Animes del género {genre}",
   "genres.unknownDate": "Fecha desconocida",
   "genres.error": "No hemos podido recuperar los géneros de tu colección.",
-  "favorites.loadMoreCount": "Cargar más · {shown} / {total}"
+  "favorites.loadMoreCount": "Cargar más · {shown} / {total}",
+  "renCollection.pageTitle": "Colección de Ren",
+  "renCollection.heading": "La colección de Ren",
+  "ghibli.loading": "Abriendo el archivo…",
+  "ghibli.openFilm": "Abrir {title}",
+  "ghibli.watched": "VISTA",
+  "ghibli.storyLoading": "Recordando el viaje…"
 }
