@@ -2,12 +2,13 @@
 export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 import { getRenanimeUser } from "../../lib/auth";
+import { localizedPath } from "../../i18n";
 
 const token = Astro.cookies.get("renanime_session")?.value;
 const user = await getRenanimeUser(token);
 
 if (user) {
-  return Astro.redirect("/");
+  return Astro.redirect(localizedPath(Astro.locals.lang, "/"));
 }
 ---
 
@@ -16,7 +17,7 @@ if (user) {
   description="Entra en tu espacio personal de Renanime's Gallery."
 >
   <main class="access-page auth-login" data-auth-screen="login">
-    <button class="language-toggle-auth" type="button" data-language-toggle aria-label="Switch language to English" title="Switch to English">ES · EN</button>
+    <a class="language-toggle-auth" href={localizedPath(Astro.locals.lang === "es" ? "en" : "es", "/login/")} data-astro-reload hreflang={Astro.locals.lang === "es" ? "en" : "es"} aria-label={Astro.locals.lang === "es" ? "Switch language to English" : "Cambiar idioma a español"} title={Astro.locals.lang === "es" ? "Switch to English" : "Cambiar a español"}>{Astro.locals.lang === "es" ? "ES · EN" : "EN · ES"}</a>
     <div class="auth-backgrounds" aria-hidden="true">
       <img id="auth-background" class="auth-background" src="/images/login2.jpg" alt="" />
     </div>
@@ -390,7 +391,7 @@ if (user) {
         return;
       }
 
-      window.location.href = "/";
+      window.location.href = document.documentElement.lang === "en" ? "/en/" : "/";
     } catch {
       recoveryMessage.textContent = "No se ha podido conectar con Renanime.";
     }
