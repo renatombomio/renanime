@@ -7,6 +7,7 @@ interface Props {
   kicker?: string;
   title?: string;
   copy?: string;
+  ariaLabel?: string;
   videoSrc?: string;
   variant?: "default" | "ghibli";
 }
@@ -15,6 +16,7 @@ const {
   kicker = "Renanime's",
   title = "Gallery.",
   copy = "Anime a través de mis ojos.\nEste es mi regalo para ti.",
+  ariaLabel = "Renanime's Gallery",
   videoSrc = "/videos/hero.mp4",
   variant = "default",
 } = Astro.props;
@@ -46,7 +48,7 @@ const slides: HeroSlide[] = (
 ).filter((slide): slide is HeroSlide => slide !== null);
 ---
 
-<HeroCarousel client:load slides={slides} kicker={kicker} title={title} copy={copy} videoSrc={videoSrc} variant={variant} />
+<HeroCarousel client:load slides={slides} kicker={kicker} title={title} copy={copy} ariaLabel={ariaLabel} videoSrc={videoSrc} variant={variant} />
 
 <style>
   :global(.hero) {
