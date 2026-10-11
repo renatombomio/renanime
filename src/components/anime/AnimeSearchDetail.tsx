@@ -129,7 +129,7 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
  if(!media)return <div className="anime-search-detail-state">{t("detail.notFound")}</div>;
 
  const from=variant === "ghibli" ? "ghibli" : params.get("from");
- const title=idParam==="movie-063" ? "Kimetsu no Yaiba: Mugen-jō-hen" : lang==="en" ? (media.title?.english||media.title?.romaji||localEntry?.title||t("detail.noTitle")) : (media.title?.romaji||media.title?.english||localEntry?.title||t("detail.noTitle"));
+ const title=idParam==="movie-063" ? "Kimetsu no Yaiba: Mugen-jō-hen" : (from==="ghibli"||lang==="en") ? (media.title?.english||media.title?.romaji||localEntry?.title||t("detail.noTitle")) : (media.title?.romaji||media.title?.english||localEntry?.title||t("detail.noTitle"));
  const image=media.coverImage?.extraLarge||media.coverImage?.large;
  const banner=media.bannerImage||image;
  const synopsis=media.description?cleanDescription(media.description):"";
