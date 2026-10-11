@@ -20,7 +20,7 @@ import PersonalLibraryView from "../../components/personal-library/PersonalLibra
     </div>
 
     <section class="collection-content" aria-label="Mi colección de anime">
-      <PersonalLibraryView mode="WATCHED" client:load />
+      <PersonalLibraryView mode="WATCHED" lang={Astro.locals.lang} client:load />
     </section>
   </main>
 
