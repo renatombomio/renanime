@@ -10,15 +10,15 @@ const collectionEntries = getWatchedLibrary();
 ---
 
 <Layout
-  title="Renanime's Gallery — Mi archivo personal de anime"
-  description="Galería personal de anime: favoritos, colección, géneros, pendientes."
+  title={Astro.locals.lang === "en" ? "Renanime's Gallery — My personal anime archive" : "Renanime's Gallery — Mi archivo personal de anime"}
+  description={Astro.locals.lang === "en" ? "Personal anime gallery: favourites, collection, genres and watchlist." : "Galería personal de anime: favoritos, colección, géneros, pendientes."}
 >
   <Navbar />
 
   <main id="main-content">
     <Hero />
 
-    <section class="home-gallery-section" aria-label="Colección de Ren">
+    <section class="home-gallery-section" aria-label={Astro.locals.lang === "en" ? "Ren's collection" : "Colección de Ren"}>
       <HomeGallery entries={collectionEntries} lang={Astro.locals.lang} client:load />
     </section>
   </main>
