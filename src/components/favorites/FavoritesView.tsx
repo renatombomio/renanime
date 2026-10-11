@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
+import type { Lang } from "../../i18n";
 
 interface FavoriteEntry {
   animeId: string;
@@ -18,11 +19,12 @@ interface Media {
 interface Props {
   entries: FavoriteEntry[];
   recommendations: FavoriteEntry[];
+  lang?: Lang;
 }
 
 const ANILIST_BATCH_SIZE = 20;
 
-export default function FavoritesView({ entries, recommendations }: Props) {
+export default function FavoritesView({ entries, recommendations, lang = "es" }: Props) {
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(true);
   const [visibleFavorites, setVisibleFavorites] = useState(10);
@@ -129,7 +131,7 @@ export default function FavoritesView({ entries, recommendations }: Props) {
 
     return (
       <article className={"favorite-card" + (compact ? " favorite-card--recommendation" : "")} key={entry.animeId}>
-        <a href={"/anime/" + entry.animeId} aria-label={"Ver " + title}>
+        <a href={`${lang === "en" ? "/en" : ""}/anime/${entry.animeId}`} aria-label={"Ver " + title}>
           <div className="favorite-media">
             {item?.coverImage?.extraLarge || item?.coverImage?.large ? (
               <img
