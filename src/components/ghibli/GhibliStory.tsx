@@ -179,20 +179,21 @@ export default function GhibliStory({ entries, totalFilms, watchedFilms, lang = 
         {entries.map((entry, index) => {
           const item = media[entry.id];
           const image = item?.coverImage?.extraLarge || item?.coverImage?.large;
+          const title = lang === "en" ? (item?.title?.english || item?.title?.romaji || entry.title) : entry.title;
           return (
             <article className="ghs-entry" key={entry.id}>
               <div className="ghs-image-wrap">
                 {image ? (
                   <img src={image} alt="" loading={index < 2 ? "eager" : "lazy"} decoding="async" />
                 ) : (
-                  <div className="ghs-placeholder">{entry.title}</div>
+                  <div className="ghs-placeholder">{title}</div>
                 )}
                 <span className="ghs-num" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
                 <span className="ghs-year">{entry.year}</span>
               </div>
               <div className="ghs-copy">
                 <p className="ghs-chapter">{lang === "en" ? englishStory[entry.id]?.chapter ?? entry.chapter : entry.chapter}</p>
-                <h3>{entry.title}</h3>
+                <h3>{title}</h3>
                 <p className="ghs-ren">{lang === "en" ? englishStory[entry.id]?.renText ?? entry.renText : entry.renText}</p>
                 <div className="ghs-creator">
                   <div className="ghs-creator-label">
