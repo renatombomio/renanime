@@ -2,9 +2,10 @@
 export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 import { getRenanimeUser } from "../../lib/auth";
-import { localizedPath } from "../../i18n";
+import { localizedPath, useT } from "../../i18n";
 
 const isEnglish = Astro.locals.lang === "en";
+const t = useT(Astro.locals.lang);
 const token = Astro.cookies.get("renanime_session")?.value;
 const user = await getRenanimeUser(token);
 
@@ -18,7 +19,7 @@ if (user) {
   description={isEnglish ? "Enter your personal space in Renanime's Gallery." : "Entra en tu espacio personal de Renanime's Gallery."}
 >
   <main class="access-page auth-login" data-auth-screen="login">
-    <a class="language-toggle-auth" href={localizedPath(Astro.locals.lang === "es" ? "en" : "es", "/login/")} data-astro-reload hreflang={Astro.locals.lang === "es" ? "en" : "es"} aria-label={Astro.locals.lang === "es" ? "Switch language to English" : "Cambiar idioma a español"} title={Astro.locals.lang === "es" ? "Switch to English" : "Cambiar a español"}>{Astro.locals.lang === "es" ? "ES · EN" : "EN · ES"}</a>
+    <a class="language-toggle-auth" href={localizedPath(Astro.locals.lang === "es" ? "en" : "es", "/login/")} data-astro-reload hreflang={Astro.locals.lang === "es" ? "en" : "es"} aria-label={t(Astro.locals.lang === "es" ? "language.switchToEnglish" : "language.switchToSpanish")} title={t(Astro.locals.lang === "es" ? "language.switchToEnglish" : "language.switchToSpanish")}>{Astro.locals.lang === "es" ? "ES · EN" : "EN · ES"}</a>
     <div class="auth-backgrounds" aria-hidden="true">
       <img id="auth-background" class="auth-background" src="/images/login2.jpg" alt="" />
     </div>
