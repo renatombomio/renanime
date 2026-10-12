@@ -80,9 +80,9 @@ export default function FavoritesView({ entries, recommendations, lang = "es" }:
         setLoading(false);
       }
 
-      // Show primary AniList results immediately; fallback posters can resolve later.
-      for (const { entry, selected } of missingPosters) {
-        if (cancelled) break;
+      // Resolve fallback posters in the background so the next AniList batch
+      // can render without waiting for the slow, rate-limited poster queue.
+      void Promise.all(missingPosters.map(async ({ entry, selected }) => {
         const poster = await fetchFallbackPoster(entry.title, entry.format);
         if (poster && !cancelled) {
           setMedia((current) => ({
@@ -95,7 +95,7 @@ export default function FavoritesView({ entries, recommendations, lang = "es" }:
             },
           }));
         }
-      }
+      }));
 
       return offset + batch.length;
     }
