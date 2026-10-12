@@ -64,26 +64,37 @@ export default function FavoritesView({ entries, recommendations, lang = "es" }:
 
       const payload = await response.json();
       const result: Record<string, Media | null> = {};
+      const missingPosters: Array<{ entry: FavoriteEntry; selected: Media | null }> = [];
 
       for (const [index, entry] of batch.entries()) {
         const candidates = payload.data?.["a" + index]?.media ?? [];
         const selected = selectBestAnimeCandidate(candidates, entry.title, entry.format);
         result[entry.animeId] = selected ?? null;
         if (!selected?.coverImage?.extraLarge && !selected?.coverImage?.large) {
-          const poster = await fetchFallbackPoster(entry.title, entry.format);
-          if (poster) {
-            result[entry.animeId] = {
-              ...(selected ?? {}),
-              title: selected?.title ?? { romaji: entry.title },
-              format: selected?.format ?? entry.format,
-              coverImage: { extraLarge: poster, large: poster },
-            };
-          }
+          missingPosters.push({ entry, selected: selected ?? null });
         }
       }
 
       if (!cancelled) {
         setMedia((current) => ({ ...current, ...result }));
+        setLoading(false);
+      }
+
+      // Show primary AniList results immediately; fallback posters can resolve later.
+      for (const { entry, selected } of missingPosters) {
+        if (cancelled) break;
+        const poster = await fetchFallbackPoster(entry.title, entry.format);
+        if (poster && !cancelled) {
+          setMedia((current) => ({
+            ...current,
+            [entry.animeId]: {
+              ...(current[entry.animeId] ?? selected ?? {}),
+              title: current[entry.animeId]?.title ?? selected?.title ?? { romaji: entry.title },
+              format: current[entry.animeId]?.format ?? selected?.format ?? entry.format,
+              coverImage: { extraLarge: poster, large: poster },
+            },
+          }));
+        }
       }
 
       return offset + batch.length;
