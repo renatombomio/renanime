@@ -43,7 +43,7 @@ function formatDate(date:Media["startDate"],lang:Lang){
   if(!date.month||!date.day)return String(date.year);
   return new Date(date.year,date.month-1,date.day).toLocaleDateString(lang === "en" ? "en-GB" : "es-ES",{day:"numeric",month:"long",year:"numeric"});
 }
-function titleOf(media?:Media|null){return media?.title?.romaji||media?.title?.english||"Anime";}
+function titleOf(media?:Media|null,fallback="Anime"){return media?.title?.romaji||media?.title?.english||fallback;}
 function isMovie(media?:Media|null){return media?.format === "MOVIE";}
 
 export default function PersonalLibraryView({mode,lang="es"}:Props){
@@ -95,7 +95,7 @@ export default function PersonalLibraryView({mode,lang="es"}:Props){
     {visibleEntries.length?<div className="personal-library-grid">
       {visibleEntries.map(entry=>{
         const item=media[entry.animeId];
-        const title=titleOf(item);
+        const title=titleOf(item,t("detail.noTitle"));
         const image=item?.coverImage?.extraLarge||item?.coverImage?.large;
         const score=entry.state.personalScore;
         return <article className="personal-library-card" key={entry.animeId}>

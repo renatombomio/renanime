@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { LibraryEntry } from "../../types/personal";
 import { buildGenreCatalog } from "../../lib/anime/genre-catalog";
 import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
@@ -100,7 +100,6 @@ export default function GenresView({ entries, lang = "es" }: Props) {
   const [selected, setSelected] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [resultsLoading, setResultsLoading] = useState(false);
-  const historyInitialized = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -125,21 +124,19 @@ export default function GenresView({ entries, lang = "es" }: Props) {
   const selectedGenre = catalog.find((genre) => genre.name === selected);
 
   useEffect(() => {
-    if (historyInitialized.current || catalog.length === 0) return;
-    historyInitialized.current = true;
+    if (catalog.length === 0) return;
 
-    const genreFromUrl = new URLSearchParams(window.location.search).get("genre");
-    if (genreFromUrl && catalog.some((genre) => genre.name === genreFromUrl)) {
-      setSelected(genreFromUrl);
-    }
-
-    const handlePopState = () => {
+    const syncSelectedGenre = () => {
       const genreFromUrl = new URLSearchParams(window.location.search).get("genre");
-      setSelected(genreFromUrl && catalog.some((genre) => genre.name === genreFromUrl) ? genreFromUrl : null);
+      const matchedGenre = genreFromUrl
+        ? catalog.find((genre) => genre.name.toLocaleLowerCase() === genreFromUrl.toLocaleLowerCase())
+        : undefined;
+      setSelected(matchedGenre?.name ?? null);
     };
 
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
+    syncSelectedGenre();
+    window.addEventListener("popstate", syncSelectedGenre);
+    return () => window.removeEventListener("popstate", syncSelectedGenre);
   }, [catalog]);
 
   const selectedEntryIds = selectedGenre?.entries.map((entry) => entry.animeId).join("|") ?? "";
