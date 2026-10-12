@@ -5,14 +5,14 @@ const PAGE_SIZE=12;
 function formatDate(date:Media["startDate"],lang:Lang){if(!date?.year)return lang==="en"?"Unknown date":"Fecha desconocida";if(!date.month||!date.day)return String(date.year);return new Date(date.year,date.month-1,date.day).toLocaleDateString(lang==="en"?"en-GB":"es-ES",{day:"numeric",month:"long",year:"numeric"});}
 export default function SearchView({lang="es"}:{lang?:Lang}){
  const t=useT(lang);
- const [query,setQuery]=useState(""),[submitted,setSubmitted]=useState(""),[results,setResults]=useState<Media[]>([]),[page,setPage]=useState(1),[hasNext,setHasNext]=useState(false),[loading,setLoading]=useState(false);
- useEffect(()=>{if(!submitted.trim()){setResults([]);setHasNext(false);return;}let cancelled=false;setLoading(true);
+ const [query,setQuery]=useState(""),[submitted,setSubmitted]=useState(""),[results,setResults]=useState<Media[]>([]),[page,setPage]=useState(1),[retry,setRetry]=useState(0),[hasNext,setHasNext]=useState(false),[loading,setLoading]=useState(false),[searchError,setSearchError]=useState(false);
+ useEffect(()=>{if(!submitted.trim()){setResults([]);setHasNext(false);setSearchError(false);return;}let cancelled=false;setLoading(true);setSearchError(false);
  fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query:"query Search($search:String!,$page:Int!,$perPage:Int!){Page(page:$page,perPage:$perPage){pageInfo{hasNextPage} media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} startDate{year month day} coverImage{extraLarge large} format}}}",variables:{search:submitted,page,perPage:PAGE_SIZE}})})
- .then(r=>r.ok?r.json():Promise.reject()).then(payload=>{if(cancelled)return;const media=payload.data?.Page?.media??[];
+ .then(r=>r.ok?r.json():Promise.reject()).then(payload=>{if(payload.errors?.length)throw new Error("AniList GraphQL error");if(cancelled)return;const media=payload.data?.Page?.media??[];
 setResults(current=>page===1?media:[...current,...media]);
-setHasNext(Boolean(payload.data?.Page?.pageInfo?.hasNextPage));}).catch(()=>{if(!cancelled&&page===1)setResults([]);}).finally(()=>{if(!cancelled)setLoading(false);});
- return()=>{cancelled=true;};},[submitted,page]);
- const submit=(event:FormEvent)=>{event.preventDefault();setPage(1);setSubmitted(query.trim());};
+setHasNext(Boolean(payload.data?.Page?.pageInfo?.hasNextPage));setSearchError(false);}).catch(()=>{if(!cancelled)setSearchError(true);}).finally(()=>{if(!cancelled)setLoading(false);});
+ return()=>{cancelled=true;};},[submitted,page,retry]);
+ const submit=(event:FormEvent)=>{event.preventDefault();setPage(1);setRetry(0);setSearchError(false);setSubmitted(query.trim());};
  return <div className="search-view">
   <style>{`
     .search-view{width:100%}
@@ -38,7 +38,7 @@ setHasNext(Boolean(payload.data?.Page?.pageInfo?.hasNextPage));}).catch(()=>{if(
   `}</style>
   <form className="search-form" onSubmit={submit}><input value={query} onChange={event=>setQuery(event.target.value)} placeholder={t("search.placeholder")} aria-label={t("search.label")}/><button type="submit">{t("search.submit")}</button></form>
   {loading&&<p className="search-status" role="status" aria-live="polite">{t("search.loading")}</p>}
-  {!loading&&submitted&&!results.length&&<p className="search-status" role="status" aria-live="polite">{t("search.empty").replace("{query}",submitted)}</p>}
-  {results.length>0&&<><div className="search-grid" aria-busy={loading}>{results.map((item,index)=>{const title=lang==="en"?(item.title?.english||item.title?.romaji||t("detail.noTitle")):(item.title?.romaji||item.title?.english||t("detail.noTitle"));return <article className="search-result" key={item.id}><a className="search-card" href={`${lang === "en" ? "/en" : ""}/anime/${item.id}`}><div className="search-poster"><img src={item.coverImage?.extraLarge||item.coverImage?.large||""} alt="" loading={index<6?"eager":"lazy"}/></div><div className="search-info"><h2>{title}</h2><span>{formatDate(item.startDate,lang)} · {item.format==="MOVIE"?t("detail.film"):t("detail.series")}</span></div></a></article>;})}</div>{hasNext&&<button className="search-more" type="button" onClick={()=>setPage(current=>current+1)} disabled={loading}>{loading?t("search.loading"):t("search.more")}</button>}</>}
+  {!loading&&searchError&&<p className="search-status" role="alert">{t("search.error")}</p>}{!loading&&!searchError&&submitted&&!results.length&&<p className="search-status" role="status" aria-live="polite">{t("search.empty").split("{query}").join(submitted)}</p>}
+  {results.length>0&&<><div className="search-grid" aria-busy={loading}>{results.map((item,index)=>{const title=lang==="en"?(item.title?.english||item.title?.romaji||t("detail.noTitle")):(item.title?.romaji||item.title?.english||t("detail.noTitle"));return <article className="search-result" key={item.id}><a className="search-card" href={`${lang === "en" ? "/en" : ""}/anime/${item.id}`}><div className="search-poster"><img src={item.coverImage?.extraLarge||item.coverImage?.large||""} alt="" loading={index<6?"eager":"lazy"}/></div><div className="search-info"><h2>{title}</h2><span>{formatDate(item.startDate,lang)} · {item.format==="MOVIE"?t("detail.film"):t("detail.series")}</span></div></a></article>;})}</div>{(hasNext||searchError&&results.length>0)&&<button className="search-more" type="button" onClick={()=>searchError?setRetry(current=>current+1):setPage(current=>current+1)} disabled={loading}>{loading?t("search.loading"):searchError?t("search.retry"):t("search.more")}</button>}</>}
  </div>;
 }
