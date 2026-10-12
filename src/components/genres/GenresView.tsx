@@ -128,7 +128,10 @@ export default function GenresView({ entries, lang = "es" }: Props) {
 
     const syncSelectedGenre = () => {
       const genreFromUrl = new URLSearchParams(window.location.search).get("genre");
-      setSelected(genreFromUrl && catalog.some((genre) => genre.name === genreFromUrl) ? genreFromUrl : null);
+      const matchedGenre = genreFromUrl
+        ? catalog.find((genre) => genre.name.toLocaleLowerCase() === genreFromUrl.toLocaleLowerCase())
+        : undefined;
+      setSelected(matchedGenre?.name ?? null);
     };
 
     syncSelectedGenre();
