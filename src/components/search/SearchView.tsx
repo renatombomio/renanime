@@ -6,7 +6,7 @@ function formatDate(date:Media["startDate"],lang:Lang){if(!date?.year)return lan
 export default function SearchView({lang="es"}:{lang?:Lang}){
  const t=useT(lang);
  const [query,setQuery]=useState(""),[submitted,setSubmitted]=useState(""),[results,setResults]=useState<Media[]>([]),[page,setPage]=useState(1),[retry,setRetry]=useState(0),[hasNext,setHasNext]=useState(false),[loading,setLoading]=useState(false),[searchError,setSearchError]=useState(false);
- useEffect(()=>{if(!submitted.trim()){setResults([]);setHasNext(false);setSearchError(false);return;}let cancelled=false;setLoading(true);setSearchError(false);
+ useEffect(()=>{if(!submitted.trim()){setResults([]);setHasNext(false);setSearchError(false);setLoading(false);return;}let cancelled=false;setLoading(true);setSearchError(false);
  fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query:"query Search($search:String!,$page:Int!,$perPage:Int!){Page(page:$page,perPage:$perPage){pageInfo{hasNextPage} media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} startDate{year month day} coverImage{extraLarge large} format}}}",variables:{search:submitted,page,perPage:PAGE_SIZE}})})
  .then(r=>r.ok?r.json():Promise.reject()).then(payload=>{if(payload.errors?.length)throw new Error("AniList GraphQL error");if(cancelled)return;const media=payload.data?.Page?.media??[];
 setResults(current=>page===1?media:[...current,...media]);
