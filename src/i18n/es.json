@@ -140,6 +140,8 @@
   "search.submit": "Buscar",
   "search.loading": "Buscando…",
   "search.empty": "No encontramos resultados para «{query}».",
+  "search.error": "No hemos podido buscar ahora mismo. Comprueba tu conexión e inténtalo de nuevo.",
+  "search.retry": "Reintentar búsqueda",
   "search.more": "Cargar más",
   "search.pageTitle": "Buscar",
   "search.eyebrow": "Explorar",
