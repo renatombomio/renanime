@@ -12,7 +12,7 @@ export default function SearchView({lang="es"}:{lang?:Lang}){
 setResults(current=>page===1?media:[...current,...media]);
 setHasNext(Boolean(payload.data?.Page?.pageInfo?.hasNextPage));setSearchError(false);}).catch(()=>{if(!cancelled)setSearchError(true);}).finally(()=>{if(!cancelled)setLoading(false);});
  return()=>{cancelled=true;};},[submitted,page,retry]);
- const submit=(event:FormEvent)=>{event.preventDefault();setPage(1);setRetry(0);setResults([]);setHasNext(false);setSearchError(false);setSubmitted(query.trim());};
+ const submit=(event:FormEvent)=>{event.preventDefault();setPage(1);setRetry(current=>current+1);setResults([]);setHasNext(false);setSearchError(false);setSubmitted(query.trim());};
  return <div className="search-view">
   <style>{`
     .search-view{width:100%}
