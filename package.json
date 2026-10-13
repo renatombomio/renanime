@@ -15,7 +15,9 @@
   },
   "dependencies": {
     "@astrojs/react": "^6.0.6",
-    "@astrojs/node": "^11.1.6",
+    "@astrojs/vercel": "^11.0.14",
+    "@react-three/fiber": "^9.0.0",
+    "@shadergradient/react": "^2.4.20",
     "@supabase/supabase-js": "^2.102.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.3.0",
@@ -25,8 +27,6 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "tailwindcss": "^4.3.3",
-    "@react-three/fiber": "^9.0.0",
-    "@shadergradient/react": "^2.4.20",
     "three": "^0.174.0",
     "three-stdlib": "^2.36.0"
   },
