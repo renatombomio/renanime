@@ -103,8 +103,8 @@ async function fetchDiscoveryRows(): Promise<Record<DiscoveryRowId, Media[]>> {
   );
   const withoutPreviouslyShown = (items: Media[], used: Set<number>) =>
     uniqueById(eligible(items)).filter((media) => !used.has(media.id)).slice(0, 12);
-  const claim = (items: Media[], used: Set<number>) => {
-    const selected = withoutPreviouslyShown(items, used);
+  const claim = (items: Media[], used: Set<number>, limit = 12) => {
+    const selected = withoutPreviouslyShown(items, used).slice(0, limit);
     selected.forEach((media) => used.add(media.id));
     return selected;
   };
@@ -119,6 +119,7 @@ async function fetchDiscoveryRows(): Promise<Record<DiscoveryRowId, Media[]>> {
       (media.popularity ?? 0) < 25000
     ),
     used,
+    3,
   );
   const trending = claim(pages.trending?.media ?? [], used);
   const seasonItems = claim(pages.season?.media ?? [], used);
