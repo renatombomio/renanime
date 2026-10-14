@@ -51,8 +51,8 @@ async function fetchMedia(entries: Entry[], resolveFallbackPosters = true): Prom
   }
 
   const chunks: Entry[][] = [];
-  for (let offset = 0; offset < unresolved.length; offset += 40) {
-    chunks.push(unresolved.slice(offset, offset + 40));
+  for (let offset = 0; offset < unresolved.length; offset += 25) {
+    chunks.push(unresolved.slice(offset, offset + 25));
   }
 
   await Promise.all(chunks.map(async (chunk) => {
