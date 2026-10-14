@@ -464,6 +464,16 @@ export default function GenresView({ entries, lang = "es" }: Props) {
           border-bottom: 1px solid var(--color-border);
         }
 
+        .genre-results-title {
+          margin: 0;
+          color: var(--color-paper-50);
+          font-family: var(--font-heading);
+          font-size: clamp(2.75rem, 6vw, 4.75rem);
+          font-weight: 400;
+          letter-spacing: -.055em;
+          line-height: .92;
+        }
+
         .genre-results-grid {
           display: grid;
           grid-template-columns: repeat(4, minmax(0, 1fr));
