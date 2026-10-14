@@ -18,6 +18,33 @@ interface GenreMedia {
   startDate?: { year?: number; month?: number; day?: number };
 }
 
+const GENRE_DESCRIPTIONS: Record<string, { es: string; en: string }> = {
+  Action: { es: "Combates, decisiones al límite y personajes que se ponen a prueba.", en: "High-stakes fights, hard choices, and characters pushed to their limits." },
+  Adventure: { es: "Viajes a mundos desconocidos, grandes descubrimientos y nuevas alianzas.", en: "Journeys into the unknown, unexpected discoveries, and new alliances." },
+  Comedy: { es: "Historias que encuentran el humor en sus personajes y situaciones.", en: "Stories that find humor in their characters and situations." },
+  Drama: { es: "Relaciones, pérdidas y decisiones que dejan huella.", en: "Relationships, loss, and decisions that leave a mark." },
+  Fantasy: { es: "Mundos extraordinarios, magia y reglas distintas a las nuestras.", en: "Extraordinary worlds, magic, and rules unlike our own." },
+  Horror: { es: "Atmósferas inquietantes, miedo y encuentros con lo desconocido.", en: "Uneasy atmospheres, fear, and encounters with the unknown." },
+  Mystery: { es: "Secretos, pistas y preguntas que piden ser resueltas.", en: "Secrets, clues, and questions waiting to be answered." },
+  Romance: { es: "Vínculos que nacen, cambian y ponen los sentimientos a prueba.", en: "Connections that grow, change, and put feelings to the test." },
+  "Sci-Fi": { es: "Tecnología, futuros posibles y preguntas sobre lo que nos hace humanos.", en: "Technology, possible futures, and questions about what makes us human." },
+  "Science Fiction": { es: "Tecnología, futuros posibles y preguntas sobre lo que nos hace humanos.", en: "Technology, possible futures, and questions about what makes us human." },
+  "Slice of Life": { es: "Momentos cotidianos, pequeños cambios y la belleza de lo cercano.", en: "Everyday moments, small changes, and the beauty of ordinary life." },
+  Sports: { es: "Entrenamiento, rivalidad y el esfuerzo por superar los propios límites.", en: "Training, rivalry, and the effort to push beyond your limits." },
+  Supernatural: { es: "Fenómenos inexplicables y fuerzas que van más allá de lo cotidiano.", en: "Unexplained phenomena and forces beyond everyday life." },
+  Thriller: { es: "Tensión creciente, riesgos y giros que cambian lo que creías saber.", en: "Rising tension, real stakes, and twists that change what you know." },
+  Psychological: { es: "Juegos mentales y conflictos que exploran los rincones de la mente.", en: "Mind games and conflicts that explore the corners of the human mind." },
+  Mecha: { es: "Máquinas gigantes, pilotos y conflictos de escala monumental.", en: "Giant machines, pilots, and conflicts on a monumental scale." },
+  Music: { es: "La música como lenguaje, pasión y punto de encuentro.", en: "Music as a language, a passion, and a point of connection." },
+  Ecchi: { es: "Comedia y situaciones sugerentes para un público adulto.", en: "Suggestive situations and comedy for a mature audience." },
+  "Mahou Shoujo": { es: "Transformaciones, poderes mágicos y heroínas que descubren su fuerza.", en: "Transformations, magical powers, and heroines discovering their strength." },
+};
+
+function getGenreDescription(name: string, lang: Lang) {
+  const description = GENRE_DESCRIPTIONS[name];
+  return description ? description[lang === "en" ? "en" : "es"] : undefined;
+}
+
 const BATCH_SIZE = 25;
 const CACHE_PREFIX = "renanime:collection:v4:";
 
@@ -175,14 +202,9 @@ export default function GenresView({ entries, lang = "es" }: Props) {
     <div className="genres-view">
       {!selectedGenre ? (
         <>
-          <div className="genres-meta">
-            <span>{loading ? t("genres.loadingMap") : t("genres.count").replace("{count}", String(catalog.length))}</span>
-            <span>{t("genres.titlesSeen").replace("{count}", String(entries.length))}</span>
-          </div>
-
           <div className="genres-rows">
             {catalog.map((genre, genreIndex) => {
-              const color = "var(--color-accent-soft)";
+              const description = getGenreDescription(genre.name, lang);
               const openGenre = () => {
                 setSelected(genre.name);
                 const url = new URL(window.location.href);
@@ -214,10 +236,10 @@ export default function GenresView({ entries, lang = "es" }: Props) {
                   <div className="genre-row-heading">
                     <div className="genre-row-title-wrap">
                       <h2 className="genre-row-title">{genre.name}</h2>
-                      <span className="genre-row-count">{t("genres.titleCount").replace("{count}", String(genre.entries.length))}</span>
+                      {description && <p className="genre-row-description">{description}</p>}
                     </div>
                     <button className="genre-view-all" type="button" onClick={openGenre} aria-label={t("genres.viewAll").replace("{genre}", genre.name)}>
-                      {t("genres.viewAllLabel")} <span aria-hidden="true">↗</span>
+                      {t("genres.viewAllLabel")}
                     </button>
                   </div>
                   <div className="genre-row-track" aria-label={genre.name}>
@@ -244,6 +266,9 @@ export default function GenresView({ entries, lang = "es" }: Props) {
         <section className="genre-results" aria-label={t("genres.resultsLabel").replace("{genre}", selectedGenre.name)}>
           <header className="genre-results-head">
             <h2 className="genre-results-title">{selectedGenre.name}</h2>
+            {getGenreDescription(selectedGenre.name, lang) && (
+              <p className="genre-results-description">{getGenreDescription(selectedGenre.name, lang)}</p>
+            )}
           </header>
 
           {resultsLoading ? (
@@ -286,19 +311,6 @@ export default function GenresView({ entries, lang = "es" }: Props) {
           width: 100%;
         }
 
-        .genres-meta {
-          display: flex;
-          align-items: baseline;
-          justify-content: space-between;
-          gap: 1rem;
-          padding-bottom: .9rem;
-          border-bottom: 1px solid var(--color-border);
-          color: var(--color-muted-400);
-          font: 500 .58rem/1 var(--font-meta);
-          letter-spacing: .1em;
-          text-transform: uppercase;
-        }
-
         .genres-rows {
           display: grid;
           gap: clamp(2rem, 5vw, 3.8rem);
@@ -306,7 +318,7 @@ export default function GenresView({ entries, lang = "es" }: Props) {
 
         .genre-row {
           min-width: 0;
-          padding-top: 1rem;
+          padding-top: 1.5rem;
           border-top: 1px solid var(--color-border);
         }
 
@@ -319,30 +331,25 @@ export default function GenresView({ entries, lang = "es" }: Props) {
 
         .genre-row-heading {
           justify-content: space-between;
-          gap: 1rem;
-          margin-bottom: 1rem;
+          align-items: center;
+          gap: 1.5rem;
+          margin-bottom: 1.25rem;
         }
 
         .genre-row-title-wrap {
-          gap: .7rem;
-          flex-wrap: wrap;
+          display: grid;
+          gap: .55rem;
+          flex: 1;
         }
 
         .genre-row-title {
           margin: 0;
           color: var(--color-paper-50);
           font-family: var(--font-heading);
-          font-size: clamp(1.45rem, 2.7vw, 2.2rem);
+          font-size: clamp(2rem, 3.5vw, 2.75rem);
           font-weight: 400;
-          letter-spacing: -.045em;
-          line-height: 1;
-        }
-
-        .genre-row-count {
-          color: var(--color-muted-400);
-          font: 500 .58rem/1 var(--font-meta);
-          letter-spacing: .08em;
-          text-transform: uppercase;
+          letter-spacing: -.05em;
+          line-height: .98;
         }
 
         .genre-view-all {
@@ -351,17 +358,26 @@ export default function GenresView({ entries, lang = "es" }: Props) {
           justify-content: center;
           gap: .45rem;
           min-height: 44px;
-          padding: .5rem 0 .5rem .5rem;
+          padding: .6rem 0 .6rem .75rem;
           border: 0;
           background: transparent;
-          color: var(--color-paper-50);
-          font: 500 .58rem/1 var(--font-meta);
-          letter-spacing: .07em;
-          text-transform: uppercase;
+          color: var(--color-muted-300);
+          font: 500 .82rem/1 var(--font-body);
+          letter-spacing: 0;
+          text-transform: none;
+          white-space: nowrap;
           cursor: pointer;
         }
 
         .genre-view-all:hover { color: var(--color-paper-50); }
+
+        .genre-row-description,
+        .genre-results-description {
+          max-width: 34rem;
+          margin: 0;
+          color: var(--color-muted-400);
+          font: 400 .88rem/1.55 var(--font-body);
+        }
 
         .genre-row-track {
           display: flex;
@@ -438,11 +454,13 @@ export default function GenresView({ entries, lang = "es" }: Props) {
         }
 
         .genre-results {
-          margin-top: clamp(2.5rem, 5vw, 4rem);
+          margin-top: 0;
         }
 
         .genre-results-head {
-          padding-bottom: 1rem;
+          display: grid;
+          gap: .8rem;
+          padding-bottom: 1.75rem;
           border-bottom: 1px solid var(--color-border);
         }
 
@@ -513,25 +531,33 @@ export default function GenresView({ entries, lang = "es" }: Props) {
         }
 
         @media (max-width: 620px) {
-          .genres-meta {
-            display: grid;
-            gap: .5rem;
-          }
-
           .genre-row {
-            padding-top: .85rem;
+            padding-top: 1.2rem;
           }
 
           .genre-row-heading {
             align-items: flex-start;
           }
 
+          .genre-row-heading {
+            gap: .5rem;
+          }
+
           .genre-row-title {
-            font-size: 1.55rem;
+            font-size: 1.85rem;
+          }
+
+          .genre-row-description,
+          .genre-results-description {
+            font-size: .82rem;
           }
 
           .genre-view-all {
-            font-size: .52rem;
+            font-size: .78rem;
+          }
+
+          .genre-results-title {
+            font-size: clamp(2.35rem, 11vw, 3.25rem);
           }
 
           .genre-poster-card {
