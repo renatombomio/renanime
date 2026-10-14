@@ -165,6 +165,8 @@
   "genres.titlesSeen": "{count} títulos vistos",
   "genres.titleCount": "{count} títulos",
   "genres.archive": "Archivo de Ren",
+  "genres.viewAll": "Ver todos los animes de {genre}",
+  "genres.viewAllLabel": "Ver todo",
   "genres.loadingTitles": "Cargando títulos…",
   "genres.resultsLabel": "Animes del género {genre}",
   "genres.unknownDate": "Fecha desconocida",
