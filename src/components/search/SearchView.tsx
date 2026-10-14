@@ -98,9 +98,9 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
   const seedEntries = [...personalEntries]
     .sort((a, b) => Number(b.state.favorite) - Number(a.state.favorite) || Number(b.state.status === "WATCHED") - Number(a.state.status === "WATCHED"))
     .slice(0, 5);
-  const numericEntries = seedEntries.filter((entry) => /^\\d+$/.test(entry.animeId));
+  const numericEntries = seedEntries.filter((entry) => /^\d+$/.test(entry.animeId));
   const customEntries = seedEntries
-    .filter((entry) => !/^\\d+$/.test(entry.animeId))
+    .filter((entry) => !/^\d+$/.test(entry.animeId))
     .map((entry) => ({ entry, title: getLibrary().find((item) => item.animeId === entry.animeId)?.title }))
     .filter((item): item is { entry: PersonalAnimeEntry; title: string } => Boolean(item.title));
   const personalIds = new Set(personalEntries.map((entry) => Number(entry.animeId)).filter(Number.isFinite));
@@ -134,7 +134,7 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
         seedSearch${index}: Page(page: 1, perPage: 1) {
           media(search: $seedTitle${index}, type: ANIME, sort: SEARCH_MATCH, isAdult: false) { id }
         }
-      `).join("\\n");
+      `).join("\n");
       const titleQuery = `
         query ResolvePersonalSeeds(${titleDefinitions.join(", ")}) {
           ${titleSearches}
@@ -168,7 +168,7 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
             nodes { rating mediaRecommendation { ${MEDIA_FIELDS} } }
           }
         }
-      `).join("\\n");
+      `).join("\n");
       const recommendationQuery = `
         query PersonalRecommendations(${definitions.join(", ")}) {
           ${seeds}
