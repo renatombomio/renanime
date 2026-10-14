@@ -1,45 +1,310 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { getLibrary } from "../../data/library";
 import { useT, type Lang } from "../../i18n";
-interface Media { id:number; title?:{romaji?:string|null;english?:string|null}; startDate?:{year?:number|null;month?:number|null;day?:number|null}|null; coverImage?:{extraLarge?:string|null;large?:string|null}; format?:string|null; }
-const PAGE_SIZE=12;
-function formatDate(date:Media["startDate"],lang:Lang){if(!date?.year)return lang==="en"?"Unknown date":"Fecha desconocida";if(!date.month||!date.day)return String(date.year);return new Date(date.year,date.month-1,date.day).toLocaleDateString(lang==="en"?"en-GB":"es-ES",{day:"numeric",month:"long",year:"numeric"});}
-export default function SearchView({lang="es"}:{lang?:Lang}){
- const t=useT(lang);
- const [query,setQuery]=useState(""),[submitted,setSubmitted]=useState(""),[results,setResults]=useState<Media[]>([]),[page,setPage]=useState(1),[retry,setRetry]=useState(0),[hasNext,setHasNext]=useState(false),[loading,setLoading]=useState(false),[searchError,setSearchError]=useState(false);
- useEffect(()=>{if(!submitted.trim()){setResults([]);setHasNext(false);setSearchError(false);setLoading(false);return;}let cancelled=false;setLoading(true);setSearchError(false);
- fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({query:"query Search($search:String!,$page:Int!,$perPage:Int!){Page(page:$page,perPage:$perPage){pageInfo{hasNextPage} media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} startDate{year month day} coverImage{extraLarge large} format}}}",variables:{search:submitted,page,perPage:PAGE_SIZE}})})
- .then(r=>r.ok?r.json():Promise.reject()).then(payload=>{if(payload.errors?.length)throw new Error("AniList GraphQL error");if(cancelled)return;const media=payload.data?.Page?.media??[];
-setResults(current=>page===1?media:[...current,...media]);
-setHasNext(Boolean(payload.data?.Page?.pageInfo?.hasNextPage));setSearchError(false);}).catch(()=>{if(!cancelled)setSearchError(true);}).finally(()=>{if(!cancelled)setLoading(false);});
- return()=>{cancelled=true;};},[submitted,page,retry]);
- const submit=(event:FormEvent)=>{event.preventDefault();setPage(1);setRetry(current=>current+1);setResults([]);setHasNext(false);setSearchError(false);setSubmitted(query.trim());};
- return <div className="search-view">
-  <style>{`
-    .search-view{width:100%}
-    .search-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.6rem;align-items:stretch;margin-bottom:2rem}
-    .search-form input{min-width:0;height:2.7rem;padding:.65rem .75rem;border:1px solid var(--color-border-strong);border-radius:0;background:var(--color-ink-900);color:var(--color-paper-50);font-size:.85rem;outline:none}
-    .search-form input:focus{border-color:var(--color-paper-50)}
-    .search-form button,.search-more{height:2.7rem;padding:.65rem .9rem;border:1px solid var(--color-border-strong);background:transparent;color:var(--color-paper-50);font-family:var(--font-meta);font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
-    .search-form button:hover,.search-more:hover:not(:disabled){background:var(--color-paper-50);color:var(--color-ink-950)}
-    .search-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2.5rem 1rem}
-    .search-result{min-width:0}
-    .search-card{display:block;min-width:0;color:inherit}
-    .search-poster{position:relative;aspect-ratio:2/3;overflow:hidden;border:1px solid rgba(245,242,236,.13);border-radius:10px;background:var(--color-ink-800);box-shadow:0 12px 34px rgba(0,0,0,.18)}
-    .search-poster img{display:block;width:100%;height:100%;object-fit:cover;transition:transform 500ms cubic-bezier(.2,.7,.2,1)}
-    .search-poster-placeholder{display:grid;width:100%;height:100%;place-items:center;padding:1rem;color:var(--color-muted-400);font-family:var(--font-meta);font-size:.55rem;letter-spacing:.08em;text-align:center;text-transform:uppercase}
-    .search-card:hover .search-poster img{transform:scale(1.035)}
-    .search-info{display:grid;gap:.3rem;padding:.65rem .1rem 0}
-    .search-info h2{display:-webkit-box;overflow:hidden;margin:0;color:var(--color-paper-50);font-family:var(--font-body);font-size:.72rem;font-weight:500;line-height:1.25;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-    .search-info span{color:var(--color-muted-400);font-family:var(--font-meta);font-size:.48rem;letter-spacing:.05em;text-transform:uppercase}
-    .search-status{color:var(--color-muted-400);font-family:var(--font-meta);font-size:.55rem;letter-spacing:.06em;text-transform:uppercase}
-    .search-more{display:block;margin:2.5rem auto 0}
-    @media(max-width:1100px){.search-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
-    @media(max-width:760px){.search-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.8rem .7rem}.search-form{margin-bottom:1.5rem}.search-info{padding-top:.55rem}.search-info h2{font-size:.68rem}.search-info span{font-size:.45rem}}
-    @media(max-width:520px){.search-page{padding-top:5.5rem}.search-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.6rem .55rem}.search-poster{border-radius:8px}.search-info h2{font-size:.65rem}.search-info span{font-size:.43rem}.search-form{grid-template-columns:minmax(0,1fr) auto;gap:.4rem}.search-form button{padding-inline:.7rem}}
-  `}</style>
-  <form className="search-form" onSubmit={submit}><input value={query} onChange={event=>setQuery(event.target.value)} placeholder={t("search.placeholder")} aria-label={t("search.label")}/><button type="submit">{t("search.submit")}</button></form>
-  {loading&&<p className="search-status" role="status" aria-live="polite">{t("search.loading")}</p>}
-  {!loading&&searchError&&<p className="search-status" role="alert">{t("search.error")}</p>}{!loading&&!searchError&&submitted&&!results.length&&<p className="search-status" role="status" aria-live="polite">{t("search.empty").split("{query}").join(submitted)}</p>}
-  {results.length>0&&<><div className="search-grid" aria-busy={loading}>{results.map((item,index)=>{const title=lang==="en"?(item.title?.english||item.title?.romaji||t("detail.noTitle")):(item.title?.romaji||item.title?.english||t("detail.noTitle"));return <article className="search-result" key={item.id}><a className="search-card" href={`${lang === "en" ? "/en" : ""}/anime/${item.id}`}><div className="search-poster">{item.coverImage?.extraLarge||item.coverImage?.large?<img src={item.coverImage.extraLarge||item.coverImage.large||undefined} alt="" loading={index<6?"eager":"lazy"}/>:<div className="search-poster-placeholder">{title}</div>}</div><div className="search-info"><h2>{title}</h2><span>{formatDate(item.startDate,lang)} · {item.format==="MOVIE"?t("detail.film"):item.format?t("detail.series"):t("detail.unknownFormat")}</span></div></a></article>;})}</div>{(hasNext||searchError)&&<button className="search-more" type="button" onClick={()=>searchError?setRetry(current=>current+1):setPage(current=>current+1)} disabled={loading}>{loading?t("search.loading"):searchError?t("search.retry"):t("search.more")}</button>}</>}{searchError&&results.length===0&&<button className="search-more" type="button" onClick={()=>setRetry(current=>current+1)} disabled={loading}>{t("search.retry")}</button>}
- </div>;
+
+interface Media {
+  id: number;
+  title?: { romaji?: string | null; english?: string | null };
+  startDate?: { year?: number | null; month?: number | null; day?: number | null } | null;
+  coverImage?: { extraLarge?: string | null; large?: string | null };
+  format?: string | null;
+  popularity?: number | null;
+  averageScore?: number | null;
+}
+
+type DiscoveryRowId = "discover" | "hidden" | "trending" | "season" | "upcoming" | "topRated";
+interface DiscoveryRow {
+  id: DiscoveryRowId;
+  title: string;
+  description: string;
+  items: Media[];
+}
+
+const PAGE_SIZE = 12;
+const DISCOVERY_ROWS: { id: DiscoveryRowId; titleKey: string; descriptionKey: string }[] = [
+  { id: "discover", titleKey: "search.rowDiscover", descriptionKey: "search.rowDiscoverDescription" },
+  { id: "hidden", titleKey: "search.rowHidden", descriptionKey: "search.rowHiddenDescription" },
+  { id: "trending", titleKey: "search.rowTrending", descriptionKey: "search.rowTrendingDescription" },
+  { id: "season", titleKey: "search.rowSeason", descriptionKey: "search.rowSeasonDescription" },
+  { id: "upcoming", titleKey: "search.rowUpcoming", descriptionKey: "search.rowUpcomingDescription" },
+  { id: "topRated", titleKey: "search.rowTopRated", descriptionKey: "search.rowTopRatedDescription" },
+];
+
+const OWNED_TITLES = new Set(
+  getLibrary().map((entry) => normalizeTitle(entry.title)).filter(Boolean),
+);
+
+function normalizeTitle(value: string): string {
+  return value.toLocaleLowerCase("en")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function isOwned(media: Media): boolean {
+  return [media.title?.romaji, media.title?.english]
+    .filter((title): title is string => Boolean(title))
+    .some((title) => OWNED_TITLES.has(normalizeTitle(title)));
+}
+
+function currentSeason(date = new Date()): { season: "WINTER" | "SPRING" | "SUMMER" | "FALL"; year: number } {
+  const month = date.getMonth();
+  const season = month < 3 ? "WINTER" : month < 6 ? "SPRING" : month < 9 ? "SUMMER" : "FALL";
+  return { season, year: date.getFullYear() };
+}
+
+function formatDate(date: Media["startDate"], lang: Lang) {
+  if (!date?.year) return lang === "en" ? "Unknown date" : "Fecha desconocida";
+  if (!date.month || !date.day) return String(date.year);
+  return new Date(date.year, date.month - 1, date.day).toLocaleDateString(
+    lang === "en" ? "en-GB" : "es-ES",
+    { day: "numeric", month: "long", year: "numeric" },
+  );
+}
+
+const MEDIA_FIELDS = "id title { romaji english } startDate { year month day } coverImage { extraLarge large } format popularity averageScore";
+
+async function fetchDiscoveryRows(): Promise<Record<DiscoveryRowId, Media[]>> {
+  const { season, year } = currentSeason();
+  const query = `
+    query SearchDiscovery($season: MediaSeason!, $year: Int!) {
+      discover: Page(page: 1, perPage: 24) {
+        media(type: ANIME, sort: POPULARITY_DESC, isAdult: false) { ${MEDIA_FIELDS} }
+      }
+      hidden: Page(page: 1, perPage: 50) {
+        media(type: ANIME, sort: SCORE_DESC, isAdult: false) { ${MEDIA_FIELDS} }
+      }
+      trending: Page(page: 1, perPage: 12) {
+        media(type: ANIME, sort: TRENDING_DESC, isAdult: false) { ${MEDIA_FIELDS} }
+      }
+      season: Page(page: 1, perPage: 12) {
+        media(type: ANIME, season: $season, seasonYear: $year, sort: POPULARITY_DESC, isAdult: false) { ${MEDIA_FIELDS} }
+      }
+      upcoming: Page(page: 1, perPage: 12) {
+        media(type: ANIME, status: NOT_YET_RELEASED, sort: POPULARITY_DESC, isAdult: false) { ${MEDIA_FIELDS} }
+      }
+      topRated: Page(page: 1, perPage: 12) {
+        media(type: ANIME, sort: SCORE_DESC, isAdult: false) { ${MEDIA_FIELDS} }
+      }
+    }
+  `;
+  const response = await fetch("https://graphql.anilist.co", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({ query, variables: { season, year } }),
+  });
+  if (!response.ok) throw new Error("Discovery request failed");
+  const payload = await response.json();
+  if (payload.errors?.length) throw new Error("Discovery query failed");
+  const pages = payload.data;
+  if (!pages) throw new Error("Discovery data unavailable");
+
+  const discover = (pages.discover?.media ?? []).filter((media: Media) => !isOwned(media)).slice(0, 12);
+  const hidden = (pages.hidden?.media ?? [])
+    .filter((media: Media) => !isOwned(media) && Boolean(media.averageScore) && (media.popularity ?? 0) > 0 && (media.popularity ?? 0) < 25000 && (media.averageScore ?? 0) >= 70)
+    .slice(0, 12);
+  const trending = (pages.trending?.media ?? []).filter((media: Media) => !isOwned(media)).slice(0, 12);
+  const seasonItems = (pages.season?.media ?? []).filter((media: Media) => !isOwned(media)).slice(0, 12);
+  const upcoming = (pages.upcoming?.media ?? []).filter((media: Media) => !isOwned(media)).slice(0, 12);
+  const topRated = (pages.topRated?.media ?? []).filter((media: Media) => !isOwned(media)).slice(0, 12);
+
+  return { discover, hidden, trending, season: seasonItems, upcoming, topRated };
+}
+
+export default function SearchView({ lang = "es" }: { lang?: Lang }) {
+  const t = useT(lang);
+  const [query, setQuery] = useState("");
+  const [submitted, setSubmitted] = useState("");
+  const [results, setResults] = useState<Media[]>([]);
+  const [page, setPage] = useState(1);
+  const [retry, setRetry] = useState(0);
+  const [hasNext, setHasNext] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [searchError, setSearchError] = useState(false);
+  const [discovery, setDiscovery] = useState<Record<DiscoveryRowId, Media[]> | null>(null);
+  const [discoveryLoading, setDiscoveryLoading] = useState(true);
+  const [discoveryError, setDiscoveryError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchDiscoveryRows()
+      .then((rows) => {
+        if (!cancelled) {
+          setDiscovery(rows);
+          setDiscoveryError(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setDiscoveryError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setDiscoveryLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    if (!submitted.trim()) {
+      setResults([]);
+      setHasNext(false);
+      setSearchError(false);
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    setSearchError(false);
+    fetch("https://graphql.anilist.co", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        query: "query Search($search:String!,$page:Int!,$perPage:Int!){Page(page:$page,perPage:$perPage){pageInfo{hasNextPage} media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} startDate{year month day} coverImage{extraLarge large} format}}}",
+        variables: { search: submitted, page, perPage: PAGE_SIZE },
+      }),
+    })
+      .then((response) => response.ok ? response.json() : Promise.reject())
+      .then((payload) => {
+        if (payload.errors?.length) throw new Error("AniList GraphQL error");
+        if (cancelled) return;
+        const media = payload.data?.Page?.media ?? [];
+        setResults((current) => page === 1 ? media : [...current, ...media]);
+        setHasNext(Boolean(payload.data?.Page?.pageInfo?.hasNextPage));
+        setSearchError(false);
+      })
+      .catch(() => { if (!cancelled) setSearchError(true); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [submitted, page, retry]);
+
+  const submit = (event: FormEvent) => {
+    event.preventDefault();
+    setPage(1);
+    setRetry((current) => current + 1);
+    setResults([]);
+    setHasNext(false);
+    setSearchError(false);
+    setSubmitted(query.trim());
+  };
+
+  const showDiscovery = !query.trim() && !submitted.trim();
+
+  const renderCard = (item: Media, index: number) => {
+    const title = lang === "en"
+      ? (item.title?.english || item.title?.romaji || t("detail.noTitle"))
+      : (item.title?.romaji || item.title?.english || t("detail.noTitle"));
+    const image = item.coverImage?.extraLarge || item.coverImage?.large;
+    return (
+      <article className="search-result" key={item.id}>
+        <a className="search-card" href={`${lang === "en" ? "/en" : ""}/anime/${item.id}`} aria-label={title}>
+          <div className="search-poster">
+            {image ? <img src={image} alt="" loading={index < 4 ? "eager" : "lazy"} /> : <div className="search-poster-placeholder">{title}</div>}
+          </div>
+          <div className="search-info">
+            <h3>{title}</h3>
+            <span>{formatDate(item.startDate, lang)} · {item.format === "MOVIE" ? t("detail.film") : item.format ? t("detail.series") : t("detail.unknownFormat")}</span>
+          </div>
+        </a>
+      </article>
+    );
+  };
+
+  return (
+    <div className="search-view">
+      <style>{`
+        .search-view { width: 100%; }
+        .search-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .6rem; align-items: stretch; margin-bottom: 2.5rem; }
+        .search-form input { min-width: 0; height: 3rem; padding: .75rem .9rem; border: 1px solid var(--color-border-strong); border-radius: 0; background: var(--color-ink-900); color: var(--color-paper-50); font: 400 .9rem/1.2 var(--font-body); outline: none; }
+        .search-form input:focus-visible { border-color: var(--color-paper-50); outline: 2px solid rgba(245,242,236,.25); outline-offset: 2px; }
+        .search-form button, .search-more { min-height: 3rem; padding: .7rem 1rem; border: 1px solid var(--color-border-strong); background: transparent; color: var(--color-paper-50); font: 500 .72rem/1 var(--font-body); cursor: pointer; }
+        .search-form button:hover, .search-more:hover:not(:disabled) { background: var(--color-paper-50); color: var(--color-ink-950); }
+        .search-discovery { display: grid; gap: clamp(2.4rem, 5vw, 4rem); }
+        .search-discovery-row { min-width: 0; }
+        .search-row-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 1.15rem; }
+        .search-row-copy { display: grid; gap: .45rem; min-width: 0; }
+        .search-row-heading h2 { margin: 0; color: var(--color-paper-50); font: 400 clamp(1.8rem, 3.3vw, 2.65rem)/.98 var(--font-heading); letter-spacing: -.045em; }
+        .search-row-heading p { max-width: 38rem; margin: 0; color: var(--color-muted-400); font: 400 .85rem/1.5 var(--font-body); }
+        .search-row-track { display: flex; gap: .9rem; overflow-x: auto; padding: .1rem .05rem .8rem; margin: 0 -.05rem; scroll-snap-type: x mandatory; overscroll-behavior-inline: contain; scrollbar-width: none; }
+        .search-row-track::-webkit-scrollbar { display: none; }
+        .search-result { flex: 0 0 clamp(125px, 15vw, 180px); min-width: 0; scroll-snap-align: start; }
+        .search-card { display: block; min-width: 0; color: inherit; text-decoration: none; }
+        .search-poster { aspect-ratio: 2 / 3; overflow: hidden; background: var(--color-ink-900); }
+        .search-poster img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 500ms cubic-bezier(.2,.7,.2,1); }
+        .search-poster-placeholder { display: grid; width: 100%; height: 100%; place-items: center; padding: .8rem; color: var(--color-muted-400); font-size: .75rem; text-align: center; }
+        .search-card:hover .search-poster img { transform: scale(1.035); }
+        .search-info { display: grid; gap: .35rem; padding: .65rem .05rem 0; }
+        .search-info h3 { display: -webkit-box; overflow: hidden; margin: 0; color: var(--color-paper-50); font: 500 .78rem/1.3 var(--font-body); -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .search-info span { color: var(--color-muted-400); font: 400 .65rem/1.3 var(--font-body); }
+        .search-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2.5rem 1rem; }
+        .search-grid .search-result { flex: initial; }
+        .search-status { color: var(--color-muted-400); font: 400 .8rem/1.5 var(--font-body); }
+        .search-more { display: block; margin: 2.5rem auto 0; }
+        .search-discovery-status { color: var(--color-muted-400); font: 400 .8rem/1.5 var(--font-body); }
+        @media (max-width: 1100px) { .search-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+        @media (max-width: 760px) {
+          .search-form { margin-bottom: 2rem; }
+          .search-discovery { gap: 2.5rem; }
+          .search-row-heading { margin-bottom: .9rem; }
+          .search-row-heading h2 { font-size: 1.85rem; }
+          .search-row-heading p { font-size: .8rem; }
+          .search-row-track { gap: .7rem; }
+          .search-result { flex-basis: 132px; }
+          .search-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.8rem .7rem; }
+          .search-info { padding-top: .55rem; }
+        }
+        @media (max-width: 520px) {
+          .search-form { grid-template-columns: minmax(0, 1fr) auto; gap: .4rem; }
+          .search-form button { padding-inline: .8rem; }
+          .search-row-heading h2 { font-size: 1.65rem; }
+          .search-row-heading p { font-size: .76rem; }
+          .search-result { flex-basis: 118px; }
+        }
+      `}</style>
+      <form className="search-form" onSubmit={submit}>
+        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("search.placeholder")} aria-label={t("search.label")} />
+        <button type="submit">{t("search.submit")}</button>
+      </form>
+
+      {showDiscovery && (
+        <div className="search-discovery">
+          {discoveryLoading && <p className="search-discovery-status" role="status" aria-live="polite">{t("search.discoveryLoading")}</p>}
+          {discoveryError && !discoveryLoading && <p className="search-discovery-status" role="status">{t("search.discoveryError")}</p>}
+          {discovery && DISCOVERY_ROWS.map((row) => {
+            const items = discovery[row.id] ?? [];
+            if (!items.length) return null;
+            return (
+              <section className="search-discovery-row" key={row.id} aria-labelledby={`search-row-${row.id}`}>
+                <header className="search-row-heading">
+                  <div className="search-row-copy">
+                    <h2 id={`search-row-${row.id}`}>{t(row.titleKey)}</h2>
+                    <p>{t(row.descriptionKey)}</p>
+                  </div>
+                </header>
+                <div className="search-row-track" aria-label={t(row.titleKey)}>
+                  {items.map(renderCard)}
+                </div>
+              </section>
+            );
+          })}
+        </div>
+      )}
+
+      {loading && <p className="search-status" role="status" aria-live="polite">{t("search.loading")}</p>}
+      {!loading && searchError && <p className="search-status" role="alert">{t("search.error")}</p>}
+      {!loading && !searchError && submitted && !results.length && <p className="search-status" role="status" aria-live="polite">{t("search.empty").split("{query}").join(submitted)}</p>}
+      {results.length > 0 && (
+        <>
+          <div className="search-grid" aria-busy={loading}>{results.map(renderCard)}</div>
+          {(hasNext || searchError) && (
+            <button className="search-more" type="button" onClick={() => searchError ? setRetry((current) => current + 1) : setPage((current) => current + 1)} disabled={loading}>
+              {loading ? t("search.loading") : searchError ? t("search.retry") : t("search.more")}
+            </button>
+          )}
+        </>
+      )}
+      {searchError && results.length === 0 && (
+        <button className="search-more" type="button" onClick={() => setRetry((current) => current + 1)} disabled={loading}>{t("search.retry")}</button>
+      )}
+    </div>
+  );
 }
