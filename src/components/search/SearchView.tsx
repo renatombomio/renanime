@@ -63,7 +63,7 @@ async function fetchDiscoveryRows(): Promise<Record<DiscoveryRowId, Media[]>> {
   const query = `
     query SearchDiscovery($season: MediaSeason!, $year: Int!) {
       discover: Page(page: 1, perPage: 50) {
-        media(type: ANIME, sort: POPULARITY_DESC, isAdult: false) { ${MEDIA_FIELDS} }
+        media(type: ANIME, averageScore_greater: 74, popularity_greater: 20000, popularity_lesser: 150000, sort: SCORE_DESC, isAdult: false) { ${MEDIA_FIELDS} }
       }
       hidden: Page(page: 1, perPage: 50) {
         media(type: ANIME, sort: SCORE_DESC, averageScore_greater: 74, popularity_greater: 500, popularity_lesser: 20000, isAdult: false) { ${MEDIA_FIELDS} }
@@ -110,7 +110,16 @@ async function fetchDiscoveryRows(): Promise<Record<DiscoveryRowId, Media[]>> {
   };
 
   const used = new Set<number>();
-  const discover = claim(pages.discover?.media ?? [], used);
+  // Discovery should introduce acclaimed, mid-popularity titles rather than the
+  // same global hits users already know. Keep true low-popularity titles for Gems.
+  const discover = claim(
+    (pages.discover?.media ?? []).filter((media: Media) =>
+      (media.averageScore ?? 0) >= 75 &&
+      (media.popularity ?? 0) > 20000 &&
+      (media.popularity ?? 0) < 150000
+    ),
+    used,
+  );
   const hidden = claim(
     (pages.hidden?.media ?? []).filter((media: Media) =>
       (media.averageScore ?? 0) >= 75 &&
