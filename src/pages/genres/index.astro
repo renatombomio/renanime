@@ -38,4 +38,12 @@ const t = useT(Astro.locals.lang);
   .genres-page-content {
     margin-top: clamp(5rem, 10vw, 9rem);
   }
+
+  .genres-page.is-genre-selected :global(.section-header) {
+    display: none;
+  }
+
+  .genres-page.is-genre-selected .genres-page-content {
+    margin-top: 0;
+  }
 </style>
