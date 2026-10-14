@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { getLibrary } from "../../data/library";
-import { useT, type Lang } from "../../i18n";
+import { useT, type Lang, type TranslationKey } from "../../i18n";
 
 interface Media {
   id: number;
@@ -13,15 +13,8 @@ interface Media {
 }
 
 type DiscoveryRowId = "discover" | "hidden" | "trending" | "season" | "upcoming" | "topRated";
-interface DiscoveryRow {
-  id: DiscoveryRowId;
-  title: string;
-  description: string;
-  items: Media[];
-}
-
 const PAGE_SIZE = 12;
-const DISCOVERY_ROWS: { id: DiscoveryRowId; titleKey: string; descriptionKey: string }[] = [
+const DISCOVERY_ROWS: { id: DiscoveryRowId; titleKey: TranslationKey; descriptionKey: TranslationKey }[] = [
   { id: "discover", titleKey: "search.rowDiscover", descriptionKey: "search.rowDiscoverDescription" },
   { id: "hidden", titleKey: "search.rowHidden", descriptionKey: "search.rowHiddenDescription" },
   { id: "trending", titleKey: "search.rowTrending", descriptionKey: "search.rowTrendingDescription" },
@@ -102,12 +95,12 @@ async function fetchDiscoveryRows(): Promise<Record<DiscoveryRowId, Media[]>> {
 
   const discover = (pages.discover?.media ?? []).filter((media: Media) => !isOwned(media)).slice(0, 12);
   const hidden = (pages.hidden?.media ?? [])
-    .filter((media: Media) => !isOwned(media) && Boolean(media.averageScore) && (media.popularity ?? 0) > 0 && (media.popularity ?? 0) < 25000 && (media.averageScore ?? 0) >= 70)
+    .filter((media: Media) => Boolean(media.averageScore) && (media.popularity ?? 0) > 0 && (media.popularity ?? 0) < 25000 && (media.averageScore ?? 0) >= 70)
     .slice(0, 12);
-  const trending = (pages.trending?.media ?? []).filter((media: Media) => !isOwned(media)).slice(0, 12);
-  const seasonItems = (pages.season?.media ?? []).filter((media: Media) => !isOwned(media)).slice(0, 12);
-  const upcoming = (pages.upcoming?.media ?? []).filter((media: Media) => !isOwned(media)).slice(0, 12);
-  const topRated = (pages.topRated?.media ?? []).filter((media: Media) => !isOwned(media)).slice(0, 12);
+  const trending = (pages.trending?.media ?? []).slice(0, 12);
+  const seasonItems = (pages.season?.media ?? []).slice(0, 12);
+  const upcoming = (pages.upcoming?.media ?? []).slice(0, 12);
+  const topRated = (pages.topRated?.media ?? []).slice(0, 12);
 
   return { discover, hidden, trending, season: seasonItems, upcoming, topRated };
 }
