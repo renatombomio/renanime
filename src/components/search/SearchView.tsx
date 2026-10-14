@@ -1,5 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { getLibrary } from "../../data/library";
+import { getPersonalLibrary, hydratePersonalLibrary, subscribeToPersonalLibrary } from "../../data/personal-library";
+import type { PersonalAnimeEntry } from "../../types/personal";
 import { useT, type Lang, type TranslationKey } from "../../i18n";
 
 interface Media {
@@ -58,10 +60,26 @@ function formatDate(date: Media["startDate"], lang: Lang) {
 
 const MEDIA_FIELDS = "id title { romaji english } startDate { year month day } coverImage { extraLarge large } format popularity averageScore";
 
-async function fetchDiscoveryRows(): Promise<Record<DiscoveryRowId, Media[]>> {
+async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): Promise<Record<DiscoveryRowId, Media[]>> {
   const { season, year } = currentSeason();
+  const seedEntries = [...personalEntries]
+    .filter((entry) => /^\\d+$/.test(entry.animeId))
+    .sort((a, b) => Number(b.state.favorite) - Number(a.state.favorite) || Number(a.state.status === "WATCHED") - Number(b.state.status === "WATCHED"))
+    .slice(0, 5);
+  const seedVariables: Record<string, number> = {};
+  const seedDefinitions = seedEntries.map((entry, index) => {
+    seedVariables[`seedId${index}`] = Number(entry.animeId);
+    return `$seedId${index}: Int!`;
+  });
+  const seedQueries = seedEntries.map((_, index) => `
+      seed${index}: Media(id: $seedId${index}, type: ANIME) {
+        recommendations(sort: RATING_DESC) {
+          nodes { rating mediaRecommendation { ${MEDIA_FIELDS} } }
+        }
+      }
+    `).join("\\n");
   const query = `
-    query SearchDiscovery($season: MediaSeason!, $year: Int!) {
+    query SearchDiscovery($season: MediaSeason!, $year: Int!${seedDefinitions.length ? `, ${seedDefinitions.join(", ")}` : ""}) {
       discover: Page(page: 1, perPage: 50) {
         media(type: ANIME, averageScore_greater: 74, popularity_greater: 20000, popularity_lesser: 150000, sort: SCORE_DESC, isAdult: false) { ${MEDIA_FIELDS} }
       }
@@ -80,12 +98,13 @@ async function fetchDiscoveryRows(): Promise<Record<DiscoveryRowId, Media[]>> {
       topRated: Page(page: 1, perPage: 50) {
         media(type: ANIME, sort: SCORE_DESC, isAdult: false) { ${MEDIA_FIELDS} }
       }
+      ${seedQueries}
     }
   `;
   const response = await fetch("https://graphql.anilist.co", {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify({ query, variables: { season, year } }),
+    body: JSON.stringify({ query, variables: { season, year, ...seedVariables } }),
   });
   if (!response.ok) throw new Error("Discovery request failed");
   const payload = await response.json();
@@ -93,7 +112,9 @@ async function fetchDiscoveryRows(): Promise<Record<DiscoveryRowId, Media[]>> {
   const pages = payload.data;
   if (!pages) throw new Error("Discovery data unavailable");
 
+  const personalIds = new Set(personalEntries.map((entry) => Number(entry.animeId)).filter(Number.isFinite));
   const eligible = (items: Media[]) => items.filter((media) =>
+    !personalIds.has(media.id) &&
     !isOwned(media) &&
     Boolean(media.coverImage?.extraLarge || media.coverImage?.large) &&
     Boolean(media.title?.romaji || media.title?.english)
@@ -112,11 +133,15 @@ async function fetchDiscoveryRows(): Promise<Record<DiscoveryRowId, Media[]>> {
   const used = new Set<number>();
   // Discovery should introduce acclaimed, mid-popularity titles rather than the
   // same global hits users already know. Keep true low-popularity titles for Gems.
+  const personalized = seedEntries.length
+    ? seedEntries.flatMap((_, index) => pages[`seed${index}`]?.recommendations?.nodes ?? [])
+        .filter((node: { mediaRecommendation?: Media | null }) => Boolean(node.mediaRecommendation))
+        .map((node: { rating?: number | null; mediaRecommendation: Media }) => ({ ...node.mediaRecommendation, recommendationRating: node.rating ?? 0 }))
+        .sort((a: Media & { recommendationRating: number }, b: Media & { recommendationRating: number }) => b.recommendationRating - a.recommendationRating || (b.averageScore ?? 0) - (a.averageScore ?? 0));
   const discover = claim(
-    (pages.discover?.media ?? []).filter((media: Media) =>
+    (personalized.length ? personalized : seedEntries.length ? [] : (pages.discover?.media ?? [])).filter((media: Media) =>
       (media.averageScore ?? 0) >= 75 &&
-      (media.popularity ?? 0) > 20000 &&
-      (media.popularity ?? 0) < 150000
+      (seedEntries.length || ((media.popularity ?? 0) > 20000 && (media.popularity ?? 0) < 150000))
     ),
     used,
   );
