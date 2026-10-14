@@ -63,7 +63,7 @@ const MEDIA_FIELDS = "id title { romaji english } startDate { year month day } c
 async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): Promise<Record<DiscoveryRowId, Media[]>> {
   const { season, year } = currentSeason();
   const seedEntries = [...personalEntries]
-    .filter((entry) => /^\\d+$/.test(entry.animeId))
+    .filter((entry) => /^\d+$/.test(entry.animeId))
     .sort((a, b) => Number(b.state.favorite) - Number(a.state.favorite) || Number(b.state.status === "WATCHED") - Number(a.state.status === "WATCHED"))
     .slice(0, 5);
   const seedVariables: Record<string, number> = {};
@@ -77,7 +77,7 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
           nodes { rating mediaRecommendation { ${MEDIA_FIELDS} } }
         }
       }
-    `).join("\\n");
+    `).join("\n");
   const query = `
     query SearchDiscovery($season: MediaSeason!, $year: Int!${seedDefinitions.length ? `, ${seedDefinitions.join(", ")}` : ""}) {
       discover: Page(page: 1, perPage: 50) {
