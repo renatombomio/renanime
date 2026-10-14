@@ -293,23 +293,6 @@ export default function GenresView({ entries, lang = "es" }: Props) {
           text-transform: uppercase;
         }
 
-        .genres-distribution {
-          display: flex;
-          width: 100%;
-          height: 4px;
-          margin: 1.6rem 0 clamp(2rem, 4vw, 3rem);
-          overflow: hidden;
-          gap: 2px;
-          border-radius: 999px;
-          background: var(--color-border);
-        }
-
-        .genres-distribution span {
-          min-width: 2px;
-          border-radius: 999px;
-          transition: width 300ms ease;
-        }
-
         .genres-rows {
           display: grid;
           gap: clamp(2rem, 5vw, 3.8rem);
@@ -337,14 +320,6 @@ export default function GenresView({ entries, lang = "es" }: Props) {
         .genre-row-title-wrap {
           gap: .7rem;
           flex-wrap: wrap;
-        }
-
-        .genre-color-dot {
-          flex: 0 0 auto;
-          width: .48rem;
-          height: .48rem;
-          border-radius: 50%;
-          box-shadow: 0 0 14px color-mix(in srgb, currentColor 25%, transparent);
         }
 
         .genre-row-title {
