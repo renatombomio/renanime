@@ -15,6 +15,7 @@ const isAuth = basePath === "/login" || basePath === "/login/";
 import "../styles/global.css";
 import { ClientRouter } from "astro:transitions";
 import SoundtrackPlayer from "../components/audio/SoundtrackPlayer";
+import { Analytics } from "@vercel/analytics/astro";
 ---
 
 <!doctype html>
@@ -32,6 +33,7 @@ import SoundtrackPlayer from "../components/audio/SoundtrackPlayer";
   <body class:list={["texture-grain", isGhibli && "theme-ghibli"]}>
     <a class="skip-link" href="#main-content">{lang === "en" ? "Skip to content" : "Saltar al contenido"}</a>
     <slot />
+    <Analytics />
     {!isAuth && <SoundtrackPlayer client:load transition:persist lang={lang} />}
   </body>
 </html>
