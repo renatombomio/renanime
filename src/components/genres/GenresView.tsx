@@ -202,7 +202,7 @@ export default function GenresView({ entries, lang = "es" }: Props) {
           </div>
 
           <div className="genres-rows">
-            {catalog.slice(0, 6).map((genre, genreIndex) => {
+            {catalog.map((genre, genreIndex) => {
               const color = getGenreColor(genre.name);
               const openGenre = () => {
                 setSelected(genre.name);
@@ -210,6 +210,25 @@ export default function GenresView({ entries, lang = "es" }: Props) {
                 url.searchParams.set("genre", genre.name);
                 window.history.pushState({ genre: genre.name }, "", url.pathname + url.search);
               };
+
+              // Make the visual selection varied across genres rather than repeating the
+              // same first few collection entries in every horizontal row.
+              const genreEntryIds = new Set(genre.entries.map((entry) => entry.animeId));
+              const orderedEntries = [
+                ...entries.filter((entry) => genreEntryIds.has(entry.animeId) && metadata[entry.animeId]?.coverImage?.extraLarge),
+                ...entries.filter((entry) => genreEntryIds.has(entry.animeId) && !metadata[entry.animeId]?.coverImage?.extraLarge && !metadata[entry.animeId]?.coverImage?.large),
+                ...entries.filter((entry) => genreEntryIds.has(entry.animeId) && metadata[entry.animeId]?.coverImage?.large),
+              ].filter((entry, index, all) => all.findIndex((item) => item.animeId === entry.animeId) === index);
+              const featuredEntries = orderedEntries
+                .filter((entry) => metadata[entry.animeId]?.genres?.includes(genre.name))
+                .sort((a, b) => {
+                  const aMedia = metadata[a.animeId];
+                  const bMedia = metadata[b.animeId];
+                  const aYear = aMedia?.startDate?.year ?? aMedia?.seasonYear ?? 0;
+                  const bYear = bMedia?.startDate?.year ?? bMedia?.seasonYear ?? 0;
+                  return bYear - aYear || a.title.localeCompare(b.title);
+                });
+              const displayedEntries = featuredEntries.length ? featuredEntries : orderedEntries;
 
               return (
                 <section className="genre-row" key={genre.name} aria-label={t("genres.resultsLabel").replace("{genre}", genre.name)} style={{ borderTopColor: color }}>
@@ -224,7 +243,7 @@ export default function GenresView({ entries, lang = "es" }: Props) {
                     </button>
                   </div>
                   <div className="genre-row-track" aria-label={genre.name}>
-                    {genre.entries.slice(0, 8).map((entry, index) => {
+                    {displayedEntries.slice(0, 8).map((entry, index) => {
                       const media = metadata[entry.animeId];
                       const image = media?.coverImage?.extraLarge ?? media?.coverImage?.large;
                       const title = lang === "en" ? (media?.title?.english || media?.title?.romaji || entry.title) : (media?.title?.romaji || media?.title?.english || entry.title);
