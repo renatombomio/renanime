@@ -66,7 +66,7 @@ async function fetchDiscoveryRows(): Promise<Record<DiscoveryRowId, Media[]>> {
         media(type: ANIME, sort: POPULARITY_DESC, isAdult: false) { ${MEDIA_FIELDS} }
       }
       hidden: Page(page: 1, perPage: 50) {
-        media(type: ANIME, sort: SCORE_DESC, isAdult: false) { ${MEDIA_FIELDS} }
+        media(type: ANIME, sort: SCORE_DESC, averageScore_greater: 74, popularity_greater: 500, popularity_lesser: 20000, isAdult: false) { ${MEDIA_FIELDS} }
       }
       trending: Page(page: 1, perPage: 50) {
         media(type: ANIME, sort: TRENDING_DESC, isAdult: false) { ${MEDIA_FIELDS} }
@@ -113,13 +113,11 @@ async function fetchDiscoveryRows(): Promise<Record<DiscoveryRowId, Media[]>> {
   const discover = claim(pages.discover?.media ?? [], used);
   const hidden = claim(
     (pages.hidden?.media ?? []).filter((media: Media) =>
-      Boolean(media.averageScore) &&
-      (media.averageScore ?? 0) >= 70 &&
-      (media.popularity ?? 0) > 0 &&
-      (media.popularity ?? 0) < 25000
+      (media.averageScore ?? 0) >= 75 &&
+      (media.popularity ?? 0) > 500 &&
+      (media.popularity ?? 0) < 20000
     ),
     used,
-    3,
   );
   const trending = claim(pages.trending?.media ?? [], used);
   const seasonItems = claim(pages.season?.media ?? [], used);
