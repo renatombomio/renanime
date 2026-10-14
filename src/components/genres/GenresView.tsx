@@ -18,26 +18,6 @@ interface GenreMedia {
   startDate?: { year?: number; month?: number; day?: number };
 }
 
-const GENRE_COLORS: Record<string, string> = {
-  Action: "#f45164",
-  Adventure: "#e0a458",
-  Comedy: "#d9b43a",
-  Drama: "#c0507a",
-  Fantasy: "#9b7bd6",
-  "Sci-Fi": "#4a8fe0",
-  "Science Fiction": "#4a8fe0",
-  Romance: "#ec4899",
-  Thriller: "#d96b47",
-  Horror: "#8e7ab5",
-  Mystery: "#6a9f9a",
-  Slice: "#c9a0dc",
-  Sports: "#7eaa74",
-};
-
-function getGenreColor(name: string) {
-  return GENRE_COLORS[name] ?? "#ec4899";
-}
-
 const BATCH_SIZE = 25;
 const CACHE_PREFIX = "renanime:collection:v4:";
 
@@ -194,16 +174,9 @@ export default function GenresView({ entries, lang = "es" }: Props) {
             <span>{t("genres.titlesSeen").replace("{count}", String(entries.length))}</span>
           </div>
 
-          <div className="genres-distribution" aria-label={t("genres.count").replace("{count}", String(catalog.length))}>
-            {catalog.map((genre) => {
-              const color = getGenreColor(genre.name);
-              return <span key={genre.name} title={genre.name} style={{ width: `${catalog.reduce((total, item) => total + item.entries.length, 0) ? genre.entries.length / catalog.reduce((total, item) => total + item.entries.length, 0) * 100 : 0}%`, backgroundColor: color }} />;
-            })}
-          </div>
-
           <div className="genres-rows">
             {catalog.map((genre, genreIndex) => {
-              const color = getGenreColor(genre.name);
+              const color = "var(--color-accent-soft)";
               const openGenre = () => {
                 setSelected(genre.name);
                 const url = new URL(window.location.href);
@@ -231,15 +204,14 @@ export default function GenresView({ entries, lang = "es" }: Props) {
               const displayedEntries = featuredEntries.length ? featuredEntries : orderedEntries;
 
               return (
-                <section className="genre-row" key={genre.name} aria-label={t("genres.resultsLabel").replace("{genre}", genre.name)} style={{ borderTopColor: color }}>
+                <section className="genre-row" key={genre.name} aria-label={t("genres.resultsLabel").replace("{genre}", genre.name)} >
                   <div className="genre-row-heading">
                     <div className="genre-row-title-wrap">
-                      <span className="genre-color-dot" style={{ backgroundColor: color }} />
                       <h2 className="genre-row-title">{genre.name}</h2>
                       <span className="genre-row-count">{t("genres.titleCount").replace("{count}", String(genre.entries.length))}</span>
                     </div>
-                    <button className="genre-view-all" type="button" onClick={openGenre} aria-label={t("genres.resultsLabel").replace("{genre}", genre.name)}>
-                      {t("genres.archive")} <span aria-hidden="true">↗</span>
+                    <button className="genre-view-all" type="button" onClick={openGenre} aria-label={t("genres.viewAll").replace("{genre}", genre.name)}>
+                      {t("genres.viewAllLabel")} <span aria-hidden="true">↗</span>
                     </button>
                   </div>
                   <div className="genre-row-track" aria-label={genre.name}>
@@ -249,19 +221,13 @@ export default function GenresView({ entries, lang = "es" }: Props) {
                       const title = lang === "en" ? (media?.title?.english || media?.title?.romaji || entry.title) : (media?.title?.romaji || media?.title?.english || entry.title);
                       return (
                         <button className="genre-poster-card" type="button" key={entry.animeId} onClick={openGenre} aria-label={title}>
-                          <span className="genre-poster-art" style={{ outlineColor: color }}>
+                          <span className="genre-poster-art">
                             {image ? <img src={image} alt="" loading={genreIndex === 0 && index < 4 ? "eager" : "lazy"} /> : <span className="genre-poster-placeholder">{title}</span>}
-                            <span className="genre-poster-wash" style={{ background: `linear-gradient(180deg, transparent 45%, ${color}55 100%)` }} />
                           </span>
                           <span className="genre-poster-title">{title}</span>
                         </button>
                       );
                     })}
-                    <button className="genre-more-card" type="button" onClick={openGenre} style={{ borderColor: color }} aria-label={t("genres.resultsLabel").replace("{genre}", genre.name)}>
-                      <span className="genre-more-mark" style={{ color }}>↗</span>
-                      <strong>{genre.name}</strong>
-                      <span>{t("genres.titleCount").replace("{count}", String(genre.entries.length))}</span>
-                    </button>
                   </div>
                 </section>
               );
@@ -270,13 +236,9 @@ export default function GenresView({ entries, lang = "es" }: Props) {
         </>
       ) : (
         <section className="genre-results" aria-label={t("genres.resultsLabel").replace("{genre}", selectedGenre.name)}>
-          <div className="genre-results-head">
-            <div>
-              <span className="genre-results-kicker">{t("genres.archive")}</span>
-              <span className="genre-results-title">{selectedGenre.name}</span>
-            </div>
-            <span>{t("genres.titleCount").replace("{count}", String(selectedGenre.entries.length))}</span>
-          </div>
+          <header className="genre-results-head">
+            <h2 className="genre-results-title">{selectedGenre.name}</h2>
+          </header>
 
           {resultsLoading ? (
             <div className="genre-results-loading" role="status" aria-live="polite">{t("genres.loadingTitles")}</div>
@@ -411,7 +373,7 @@ export default function GenresView({ entries, lang = "es" }: Props) {
           padding: .5rem 0 .5rem .5rem;
           border: 0;
           background: transparent;
-          color: var(--color-accent-soft);
+          color: var(--color-paper-50);
           font: 500 .58rem/1 var(--font-meta);
           letter-spacing: .07em;
           text-transform: uppercase;
@@ -454,8 +416,7 @@ export default function GenresView({ entries, lang = "es" }: Props) {
           aspect-ratio: 2 / 3;
           overflow: hidden;
           border-radius: 8px;
-          outline: 1px solid rgba(245,242,236,.12);
-          outline-offset: -1px;
+          border: 1px solid rgba(245,242,236,.12);
           background: var(--color-ink-900);
           isolation: isolate;
         }
@@ -466,14 +427,6 @@ export default function GenresView({ entries, lang = "es" }: Props) {
           height: 100%;
           object-fit: cover;
           transition: transform 550ms cubic-bezier(.22,1,.36,1), filter 350ms ease;
-        }
-
-        .genre-poster-wash {
-          position: absolute;
-          inset: 0;
-          opacity: .5;
-          pointer-events: none;
-          mix-blend-mode: screen;
         }
 
         .genre-poster-placeholder {
@@ -503,89 +456,13 @@ export default function GenresView({ entries, lang = "es" }: Props) {
           filter: saturate(1.12);
         }
 
-        .genre-more-card {
-          display: flex;
-          flex: 0 0 clamp(112px, 14vw, 172px);
-          flex-direction: column;
-          align-items: flex-start;
-          justify-content: flex-end;
-          gap: .65rem;
-          min-height: 0;
-          padding: 1rem;
-          border: 1px solid;
-          border-radius: 8px;
-          background: radial-gradient(ellipse at 100% 0%, rgba(236,72,153,.09), transparent 65%), var(--color-ink-950);
-          color: var(--color-paper-50);
-          text-align: left;
-          cursor: pointer;
-          scroll-snap-align: start;
-        }
-
-        .genre-more-mark {
-          display: grid;
-          place-items: center;
-          width: 2rem;
-          height: 2rem;
-          border: 1px solid currentColor;
-          border-radius: 50%;
-          font-size: 1rem;
-        }
-
-        .genre-more-card strong {
-          font-family: var(--font-heading);
-          font-size: 1.25rem;
-          font-weight: 400;
-          letter-spacing: -.03em;
-        }
-
-        .genre-more-card > span:last-child {
-          color: var(--color-muted-400);
-          font: 500 .52rem/1 var(--font-meta);
-          letter-spacing: .08em;
-          text-transform: uppercase;
-        }
-
         .genre-results {
           margin-top: clamp(2.5rem, 5vw, 4rem);
         }
 
         .genre-results-head {
-          display: grid;
-          grid-template-columns: 1fr auto 1fr;
-          align-items: end;
-          gap: 1rem;
           padding-bottom: 1rem;
           border-bottom: 1px solid var(--color-border);
-        }
-
-        .genre-results-head > span:last-child {
-          justify-self: end;
-          color: var(--color-muted-400);
-          font: 500 .58rem/1 var(--font-meta);
-          letter-spacing: .1em;
-          text-transform: uppercase;
-        }
-
-        .genre-results-head > div {
-          display: grid;
-          gap: .35rem;
-          text-align: center;
-        }
-
-        .genre-results-kicker {
-          color: var(--color-accent-soft);
-          font: 500 .52rem/1 var(--font-meta);
-          letter-spacing: .12em;
-          text-transform: uppercase;
-        }
-
-        .genre-results-title {
-          color: var(--color-paper-50);
-          font-family: var(--font-heading);
-          font-size: clamp(1.8rem, 4vw, 3.6rem);
-          font-weight: 400;
-          letter-spacing: -.05em;
-          line-height: .9;
         }
 
         .genre-results-grid {
@@ -645,8 +522,7 @@ export default function GenresView({ entries, lang = "es" }: Props) {
         }
 
         @media (max-width: 900px) {
-          .genre-poster-card,
-          .genre-more-card {
+          .genre-poster-card {
             flex-basis: 142px;
           }
 
@@ -661,11 +537,6 @@ export default function GenresView({ entries, lang = "es" }: Props) {
             gap: .5rem;
           }
 
-          .genres-distribution {
-            margin-top: 1.25rem;
-            margin-bottom: 2rem;
-          }
-
           .genre-row {
             padding-top: .85rem;
           }
@@ -674,46 +545,20 @@ export default function GenresView({ entries, lang = "es" }: Props) {
             align-items: flex-start;
           }
 
-          .genre-row-title-wrap {
-            gap: .45rem;
-          }
-
           .genre-row-title {
             font-size: 1.55rem;
-          }
-
-          .genre-row-count {
-            width: 100%;
-            padding-left: .95rem;
           }
 
           .genre-view-all {
             font-size: .52rem;
           }
 
-          .genre-poster-card,
-          .genre-more-card {
+          .genre-poster-card {
             flex-basis: 118px;
           }
 
           .genre-row-track {
             gap: .7rem;
-          }
-
-          .genre-results-head {
-            grid-template-columns: 1fr auto;
-          }
-
-          .genre-results-head > div {
-            grid-column: 1 / -1;
-            grid-row: 1;
-            order: -1;
-            text-align: left;
-          }
-
-          .genre-results-head > span:last-child {
-            grid-column: 2;
-            grid-row: 2;
           }
 
           .genre-results-grid {
