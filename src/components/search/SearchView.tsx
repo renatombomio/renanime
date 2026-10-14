@@ -12,6 +12,8 @@ interface Media {
   format?: string | null;
   popularity?: number | null;
   averageScore?: number | null;
+  genres?: string[];
+  tags?: { name: string; rank?: number | null }[];
 }
 
 type DiscoveryRowId = "discover" | "hidden" | "trending" | "season" | "upcoming" | "topRated";
@@ -58,7 +60,7 @@ function formatDate(date: Media["startDate"], lang: Lang) {
   );
 }
 
-const MEDIA_FIELDS = "id title { romaji english } startDate { year month day } coverImage { extraLarge large } format popularity averageScore";
+const MEDIA_FIELDS = "id title { romaji english } startDate { year month day } coverImage { extraLarge large } format popularity averageScore genres tags { name rank }";
 
 async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): Promise<Record<DiscoveryRowId, Media[]>> {
   const { season, year } = currentSeason();
@@ -164,7 +166,9 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
       });
       const seeds = seedIds.map((_, index) => `
         seed${index}: Media(id: $seedId${index}, type: ANIME) {
-          recommendations(page: 1, perPage: 10, sort: RATING_DESC) {
+          genres
+          tags { name rank }
+          recommendations(page: 1, perPage: 25, sort: RATING_DESC) {
             nodes { rating mediaRecommendation { ${MEDIA_FIELDS} } }
           }
         }
@@ -182,12 +186,23 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
       if (recommendationResponse.ok) {
         const recommendationPayload = await recommendationResponse.json();
         if (!recommendationPayload.errors?.length && recommendationPayload.data) {
-          personalized = seedIds.flatMap((_, index) => recommendationPayload.data[`seed${index}`]?.recommendations?.nodes ?? [])
+          const seedMedia = seedIds.map((_, index) => recommendationPayload.data[`seed${index}`]).filter(Boolean);
+          const genreCounts = new Map<string, number>();
+          const tagCounts = new Map<string, number>();
+          seedMedia.forEach((seed: { genres?: string[]; tags?: { name: string; rank?: number | null }[] }) => {
+            (seed.genres ?? []).forEach((genre) => genreCounts.set(genre, (genreCounts.get(genre) ?? 0) + 1));
+            (seed.tags ?? []).filter((tag) => (tag.rank ?? 0) >= 60).forEach((tag) => tagCounts.set(tag.name, (tagCounts.get(tag.name) ?? 0) + 1));
+          });
+          const maxGenreCount = Math.max(1, ...genreCounts.values());
+          const maxTagCount = Math.max(1, ...tagCounts.values());
+          personalized = seedMedia.flatMap((seed: { recommendations?: { nodes?: { rating?: number | null; mediaRecommendation?: Media | null }[] } }) => seed.recommendations?.nodes ?? [])
             .filter((node: { mediaRecommendation?: Media | null }) => Boolean(node.mediaRecommendation))
-            .map((node: { rating?: number | null; mediaRecommendation: Media }) => ({
-              ...node.mediaRecommendation,
-              recommendationRating: node.rating ?? 0,
-            }))
+            .map((node: { rating?: number | null; mediaRecommendation: Media }) => {
+              const media = node.mediaRecommendation;
+              const genreFit = (media.genres ?? []).reduce((sum, genre) => sum + (genreCounts.get(genre) ?? 0) / maxGenreCount, 0);
+              const tagFit = (media.tags ?? []).filter((tag) => (tag.rank ?? 0) >= 60).reduce((sum, tag) => sum + (tagCounts.get(tag.name) ?? 0) / maxTagCount, 0);
+              return { ...media, recommendationRating: (node.rating ?? 0) + genreFit * 8 + tagFit * 2 };
+            })
             .sort((a: Media & { recommendationRating: number }, b: Media & { recommendationRating: number }) =>
               b.recommendationRating - a.recommendationRating || (b.averageScore ?? 0) - (a.averageScore ?? 0));
         }
