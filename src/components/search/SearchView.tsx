@@ -130,7 +130,7 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
           nodes { rating mediaRecommendation { ${MEDIA_FIELDS} } }
         }
       }
-    `).join("\\n");
+    `).join("\n");
     const recommendationQuery = `
       query PersonalRecommendations(${definitions.join(", ")}) {
         ${seeds}
