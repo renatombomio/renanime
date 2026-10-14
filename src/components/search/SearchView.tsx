@@ -64,7 +64,7 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
   const { season, year } = currentSeason();
   const seedEntries = [...personalEntries]
     .filter((entry) => /^\\d+$/.test(entry.animeId))
-    .sort((a, b) => Number(b.state.favorite) - Number(a.state.favorite) || Number(a.state.status === "WATCHED") - Number(b.state.status === "WATCHED"))
+    .sort((a, b) => Number(b.state.favorite) - Number(a.state.favorite) || Number(b.state.status === "WATCHED") - Number(a.state.status === "WATCHED"))
     .slice(0, 5);
   const seedVariables: Record<string, number> = {};
   const seedDefinitions = seedEntries.map((entry, index) => {
@@ -182,13 +182,34 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
   const [hasNext, setHasNext] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchError, setSearchError] = useState(false);
+  const [personalEntries, setPersonalEntries] = useState<PersonalAnimeEntry[]>([]);
+  const [personalLibraryReady, setPersonalLibraryReady] = useState(false);
   const [discovery, setDiscovery] = useState<Record<DiscoveryRowId, Media[]> | null>(null);
   const [discoveryLoading, setDiscoveryLoading] = useState(true);
   const [discoveryError, setDiscoveryError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    fetchDiscoveryRows()
+    const syncPersonalLibrary = () => setPersonalEntries(getPersonalLibrary());
+    const unsubscribe = subscribeToPersonalLibrary(syncPersonalLibrary);
+    syncPersonalLibrary();
+    void hydratePersonalLibrary().finally(() => {
+      if (!cancelled) {
+        syncPersonalLibrary();
+        setPersonalLibraryReady(true);
+      }
+    });
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!personalLibraryReady) return;
+    let cancelled = false;
+    setDiscoveryLoading(true);
+    fetchDiscoveryRows(personalEntries)
       .then((rows) => {
         if (!cancelled) {
           setDiscovery(rows);
@@ -202,7 +223,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         if (!cancelled) setDiscoveryLoading(false);
       });
     return () => { cancelled = true; };
-  }, []);
+  }, [personalLibraryReady, personalEntries]);
 
   useEffect(() => {
     if (!submitted.trim()) {
