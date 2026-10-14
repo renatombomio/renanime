@@ -124,6 +124,12 @@ export default function GenresView({ entries, lang = "es" }: Props) {
   const selectedGenre = catalog.find((genre) => genre.name === selected);
 
   useEffect(() => {
+    const page = document.querySelector(".genres-page");
+    page?.classList.toggle("is-genre-selected", Boolean(selectedGenre));
+    return () => page?.classList.remove("is-genre-selected");
+  }, [selectedGenre]);
+
+  useEffect(() => {
     if (catalog.length === 0) return;
 
     const syncSelectedGenre = () => {
