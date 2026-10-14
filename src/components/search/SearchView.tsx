@@ -95,10 +95,14 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
   const pages = payload.data;
   if (!pages) throw new Error("Discovery data unavailable");
 
-  const numericEntries = personalEntries
-    .filter((entry) => /^\d+$/.test(entry.animeId))
+  const seedEntries = [...personalEntries]
     .sort((a, b) => Number(b.state.favorite) - Number(a.state.favorite) || Number(b.state.status === "WATCHED") - Number(a.state.status === "WATCHED"))
     .slice(0, 5);
+  const numericEntries = seedEntries.filter((entry) => /^\\d+$/.test(entry.animeId));
+  const customEntries = seedEntries
+    .filter((entry) => !/^\\d+$/.test(entry.animeId))
+    .map((entry) => ({ entry, title: getLibrary().find((item) => item.animeId === entry.animeId)?.title }))
+    .filter((item): item is { entry: PersonalAnimeEntry; title: string } => Boolean(item.title));
   const personalIds = new Set(personalEntries.map((entry) => Number(entry.animeId)).filter(Number.isFinite));
   const eligible = (items: Media[]) => items.filter((media) =>
     !personalIds.has(media.id) &&
@@ -118,25 +122,58 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
   };
 
   let personalized: Media[] = [];
-  if (numericEntries.length) {
-    const variables: Record<string, number> = {};
-    const definitions = numericEntries.map((entry, index) => {
-      variables[`seedId${index}`] = Number(entry.animeId);
-      return `$seedId${index}: Int!`;
-    });
-    const seeds = numericEntries.map((_, index) => `
-      seed${index}: Media(id: $seedId${index}, type: ANIME) {
-        recommendations(page: 1, perPage: 10, sort: RATING_DESC) {
-          nodes { rating mediaRecommendation { ${MEDIA_FIELDS} } }
+  try {
+    const seedIds = numericEntries.map((entry) => Number(entry.animeId));
+    if (customEntries.length) {
+      const titleVariables: Record<string, string> = {};
+      const titleDefinitions = customEntries.map((item, index) => {
+        titleVariables[`seedTitle${index}`] = item.title;
+        return `$seedTitle${index}: String!`;
+      });
+      const titleSearches = customEntries.map((_, index) => `
+        seedSearch${index}: Page(page: 1, perPage: 1) {
+          media(search: $seedTitle${index}, type: ANIME, sort: SEARCH_MATCH, isAdult: false) { id }
+        }
+      `).join("\\n");
+      const titleQuery = `
+        query ResolvePersonalSeeds(${titleDefinitions.join(", ")}) {
+          ${titleSearches}
+        }
+      `;
+      const titleResponse = await fetch("https://graphql.anilist.co", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ query: titleQuery, variables: titleVariables }),
+      });
+      if (titleResponse.ok) {
+        const titlePayload = await titleResponse.json();
+        if (!titlePayload.errors?.length && titlePayload.data) {
+          customEntries.forEach((_, index) => {
+            const resolvedId = titlePayload.data[`seedSearch${index}`]?.media?.[0]?.id;
+            if (Number.isInteger(resolvedId)) seedIds.push(resolvedId);
+          });
         }
       }
-    `).join("\n");
-    const recommendationQuery = `
-      query PersonalRecommendations(${definitions.join(", ")}) {
-        ${seeds}
-      }
-    `;
-    try {
+    }
+
+    if (seedIds.length) {
+      const variables: Record<string, number> = {};
+      const definitions = seedIds.map((id, index) => {
+        variables[`seedId${index}`] = id;
+        return `$seedId${index}: Int!`;
+      });
+      const seeds = seedIds.map((_, index) => `
+        seed${index}: Media(id: $seedId${index}, type: ANIME) {
+          recommendations(page: 1, perPage: 10, sort: RATING_DESC) {
+            nodes { rating mediaRecommendation { ${MEDIA_FIELDS} } }
+          }
+        }
+      `).join("\\n");
+      const recommendationQuery = `
+        query PersonalRecommendations(${definitions.join(", ")}) {
+          ${seeds}
+        }
+      `;
       const recommendationResponse = await fetch("https://graphql.anilist.co", {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
@@ -145,7 +182,7 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
       if (recommendationResponse.ok) {
         const recommendationPayload = await recommendationResponse.json();
         if (!recommendationPayload.errors?.length && recommendationPayload.data) {
-          personalized = numericEntries.flatMap((_, index) => recommendationPayload.data[`seed${index}`]?.recommendations?.nodes ?? [])
+          personalized = seedIds.flatMap((_, index) => recommendationPayload.data[`seed${index}`]?.recommendations?.nodes ?? [])
             .filter((node: { mediaRecommendation?: Media | null }) => Boolean(node.mediaRecommendation))
             .map((node: { rating?: number | null; mediaRecommendation: Media }) => ({
               ...node.mediaRecommendation,
@@ -155,11 +192,10 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
               b.recommendationRating - a.recommendationRating || (b.averageScore ?? 0) - (a.averageScore ?? 0));
         }
       }
-    } catch {
-      // Keep the general discovery row available if personalized recommendations fail.
     }
+  } catch {
+    // Keep the general discovery row available if personalized recommendations fail.
   }
-
   const used = new Set<number>();
   const discoverSource = personalized.length ? personalized : pages.discover?.media ?? [];
   const discover = claim(discoverSource.filter((media: Media & { recommendationRating?: number }) =>
