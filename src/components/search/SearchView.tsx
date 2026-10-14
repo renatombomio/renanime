@@ -96,7 +96,7 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
   if (!pages) throw new Error("Discovery data unavailable");
 
   const numericEntries = personalEntries
-    .filter((entry) => /^\\d+$/.test(entry.animeId))
+    .filter((entry) => /^\d+$/.test(entry.animeId))
     .sort((a, b) => Number(b.state.favorite) - Number(a.state.favorite) || Number(b.state.status === "WATCHED") - Number(a.state.status === "WATCHED"))
     .slice(0, 5);
   const personalIds = new Set(personalEntries.map((entry) => Number(entry.animeId)).filter(Number.isFinite));
