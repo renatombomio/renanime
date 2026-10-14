@@ -165,6 +165,8 @@
   "genres.titlesSeen": "{count} titles watched",
   "genres.titleCount": "{count} titles",
   "genres.archive": "Ren's archive",
+  "genres.viewAll": "View all {genre} anime",
+  "genres.viewAllLabel": "View all",
   "genres.loadingTitles": "Loading titles…",
   "genres.resultsLabel": "Anime in the {genre} genre",
   "genres.unknownDate": "Unknown date",
