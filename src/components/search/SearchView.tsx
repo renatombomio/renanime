@@ -62,22 +62,22 @@ async function fetchDiscoveryRows(): Promise<Record<DiscoveryRowId, Media[]>> {
   const { season, year } = currentSeason();
   const query = `
     query SearchDiscovery($season: MediaSeason!, $year: Int!) {
-      discover: Page(page: 1, perPage: 24) {
+      discover: Page(page: 1, perPage: 50) {
         media(type: ANIME, sort: POPULARITY_DESC, isAdult: false) { ${MEDIA_FIELDS} }
       }
       hidden: Page(page: 1, perPage: 50) {
         media(type: ANIME, sort: SCORE_DESC, isAdult: false) { ${MEDIA_FIELDS} }
       }
-      trending: Page(page: 1, perPage: 12) {
+      trending: Page(page: 1, perPage: 50) {
         media(type: ANIME, sort: TRENDING_DESC, isAdult: false) { ${MEDIA_FIELDS} }
       }
-      season: Page(page: 1, perPage: 12) {
+      season: Page(page: 1, perPage: 50) {
         media(type: ANIME, season: $season, seasonYear: $year, sort: POPULARITY_DESC, isAdult: false) { ${MEDIA_FIELDS} }
       }
-      upcoming: Page(page: 1, perPage: 12) {
+      upcoming: Page(page: 1, perPage: 50) {
         media(type: ANIME, status: NOT_YET_RELEASED, sort: POPULARITY_DESC, isAdult: false) { ${MEDIA_FIELDS} }
       }
-      topRated: Page(page: 1, perPage: 12) {
+      topRated: Page(page: 1, perPage: 50) {
         media(type: ANIME, sort: SCORE_DESC, isAdult: false) { ${MEDIA_FIELDS} }
       }
     }
@@ -93,14 +93,48 @@ async function fetchDiscoveryRows(): Promise<Record<DiscoveryRowId, Media[]>> {
   const pages = payload.data;
   if (!pages) throw new Error("Discovery data unavailable");
 
-  const discover = (pages.discover?.media ?? []).filter((media: Media) => !isOwned(media)).slice(0, 12);
-  const hidden = (pages.hidden?.media ?? [])
-    .filter((media: Media) => Boolean(media.averageScore) && (media.popularity ?? 0) > 0 && (media.popularity ?? 0) < 25000 && (media.averageScore ?? 0) >= 70)
-    .slice(0, 12);
-  const trending = (pages.trending?.media ?? []).slice(0, 12);
-  const seasonItems = (pages.season?.media ?? []).slice(0, 12);
-  const upcoming = (pages.upcoming?.media ?? []).slice(0, 12);
-  const topRated = (pages.topRated?.media ?? []).slice(0, 12);
+  const eligible = (items: Media[]) => items.filter((media) =>
+    !isOwned(media) &&
+    Boolean(media.coverImage?.extraLarge || media.coverImage?.large) &&
+    Boolean(media.title?.romaji || media.title?.english)
+  );
+  const uniqueById = (items: Media[]) => items.filter(
+    (media, index, list) => list.findIndex((candidate) => candidate.id === media.id) === index,
+  );
+  const withoutPreviouslyShown = (items: Media[], used: Set<number>) =>
+    uniqueById(eligible(items)).filter((media) => !used.has(media.id)).slice(0, 12);
+  const claim = (items: Media[], used: Set<number>) => {
+    const selected = withoutPreviouslyShown(items, used);
+    selected.forEach((media) => used.add(media.id));
+    return selected;
+  };
+
+  const used = new Set<number>();
+  const discover = claim(pages.discover?.media ?? [], used);
+  const hidden = claim(
+    (pages.hidden?.media ?? []).filter((media: Media) =>
+      Boolean(media.averageScore) &&
+      (media.averageScore ?? 0) >= 70 &&
+      (media.popularity ?? 0) > 0 &&
+      (media.popularity ?? 0) < 25000
+    ),
+    used,
+  );
+  const trending = claim(pages.trending?.media ?? [], used);
+  const seasonItems = claim(pages.season?.media ?? [], used);
+  const upcoming = claim(
+    (pages.upcoming?.media ?? []).filter((media: Media) => {
+      const date = media.startDate;
+      if (!date?.year) return false;
+      const timestamp = new Date(date.year, (date.month ?? 1) - 1, date.day ?? 1).getTime();
+      return timestamp > Date.now();
+    }),
+    used,
+  );
+  const topRated = claim(
+    (pages.topRated?.media ?? []).filter((media: Media) => (media.averageScore ?? 0) >= 75),
+    used,
+  );
 
   return { discover, hidden, trending, season: seasonItems, upcoming, topRated };
 }
