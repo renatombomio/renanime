@@ -14,7 +14,7 @@ const {columns=4,gap="default"}=Astro.props;
 
 </style>
 <script>
-  import { gsap } from "gsap";
+  import gsap from "gsap";
 
   const initAnimeGridMotion = () => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
