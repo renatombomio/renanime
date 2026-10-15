@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
+import gsap from "gsap";
 import { fetchFallbackPoster } from "../../lib/api/poster-fallback";
 import { fetchGhibliAniList } from "../../lib/api/ghibli-anilist";
 import { useT, type Lang } from "../../i18n";
