@@ -3428,6 +3428,8 @@ snapshots:
 
   '@ungap/structured-clone@1.4.0': {}
 
+  '@vercel/analytics@2.0.1': {}
+
   '@vercel/analytics@2.0.1(react@19.3.0)':
     optionalDependencies:
       react: 19.3.0
