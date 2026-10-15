@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
 import { fetchFallbackPoster } from "../../lib/api/poster-fallback";
 import { fetchGhibliAniList } from "../../lib/api/ghibli-anilist";
 import { useT, type Lang } from "../../i18n";
@@ -48,14 +47,17 @@ export default function GhibliView({ films, lang = "es" }: { films: Film[]; lang
 
   useEffect(() => {
     if (loading || !gridRef.current) return;
-    const grid = gridRef.current;
+    let cancelled = false;
+    let cleanups: Array<() => void> = [];
+
+    void import("gsap").then(({ gsap }) => {
+      if (cancelled || !gridRef.current) return;
+      const grid = gridRef.current;
     const cards = Array.from(grid.querySelectorAll<HTMLElement>(".ghibli-card"));
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!cards.length || reduceMotion) return;
 
-    const cleanups: Array<() => void> = [];
-
-    cards.forEach((card, index) => {
+      cards.forEach((card, index) => {
       gsap.set(card, { autoAlpha: 0, y: 22, scale: 0.985 });
 
       const reveal = () => {
@@ -113,7 +115,15 @@ export default function GhibliView({ films, lang = "es" }: { films: Film[]; lang
       });
     });
 
-    return () => cleanups.forEach((cleanup) => cleanup());
+      if (cancelled) cleanups.forEach((cleanup) => cleanup());
+    }).catch(() => {
+      // Animations are optional; the Ghibli page must remain usable if GSAP fails to load.
+    });
+
+    return () => {
+      cancelled = true;
+      cleanups.forEach((cleanup) => cleanup());
+    };
   }, [loading]);
 
 
