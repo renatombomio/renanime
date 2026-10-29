@@ -301,14 +301,42 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
   .legal { margin:1.5rem 0 0; color:#777783; font-size:.72rem; line-height:1.6; }
   .mobile-brand,.language-toggle-auth { display:none; }
   @media(max-width:760px) {
-    .auth-shell { display:block; min-height:100svh; position:relative; padding:1px 0; }
-    .auth-art { position:fixed; inset:0; min-height:0; height:100svh; opacity:.38; }
+    .auth-shell { display:block; width:100%; height:100svh; min-height:0; max-height:100svh; overflow:hidden; position:relative; padding:0; }
+    .auth-art { position:absolute; inset:0; min-height:0; height:100%; opacity:.34; }
     .auth-art img { object-position:58% center; }
-    .art-shade { background:linear-gradient(180deg,rgba(7,7,12,.55),rgba(7,7,12,.8)); }
+    .art-shade { background:linear-gradient(180deg,rgba(7,7,12,.52),rgba(7,7,12,.84)); }
     .auth-art .brand,.art-caption { display:none; }
-    .auth-panel { position:relative; z-index:2; width:min(100%,500px); padding:6rem 1.35rem 2.5rem; min-height:100svh; display:flex; flex-direction:column; justify-content:center; }
-    .mobile-brand { display:block; position:static; margin-bottom:2.4rem; }
-    .language-toggle-auth { display:block; position:absolute; top:1.2rem; right:1.2rem; z-index:4; padding:.6rem .75rem; border:1px solid #494953; border-radius:999px; color:#fff; background:#14141b; text-decoration:none; font-size:.7rem; font-weight:800; }
-    h1 { font-size:clamp(2.2rem,11vw,3.2rem); }
+    .auth-panel { position:relative; z-index:2; width:100%; max-width:500px; height:100svh; min-height:0; box-sizing:border-box; margin:0 auto; padding:4.65rem 1.3rem .8rem; display:flex; flex-direction:column; justify-content:center; gap:0; overflow:hidden; }
+    .mobile-brand { display:block; position:absolute; top:1rem; left:1.3rem; margin:0; font-size:1.65rem; line-height:1.2; }
+    .language-toggle-auth { display:block; position:absolute; top:1rem; right:1rem; z-index:4; padding:.5rem .65rem; border:1px solid #494953; border-radius:999px; color:#fff; background:#14141b; text-decoration:none; font-size:.68rem; font-weight:800; }
+    .eyebrow { font-size:.62rem; margin:0 0 .55rem; }
+    h1 { font-size:clamp(1.9rem,8.5vw,2.45rem); line-height:1.02; letter-spacing:-.055em; }
+    .intro { font-size:.88rem; line-height:1.4; margin:.55rem 0 .85rem; }
+    .auth-tabs { gap:.25rem; padding:.22rem; border-radius:11px; margin-bottom:.65rem; }
+    .tab { padding:.62rem .35rem; font-size:.88rem; }
+    .google-button,.primary-button { min-height:43px; border-radius:10px; font-size:.9rem; }
+    .separator { gap:.65rem; font-size:.72rem; margin:.7rem 0; }
+    form { gap:.62rem; }
+    .field { gap:.35rem; }
+    label { font-size:.76rem; }
+    input { min-height:42px; padding:0 .8rem; border-radius:10px; font-size:.9rem; }
+    small { font-size:.68rem; }
+    .primary-button { margin-top:.05rem; }
+    .text-button { font-size:.75rem; }
+    .legal { display:none; }
+    .feedback:not(:empty) { padding:.5rem; font-size:.76rem; }
+  }
+  @media(max-width:380px), (max-height:700px) {
+    .auth-panel { padding:4.2rem 1rem .5rem; }
+    .mobile-brand { left:1rem; top:.75rem; font-size:1.5rem; }
+    .language-toggle-auth { top:.75rem; right:.75rem; }
+    .eyebrow { margin-bottom:.35rem; }
+    h1 { font-size:1.85rem; }
+    .intro { margin:.4rem 0 .6rem; font-size:.82rem; }
+    .auth-tabs { margin-bottom:.5rem; }
+    .google-button,.primary-button { min-height:40px; }
+    .separator { margin:.5rem 0; }
+    form { gap:.5rem; }
+    input { min-height:39px; }
   }
 </style>
