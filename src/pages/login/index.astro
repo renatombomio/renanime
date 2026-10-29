@@ -103,7 +103,7 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
     feedback.dataset.error = error ? "true" : "false";
   };
 
-  const setMode = (next: "login" | "register" | "recovery") => {
+  const setMode = (next: "login" | "register" | "recovery" | "profile") => {
     mode = next;
     const registering = next === "register";
     const recovering = next === "recovery";
@@ -191,8 +191,8 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
     const email = emailInput?.value.trim().toLowerCase() ?? "";
     const password = passwordInput?.value ?? "";
     const aka = akaInput?.value.trim() ?? "";
-    if (mode !== "recovery" && !email) return setFeedback(isEnglish ? "Enter a valid email." : "Introduce un email válido.", true);
-    if (password.length < 8) return setFeedback(isEnglish ? "Use at least 8 characters for your password." : "La contraseña debe tener al menos 8 caracteres.", true);
+    if (mode !== "recovery" && mode !== "profile" && !email) return setFeedback(isEnglish ? "Enter a valid email." : "Introduce un email válido.", true);
+    if (mode !== "profile" && password.length < 8) return setFeedback(isEnglish ? "Use at least 8 characters for your password." : "La contraseña debe tener al menos 8 caracteres.", true);
     if (mode === "register" && !/^[\p{L}\p{N}_-]{2,24}$/u.test(aka)) return setFeedback(isEnglish ? "Your nickname must be 2–24 letters, numbers, underscores or hyphens." : "El mote debe tener entre 2 y 24 letras, números, guiones o guiones bajos.", true);
     if (mode === "register" && password !== (confirmInput?.value ?? "")) return setFeedback(isEnglish ? "Passwords do not match." : "Las contraseñas no coinciden.", true);
 
@@ -228,8 +228,8 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
         throw new Error(message);
       }
       if (mode === "register") {
-        setFeedback(isEnglish ? "Account created. Check your email to confirm it before signing in." : "Cuenta creada. Revisa tu email para confirmarla antes de iniciar sesión.");
         setMode("login");
+        setFeedback(isEnglish ? "Account created. Check your email to confirm it before signing in." : "Cuenta creada. Revisa tu email para confirmarla antes de iniciar sesión.");
       } else if (mode === "recovery") {
         window.location.assign(isEnglish ? "/en/login/?password_updated=1" : "/login/?password_updated=1");
       } else if (mode === "profile") {
