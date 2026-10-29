@@ -24,7 +24,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
   try {
     const supabase = createSupabaseSsrClient(request, cookies);
-    const redirectTo = new URL("/auth/callback?next=%2F", request.url).toString();
+    const redirectTo = new URL("/auth/callback?next=%2Flogin%2F%3Fcomplete-profile%3D1", request.url).toString();
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo, skipBrowserRedirect: true },
