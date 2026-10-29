@@ -15,7 +15,7 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
   title={isEnglish ? "Sign in — Renanime's Gallery" : "Acceso — Renanime's Gallery"}
   description={isEnglish ? "Sign in or create your Renanime account." : "Inicia sesión o crea tu cuenta de Renanime."}
 >
-  <main class="auth-shell">
+  <main class="auth-shell" data-initial-recovery={recovery ? "true" : "false"} data-initial-confirmed={confirmed ? "true" : "false"} data-initial-complete-profile={completeProfile ? "true" : "false"}>
     <a class="language-toggle-auth" href={localizedPath(Astro.locals.lang === "es" ? "en" : "es", "/login/")} hreflang={Astro.locals.lang === "es" ? "en" : "es"} aria-label={t(Astro.locals.lang === "es" ? "language.switchToEnglish" : "language.switchToSpanish")} title={t(Astro.locals.lang === "es" ? "language.switchToEnglish" : "language.switchToSpanish")}>
       {isEnglish ? "EN · ES" : "ES · EN"}
     </a>
@@ -75,7 +75,11 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
   </main>
 </Layout>
 
-<script define:vars={{ initialRecovery: recovery, initialConfirmed: confirmed, initialCompleteProfile: completeProfile }}>
+<script>
+  const root = document.querySelector<HTMLElement>(".auth-shell");
+  const initialRecovery = root?.dataset.initialRecovery === "true";
+  const initialConfirmed = root?.dataset.initialConfirmed === "true";
+  const initialCompleteProfile = root?.dataset.initialCompleteProfile === "true";
   const isEnglish = document.documentElement.lang === "en";
   const form = document.querySelector<HTMLFormElement>("#auth-form");
   const tabLogin = document.querySelector<HTMLButtonElement>("#tab-login");
@@ -95,6 +99,8 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
   const title = document.querySelector<HTMLHeadingElement>("#auth-title");
   const intro = document.querySelector<HTMLParagraphElement>("#auth-intro");
   const separator = document.querySelector<HTMLElement>(".separator");
+  const socialOptions = document.querySelector<HTMLElement>(".auth-social-options");
+  const tabs = document.querySelector<HTMLElement>(".auth-tabs");
   let mode: "login" | "register" | "recovery" | "profile" = initialRecovery ? "recovery" : initialCompleteProfile ? "profile" : "login";
 
   const setFeedback = (message: string, error = false) => {
@@ -112,8 +118,10 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
     if (confirmField) confirmField.hidden = !registering;
     if (emailField) emailField.hidden = recovering || completingProfile;
     if (passwordField) passwordField.hidden = completingProfile;
-    if (googleButton) googleButton.hidden = recovering || completingProfile;
-    if (separator) separator.hidden = recovering || completingProfile;
+    if (googleButton) googleButton.hidden = recovering || completingProfile || registering;
+    if (separator) separator.hidden = recovering || completingProfile || registering;
+    if (socialOptions) socialOptions.hidden = recovering || completingProfile;
+    if (tabs) tabs.hidden = recovering || completingProfile;
     if (tabLogin) tabLogin.hidden = completingProfile;
     if (tabRegister) tabRegister.hidden = completingProfile;
     if (forgotButton) forgotButton.hidden = next !== "login";
