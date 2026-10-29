@@ -40,7 +40,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       password,
       options: {
         emailRedirectTo,
-        data: { aka, display_name: aka },
+        data: { name: aka, aka, display_name: aka },
       },
     });
 
