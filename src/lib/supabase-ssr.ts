@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 
 type CookieValue = { name: string; value: string };
-type CookieOptions = Record<string, unknown>;
+type CookieOptions = any;
 
 type AstroCookieAdapter = {
   getAll: () => CookieValue[];
