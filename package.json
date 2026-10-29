@@ -18,6 +18,7 @@
     "@astrojs/vercel": "^11.0.14",
     "@react-three/fiber": "^9.0.0",
     "@shadergradient/react": "^2.4.20",
+    "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.102.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.3.0",
