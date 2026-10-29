@@ -1,799 +1,282 @@
 ---
 export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
-import { getRenanimeUser } from "../../lib/auth";
 import { localizedPath, useT } from "../../i18n";
 
-const isEnglish = Astro.locals.lang === "en";
-const t = useT(Astro.locals.lang);
-const token = Astro.cookies.get("renanime_session")?.value;
-const user = await getRenanimeUser(token);
-
-if (user) {
-  return Astro.redirect(localizedPath(Astro.locals.lang, "/"));
-}
+const lang = Astro.locals.lang;
+const isEnglish = lang === "en";
+const t = useT(lang);
+const confirmed = Astro.url.searchParams.get("confirmed") === "1";
+const recovery = Astro.url.searchParams.get("recovery") === "1";
 ---
 
 <Layout
-  title={isEnglish ? "Access — Renanime's Gallery" : "Acceso — Renanime's Gallery"}
-  description={isEnglish ? "Enter your personal space in Renanime's Gallery." : "Entra en tu espacio personal de Renanime's Gallery."}
+  title={isEnglish ? "Sign in — Renanime's Gallery" : "Acceso — Renanime's Gallery"}
+  description={isEnglish ? "Sign in or create your Renanime account." : "Inicia sesión o crea tu cuenta de Renanime."}
 >
-  <main class="access-page auth-login" data-auth-screen="login">
-    <a class="language-toggle-auth" href={localizedPath(Astro.locals.lang === "es" ? "en" : "es", "/login/")} data-astro-reload hreflang={Astro.locals.lang === "es" ? "en" : "es"} aria-label={t(Astro.locals.lang === "es" ? "language.switchToEnglish" : "language.switchToSpanish")} title={t(Astro.locals.lang === "es" ? "language.switchToEnglish" : "language.switchToSpanish")}>{Astro.locals.lang === "es" ? "ES · EN" : "EN · ES"}</a>
-    <div class="auth-backgrounds" aria-hidden="true">
-      <img id="auth-background" class="auth-background" src="/images/login2.jpg" alt="" />
+  <main class="auth-shell">
+    <a class="language-toggle-auth" href={localizedPath(lang === "es" ? "en" : "es", "/login/")} hreflang={lang === "es" ? "en" : "es"}>
+      {isEnglish ? "EN · ES" : "ES · EN"}
+    </a>
+    <div class="auth-art" aria-hidden="true">
+      <img src="/images/login2.jpg" alt="" />
+      <div class="art-shade"></div>
+      <a class="brand" href={localizedPath(lang, "/")} aria-label="Renanime"><span>Ren</span>anime</a>
+      <p class="art-caption">{isEnglish ? "YOUR ANIME WORLD. YOUR STORY." : "TU MUNDO ANIME. TU HISTORIA."}</p>
     </div>
-    <section class="access-card" aria-labelledby="access-title">
-      <div class="brand" aria-label="Renanime">
-        <span class="brand-ren">Ren</span><span class="brand-anime">anime</span>
-      </div>
 
-      <h1 id="access-title">{isEnglish ? "Access" : "Acceso"}</h1>
-      <p class="subtitle">{isEnglish ? "Enter your personal anime space." : "Entra en tu espacio personal de anime."}</p>
+    <section class="auth-panel" aria-labelledby="auth-title">
+      <div class="mobile-brand brand"><span>Ren</span>anime</div>
+      <p class="eyebrow">{isEnglish ? "WELCOME, NAKAMA" : "BIENVENIDO, NAKAMA"}</p>
+      <h1 id="auth-title">{recovery ? (isEnglish ? "Choose a new password" : "Crea una nueva contraseña") : confirmed ? (isEnglish ? "Verify your email" : "Verifica tu email") : (isEnglish ? "Your anime journey starts here." : "Tu aventura anime empieza aquí.")}</h1>
+      <p class="intro" id="auth-intro">{recovery ? (isEnglish ? "Choose a strong password for your account." : "Elige una contraseña segura para tu cuenta.") : confirmed ? (isEnglish ? "Check your inbox to confirm your account, then sign in." : "Revisa tu bandeja de entrada para confirmar tu cuenta y después inicia sesión.") : (isEnglish ? "Sign in to your collection or create your own space." : "Entra en tu colección o crea tu propio espacio.")}</p>
 
-      <form id="access-form">
-        <label for="access-password">{isEnglish ? "Access code" : "Código de acceso"}</label>
-        <input
-          id="access-password"
-          name="accessPassword"
-          type="password"
-          autocomplete="current-password"
-          required
-          autofocus
-        />
-        <button type="submit">{isEnglish ? "Enter" : "Entrar"}</button>
-        <p id="access-message" class="message" aria-live="polite"></p>
+      {#if !recovery}
+        <div class="auth-tabs" role="tablist" aria-label={isEnglish ? "Account access" : "Acceso a la cuenta"}>
+          <button type="button" id="tab-login" class:list={["tab", !confirmed ? "active" : ""]} role="tab" aria-selected={!confirmed ? "true" : "false"}>{isEnglish ? "Sign in" : "Iniciar sesión"}</button>
+          <button type="button" id="tab-register" class="tab" role="tab" aria-selected="false">{isEnglish ? "Create account" : "Crear cuenta"}</button>
+        </div>
+
+        <button type="button" class="google-button" id="google-auth">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.35 12.23c0-.72-.06-1.25-.2-1.8H12v3.27h5.36a4.6 4.6 0 0 1-1.99 3.02l-.02.11 2.89 2.24.2.02c1.85-1.71 2.91-4.23 2.91-7.36Z"/><path fill="#34A853" d="M12 21.6c2.64 0 4.86-.87 6.48-2.36l-3.09-2.4c-.83.56-1.94.95-3.39.95-2.59 0-4.79-1.71-5.57-4.07l-.1.01-3 2.32-.04.1A9.79 9.79 0 0 0 12 21.6Z"/><path fill="#FBBC05" d="M6.43 13.72A5.9 5.9 0 0 1 6.1 12c0-.6.11-1.18.31-1.72l-.01-.12-3.04-2.36-.1.05A9.7 9.7 0 0 0 2.2 12c0 1.57.38 3.06 1.06 4.35l3.17-2.63Z"/><path fill="#EA4335" d="M12 6.2c1.84 0 3.08.79 3.79 1.45l2.77-2.7C16.85 3.37 14.64 2.4 12 2.4a9.8 9.8 0 0 0-8.74 5.45l3.16 2.43C7.21 7.91 9.41 6.2 12 6.2Z"/></svg>
+          {isEnglish ? "Continue with Google" : "Continuar con Google"}
+        </button>
+
+        <div class="separator"><span>{isEnglish ? "or with email" : "o con email"}</span></div>
+      {/if}
+
+      <form id="auth-form">
+        <div class="field" id="aka-field" hidden>
+          <label for="aka">{isEnglish ? "Otaku nickname" : "Mote otaku"}</label>
+          <input id="aka" name="aka" type="text" minlength="2" maxlength="24" autocomplete="nickname" placeholder={isEnglish ? "e.g. Rensensei" : "Ej. Rensensei"} />
+          <small>{isEnglish ? "This is how other nakama will know you." : "Así te conocerán los demás nakamas."}</small>
+        </div>
+        <div class="field" id="email-field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com" />
+        </div>
+        <div class="field" id="password-field">
+          <label for="password">{isEnglish ? "Password" : "Contraseña"}</label>
+          <input id="password" name="password" type="password" autocomplete={recovery ? "new-password" : "current-password"} required minlength="8" maxlength="128" placeholder="••••••••" />
+          <small id="password-help">{isEnglish ? "At least 8 characters." : "Mínimo 8 caracteres."}</small>
+        </div>
+        <div class="field" id="confirm-field" hidden>
+          <label for="confirm-password">{isEnglish ? "Confirm password" : "Repite la contraseña"}</label>
+          <input id="confirm-password" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" maxlength="128" />
+        </div>
+        <button type="submit" class="primary-button" id="submit-auth">{recovery ? (isEnglish ? "Update password" : "Actualizar contraseña") : confirmed ? (isEnglish ? "Sign in" : "Iniciar sesión") : (isEnglish ? "Sign in" : "Iniciar sesión")}</button>
+        <button type="button" class="text-button" id="forgot-password" hidden>{isEnglish ? "Forgot your password?" : "¿Has olvidado tu contraseña?"}</button>
+        <p class="feedback" id="auth-feedback" role="status" aria-live="polite"></p>
       </form>
 
-      <div class="member-entry">
-        <span>{isEnglish ? "Already a Renanime member?" : "¿Eres miembro de Renanime?"}</span>
-        <button id="show-recovery" type="button">{isEnglish ? "Enter with your recovery code" : "Entra con tu código de recuperación"}</button>
-      </div>
-
-      <section id="onboarding" class="panel" hidden>
-        <div class="step" data-step="profile">
-          <p class="panel-eyebrow">{isEnglish ? "WELCOME" : "BIENVENIDO"}</p>
-          <h2>{isEnglish ? "What is your name?" : "¿Cómo te llamas?"}</h2>
-          <p>{isEnglish ? "Let’s create your personal space." : "Vamos a crear tu espacio personal."}</p>
-          <label for="name">{isEnglish ? "Your name" : "Tu nombre"}</label>
-          <input id="name" type="text" maxlength="80" autocomplete="name" />
-          <button id="continue-name" type="button">{isEnglish ? "Continue" : "Continuar"}</button>
-          <p id="name-message" class="message" aria-live="polite"></p>
-        </div>
-
-        <div class="step" data-step="aka" hidden>
-          <p class="panel-eyebrow">{isEnglish ? "LEVEL UP, NAKAMA!" : "¡SUBE DE RANGO, NAKAMA!"}</p>
-          <h2>{isEnglish ? "What is your otaku nickname?" : "¿Cuál es tu mote otaku?"}</h2>
-          <p>{isEnglish ? "What would your nakamas call you in the anime world?" : "¿Cómo te llamarían tus nakamas en el mundo del anime?"}</p>
-          <label for="aka">{isEnglish ? "Your legendary nickname" : "Tu apodo legendario"}</label>
-          <input id="aka" type="text" maxlength="40" autocomplete="nickname" placeholder="Ren-sama · Hokage · Goku" />
-          <button id="create-profile" type="button">{isEnglish ? "That’s the one" : "Vale, este es"}</button>
-          <p id="aka-message" class="message" aria-live="polite"></p>
-        </div>
-
-        <div class="step complete-step" data-step="complete" hidden>
-          <h2 class="welcome-title">{isEnglish ? "Welcome to Renanime, " : "Bienvenido a Renanime, "}<span id="welcome-name"></span>.</h2>
-          <p class="joke-result">
-            {isEnglish ? "Ha, ha, ha… just kidding. Nobody cares about your nickname, " : "Ja, ja, ja… era broma. A nadie le importa tu mote, "}<strong>kono baka</strong>.<br />
-            {isEnglish ? <>I can't believe you actually wrote it… though you didn't have much choice. Around here, I'm <strong>Kami</strong>.</> : <>No me puedo creer que lo hayas escrito… aunque tampoco tenías otra alternativa. Aquí yo soy <strong>Kami</strong>.</>}
-          </p>
-          <p class="recovery-note">{isEnglish ? "Write down your recovery code:" : "Apunta tu código de recuperación:"}</p>
-          <div id="recovery-display" class="recovery-display" role="button" tabindex="0" aria-label={isEnglish ? "Copy recovery code" : "Copiar código de recuperación"} title={isEnglish ? "Click to copy" : "Haz clic para copiar"}></div>
-          <button id="copy-recovery-code" class="secondary recovery-copy-button" type="button">{isEnglish ? "Copy code" : "Copiar código"}</button>
-          <p id="recovery-copy-message" class="recovery-help" role="status" aria-live="polite">{isEnglish ? "Click the code or button to copy it." : "Haz clic en el código o en el botón para copiarlo."}</p>
-          <p class="recovery-help">{isEnglish ? "Keep it safe. You'll need it to sign in from another device." : "Guárdalo. Lo necesitarás para entrar desde otro dispositivo."}</p>
-          <button id="enter-renanime" type="button">{isEnglish ? "Sign in" : "Iniciar sesión"}</button>
-        </div>
-
-        <div class="step" data-step="recovery" hidden>
-          <p class="panel-eyebrow">{isEnglish ? "RENANIME MEMBER" : "MIEMBRO DE RENANIME"}</p>
-          <h2>{isEnglish ? "Let’s come home." : "Volvamos a casa."}</h2>
-          <p>{isEnglish ? "Enter your recovery code. You do not need to register again." : "Introduce tu código de recuperación. No necesitas registrarte otra vez."}</p>
-          <label for="recovery-code">{isEnglish ? "Recovery code" : "Código de recuperación"}</label>
-          <input id="recovery-code" type="text" placeholder="REN-XXXX-XXXX" autocomplete="off" />
-          <button id="recover-account" type="button">{isEnglish ? "Access my account" : "Entrar en mi cuenta"}</button>
-          <button id="back-to-create" class="secondary" type="button">{isEnglish ? "I’m new, create a profile" : "Soy nuevo, crear un perfil"}</button>
-          <p id="recovery-message" class="message" aria-live="polite"></p>
-        </div>
-      </section>
+      <p class="legal">{isEnglish ? "By continuing, you agree to use Renanime respectfully. Account and privacy terms will be available before public launch." : "Al continuar, te comprometes a utilizar Renanime de forma respetuosa. Las condiciones de cuenta y privacidad estarán disponibles antes del lanzamiento público."}</p>
     </section>
   </main>
-
-  <style is:global>
-    .auth-login {
-      --auth-copy: #fff;
-      --auth-copy-shadow: 0 2px 10px rgba(0, 0, 0, .95), 0 1px 3px rgba(0, 0, 0, .9);
-    }
-    .auth-login p,
-    .auth-login .subtitle,
-    .auth-login .member-entry,
-    .auth-login .member-entry span,
-    .auth-login label,
-    .auth-login .panel-eyebrow,
-    .auth-login .recovery-help,
-    .auth-login .recovery-note,
-    .auth-login .message {
-      color: var(--auth-copy) !important;
-      font-size: 1.05rem;
-      line-height: 1.65;
-      text-shadow: var(--auth-copy-shadow);
-    }
-    .auth-login .subtitle { font-size: 1.1rem; }
-    .auth-login .member-entry button { font-size: 1rem; text-shadow: var(--auth-copy-shadow); }
-    .auth-login .joke-result { font-size: 1.05rem; line-height: 1.75; }
-    .auth-login .recovery-help { font-size: 1rem; }
-    .auth-login .message { font-weight: 700; }
-    .auth-login input { color: #fff; text-shadow: var(--auth-copy-shadow); }
-    .auth-login .access-card { text-shadow: var(--auth-copy-shadow); }
-    .auth-login .access-card h1,
-    .auth-login .access-card h2,
-    .auth-login .access-card .welcome-title { text-shadow: 0 2px 12px rgba(0, 0, 0, .8); }
-    @media (max-width: 480px) {
-      .auth-login p,
-      .auth-login .subtitle,
-      .auth-login .member-entry,
-      .auth-login .member-entry span,
-      .auth-login label,
-      .auth-login .panel-eyebrow,
-      .auth-login .recovery-help,
-      .auth-login .recovery-note,
-      .auth-login .message { font-size: 1rem; line-height: 1.65; }
-    }
-  </style>
 </Layout>
 
-<script>
+<script define:vars={{ initialRecovery: recovery, initialConfirmed: confirmed }}>
   const isEnglish = document.documentElement.lang === "en";
-  const accessForm = document.querySelector<HTMLFormElement>("#access-form");
-  const accessPasswordInput = document.querySelector<HTMLInputElement>("#access-password");
-  const accessMessage = document.querySelector<HTMLParagraphElement>("#access-message");
-  const accessCard = document.querySelector<HTMLElement>(".access-card");
-  const onboarding = document.querySelector<HTMLElement>("#onboarding");
-  const memberEntry = document.querySelector<HTMLElement>(".member-entry");
-  const accessPage = document.querySelector<HTMLElement>(".access-page");
-  const authBackground = document.querySelector<HTMLImageElement>("#auth-background");
-
-  const accessJokes = document.createElement("div");
-  accessJokes.className = "access-jokes";
-  accessJokes.setAttribute("aria-live", "polite");
-  document.body.appendChild(accessJokes);
-
-  const accessFailureMessages = [
-    isEnglish ? "Someone forgot the access code." : "Alguien se ha olvidado del código de acceso.",
-    isEnglish ? "Renato does not want you here." : "Renato no te quiere por aquí.",
-    isEnglish ? "Are you sure you know where you are?" : "¿Seguro que sabes dónde estás?",
-    isEnglish ? "That code would not even open the fridge." : "Ese código no abre ni la nevera.",
-    isEnglish ? "RenAnime says: access denied." : "RenAnime dice: acceso denegado."
-  ];
-
-  const accessFailureKey = "renanime-access-failure-index";
-  let accessFailureIndex = Number(sessionStorage.getItem(accessFailureKey) ?? "0");
-  if (!Number.isInteger(accessFailureIndex) || accessFailureIndex < 0 || accessFailureIndex >= accessFailureMessages.length) {
-    accessFailureIndex = 0;
-  }
-
-  const showAccessFailure = () => {
-    accessJokes.innerHTML = "";
-    accessCard?.classList.remove("access-wrong");
-    void accessCard?.offsetWidth;
-    accessCard?.classList.add("access-wrong");
-
-    const message = accessFailureMessages[accessFailureIndex];
-    accessFailureIndex = (accessFailureIndex + 1) % accessFailureMessages.length;
-    sessionStorage.setItem(accessFailureKey, String(accessFailureIndex));
-
-    if (accessMessage) {
-      accessMessage.textContent = message;
-      accessMessage.hidden = false;
-    }
-
-    const bubble = document.createElement("span");
-    bubble.textContent = message;
-    accessJokes.appendChild(bubble);
-
-    window.setTimeout(() => {
-      accessJokes.innerHTML = "";
-      accessCard?.classList.remove("access-wrong");
-    }, 3200);
-  };
-
-  const nameStep = document.querySelector<HTMLElement>('[data-step="profile"]');
-  const akaStep = document.querySelector<HTMLElement>('[data-step="aka"]');
-  const completeStep = document.querySelector<HTMLElement>('[data-step="complete"]');
-  const recoveryStep = document.querySelector<HTMLElement>('[data-step="recovery"]');
-
-  const nameInput = document.querySelector<HTMLInputElement>("#name");
+  const form = document.querySelector<HTMLFormElement>("#auth-form");
+  const tabLogin = document.querySelector<HTMLButtonElement>("#tab-login");
+  const tabRegister = document.querySelector<HTMLButtonElement>("#tab-register");
+  const akaField = document.querySelector<HTMLElement>("#aka-field");
+  const emailField = document.querySelector<HTMLElement>("#email-field");
+  const passwordField = document.querySelector<HTMLElement>("#password-field");
+  const confirmField = document.querySelector<HTMLElement>("#confirm-field");
+  const emailInput = document.querySelector<HTMLInputElement>("#email");
+  const passwordInput = document.querySelector<HTMLInputElement>("#password");
+  const confirmInput = document.querySelector<HTMLInputElement>("#confirm-password");
   const akaInput = document.querySelector<HTMLInputElement>("#aka");
-  const recoveryInput = document.querySelector<HTMLInputElement>("#recovery-code");
+  const submit = document.querySelector<HTMLButtonElement>("#submit-auth");
+  const feedback = document.querySelector<HTMLParagraphElement>("#auth-feedback");
+  const googleButton = document.querySelector<HTMLButtonElement>("#google-auth");
+  const forgotButton = document.querySelector<HTMLButtonElement>("#forgot-password");
+  const title = document.querySelector<HTMLHeadingElement>("#auth-title");
+  const intro = document.querySelector<HTMLParagraphElement>("#auth-intro");
+  const separator = document.querySelector<HTMLElement>(".separator");
+  let mode: "login" | "register" | "recovery" = initialRecovery ? "recovery" : "login";
 
-  const nameMessage = document.querySelector<HTMLParagraphElement>("#name-message");
-  const akaMessage = document.querySelector<HTMLParagraphElement>("#aka-message");
-  const recoveryMessage = document.querySelector<HTMLParagraphElement>("#recovery-message");
-
-  const welcomeName = document.querySelector<HTMLSpanElement>("#welcome-name");
-  const recoveryDisplay = document.querySelector<HTMLDivElement>("#recovery-display");
-  const copyRecoveryCode = document.querySelector<HTMLButtonElement>("#copy-recovery-code");
-  const recoveryCopyMessage = document.querySelector<HTMLParagraphElement>("#recovery-copy-message");
-
-  const continueName = document.querySelector<HTMLButtonElement>("#continue-name");
-  const createProfile = document.querySelector<HTMLButtonElement>("#create-profile");
-  let sameNameAkaAttempts = 0;
-  const recoverAccount = document.querySelector<HTMLButtonElement>("#recover-account");
-  const backToCreate = document.querySelector<HTMLButtonElement>("#back-to-create");
-  const showRecovery = document.querySelector<HTMLButtonElement>("#show-recovery");
-  const enterRenanime = document.querySelector<HTMLButtonElement>("#enter-renanime");
-
-  let accessPassword = "";
-  let profileName = "";
-
-  const showStep = (step: HTMLElement | null) => {
-    [nameStep, akaStep, completeStep, recoveryStep].forEach((item) => {
-      if (item) item.hidden = item !== step;
-    });
-
-    const screen = step === recoveryStep ? "recovery" : "register";
-    accessPage?.setAttribute("data-auth-screen", screen);
-    accessPage?.classList.remove("auth-login", "auth-register", "auth-recovery");
-    accessPage?.classList.add(screen === "recovery" ? "auth-recovery" : "auth-register");
-
-    if (authBackground) {
-      authBackground.src = screen === "recovery" ? "/images/loginM.jpg" : "/images/login1.jpg";
-    }
-
-    accessCard?.classList.add("panel-open");
+  const setFeedback = (message: string, error = false) => {
+    if (!feedback) return;
+    feedback.textContent = message;
+    feedback.dataset.error = error ? "true" : "false";
   };
 
-  const openRecovery = () => {
-    accessPage?.classList.remove("auth-login", "auth-register");
-    accessPage?.classList.add("auth-recovery");
-
-    if (onboarding) onboarding.hidden = false;
-    if (accessForm) accessForm.hidden = true;
-    if (memberEntry) memberEntry.hidden = true;
-    showStep(recoveryStep);
+  const setMode = (next: "login" | "register" | "recovery") => {
+    mode = next;
+    const registering = next === "register";
+    const recovering = next === "recovery";
+    if (akaField) akaField.hidden = !registering;
+    if (confirmField) confirmField.hidden = !registering;
+    if (emailField) emailField.hidden = recovering;
+    if (googleButton) googleButton.hidden = recovering;
+    if (separator) separator.hidden = recovering;
+    if (forgotButton) forgotButton.hidden = next !== "login";
+    if (tabLogin) { tabLogin.classList.toggle("active", next === "login"); tabLogin.setAttribute("aria-selected", String(next === "login")); }
+    if (tabRegister) { tabRegister.classList.toggle("active", registering); tabRegister.setAttribute("aria-selected", String(registering)); }
+    if (title) title.textContent = recovering
+      ? (isEnglish ? "Choose a new password" : "Crea una nueva contraseña")
+      : (isEnglish ? (registering ? "Join your anime world." : "Your anime journey starts here.") : (registering ? "Tu mundo anime te espera." : "Tu aventura anime empieza aquí."));
+    if (intro) intro.textContent = recovering
+      ? (isEnglish ? "Choose a strong password for your account." : "Elige una contraseña segura para tu cuenta.")
+      : (isEnglish ? (registering ? "Create your account and choose your otaku nickname." : "Sign in to your collection or create your own space.") : (registering ? "Crea tu cuenta y elige tu mote otaku." : "Entra en tu colección o crea tu propio espacio."));
+    if (submit) submit.textContent = recovering
+      ? (isEnglish ? "Update password" : "Actualizar contraseña")
+      : (isEnglish ? (registering ? "Create account" : "Sign in") : (registering ? "Crear cuenta" : "Iniciar sesión"));
+    if (passwordInput) passwordInput.autocomplete = registering || recovering ? "new-password" : "current-password";
+    setFeedback("");
   };
 
-  const copyRecoveryCodeToClipboard = async () => {
-    const code = recoveryDisplay?.textContent?.trim();
-    if (!code || !recoveryCopyMessage) return;
+  tabLogin?.addEventListener("click", () => setMode("login"));
+  tabRegister?.addEventListener("click", () => setMode("register"));
 
+  googleButton?.addEventListener("click", async () => {
+    setFeedback("");
+    googleButton.disabled = true;
     try {
-      await navigator.clipboard.writeText(code);
-      recoveryCopyMessage.textContent = isEnglish ? "Code copied! Keep it somewhere safe." : "¡Código copiado! Guárdalo en un lugar seguro.";
-    } catch {
-      // Fallback for browsers where the Clipboard API is unavailable.
-      const selection = window.getSelection();
-      const range = document.createRange();
-      if (recoveryDisplay) {
-        range.selectNodeContents(recoveryDisplay);
-        selection?.removeAllRanges();
-        selection?.addRange(range);
-        recoveryCopyMessage.textContent = isEnglish ? "Code selected. Press Ctrl+C or ⌘C to copy it." : "Código seleccionado. Pulsa Ctrl+C o ⌘C para copiarlo.";
-      } else {
-        recoveryCopyMessage.textContent = isEnglish ? "Could not copy automatically. Select the code and copy it." : "No se ha podido copiar automáticamente. Selecciona el código y cópialo.";
-      }
-    }
-  };
-
-  copyRecoveryCode?.addEventListener("click", copyRecoveryCodeToClipboard);
-  recoveryDisplay?.addEventListener("click", copyRecoveryCodeToClipboard);
-  recoveryDisplay?.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      void copyRecoveryCodeToClipboard();
-    }
-  });
-
-  showRecovery?.addEventListener("click", openRecovery);
-
-  accessForm?.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    if (!accessPasswordInput || !accessMessage || !onboarding) return;
-
-    accessMessage.textContent = "";
-    accessPassword = accessPasswordInput.value.trim();
-
-    if (!accessPassword) {
-      accessMessage.textContent = isEnglish ? "Enter the access code." : "Introduce el código de acceso.";
-      accessMessage.hidden = false;
-      return;
-    }
-
-    try {
-      const response = await fetch("/api/auth/access", {
+      const response = await fetch("/api/auth/oauth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "same-origin",
-        body: JSON.stringify({ accessPassword }),
+        body: JSON.stringify({ provider: "google" }),
       });
+      const data = await response.json();
+      if (!response.ok || !data.url) throw new Error(data.error || "OAUTH_FAILED");
+      window.location.assign(data.url);
+    } catch {
+      setFeedback(isEnglish ? "Google sign-in is not available yet. Please try email instead." : "El acceso con Google aún no está disponible. Prueba con email.", true);
+      googleButton.disabled = false;
+    }
+  });
 
-      const raw = await response.text();
-      let data: { ok?: boolean; error?: string } = {};
+  forgotButton?.addEventListener("click", async () => {
+    const email = emailInput?.value.trim().toLowerCase() ?? "";
+    if (!email) {
+      setFeedback(isEnglish ? "Enter your email first, then choose this option." : "Introduce primero tu email y vuelve a pulsar esta opción.", true);
+      emailInput?.focus();
+      return;
+    }
+    forgotButton.disabled = true;
+    try {
+      const response = await fetch("/api/auth/reset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "RESET_FAILED");
+      setFeedback(isEnglish ? "If an account exists for this email, a reset link will be sent." : "Si existe una cuenta con ese email, recibirás un enlace para restablecer la contraseña.");
+    } catch {
+      setFeedback(isEnglish ? "Password reset is temporarily unavailable." : "La recuperación de contraseña no está disponible temporalmente.", true);
+    } finally {
+      forgotButton.disabled = false;
+    }
+  });
 
-      try {
-        data = JSON.parse(raw);
-      } catch {
-        data = {};
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    setFeedback("");
+    const email = emailInput?.value.trim().toLowerCase() ?? "";
+    const password = passwordInput?.value ?? "";
+    const aka = akaInput?.value.trim() ?? "";
+    if (mode !== "recovery" && !email) return setFeedback(isEnglish ? "Enter a valid email." : "Introduce un email válido.", true);
+    if (password.length < 8) return setFeedback(isEnglish ? "Use at least 8 characters for your password." : "La contraseña debe tener al menos 8 caracteres.", true);
+    if (mode === "register" && !/^[\p{L}\p{N}_-]{2,24}$/u.test(aka)) return setFeedback(isEnglish ? "Your nickname must be 2–24 letters, numbers, underscores or hyphens." : "El mote debe tener entre 2 y 24 letras, números, guiones o guiones bajos.", true);
+    if (mode === "register" && password !== (confirmInput?.value ?? "")) return setFeedback(isEnglish ? "Passwords do not match." : "Las contraseñas no coinciden.", true);
+
+    submit && (submit.disabled = true);
+    try {
+      let response: Response;
+      let data: any;
+      if (mode === "recovery") {
+        response = await fetch("/api/auth/update-password", {
+          method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin",
+          body: JSON.stringify({ password }),
+        });
+      } else {
+        response = await fetch(mode === "register" ? "/api/auth/register" : "/api/auth/login", {
+          method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin",
+          body: JSON.stringify(mode === "register" ? { email, password, aka } : { email, password }),
+        });
       }
-
+      data = await response.json();
       if (!response.ok || data.ok !== true) {
-        accessMessage.textContent =
-          data.error === "INVALID_ACCESS_PASSWORD"
-            ? isEnglish ? "Incorrect access code." : "Código de acceso incorrecto."
-            : isEnglish ? "Could not open the door to Renanime." : "No se ha podido abrir la puerta de Renanime.";
-        accessMessage.hidden = false;
-        showAccessFailure();
-        return;
+        const message = data.error === "INVALID_CREDENTIALS"
+          ? (isEnglish ? "Email or password is incorrect." : "El email o la contraseña no son correctos.")
+          : data.error === "NICKNAME_TAKEN"
+            ? (isEnglish ? "That nickname is already taken." : "Ese mote ya está en uso.")
+            : data.error === "EMAIL_PASSWORD_SIGNUP_DISABLED"
+              ? (isEnglish ? "Email sign-up is not enabled yet." : "El registro por email aún no está habilitado.")
+              : (isEnglish ? "We couldn't complete that request. Please try again." : "No se ha podido completar la solicitud. Inténtalo de nuevo.");
+        throw new Error(message);
       }
-
-      // El código de acceso solo abre la puerta.
-      // Nunca identifica a un usuario existente.
-      onboarding.hidden = false;
-      accessForm.hidden = true;
-      memberEntry!.hidden = true;
-      showStep(nameStep);
-      nameInput?.focus();
+      if (mode === "register") {
+        setFeedback(isEnglish ? "Account created. Check your email to confirm it before signing in." : "Cuenta creada. Revisa tu email para confirmarla antes de iniciar sesión.");
+        setMode("login");
+      } else if (mode === "recovery") {
+        window.location.assign(isEnglish ? "/en/login/?password_updated=1" : "/login/?password_updated=1");
+      } else {
+        window.location.assign(isEnglish ? "/en/" : "/");
+      }
     } catch (error) {
-      console.error("Renanime access request failed:", error);
-      accessMessage.textContent = isEnglish ? "Could not connect to Renanime." : "No se ha podido conectar con Renanime.";
-      accessMessage.hidden = false;
+      setFeedback(error instanceof Error ? error.message : (isEnglish ? "Connection error. Try again." : "Error de conexión. Inténtalo de nuevo."), true);
+    } finally {
+      if (submit) submit.disabled = false;
     }
   });
 
-  backToCreate?.addEventListener("click", () => {
-    showStep(nameStep);
-    if (nameInput) nameInput.value = "";
-    if (akaInput) akaInput.value = "";
-  });
-
-  continueName?.addEventListener("click", () => {
-    if (!nameInput || !nameMessage) return;
-    const name = nameInput.value.trim();
-    nameMessage.textContent = "";
-
-    if (!name) {
-      nameMessage.textContent = isEnglish ? "Enter your name." : "Escribe tu nombre.";
-      return;
-    }
-
-    profileName = name;
-    showStep(akaStep);
-  });
-
-  createProfile?.addEventListener("click", async () => {
-    if (!nameInput || !akaInput || !akaMessage) return;
-
-    const name = profileName || nameInput.value.trim();
-    const aka = akaInput.value.trim();
-    akaMessage.textContent = "";
-
-    if (!aka) {
-      akaMessage.textContent = isEnglish ? "Come on, give me an AKA." : "Venga va. Dame un AKA.";
-      return;
-    }
-
-    if (name.toLocaleLowerCase() === aka.toLocaleLowerCase()) {
-      sameNameAkaAttempts += 1;
-      akaMessage.textContent = sameNameAkaAttempts % 2 === 1
-        ? isEnglish ? "Be more creative, you can do it! Gambare!" : "¡Sé más creativo, tú puedes! ¡Gambare!"
-        : isEnglish ? "Gambare, gambare, senpai." : "Gambare Gambare Senpai";
-      return;
-    }
-
-    try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ accessPassword, name, aka }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        akaMessage.textContent =
-          data.error === "SAME_NAME_AKA"
-            ? isEnglish ? "Be more creative, you can do it! Gambare!" : "¡Sé más creativo, tú puedes! ¡Gambare!"
-            : data.error === "INVALID_PROFILE"
-              ? (isEnglish ? (!name ? "I can't find your name. Go back and enter it again." : !aka ? "Enter your otaku nickname." : "Couldn't validate those details. Try another nickname.") : (!name ? "No encuentro tu nombre. Vuelve atrás y escríbelo de nuevo." : !aka ? "Escribe tu mote otaku." : "No se han podido validar los datos. Prueba otro mote."))
-              : isEnglish ? "Could not create the profile." : "No se ha podido crear el perfil.";
-        return;
-      }
-
-      welcomeName!.textContent = data.user.name;
-      recoveryDisplay!.textContent = data.recoveryCode;
-      showStep(completeStep);
-    } catch {
-      akaMessage.textContent = isEnglish ? "Could not connect to Renanime." : "No se ha podido conectar con Renanime.";
-    }
-  });
-
-  recoverAccount?.addEventListener("click", async () => {
-    if (!recoveryInput || !recoveryMessage) return;
-
-    const recoveryCode = recoveryInput.value.trim();
-    recoveryMessage.textContent = "";
-
-    if (!recoveryCode) {
-      recoveryMessage.textContent = isEnglish ? "Enter your recovery code." : "Introduce tu código de recuperación.";
-      return;
-    }
-
-    try {
-      const response = await fetch("/api/auth/recover", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recoveryCode }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        recoveryMessage.textContent =
-          data.error === "INVALID_RECOVERY_CODE"
-            ? isEnglish ? "Incorrect recovery code." : "Código de recuperación incorrecto."
-            : isEnglish ? "Could not sign in." : "No se ha podido iniciar sesión.";
-        return;
-      }
-
-      window.location.href = document.documentElement.lang === "en" ? "/en/" : "/";
-    } catch {
-      recoveryMessage.textContent = isEnglish ? "Could not connect to Renanime." : "No se ha podido conectar con Renanime.";
-    }
-  });
-
-  enterRenanime?.addEventListener("click", () => {
-    window.location.href = document.documentElement.lang === "en" ? "/en/" : "/";
-  });
+  if (initialRecovery) setMode("recovery");
+  else if (initialConfirmed) setMode("login");
 </script>
 
 <style>
-  .language-toggle-auth {
-    position: fixed;
-    top: 1.5rem;
-    right: 1.25rem;
-    z-index: 130;
-    padding: 0.6rem 0.75rem;
-    border: 1px solid rgba(255,255,255,0.35);
-    border-radius: 999px;
-    background: rgba(8,8,10,0.6);
-    color: #fff;
-    font: 600 0.68rem/1 var(--font-meta, monospace);
-    letter-spacing: 0.08em;
-    cursor: pointer;
-    backdrop-filter: blur(8px);
-  }
-
-  .language-toggle-auth:hover,
-  .language-toggle-auth:focus-visible {
-    border-color: #ff4f8b;
-    outline: 2px solid #ff4f8b;
-    outline-offset: 2px;
-  }
-
-  .access-page {
-    position: relative;
-    min-height: 100vh;
-    display: grid;
-    place-items: center;
-    padding: 2rem 1.25rem;
-    overflow: hidden;
-    background-color: #050505;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    transition: background-image 0.5s ease;
-  }
-
-  .auth-backgrounds {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    overflow: hidden;
-    background: #050505;
-  }
-
-  .auth-background {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
-    object-fit: cover;
-    object-position: center;
-  }
-
-  .access-card {
-    z-index: 1;
-  }
-
-  .panel {
-    z-index: 2;
-  }
-
-  .access-card {
-    position: relative;
-    width: min(100%, 430px);
-    justify-self: stretch;
-    margin-inline: 0;
-  }
-
-  .access-card > .brand {
-    position: fixed;
-    top: 1.5rem;
-    left: 1.25rem;
-    z-index: 3;
-    display: block;
-    width: fit-content;
-    margin: 0;
-    text-align: left;
-  }
-
-  .access-card.panel-open > .brand,
-  .access-card.panel-open > .eyebrow,
-  .access-card.panel-open > h1,
-  .access-card.panel-open > .subtitle,
-  .access-card.panel-open > #access-form,
-  .access-card.panel-open > .member-entry {
-    visibility: hidden;
-  }
-
-  .access-wrong { animation: access-shake 0.42s ease; }
-
-  .access-jokes {
-    position: fixed;
-    inset: 0;
-    z-index: 120;
-    pointer-events: none;
-    overflow: hidden;
-  }
-
-  .access-jokes span {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    max-width: min(220px, 42vw);
-    padding: 0.7rem 0.9rem;
-    border: 1px solid rgba(255,255,255,0.16);
-    border-radius: 999px;
-    background: rgba(12,12,12,0.96);
-    color: rgba(255,255,255,0.82);
-    font-size: 0.72rem;
-    line-height: 1.25;
-    text-align: center;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-    animation: access-joke-pop 2.9s cubic-bezier(.2,.8,.2,1) forwards;
-  }
-
-  .brand {
-    margin: 0 0 3rem;
-    align-self: flex-start;
-    text-align: left;
-    font-size: 2rem;
-    font-weight: 700;
-    letter-spacing: -0.05em;
-  }
-
-  .brand-ren { color: var(--accent, #ff4f8b); }
-  .brand-anime { color: white; }
-
-  .eyebrow, .panel-eyebrow {
-    margin: 0 0 0.65rem;
-    font-size: 0.7rem;
-    letter-spacing: 0.18em;
-    opacity: 0.5;
-  }
-
-  h1 { margin: 0; font-size: clamp(2.4rem, 9vw, 4rem); line-height: 0.95; }
-  h2 { margin: 0; font-size: clamp(2.2rem, 7vw, 2.7rem); line-height: 1.02; letter-spacing: -0.03em; }
-
-  .subtitle, .panel p {
-    max-width: 390px;
-    margin: 0.65rem 0 1.15rem;
-    line-height: 1.6;
-    opacity: 0.62;
-  }
-
-  form, .panel { display: grid; gap: 0.75rem; }
-
-  .member-entry {
-    display: grid;
-    gap: 0.45rem;
-    margin-top: 1.5rem;
-    text-align: center;
-    font-size: 0.82rem;
-    opacity: 0.65;
-  }
-
-  .member-entry button {
-    width: auto;
-    min-height: 0;
-    margin: 0;
-    padding: 0;
-    background: none;
-    color: #ff4f8b;
-    font-size: inherit;
-    font-weight: 600;
-  }
-
-  .panel {
-    position: fixed;
-    inset: 50% auto auto 50%;
-    z-index: 100;
-    width: min(calc(100% - 2rem), 430px);
-    max-height: min(88vh, 720px);
-    overflow-y: auto;
-    transform: translate(-50%, -50%);
-    padding: 1.45rem;
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 20px;
-    background: rgba(8,8,10,0.12);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    box-shadow: 0 0 0 100vmax rgba(0,0,0,0.04), 0 24px 80px rgba(0,0,0,0.45);
-  }
-
-  label { font-size: 0.85rem; opacity: 0.75; }
-
-  input {
-    width: 100%;
-    min-height: 48px;
-    padding: 0 1rem;
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 12px;
-    background: rgba(15,15,22,0.42);
-    color: #fff;
-    font: inherit;
-    box-sizing: border-box;
-  }
-
-  input::placeholder {
-    color: rgba(255,255,255,0.82);
-    opacity: 1;
-  }
-
-  input:focus {
-    outline: 2px solid var(--accent, #ff4f8b);
-    outline-offset: 2px;
-  }
-
-  button {
-    width: 100%;
-    min-height: 50px;
-    margin-top: 0.35rem;
-    border: 0;
-    border-radius: 12px;
-    background: var(--accent, #ff4f8b);
-    color: white;
-    font: inherit;
-    font-weight: 700;
-    cursor: pointer;
-  }
-
-  button.secondary {
-    width: 100%;
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.14);
-    color: rgba(255,255,255,0.72);
-  }
-
-  .message {
-    width: 100%;
-    min-height: 1.25rem;
-    margin: 0.25rem 0 0;
-    padding: 0.55rem 0.7rem;
-    box-sizing: border-box;
-    border: 1px solid rgba(255,79,139,0.7);
-    border-radius: 8px;
-    background: rgba(125,12,45,0.92);
-    font-size: 0.9rem;
-    font-weight: 700;
-    line-height: 1.45;
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.65);
-  }
-
-  .message:empty {
-    display: none;
-  }
-
-  #access-message:empty {
-    display: none;
-  }
-
-  #access-message:not(:empty) {
-    display: block;
-  }
-
-  .welcome-title {
-    font-size: clamp(2.2rem, 8vw, 3.4rem);
-    line-height: 1;
-    letter-spacing: -0.04em;
-  }
-
-  .joke-result {
-    color: rgba(255,255,255,0.96) !important;
-    margin-top: 1rem !important;
-    font-size: 0.96rem;
-    font-weight: 600;
-    line-height: 1.6;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.65);
-  }
-
-  .joke-result strong {
-    color: #fff;
-    font-weight: 800;
-  }
-
-  .recovery-note {
-    margin: 1.1rem 0 0.5rem !important;
-    color: rgba(255,255,255,0.96) !important;
-    font-weight: 700;
-  }
-
-  .recovery-display {
-    padding: 1rem;
-    border: 1px solid rgba(255,79,139,0.4);
-    border-radius: 12px;
-    background: rgba(255,79,139,0.08);
-    color: #ff4f8b;
-    font-family: monospace;
-    font-size: 1.05rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-align: center;
-    cursor: pointer;
-    user-select: all;
-    -webkit-user-select: all;
-    overflow-wrap: anywhere;
-  }
-
-  .recovery-display:focus-visible {
-    outline: 2px solid #ff4f8b;
-    outline-offset: 3px;
-  }
-
-  .recovery-copy-button {
-    margin-top: 0;
-  }
-
-  .recovery-help {
-    margin: 0.75rem 0 0.5rem !important;
-    font-size: 0.86rem;
-    font-weight: 600;
-    line-height: 1.5;
-    color: rgba(255,255,255,0.92) !important;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.65);
-  }
-
-  @keyframes access-shake {
-    0%, 100% { transform: translateX(0); }
-    20% { transform: translateX(-8px); }
-    40% { transform: translateX(8px); }
-    60% { transform: translateX(-5px); }
-    80% { transform: translateX(5px); }
-  }
-
-  @keyframes access-joke-pop {
-    0% { opacity: 0; scale: 0.35; filter: blur(4px); }
-    12% { opacity: 1; scale: 1.05; filter: blur(0); }
-    22% { scale: 1; }
-    78% { opacity: 1; }
-    100% { opacity: 0; scale: 0.9; translate: 0 12px; }
-  }
-</style>
-
-
-<style>
-  @media (max-width: 640px) {
-    .access-page {
-      background-attachment: scroll;
-      background-position: 58% center;
-    }
-
-    .access-page.auth-login .auth-background { object-position: 62% center; }
-    .access-page.auth-register .auth-background { object-position: 50% center; }
-    .access-page.auth-recovery .auth-background { object-position: 54% center; }
+  .auth-shell { min-height: 100svh; display:grid; grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr); background:#08080b; color:#f7f7fb; }
+  .auth-art { position:relative; min-height:100svh; overflow:hidden; background:#14182c; }
+  .auth-art img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; }
+  .art-shade { position:absolute; inset:0; background:linear-gradient(180deg,rgba(5,6,15,.15),rgba(5,6,15,.2) 40%,rgba(5,6,15,.88)); }
+  .brand { position:absolute; top:2rem; left:2.4rem; z-index:1; color:#fff; text-decoration:none; font-size:1.85rem; font-weight:800; letter-spacing:-.07em; }
+  .brand span { color:#ff4f8b; }
+  .art-caption { position:absolute; z-index:1; left:2.5rem; bottom:2.5rem; margin:0; font-size:.72rem; letter-spacing:.2em; font-weight:700; }
+  .auth-panel { width:min(100%,480px); box-sizing:border-box; justify-self:center; align-self:center; padding:3.5rem 2.5rem; }
+  .eyebrow { color:#ff4f8b; font-size:.7rem; font-weight:800; letter-spacing:.18em; margin:0 0 1rem; }
+  h1 { font-size:clamp(2.2rem,4vw,3.4rem); line-height:1.03; letter-spacing:-.055em; margin:0; }
+  .intro { color:#aaaab8; line-height:1.65; margin:.9rem 0 1.8rem; }
+  .auth-tabs { display:grid; grid-template-columns:1fr 1fr; gap:.35rem; padding:.3rem; border:1px solid #292932; background:#121217; border-radius:13px; margin-bottom:1rem; }
+  .tab { border:0; border-radius:9px; padding:.8rem .5rem; color:#a7a7b4; background:transparent; font:inherit; font-weight:700; cursor:pointer; }
+  .tab.active { color:white; background:#29232d; box-shadow:inset 0 0 0 1px rgba(255,79,139,.4); }
+  .google-button,.primary-button { display:flex; align-items:center; justify-content:center; gap:.7rem; width:100%; min-height:49px; border-radius:12px; font:inherit; font-weight:750; cursor:pointer; }
+  .google-button { border:1px solid #373740; color:#f7f7fb; background:#15151b; }
+  .google-button svg { width:19px; height:19px; flex:none; }
+  .google-button:hover { background:#202027; }
+  .separator { display:flex; align-items:center; gap:.8rem; color:#777783; font-size:.78rem; margin:1.2rem 0; }
+  .separator:before,.separator:after { content:""; height:1px; background:#292932; flex:1; }
+  form { display:grid; gap:1rem; }
+  .field { display:grid; gap:.5rem; }
+  .field[hidden], [hidden] { display:none!important; }
+  label { font-size:.82rem; color:#e2e2e9; font-weight:650; }
+  input { width:100%; min-height:48px; box-sizing:border-box; border:1px solid #34343e; border-radius:11px; padding:0 .9rem; color:#fff; background:#111116; font:inherit; }
+  input:focus { outline:2px solid #ff4f8b; outline-offset:2px; border-color:transparent; }
+  input::placeholder { color:#666673; }
+  small { color:#81818e; font-size:.75rem; line-height:1.4; }
+  .primary-button { border:0; margin-top:.2rem; color:white; background:#ed4785; }
+  .primary-button:hover { background:#ff5b99; }
+  button:disabled { opacity:.6; cursor:wait; }
+  .text-button { justify-self:center; border:0; background:none; color:#ff6b9e; font:inherit; font-size:.82rem; cursor:pointer; padding:.25rem; }
+  .feedback { min-height:0; margin:0; color:#d5d5df; font-size:.84rem; line-height:1.5; }
+  .feedback:not(:empty) { border-radius:9px; padding:.75rem; background:#1b1b24; }
+  .feedback[data-error="true"] { color:#ffb2c8; background:#321721; }
+  .legal { margin:1.5rem 0 0; color:#777783; font-size:.72rem; line-height:1.6; }
+  .mobile-brand,.language-toggle-auth { display:none; }
+  @media(max-width:760px) {
+    .auth-shell { display:block; min-height:100svh; position:relative; padding:1px 0; }
+    .auth-art { position:fixed; inset:0; min-height:0; height:100svh; opacity:.38; }
+    .auth-art img { object-position:58% center; }
+    .art-shade { background:linear-gradient(180deg,rgba(7,7,12,.55),rgba(7,7,12,.8)); }
+    .auth-art .brand,.art-caption { display:none; }
+    .auth-panel { position:relative; z-index:2; width:min(100%,500px); padding:6rem 1.35rem 2.5rem; min-height:100svh; display:flex; flex-direction:column; justify-content:center; }
+    .mobile-brand { display:block; position:static; margin-bottom:2.4rem; }
+    .language-toggle-auth { display:block; position:absolute; top:1.2rem; right:1.2rem; z-index:4; padding:.6rem .75rem; border:1px solid #494953; border-radius:999px; color:#fff; background:#14141b; text-decoration:none; font-size:.7rem; font-weight:800; }
+    h1 { font-size:clamp(2.2rem,11vw,3.2rem); }
   }
 </style>
