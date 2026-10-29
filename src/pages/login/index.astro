@@ -32,7 +32,7 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
       <h1 id="auth-title">{recovery ? (isEnglish ? "Choose a new password" : "Crea una nueva contraseña") : confirmed ? (isEnglish ? "Verify your email" : "Verifica tu email") : (isEnglish ? "Your anime journey starts here." : "Tu aventura anime empieza aquí.")}</h1>
       <p class="intro" id="auth-intro">{recovery ? (isEnglish ? "Choose a strong password for your account." : "Elige una contraseña segura para tu cuenta.") : confirmed ? (isEnglish ? "Check your inbox to confirm your account, then sign in." : "Revisa tu bandeja de entrada para confirmar tu cuenta y después inicia sesión.") : (isEnglish ? "Sign in to your collection or create your own space." : "Entra en tu colección o crea tu propio espacio.")}</p>
 
-      {#if !recovery}
+      <div class="auth-social-options" hidden={recovery}>
         <div class="auth-tabs" role="tablist" aria-label={isEnglish ? "Account access" : "Acceso a la cuenta"}>
           <button type="button" id="tab-login" class:list={["tab", !confirmed ? "active" : ""]} role="tab" aria-selected={!confirmed ? "true" : "false"}>{isEnglish ? "Sign in" : "Iniciar sesión"}</button>
           <button type="button" id="tab-register" class="tab" role="tab" aria-selected="false">{isEnglish ? "Create account" : "Crear cuenta"}</button>
@@ -44,7 +44,7 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
         </button>
 
         <div class="separator"><span>{isEnglish ? "or with email" : "o con email"}</span></div>
-      {/if}
+      </div>
 
       <form id="auth-form">
         <div class="field" id="aka-field" hidden>
