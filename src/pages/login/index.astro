@@ -8,6 +8,7 @@ const isEnglish = lang === "en";
 const t = useT(lang);
 const confirmed = Astro.url.searchParams.get("confirmed") === "1";
 const recovery = Astro.url.searchParams.get("recovery") === "1";
+const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
 ---
 
 <Layout
@@ -74,7 +75,7 @@ const recovery = Astro.url.searchParams.get("recovery") === "1";
   </main>
 </Layout>
 
-<script define:vars={{ initialRecovery: recovery, initialConfirmed: confirmed }}>
+<script define:vars={{ initialRecovery: recovery, initialConfirmed: confirmed, initialCompleteProfile: completeProfile }}>
   const isEnglish = document.documentElement.lang === "en";
   const form = document.querySelector<HTMLFormElement>("#auth-form");
   const tabLogin = document.querySelector<HTMLButtonElement>("#tab-login");
@@ -94,7 +95,7 @@ const recovery = Astro.url.searchParams.get("recovery") === "1";
   const title = document.querySelector<HTMLHeadingElement>("#auth-title");
   const intro = document.querySelector<HTMLParagraphElement>("#auth-intro");
   const separator = document.querySelector<HTMLElement>(".separator");
-  let mode: "login" | "register" | "recovery" = initialRecovery ? "recovery" : "login";
+  let mode: "login" | "register" | "recovery" | "profile" = initialRecovery ? "recovery" : initialCompleteProfile ? "profile" : "login";
 
   const setFeedback = (message: string, error = false) => {
     if (!feedback) return;
@@ -106,23 +107,33 @@ const recovery = Astro.url.searchParams.get("recovery") === "1";
     mode = next;
     const registering = next === "register";
     const recovering = next === "recovery";
-    if (akaField) akaField.hidden = !registering;
+    const completingProfile = next === "profile";
+    if (akaField) akaField.hidden = !(registering || completingProfile);
     if (confirmField) confirmField.hidden = !registering;
-    if (emailField) emailField.hidden = recovering;
-    if (googleButton) googleButton.hidden = recovering;
-    if (separator) separator.hidden = recovering;
+    if (emailField) emailField.hidden = recovering || completingProfile;
+    if (passwordField) passwordField.hidden = completingProfile;
+    if (googleButton) googleButton.hidden = recovering || completingProfile;
+    if (separator) separator.hidden = recovering || completingProfile;
+    if (tabLogin) tabLogin.hidden = completingProfile;
+    if (tabRegister) tabRegister.hidden = completingProfile;
     if (forgotButton) forgotButton.hidden = next !== "login";
     if (tabLogin) { tabLogin.classList.toggle("active", next === "login"); tabLogin.setAttribute("aria-selected", String(next === "login")); }
     if (tabRegister) { tabRegister.classList.toggle("active", registering); tabRegister.setAttribute("aria-selected", String(registering)); }
     if (title) title.textContent = recovering
       ? (isEnglish ? "Choose a new password" : "Crea una nueva contraseña")
-      : (isEnglish ? (registering ? "Join your anime world." : "Your anime journey starts here.") : (registering ? "Tu mundo anime te espera." : "Tu aventura anime empieza aquí."));
+      : completingProfile
+        ? (isEnglish ? "Choose your otaku nickname." : "Elige tu mote otaku.")
+        : (isEnglish ? (registering ? "Join your anime world." : "Your anime journey starts here.") : (registering ? "Tu mundo anime te espera." : "Tu aventura anime empieza aquí."));
     if (intro) intro.textContent = recovering
       ? (isEnglish ? "Choose a strong password for your account." : "Elige una contraseña segura para tu cuenta.")
-      : (isEnglish ? (registering ? "Create your account and choose your otaku nickname." : "Sign in to your collection or create your own space.") : (registering ? "Crea tu cuenta y elige tu mote otaku." : "Entra en tu colección o crea tu propio espacio."));
+      : completingProfile
+        ? (isEnglish ? "One last step before entering Renanime." : "Un último paso antes de entrar en Renanime.")
+        : (isEnglish ? (registering ? "Create your account and choose your otaku nickname." : "Sign in to your collection or create your own space.") : (registering ? "Crea tu cuenta y elige tu mote otaku." : "Entra en tu colección o crea tu propio espacio."));
     if (submit) submit.textContent = recovering
       ? (isEnglish ? "Update password" : "Actualizar contraseña")
-      : (isEnglish ? (registering ? "Create account" : "Sign in") : (registering ? "Crear cuenta" : "Iniciar sesión"));
+      : completingProfile
+        ? (isEnglish ? "Save nickname" : "Guardar mote")
+        : (isEnglish ? (registering ? "Create account" : "Sign in") : (registering ? "Crear cuenta" : "Iniciar sesión"));
     if (passwordInput) passwordInput.autocomplete = registering || recovering ? "new-password" : "current-password";
     setFeedback("");
   };
@@ -189,7 +200,12 @@ const recovery = Astro.url.searchParams.get("recovery") === "1";
     try {
       let response: Response;
       let data: any;
-      if (mode === "recovery") {
+      if (mode === "profile") {
+        response = await fetch("/api/auth/profile", {
+          method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin",
+          body: JSON.stringify({ aka }),
+        });
+      } else if (mode === "recovery") {
         response = await fetch("/api/auth/update-password", {
           method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin",
           body: JSON.stringify({ password }),
@@ -216,6 +232,8 @@ const recovery = Astro.url.searchParams.get("recovery") === "1";
         setMode("login");
       } else if (mode === "recovery") {
         window.location.assign(isEnglish ? "/en/login/?password_updated=1" : "/login/?password_updated=1");
+      } else if (mode === "profile") {
+        window.location.assign(isEnglish ? "/en/" : "/");
       } else {
         window.location.assign(isEnglish ? "/en/" : "/");
       }
@@ -227,6 +245,7 @@ const recovery = Astro.url.searchParams.get("recovery") === "1";
   });
 
   if (initialRecovery) setMode("recovery");
+  else if (initialCompleteProfile) setMode("profile");
   else if (initialConfirmed) setMode("login");
 </script>
 
