@@ -24,7 +24,6 @@ export async function getRenanimeUser(token: string | undefined) {
     id: string
     name: string
     aka: string
-    recovery_code?: string
     created_at?: string
   }
 }
