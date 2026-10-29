@@ -27,7 +27,7 @@ Las fuentes de datos de anime incluyen AniList y Jikan. Las cuotas y límites de
 - pnpm como gestor de paquetes.
 - Vitest para pruebas.
 
-La migración a Supabase Auth está en preparación. La implementación actual todavía contiene autenticación heredada de Renanime; no se debe asumir que registro, login, recuperación por email o Google OAuth de Supabase están ya operativos.
+La migración a Supabase Auth está en curso. Ya existe un cliente SSR por petición y endpoints iniciales para login, consulta de sesión y callback PKCE, pero todavía no están integrados con la pantalla de acceso, el middleware, el registro ni la biblioteca. No se debe asumir que la autenticación de Supabase está operativa.
 
 ## Requisitos
 
@@ -56,7 +56,7 @@ La migración a Supabase Auth está en preparación. La implementación actual t
    - \`PUBLIC_SUPABASE_URL\`: URL del proyecto Supabase.
    - \`SUPABASE_SECRET_KEY\`: clave secreta solo de servidor. Nunca debe exponerse al navegador ni publicarse en el repositorio.
 
-   Consulta la configuración del entorno de desarrollo antes de añadir otras variables. Durante la migración, el cliente SSR deberá utilizar la clave pública/publishable de Supabase; la clave secreta seguirá reservada para tareas confiables de servidor y nunca para una sesión de usuario.
+   Consulta la configuración del entorno de desarrollo antes de añadir otras variables. El cliente SSR usa `PUBLIC_SUPABASE_PUBLISHABLE_KEY` o, como alternativa compatible, `PUBLIC_SUPABASE_ANON_KEY`, junto con `PUBLIC_SUPABASE_URL`. Configura la clave pública en el entorno local y en Vercel antes de probar las nuevas rutas. La clave secreta seguirá reservada para tareas confiables de servidor y nunca para una sesión de usuario.
 
 4. Inicia el servidor de desarrollo:
 
@@ -125,7 +125,7 @@ Principios obligatorios:
 
 ## Estado de la migración
 
-La migración a Supabase Auth todavía no está completada. La PR #13 contiene documentación y una propuesta de mapeo; no activa el nuevo sistema ni cambia datos de producción. El sitio debe permanecer en mantenimiento hasta que la implementación y las pruebas estén listas.
+La migración a Supabase Auth todavía no está completada. La PR #13 contiene la documentación de migración, el cliente SSR y endpoints iniciales aún no integrados; no activa el nuevo sistema ni cambia datos de producción. El sitio debe permanecer en mantenimiento hasta que la implementación y las pruebas estén listas.
 
 ## Enlaces
 
