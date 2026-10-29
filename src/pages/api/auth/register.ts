@@ -1,116 +1,62 @@
-import type { APIRoute } from 'astro'
-import { supabaseServer } from '../../../lib/supabase-server'
+import type { APIRoute } from "astro";
+import { createSupabaseSsrClient } from "../../../lib/supabase-ssr";
 
-export const prerender = false
+export const prerender = false;
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+  });
+}
 
 export const POST: APIRoute = async ({ request, cookies }) => {
+  let body: { email?: unknown; password?: unknown; aka?: unknown };
   try {
-    const rawBody = await request.text()
+    body = await request.json();
+  } catch {
+    return json({ ok: false, error: "INVALID_REQUEST" }, 400);
+  }
 
-    if (!rawBody.trim()) {
-      return new Response(JSON.stringify({ ok: false, error: 'MISSING_REQUEST_BODY' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    }
+  const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+  const password = typeof body.password === "string" ? body.password : "";
+  const aka = typeof body.aka === "string" ? body.aka.trim() : "";
 
-    let body: { accessPassword?: unknown; name?: unknown; aka?: unknown }
+  if (!email || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return json({ ok: false, error: "INVALID_EMAIL" }, 400);
+  }
+  if (password.length < 8 || password.length > 128) {
+    return json({ ok: false, error: "INVALID_PASSWORD" }, 400);
+  }
+  if (!/^[\p{L}\p{N}_-]{2,24}$/u.test(aka)) {
+    return json({ ok: false, error: "INVALID_NICKNAME" }, 400);
+  }
 
-    try {
-      body = JSON.parse(rawBody)
-    } catch {
-      return new Response(JSON.stringify({ ok: false, error: 'INVALID_JSON' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    }
-
-    const accessPassword = String(body.accessPassword ?? '')
-    const name = String(body.name ?? '').trim()
-    const aka = String(body.aka ?? '').trim()
-
-    if (!accessPassword || !name || !aka) {
-      return new Response(JSON.stringify({ ok: false, error: 'INVALID_PROFILE' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    }
-
-    const { data, error } = await supabaseServer.rpc('renanime_register', {
-      p_access_password: accessPassword,
-      p_name: name,
-      p_aka: aka,
-    })
+  try {
+    const supabase = createSupabaseSsrClient(request, cookies);
+    const emailRedirectTo = new URL("/auth/callback?next=%2Flogin%2F%3Fconfirmed%3D1", request.url).toString();
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo,
+        data: { name: aka, aka, display_name: aka },
+      },
+    });
 
     if (error) {
-      if (error.message.includes('INVALID_ACCESS_PASSWORD')) {
-        return new Response(JSON.stringify({ ok: false, error: 'INVALID_ACCESS_PASSWORD' }), {
-          status: 401,
-          headers: { 'Content-Type': 'application/json' },
-        })
-      }
-
-      if (error.message.includes('SAME_NAME_AKA')) {
-        return new Response(JSON.stringify({ ok: false, error: 'SAME_NAME_AKA' }), {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        })
-      }
-
-      if (error.message.includes('INVALID_PROFILE')) {
-        return new Response(JSON.stringify({ ok: false, error: 'INVALID_PROFILE' }), {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        })
-      }
-
-      console.error('Renanime registration error:', error.message)
-      return new Response(JSON.stringify({ ok: false, error: 'REGISTER_FAILED' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      })
+      // Do not reveal whether an email is already registered.
+      console.warn("Supabase sign-up rejected:", error.code ?? "UNKNOWN");
+      return json({ ok: false, error: "SIGNUP_FAILED" }, 400);
     }
 
-    if (!data?.session_token || !data?.recovery_code) {
-      return new Response(JSON.stringify({ ok: false, error: 'REGISTRATION_FAILED' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    }
-
-    cookies.set('renanime_session', data.session_token, {
-      httpOnly: true,
-      secure: import.meta.env.PROD,
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 30,
-    })
-
-    const headers = new Headers({
-      'Content-Type': 'application/json',
-    })
-
-    for (const setCookie of cookies.headers()) {
-      headers.append('Set-Cookie', setCookie)
-    }
-
-    return new Response(JSON.stringify({
+    return json({
       ok: true,
-      recoveryCode: data.recovery_code,
-      user: {
-        id: data.id,
-        name: data.name,
-        aka: data.aka,
-      },
-    }), {
-      status: 200,
-      headers,
-    })
+      requiresEmailConfirmation: !data.session,
+      message: "If registration can be completed, check your email for the next step.",
+    });
   } catch (error) {
-    console.error('Unexpected registration error:', error)
-    return new Response(JSON.stringify({ ok: false, error: 'REGISTER_REQUEST_FAILED' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    console.error("Supabase registration setup failed:", error);
+    return json({ ok: false, error: "AUTH_UNAVAILABLE" }, 503);
   }
-}
+};
