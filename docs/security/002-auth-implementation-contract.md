@@ -1,6 +1,6 @@
 # Supabase Auth implementation contract
 
-Status: initial SSR foundation and isolated login/session/callback routes committed on the migration branch. Not yet integrated into the login UI, middleware, registration, or library. Do not deploy or disable maintenance mode.
+Status: Supabase email login/sign-up UI and initial email/password, Google OAuth, reset-password, password-update, and nickname setup routes are implemented on the migration branch. They are not yet end-to-end validated. API requests remain blocked by Preview maintenance middleware. Do not deploy or disable production maintenance mode.
 
 ## Dependency gate
 
@@ -10,12 +10,12 @@ Use the documented `createServerClient` cookie adapter with request-cookie `getA
 
 ## Target routes
 
-- `POST /api/auth/register`: validate email/password/name/aka, call `auth.signUp`, and return a neutral confirmation message. Do not create a legacy profile until the identity/profile strategy is finalized.
+- `POST /api/auth/register`: validates email/password/aka and calls `auth.signUp`; nickname and display name are stored in Auth metadata and the existing `handle_new_user` trigger seeds `public.profiles`.
 - `POST /api/auth/login`: initial isolated endpoint added; calls `auth.signInWithPassword` and returns generic credential errors. Needs local build/tests and UI integration.
 - `POST /api/auth/logout`: legacy endpoint remains unchanged. An isolated `POST /api/auth/logout-supabase` endpoint has been added pending cutover.
-- `POST /api/auth/reset`: validate email and call `auth.resetPasswordForEmail` with a fixed, allowlisted redirect URL.
+- `POST /api/auth/reset`: validates email and requests a password-reset email. `POST /api/auth/update-password` requires a valid recovery session.
 - `GET /api/auth/session`: initial session-check endpoint added. `GET /auth/callback` exchanges PKCE code and rejects external redirect targets.
-- OAuth: use `signInWithOAuth({ provider: 'google', options: { redirectTo } })` and the same callback handler. Enable Google provider and exact redirect URLs in Supabase Dashboard separately.
+- OAuth: `POST /api/auth/oauth` initiates Google OAuth and routes first-time Google users through nickname setup. Enable Google provider and exact redirect URLs in Supabase Dashboard separately.
 
 ## Legacy account and library preservation
 
@@ -29,7 +29,10 @@ Use the documented `createServerClient` cookie adapter with request-cookie `getA
 
 - Added `src/lib/supabase-ssr.ts` using the public publishable/anon key and a request-scoped cookie adapter.
 - Added initial `POST /api/auth/login`, `GET /api/auth/session`, `POST /api/auth/logout-supabase`, and `GET /auth/callback` routes.
-- These routes are currently behind the global maintenance middleware, have not been build/test validated in this environment, and are not wired to the existing legacy login screen.
+- Replaced the legacy access-code login UI with email/password sign-in, email/password registration, Google OAuth, password reset/update, and nickname onboarding.
+- Added initial Supabase endpoints for registration, OAuth, password reset/update, and authenticated nickname setup.
+- Added a review-only migration file for case-insensitive nickname uniqueness; it has not been applied to the database.
+- These routes remain blocked by Preview maintenance middleware, and no build or end-to-end tests have been run after these changes.
 - The current `POST /api/auth/register`, `POST /api/auth/recover`, `POST /api/auth/logout`, middleware and library routes still use legacy authentication. Do not treat the migration as usable until the remaining integration is completed.
 
 ## Required tests before cutover
