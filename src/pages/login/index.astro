@@ -134,7 +134,12 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
       : completingProfile
         ? (isEnglish ? "Save nickname" : "Guardar mote")
         : (isEnglish ? (registering ? "Create account" : "Sign in") : (registering ? "Crear cuenta" : "Iniciar sesión"));
-    if (passwordInput) passwordInput.autocomplete = registering || recovering ? "new-password" : "current-password";
+    if (emailInput) emailInput.required = !recovering && !completingProfile;
+    if (passwordInput) {
+      passwordInput.required = !completingProfile;
+      passwordInput.autocomplete = registering || recovering ? "new-password" : "current-password";
+    }
+    if (akaInput) akaInput.required = registering || completingProfile;
     setFeedback("");
   };
 
