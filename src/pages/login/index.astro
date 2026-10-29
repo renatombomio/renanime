@@ -16,7 +16,7 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
   description={isEnglish ? "Sign in or create your Renanime account." : "Inicia sesión o crea tu cuenta de Renanime."}
 >
   <main class="auth-shell">
-    <a class="language-toggle-auth" href={localizedPath(lang === "es" ? "en" : "es", "/login/")} hreflang={lang === "es" ? "en" : "es"}>
+    <a class="language-toggle-auth" href={localizedPath(Astro.locals.lang === "es" ? "en" : "es", "/login/")} hreflang={Astro.locals.lang === "es" ? "en" : "es"} aria-label={t(Astro.locals.lang === "es" ? "language.switchToEnglish" : "language.switchToSpanish")} title={t(Astro.locals.lang === "es" ? "language.switchToEnglish" : "language.switchToSpanish")}>
       {isEnglish ? "EN · ES" : "ES · EN"}
     </a>
     <div class="auth-art" aria-hidden="true">
