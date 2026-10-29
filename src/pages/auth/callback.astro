@@ -1,0 +1,35 @@
+---
+export const prerender = false;
+
+import { createSupabaseSsrClient } from "../../lib/supabase-ssr";
+
+const requestUrl = new URL(Astro.request.url);
+const code = requestUrl.searchParams.get("code");
+const requestedNext = requestUrl.searchParams.get("next") ?? "/login/";
+const safeNext =
+  requestedNext.startsWith("/") &&
+  !requestedNext.startsWith("//") &&
+  !requestedNext.includes("\\") &&
+  !requestedNext.includes("://")
+    ? requestedNext
+    : "/login/";
+
+if (!code) {
+  return Astro.redirect(new URL("/login/?auth_error=callback", requestUrl.origin), 303);
+}
+
+try {
+  const supabase = createSupabaseSsrClient(Astro.request, Astro.cookies);
+  const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+  if (error) {
+    console.error("Supabase auth callback failed:", error.message);
+    return Astro.redirect(new URL("/login/?auth_error=callback", requestUrl.origin), 303);
+  }
+
+  return Astro.redirect(new URL(safeNext, requestUrl.origin), 303);
+} catch (error) {
+  console.error("Supabase auth callback setup failed:", error);
+  return Astro.redirect(new URL("/login/?auth_error=callback", requestUrl.origin), 303);
+}
+---
