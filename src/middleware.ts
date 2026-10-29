@@ -2,7 +2,9 @@ import { defineMiddleware } from "astro:middleware";
 import { getRenanimeUser } from "./lib/auth";
 import { localizedPath } from "./i18n";
 
-const PUBLIC_PATHS = new Set(["/login", "/login/", "/register", "/register/"]);
+// Temporary switch for the Renanime 2.0 maintenance window.
+// Set to false when the updated site is ready to reopen.
+const MAINTENANCE_MODE = true;
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const { pathname, search } = context.url;
@@ -12,6 +14,45 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   context.locals.lang = isEnglish ? "en" : "es";
   context.locals.basePath = basePath;
+
+  if (MAINTENANCE_MODE) {
+    // Keep the maintenance page and static assets available, but pause the app and API.
+    if (routePath === "/maintenance") {
+      return next();
+    }
+
+    const isStaticAsset =
+      routePath.startsWith("/_astro/") ||
+      routePath.startsWith("/audio/") ||
+      routePath.startsWith("/videos/") ||
+      routePath.startsWith("/images/") ||
+      routePath === "/favicon.svg" ||
+      routePath === "/favicon.ico";
+
+    if (isStaticAsset) {
+      return next();
+    }
+
+    if (routePath.startsWith("/api/")) {
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          error: "MAINTENANCE_MODE",
+          message: "Renanime 2.0 is being updated. Please try again later.",
+        }),
+        {
+          status: 503,
+          headers: {
+            "Content-Type": "application/json",
+            "Retry-After": "3600",
+            "Cache-Control": "no-store",
+          },
+        }
+      );
+    }
+
+    return context.redirect("/maintenance/", 307);
+  }
 
   context.cookies.set("lang", context.locals.lang, {
     path: "/",
@@ -30,7 +71,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     routePath === "/favicon.svg" ||
     routePath === "/favicon.ico";
 
-  if (isPublicAssetOrApi || PUBLIC_PATHS.has(routePath)) {
+  if (isPublicAssetOrApi || ["/login", "/login/", "/register", "/register/"].includes(routePath)) {
     return isEnglish ? next(basePath + search) : next();
   }
 
