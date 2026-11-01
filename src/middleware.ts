@@ -33,6 +33,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
       return next();
     }
 
+    // Allow authentication endpoints in Preview so the migration can be tested.
+    // All other API routes remain paused, and production remains in maintenance.
+    if (import.meta.env.VERCEL_ENV === "preview" && routePath.startsWith("/api/auth/")) {
+      return next();
+    }
+
     if (routePath.startsWith("/api/")) {
       return new Response(
         JSON.stringify({
