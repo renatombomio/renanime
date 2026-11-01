@@ -3,6 +3,15 @@ import { createSupabaseSsrClient } from "../../../lib/supabase-ssr";
 
 export const prerender = false;
 
+function isPasswordPolicyValid(password: string) {
+  return password.length >= 8
+    && password.length <= 128
+    && /[a-z]/.test(password)
+    && /[A-Z]/.test(password)
+    && /[0-9]/.test(password)
+    && /[^A-Za-z0-9]/.test(password);
+}
+
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
@@ -19,8 +28,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   }
 
   const password = typeof body.password === "string" ? body.password : "";
-  if (password.length < 8 || password.length > 128) {
-    return json({ ok: false, error: "INVALID_PASSWORD" }, 400);
+  if (!isPasswordPolicyValid(password)) {
+    return json({ ok: false, error: "PASSWORD_REQUIREMENTS_NOT_MET" }, 400);
   }
 
   try {
@@ -33,6 +42,9 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const { error } = await supabase.auth.updateUser({ password });
     if (error) {
       console.warn("Supabase password update failed:", error.code ?? "UNKNOWN");
+      if (error.code === "weak_password") {
+        return json({ ok: false, error: "PASSWORD_REQUIREMENTS_NOT_MET" }, 400);
+      }
       return json({ ok: false, error: "PASSWORD_UPDATE_FAILED" }, 400);
     }
 
