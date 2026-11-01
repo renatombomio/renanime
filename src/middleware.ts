@@ -1,9 +1,9 @@
 import { defineMiddleware } from "astro:middleware";
-import { getRenanimeUser } from "./lib/auth";
+import { createSupabaseSsrClient } from "./lib/supabase-ssr";
 import { localizedPath } from "./i18n";
 
-// Temporary switch for the Renanime 2.0 maintenance window.
-// Set to false when the updated site is ready to reopen.
+// Keep production and Preview in maintenance until the Supabase Auth cutover
+// has been fully tested and explicitly approved.
 const MAINTENANCE_MODE = true;
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -16,10 +16,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.basePath = basePath;
 
   if (MAINTENANCE_MODE) {
-    // Keep the maintenance page and static assets available, but pause the app and API.
-    if (routePath === "/maintenance") {
-      return next();
-    }
+    if (routePath === "/maintenance") return next();
 
     const isStaticAsset =
       routePath.startsWith("/_astro/") ||
@@ -29,12 +26,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
       routePath === "/favicon.svg" ||
       routePath === "/favicon.ico";
 
-    if (isStaticAsset) {
-      return next();
-    }
+    if (isStaticAsset) return next();
 
-    // Allow authentication endpoints in Preview so the migration can be tested.
-    // All other API routes remain paused, and production remains in maintenance.
+    // Preview permits only auth endpoints for controlled migration testing.
     if (import.meta.env.VERCEL_ENV === "preview" && routePath.startsWith("/api/auth/")) {
       return next();
     }
@@ -53,15 +47,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
             "Retry-After": "3600",
             "Cache-Control": "no-store",
           },
-        }
+        },
       );
     }
 
-    // In Vercel Preview, allow page rendering for visual review while keeping every API blocked.
-    // Production (main) continues to redirect all app pages to maintenance.
     if (import.meta.env.VERCEL_ENV === "preview") {
-      // Match the established i18n routing: /en/* is internally rewritten
-      // to the shared route after Astro.locals.lang has been set to "en".
       return isEnglish ? next(basePath + search) : next();
     }
 
@@ -85,17 +75,67 @@ export const onRequest = defineMiddleware(async (context, next) => {
     routePath === "/favicon.svg" ||
     routePath === "/favicon.ico";
 
-  if (isPublicAssetOrApi || ["/login", "/login/", "/register", "/register/"].includes(routePath)) {
+  const isPublicAuthPage = ["/login", "/login/", "/register", "/register/"].includes(routePath);
+
+  if (isPublicAssetOrApi) {
     return isEnglish ? next(basePath + search) : next();
   }
 
-  const token = context.cookies.get("renanime_session")?.value;
-  const user = await getRenanimeUser(token);
+  let user: Awaited<ReturnType<ReturnType<typeof createSupabaseSsrClient>["auth"]["getUser"]>>["data"]["user"] | null = null;
+
+  try {
+    const supabase = createSupabaseSsrClient(context.request, context.cookies);
+    const { data, error } = await supabase.auth.getUser();
+    if (!error) user = data.user;
+  } catch (error) {
+    console.error("Supabase middleware authentication failed:", error);
+    return new Response("Authentication service unavailable.", {
+      status: 503,
+      headers: { "Cache-Control": "no-store" },
+    });
+  }
+
+  if (isPublicAuthPage) {
+    if (user && routePath !== "/register" && routePath !== "/register/") {
+      return context.redirect(isEnglish ? "/en/" : "/", 303);
+    }
+    return isEnglish ? next(basePath + search) : next();
+  }
 
   if (!user) {
     return context.redirect(localizedPath(context.locals.lang, "/login/"));
   }
 
-  context.locals.renanimeUser = user;
+  try {
+    const supabase = createSupabaseSsrClient(context.request, context.cookies);
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("id, name, aka, created_at")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Supabase profile lookup failed:", error.code);
+      return new Response("Profile service unavailable.", {
+        status: 503,
+        headers: { "Cache-Control": "no-store" },
+      });
+    }
+
+    context.locals.renanimeUser = {
+      id: user.id,
+      name: profile?.name ?? user.user_metadata?.name ?? "Usuario",
+      aka: profile?.aka ?? user.user_metadata?.aka ?? "",
+      created_at: profile?.created_at ?? user.created_at,
+      email: user.email ?? "",
+    };
+  } catch (error) {
+    console.error("Supabase profile lookup failed:", error);
+    return new Response("Profile service unavailable.", {
+      status: 503,
+      headers: { "Cache-Control": "no-store" },
+    });
+  }
+
   return isEnglish ? next(basePath + search) : next();
 });
