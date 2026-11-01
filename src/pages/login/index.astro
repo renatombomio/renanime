@@ -59,7 +59,7 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
         <div class="field" id="password-field">
           <label for="password">{isEnglish ? "Password" : "Contraseña"}</label>
           <input id="password" name="password" type="password" autocomplete={recovery ? "new-password" : "current-password"} required minlength="8" maxlength="128" placeholder="••••••••" />
-          <small id="password-help">{isEnglish ? "At least 8 characters." : "Mínimo 8 caracteres."}</small>
+          <small id="password-help">{isEnglish ? "Use 8+ characters with uppercase, lowercase, a number and a symbol when creating or changing your password." : "Usa 8 o más caracteres con mayúscula, minúscula, un número y un símbolo al crear o cambiar tu contraseña."}</small>
         </div>
         <div class="field" id="confirm-field" hidden>
           <label for="confirm-password">{isEnglish ? "Confirm password" : "Repite la contraseña"}</label>
