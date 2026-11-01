@@ -61,12 +61,12 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
           <input id="password" name="password" type="password" autocomplete={recovery ? "new-password" : "current-password"} required minlength="8" maxlength="128" placeholder="••••••••" />
           <small id="password-help">{isEnglish ? "Use 8+ characters with uppercase, lowercase, a number and a symbol when creating or changing your password." : "Usa 8 o más caracteres con mayúscula, minúscula, un número y un símbolo al crear o cambiar tu contraseña."}</small>
         </div>
+        <button type="button" class="text-button forgot-password-button" id="forgot-password" hidden>{isEnglish ? "Forgot your password?" : "¿Has olvidado tu contraseña?"}</button>
         <div class="field" id="confirm-field" hidden>
           <label for="confirm-password">{isEnglish ? "Confirm password" : "Repite la contraseña"}</label>
           <input id="confirm-password" name="confirmPassword" type="password" autocomplete="new-password" minlength="8" maxlength="128" />
         </div>
         <button type="submit" class="primary-button" id="submit-auth">{recovery ? (isEnglish ? "Update password" : "Actualizar contraseña") : confirmed ? (isEnglish ? "Sign in" : "Iniciar sesión") : (isEnglish ? "Sign in" : "Iniciar sesión")}</button>
-        <button type="button" class="text-button" id="forgot-password" hidden>{isEnglish ? "Forgot your password?" : "¿Has olvidado tu contraseña?"}</button>
         <p class="feedback" id="auth-feedback" role="status" aria-live="polite"></p>
       </form>
 
@@ -285,9 +285,9 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
     }
   });
 
-  if (initialRecovery) setMode("recovery");
-  else if (initialCompleteProfile) setMode("profile");
-  else if (initialConfirmed) setMode("login");
+  // Apply the initial state on first render so login-only controls (including
+  // password recovery) are not left hidden by their HTML fallback attributes.
+  setMode(mode);
 </script>
 
 
@@ -325,6 +325,7 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
   .primary-button:hover { background:#ff5b99; }
   button:disabled { opacity:.6; cursor:wait; }
   .text-button { justify-self:center; border:0; background:none; color:#ff6b9e; font:inherit; font-size:.82rem; cursor:pointer; padding:.25rem; }
+  .forgot-password-button { justify-self:end; margin-top:-.45rem; margin-bottom:-.2rem; text-align:right; }
   .feedback { min-height:0; margin:0; color:#d5d5df; font-size:.84rem; line-height:1.5; }
   .feedback:not(:empty) { border-radius:9px; padding:.75rem; background:#1b1b24; }
   .feedback[data-error="true"] { color:#ffb2c8; background:#321721; }
