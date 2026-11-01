@@ -85,7 +85,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
     "/auth/callback/",
   ].includes(routePath);
 
-  if (isPublicAssetOrApi) {
+  if (isPublicAssetOrApi || isPublicAuthPage) {
+    // Login and OAuth callback pages must render even when Supabase is
+    // misconfigured or temporarily unavailable, so the user can see the UI
+    // and auth endpoints can report their own actionable errors.
     return isEnglish ? next(basePath + search) : next();
   }
 
@@ -97,6 +100,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
     if (!error) user = data.user;
   } catch (error) {
     console.error("Supabase middleware authentication failed:", error);
+    if (import.meta.env.VERCEL_ENV === "preview") {
+      return context.redirect(localizedPath(context.locals.lang, "/login/"), 303);
+    }
     return new Response("Authentication service unavailable.", {
       status: 503,
       headers: { "Cache-Control": "no-store" },
