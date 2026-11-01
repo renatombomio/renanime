@@ -16,19 +16,23 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
   description={isEnglish ? "Sign in or create your Renanime account." : "Inicia sesión o crea tu cuenta de Renanime."}
 >
   <main class="auth-shell" data-initial-recovery={recovery ? "true" : "false"} data-initial-confirmed={confirmed ? "true" : "false"} data-initial-complete-profile={completeProfile ? "true" : "false"}>
-  <section class="access-gate" id="access-gate" aria-labelledby="access-gate-title">
-    <div class="access-gate-card">
-      <a class="access-brand" href="/" aria-label="Renanime"><span>Ren</span>anime</a>
-      <p class="access-eyebrow">{isEnglish ? "PRIVATE ACCESS" : "ACCESO PRIVADO"}</p>
-      <h1 id="access-gate-title">{isEnglish ? "A world for nakamas." : "Un mundo para nakamas."}</h1>
-      <p class="access-copy">{isEnglish ? "Enter the access password to continue to Renanime." : "Introduce la contraseña de acceso para continuar a Renanime."}</p>
-      <form id="access-gate-form">
-        <label for="access-gate-password">{isEnglish ? "Access password" : "Contraseña de acceso"}</label>
-        <input id="access-gate-password" name="accessPassword" type="password" autocomplete="current-password" required />
-        <button type="submit" id="access-gate-submit">{isEnglish ? "Unlock access" : "Desbloquear acceso"}</button>
-        <p id="access-gate-feedback" class="access-gate-feedback" role="alert" aria-live="polite"></p>
-      </form>
+  <section class="access-gate access-page auth-login" id="access-gate" aria-labelledby="access-gate-title">
+    <a class="language-toggle-auth" data-astro-reload href={`${localizedPath(lang === "es" ? "en" : "es", "/login/")}${Astro.url.search}`} hreflang={lang === "es" ? "en" : "es"} aria-label={t(lang === "es" ? "language.switchToEnglish" : "language.switchToSpanish")} title={t(lang === "es" ? "language.switchToEnglish" : "language.switchToSpanish")}>{isEnglish ? "EN · ES" : "ES · EN"}</a>
+    <div class="auth-backgrounds" aria-hidden="true">
+      <img class="auth-background" src="/images/login2.jpg" alt="" />
     </div>
+    <section class="access-card" id="access-gate-card" aria-labelledby="access-gate-title">
+      <div class="brand" aria-label="Renanime"><span class="brand-ren">Ren</span><span class="brand-anime">anime</span></div>
+      <p class="eyebrow">{isEnglish ? "PRIVATE ACCESS" : "ACCESO PRIVADO"}</p>
+      <h1 id="access-gate-title">{isEnglish ? "Your anime world awaits." : "Tu mundo anime te espera."}</h1>
+      <p class="subtitle">{isEnglish ? "Enter the access code to continue to Renanime." : "Introduce tu código de acceso para entrar en Renanime."}</p>
+      <form id="access-gate-form">
+        <label for="access-gate-password">{isEnglish ? "Access code" : "Código de acceso"}</label>
+        <input id="access-gate-password" name="accessPassword" type="password" autocomplete="current-password" required autofocus />
+        <button type="submit" id="access-gate-submit">{isEnglish ? "Enter" : "Entrar"}</button>
+        <p id="access-gate-feedback" class="message" role="alert" aria-live="polite"></p>
+      </form>
+    </section>
   </section>
 
     <a class="language-toggle-auth" data-astro-reload href={`${localizedPath(Astro.locals.lang === "es" ? "en" : "es", "/login/")}${Astro.url.search}`} hreflang={Astro.locals.lang === "es" ? "en" : "es"} aria-label={t(Astro.locals.lang === "es" ? "language.switchToEnglish" : "language.switchToSpanish")} title={t(Astro.locals.lang === "es" ? "language.switchToEnglish" : "language.switchToSpanish")}>
@@ -98,6 +102,35 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
   const accessGateSubmit = document.querySelector<HTMLButtonElement>("#access-gate-submit");
   const accessGateFeedback = document.querySelector<HTMLParagraphElement>("#access-gate-feedback");
   const ACCESS_SESSION_KEY = "renanime-access-granted";
+  const accessGateCard = document.querySelector<HTMLElement>("#access-gate-card");
+  const accessJokes = document.createElement("div");
+  accessJokes.className = "access-jokes";
+  accessJokes.setAttribute("aria-live", "polite");
+  document.body.appendChild(accessJokes);
+  const gateIsEnglish = document.documentElement.lang === "en";
+  const accessFailureMessages = gateIsEnglish
+    ? ["Someone forgot the access code.", "Renato does not want you here.", "Are you sure you know where you are?", "That code would not even open the fridge.", "Kami says: access denied."]
+    : ["Alguien se ha olvidado del código de acceso.", "Renato no te quiere por aquí.", "¿Seguro que sabes dónde estás?", "Ese código no abre ni la nevera.", "Kami dice: acceso denegado."];
+  const accessFailureKey = "renanime-access-failure-index";
+  let accessFailureIndex = Number(sessionStorage.getItem(accessFailureKey) ?? "0");
+  if (!Number.isInteger(accessFailureIndex) || accessFailureIndex < 0 || accessFailureIndex >= accessFailureMessages.length) accessFailureIndex = 0;
+  const showAccessFailure = () => {
+    accessJokes.innerHTML = "";
+    accessGateCard?.classList.remove("access-wrong");
+    void accessGateCard?.offsetWidth;
+    accessGateCard?.classList.add("access-wrong");
+    const message = accessFailureMessages[accessFailureIndex];
+    accessFailureIndex = (accessFailureIndex + 1) % accessFailureMessages.length;
+    sessionStorage.setItem(accessFailureKey, String(accessFailureIndex));
+    if (accessGateFeedback) accessGateFeedback.textContent = message;
+    const bubble = document.createElement("span");
+    bubble.textContent = message;
+    accessJokes.appendChild(bubble);
+    window.setTimeout(() => {
+      accessJokes.innerHTML = "";
+      accessGateCard?.classList.remove("access-wrong");
+    }, 3200);
+  };
 
   const unlockAccess = () => {
     if (accessGate) accessGate.hidden = true;
@@ -124,8 +157,9 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
       const data = await response.json().catch(() => ({}));
       if (!response.ok || data.ok !== true) {
         accessGateFeedback.textContent = data.error === "INVALID_ACCESS_PASSWORD"
-          ? (isEnglish ? "Incorrect access password." : "Contraseña de acceso incorrecta.")
-          : (isEnglish ? "Access is temporarily unavailable. Try again." : "El acceso no está disponible temporalmente. Inténtalo de nuevo.");
+          ? (isEnglish ? "Incorrect access code." : "Código de acceso incorrecto.")
+          : (isEnglish ? "Could not open the door to Renanime." : "No se ha podido abrir la puerta de Renanime.");
+        if (data.error === "INVALID_ACCESS_PASSWORD") showAccessFailure();
         return;
       }
       sessionStorage.setItem(ACCESS_SESSION_KEY, "1");
@@ -336,6 +370,38 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
   else if (initialCompleteProfile) setMode("profile");
   else if (initialConfirmed) setMode("login");
 </script>
+
+<style is:global>
+  .access-gate { position:fixed; inset:0; z-index:50; min-height:100svh; display:grid; place-items:center; padding:2rem 1.25rem; overflow:hidden; background:#050505; color:#fff; }
+  .access-gate[hidden] { display:none!important; }
+  .access-gate .auth-backgrounds { position:absolute; inset:0; z-index:0; overflow:hidden; background:#050505; }
+  .access-gate .auth-background { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; }
+  .access-gate .access-card { position:relative; z-index:1; width:min(100%,430px); margin-inline:auto; }
+  .access-gate .access-card > .brand { position:static; display:block; width:fit-content; margin:0 0 3rem; text-align:left; font-size:2rem; font-weight:700; letter-spacing:-.05em; }
+  .access-gate .brand-ren { color:var(--accent,#ff4f8b); }
+  .access-gate .brand-anime { color:#fff; }
+  .access-gate .eyebrow { margin:0 0 .65rem; color:#ff4f8b; font-size:.7rem; font-weight:800; letter-spacing:.18em; opacity:1; }
+  .access-gate h1 { margin:0; font-size:clamp(2.4rem,9vw,4rem); line-height:.95; letter-spacing:-.045em; }
+  .access-gate .subtitle { max-width:390px; margin:.8rem 0 1.2rem; color:rgba(255,255,255,.82); line-height:1.6; opacity:1; }
+  .access-gate form { display:grid; gap:.75rem; }
+  .access-gate label { color:#fff; font-size:.85rem; font-weight:650; }
+  .access-gate input { width:100%; min-height:48px; box-sizing:border-box; padding:0 1rem; border:1px solid rgba(255,255,255,.2); border-radius:12px; background:rgba(15,15,22,.72); color:#fff; font:inherit; }
+  .access-gate input:focus { outline:2px solid #ff4f8b; outline-offset:2px; }
+  .access-gate button { width:100%; min-height:50px; margin-top:.35rem; border:0; border-radius:12px; background:var(--accent,#ff4f8b); color:#fff; font:inherit; font-weight:700; cursor:pointer; }
+  .access-gate button:disabled { opacity:.65; cursor:wait; }
+  .access-gate .message { min-height:1.25rem; margin:.25rem 0 0; padding:.55rem .7rem; border:1px solid rgba(255,79,139,.7); border-radius:8px; background:rgba(125,12,45,.92); color:#fff; font-size:.9rem; font-weight:700; line-height:1.45; }
+  .access-gate .message:empty { display:none; }
+  .access-gate .access-wrong { animation:access-shake .42s ease; }
+  .access-jokes { position:fixed; inset:0; z-index:120; pointer-events:none; overflow:hidden; }
+  .access-jokes span { position:absolute; left:50%; top:50%; max-width:min(220px,42vw); padding:.7rem .9rem; border:1px solid rgba(255,255,255,.16); border-radius:999px; background:rgba(12,12,12,.96); color:rgba(255,255,255,.9); font-size:.78rem; line-height:1.25; text-align:center; box-shadow:0 12px 40px rgba(0,0,0,.5); animation:access-joke-pop 2.9s cubic-bezier(.2,.8,.2,1) forwards; }
+  @keyframes access-shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+  @keyframes access-joke-pop { 0%{opacity:0;scale:.35;filter:blur(4px)} 12%{opacity:1;scale:1.05;filter:blur(0)} 22%{scale:1} 78%{opacity:1} 100%{opacity:0;scale:.9;translate:0 12px} }
+  @media(max-width:640px) {
+    .access-gate { padding:2rem 1.25rem; }
+    .access-gate .auth-background { object-position:62% center; }
+    .access-gate .access-card > .brand { margin-bottom:3rem; }
+  }
+</style>
 
 <style>
   .access-gate { position:fixed; inset:0; z-index:50; display:grid; grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr); min-height:100svh; overflow:auto; background:#08080b; color:#f7f7fb; }
