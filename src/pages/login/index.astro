@@ -246,7 +246,11 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
             ? (isEnglish ? "That nickname is already taken." : "Ese mote ya está en uso.")
             : data.error === "EMAIL_PASSWORD_SIGNUP_DISABLED"
               ? (isEnglish ? "Email sign-up is not enabled yet." : "El registro por email aún no está habilitado.")
-              : (isEnglish ? "We couldn't complete that request. Please try again." : "No se ha podido completar la solicitud. Inténtalo de nuevo.");
+              : data.error === "PROFILE_UPDATE_FAILED"
+                ? (isEnglish
+                    ? `Profile update failed (${data.code || "UNKNOWN"}).`
+                    : `No se pudo guardar el mote (${data.code || "UNKNOWN"}).`)
+                : (isEnglish ? "We couldn't complete that request. Please try again." : "No se ha podido completar la solicitud. Inténtalo de nuevo.");
         throw new Error(message);
       }
       if (mode === "register") {
