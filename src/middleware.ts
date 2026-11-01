@@ -16,7 +16,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.lang = isEnglish ? "en" : "es";
   context.locals.basePath = basePath;
 
-  if (MAINTENANCE_MODE) {
+  if (MAINTENANCE_MODE && import.meta.env.VERCEL_ENV !== "preview") {
     if (routePath === "/maintenance") return next();
 
     const isStaticAsset =
