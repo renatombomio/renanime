@@ -76,7 +76,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
     routePath === "/favicon.svg" ||
     routePath === "/favicon.ico";
 
-  const isPublicAuthPage = ["/login", "/login/", "/register", "/register/"].includes(routePath);
+  const isPublicAuthPage = [
+    "/login",
+    "/login/",
+    "/register",
+    "/register/",
+    "/auth/callback",
+    "/auth/callback/",
+  ].includes(routePath);
 
   if (isPublicAssetOrApi) {
     return isEnglish ? next(basePath + search) : next();
@@ -97,7 +104,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   if (isPublicAuthPage) {
-    if (user && !context.url.searchParams.has("complete-profile") && routePath !== "/register" && routePath !== "/register/") {
+    if (user && !context.url.searchParams.has("complete-profile") && !context.url.searchParams.has("recovery") && routePath !== "/register" && routePath !== "/register/") {
       return context.redirect(isEnglish ? "/en/" : "/", 303);
     }
     return isEnglish ? next(basePath + search) : next();
