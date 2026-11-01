@@ -273,7 +273,7 @@ const joinedDate = profile.created_at
     logoutButton.textContent = isEnglish ? "Logging out…" : "Cerrando sesión…";
 
     try {
-      const response = await fetch("/api/auth/logout-supabase", { method: "POST", credentials: "same-origin" });
+      const response = await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" });
       if (!response.ok) throw new Error("logout_failed");
       window.location.href = document.documentElement.lang === "en" ? "/en/login/" : "/login/";
     } catch {
