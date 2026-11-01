@@ -145,7 +145,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
     });
   }
 
-  const hasNickname = Boolean(context.locals.renanimeUser.aka?.trim());
+  const nickname = context.locals.renanimeUser.aka?.trim() ?? "";
+  const hasNickname = Boolean(nickname && !nickname.startsWith("nakama_"));
 
   if (isPublicAuthPage) {
     if (routePath === "/auth/callback" || routePath === "/login" || routePath === "/register") {
