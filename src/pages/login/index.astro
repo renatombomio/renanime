@@ -338,6 +338,30 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
 </script>
 
 <style>
+  .access-gate { position:fixed; inset:0; z-index:50; display:grid; grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr); min-height:100svh; overflow:auto; background:#08080b; color:#f7f7fb; }
+  .access-gate[hidden] { display:none!important; }
+  .access-gate-card { position:relative; display:flex; flex-direction:column; justify-content:center; width:min(100%,480px); box-sizing:border-box; justify-self:center; align-self:center; padding:clamp(2rem,5vw,4rem); }
+  .access-gate-card:before { content:""; position:fixed; inset:0 50% 0 0; z-index:-1; background:linear-gradient(180deg,rgba(5,6,15,.2),rgba(5,6,15,.85)),url('/images/login2.jpg') center/cover; }
+  .access-brand { display:inline-block; width:max-content; margin-bottom:3rem; color:#fff; text-decoration:none; font-size:1.85rem; font-weight:800; letter-spacing:-.07em; }
+  .access-brand span { color:#ff4f8b; }
+  .access-eyebrow { margin:0 0 1rem; color:#ff4f8b; font-size:.7rem; font-weight:800; letter-spacing:.18em; }
+  .access-gate-card h1 { margin:0; font-size:clamp(2.2rem,4vw,3.4rem); line-height:1.03; letter-spacing:-.055em; }
+  .access-copy { margin:.9rem 0 1.8rem; color:#aaaab8; line-height:1.65; }
+  #access-gate-form { display:grid; gap:1rem; }
+  #access-gate-form label { font-size:.82rem; color:#e2e2e9; font-weight:650; }
+  #access-gate-password { width:100%; min-height:48px; box-sizing:border-box; border:1px solid #34343e; border-radius:11px; padding:0 .9rem; color:#fff; background:#111116; font:inherit; }
+  #access-gate-password:focus { outline:2px solid #ff4f8b; outline-offset:2px; border-color:transparent; }
+  #access-gate-submit { display:flex; align-items:center; justify-content:center; width:100%; min-height:49px; border:0; border-radius:12px; color:#fff; background:#ed4785; font:inherit; font-weight:750; cursor:pointer; }
+  #access-gate-submit:disabled { opacity:.6; cursor:wait; }
+  .access-gate-feedback { min-height:0; margin:0; color:#ffb2c8; font-size:.82rem; line-height:1.5; }
+  .access-gate-feedback:not(:empty) { padding:.65rem; border-radius:9px; background:#321721; }
+  @media(max-width:700px) {
+    .access-gate { display:flex; align-items:stretch; justify-content:center; padding:0 1.4rem; box-sizing:border-box; }
+    .access-gate-card { width:100%; max-width:480px; padding:clamp(2rem,9vh,5rem) 0; }
+    .access-gate-card:before { inset:0; background:linear-gradient(180deg,rgba(5,6,15,.58),rgba(5,6,15,.84)),url('/images/login2.jpg') center/cover; }
+    .access-brand { margin-bottom:auto; }
+    .access-gate-card h1 { font-size:clamp(2rem,9vw,2.8rem); }
+  }
   .auth-shell { min-height: 100svh; display:grid; grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr); background:#08080b; color:#f7f7fb; }
   .auth-art { position:relative; min-height:100svh; overflow:hidden; background:#14182c; }
   .auth-art img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; }
