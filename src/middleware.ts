@@ -85,7 +85,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     "/auth/callback/",
   ].includes(routePath);
 
-  if (isPublicAssetOrApi || isPublicAuthPage) {
+  if (isPublicAssetOrApi) {
     // Login and OAuth callback pages must render even when Supabase is
     // misconfigured or temporarily unavailable, so the user can see the UI
     // and auth endpoints can report their own actionable errors.
@@ -117,6 +117,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   if (!user) {
+    if (isPublicAuthPage) return isEnglish ? next(basePath + search) : next();
     return context.redirect(localizedPath(context.locals.lang, "/login/"));
   }
 
@@ -149,6 +150,20 @@ export const onRequest = defineMiddleware(async (context, next) => {
       status: 503,
       headers: { "Cache-Control": "no-store" },
     });
+  }
+
+  const hasNickname = Boolean(context.locals.renanimeUser.aka?.trim());
+
+  if (isPublicAuthPage) {
+    if (routePath === "/auth/callback" || routePath === "/login" || routePath === "/register") {
+      if (!context.url.searchParams.has("recovery")) {
+        return hasNickname
+          ? context.redirect(isEnglish ? "/en/" : "/", 303)
+          : context.redirect(localizedPath(context.locals.lang, "/login/") + "?complete-profile=1", 303);
+      }
+    }
+  } else if (!hasNickname) {
+    return context.redirect(localizedPath(context.locals.lang, "/login/") + "?complete-profile=1", 303);
   }
 
   return isEnglish ? next(basePath + search) : next();
