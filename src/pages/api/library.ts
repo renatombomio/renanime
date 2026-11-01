@@ -49,8 +49,8 @@ function normalizeEntry(entry: LibraryEntry, userId: string) {
   if (typeof entry.franchiseId === "string" && entry.franchiseId.length <= 64) {
     metadata.franchiseId = entry.franchiseId;
   }
-  if (Number.isFinite(entry.state.personalScore)) metadata.personalScore = entry.state.personalScore;
-  if (Number.isSafeInteger(entry.state.personalRanking)) metadata.personalRanking = entry.state.personalRanking;
+  if (typeof entry.state.personalScore === "number" && Number.isFinite(entry.state.personalScore)) metadata.personalScore = entry.state.personalScore;
+  if (typeof entry.state.personalRanking === "number" && Number.isSafeInteger(entry.state.personalRanking)) metadata.personalRanking = entry.state.personalRanking;
   if (typeof entry.state.review === "string") metadata.review = entry.state.review.slice(0, 5000);
 
   return { user_id: userId, anime_id: animeId, status, metadata };
@@ -74,7 +74,7 @@ export const GET: APIRoute = async ({ request, cookies }) => {
     }
 
     const entries = (data ?? []).map((row) => {
-      const metadata = row.metadata && typeof row.metadata === "object" ? row.metadata : {};
+      const metadata = (row.metadata && typeof row.metadata === "object" ? row.metadata : {}) as Record<string, unknown>;
       return {
         animeId: String(row.anime_id),
         format: metadata.format,
