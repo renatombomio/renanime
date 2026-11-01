@@ -6,8 +6,8 @@ declare namespace App {
       id: string;
       name: string;
       aka: string;
-      recovery_code?: string;
       created_at?: string;
+      email: string;
     };
   }
 }
