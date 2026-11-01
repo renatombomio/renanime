@@ -35,7 +35,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   }
 
   const redirectTo = new URL(
-    "/auth/callback?next=%2Flogin%2F%3Fcomplete-profile%3D1",
+    "/auth/callback?next=%2F",
     request.url,
   ).toString();
 
