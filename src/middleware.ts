@@ -109,13 +109,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
     });
   }
 
-  if (isPublicAuthPage) {
-    if (user && !context.url.searchParams.has("complete-profile") && !context.url.searchParams.has("recovery") && routePath !== "/register" && routePath !== "/register/") {
-      return context.redirect(isEnglish ? "/en/" : "/", 303);
-    }
-    return isEnglish ? next(basePath + search) : next();
-  }
-
   if (!user) {
     if (isPublicAuthPage) return isEnglish ? next(basePath + search) : next();
     return context.redirect(localizedPath(context.locals.lang, "/login/"));
