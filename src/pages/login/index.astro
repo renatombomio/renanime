@@ -91,6 +91,7 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
   const emailInput = document.querySelector<HTMLInputElement>("#email");
   const passwordInput = document.querySelector<HTMLInputElement>("#password");
   const confirmInput = document.querySelector<HTMLInputElement>("#confirm-password");
+  const passwordHelp = document.querySelector<HTMLElement>("#password-help");
   const akaInput = document.querySelector<HTMLInputElement>("#aka");
   const submit = document.querySelector<HTMLButtonElement>("#submit-auth");
   const feedback = document.querySelector<HTMLParagraphElement>("#auth-feedback");
@@ -148,6 +149,11 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
       passwordInput.autocomplete = registering || recovering ? "new-password" : "current-password";
     }
     if (akaInput) akaInput.required = registering || completingProfile;
+    if (passwordHelp) passwordHelp.textContent = registering || recovering
+      ? (isEnglish
+          ? "8–128 characters, including uppercase, lowercase, a number and a symbol."
+          : "8–128 caracteres, con mayúscula, minúscula, un número y un símbolo.")
+      : (isEnglish ? "Enter your account password." : "Introduce la contraseña de tu cuenta.");
     setFeedback("");
   };
 
@@ -215,6 +221,11 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
     const aka = akaInput?.value.trim() ?? "";
     if (mode !== "recovery" && mode !== "profile" && !email) return setFeedback(isEnglish ? "Enter a valid email." : "Introduce un email válido.", true);
     if (mode !== "profile" && password.length < 8) return setFeedback(isEnglish ? "Use at least 8 characters for your password." : "La contraseña debe tener al menos 8 caracteres.", true);
+    if ((mode === "register" || mode === "recovery") && !(password.length <= 128 && /[a-z]/.test(password) && /[A-Z]/.test(password) && /[0-9]/.test(password) && /[^A-Za-z0-9]/.test(password))) {
+      return setFeedback(isEnglish
+        ? "Include at least one uppercase letter, one lowercase letter, one number and one symbol."
+        : "Incluye al menos una mayúscula, una minúscula, un número y un símbolo.", true);
+    }
     if (mode === "register" && !/^[\p{L}\p{N}_-]{2,24}$/u.test(aka)) return setFeedback(isEnglish ? "Your nickname must be 2–24 letters, numbers, underscores or hyphens." : "El mote debe tener entre 2 y 24 letras, números, guiones o guiones bajos.", true);
     if (mode === "register" && password !== (confirmInput?.value ?? "")) return setFeedback(isEnglish ? "Passwords do not match." : "Las contraseñas no coinciden.", true);
 
@@ -240,8 +251,12 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
       }
       data = await response.json();
       if (!response.ok || data.ok !== true) {
-        const message = data.error === "INVALID_CREDENTIALS"
-          ? (isEnglish ? "Email or password is incorrect." : "El email o la contraseña no son correctos.")
+        const message = data.error === "PASSWORD_REQUIREMENTS_NOT_MET"
+          ? (isEnglish
+              ? "Your password must have 8–128 characters, uppercase and lowercase letters, a number and a symbol."
+              : "La contraseña debe tener 8–128 caracteres, mayúsculas y minúsculas, un número y un símbolo.")
+          : data.error === "INVALID_CREDENTIALS"
+            ? (isEnglish ? "Email or password is incorrect." : "El email o la contraseña no son correctos.")
           : data.error === "NICKNAME_TAKEN"
             ? (isEnglish ? "That nickname is already taken." : "Ese mote ya está en uso.")
             : data.error === "EMAIL_PASSWORD_SIGNUP_DISABLED"
