@@ -164,11 +164,20 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
         credentials: "same-origin",
         body: JSON.stringify({ provider: "google" }),
       });
-      const data = await response.json();
-      if (!response.ok || !data.url) throw new Error(data.error || "OAUTH_FAILED");
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.url) {
+        const diagnostic = [data.error, data.code, data.stage, data.errorName].filter(Boolean).join(":") || "OAUTH_FAILED";
+        throw new Error(diagnostic);
+      }
       window.location.assign(data.url);
-    } catch {
-      setFeedback(isEnglish ? "Google sign-in is not available yet. Please try email instead." : "El acceso con Google aún no está disponible. Prueba con email.", true);
+    } catch (error) {
+      const diagnostic = error instanceof Error ? error.message : "UNKNOWN_ERROR";
+      setFeedback(
+        isEnglish
+          ? `Google sign-in failed (${diagnostic}). You can try email instead.`
+          : `No se pudo iniciar sesión con Google (${diagnostic}). Puedes probar con email.`,
+        true,
+      );
       googleButton.disabled = false;
     }
   });
