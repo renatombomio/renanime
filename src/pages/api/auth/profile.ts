@@ -34,8 +34,12 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       .eq("id", authData.user.id);
 
     if (error) {
-      console.warn("Profile nickname update failed:", error.code ?? "UNKNOWN");
-      return json({ ok: false, error: "PROFILE_UPDATE_FAILED" }, 400);
+      const code = error.code ?? "UNKNOWN";
+      console.warn("Profile nickname update failed:", code);
+      return json(
+        { ok: false, error: "PROFILE_UPDATE_FAILED", code },
+        400,
+      );
     }
 
     return json({ ok: true, profile: { aka } });
