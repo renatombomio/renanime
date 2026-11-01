@@ -54,7 +54,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
     // In Vercel Preview, allow page rendering for visual review while keeping every API blocked.
     // Production (main) continues to redirect all app pages to maintenance.
     if (import.meta.env.VERCEL_ENV === "preview") {
-      return next();
+      // Keep API routes blocked above, but rewrite /en/* to the shared page routes
+      // so the English login screen resolves in Preview just like production.
+      return isEnglish ? next(basePath + search) : next();
     }
 
     return context.redirect("/maintenance/", 307);
