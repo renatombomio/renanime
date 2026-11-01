@@ -3,6 +3,15 @@ import { createSupabaseSsrClient } from "../../../lib/supabase-ssr";
 
 export const prerender = false;
 
+function isPasswordPolicyValid(password: string) {
+  return password.length >= 8
+    && password.length <= 128
+    && /[a-z]/.test(password)
+    && /[A-Z]/.test(password)
+    && /[0-9]/.test(password)
+    && /[^A-Za-z0-9]/.test(password);
+}
+
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
@@ -25,8 +34,8 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   if (!email || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return json({ ok: false, error: "INVALID_EMAIL" }, 400);
   }
-  if (password.length < 8 || password.length > 128) {
-    return json({ ok: false, error: "INVALID_PASSWORD" }, 400);
+  if (!isPasswordPolicyValid(password)) {
+    return json({ ok: false, error: "PASSWORD_REQUIREMENTS_NOT_MET" }, 400);
   }
   if (!/^[\p{L}\p{N}_-]{2,24}$/u.test(aka)) {
     return json({ ok: false, error: "INVALID_NICKNAME" }, 400);
@@ -47,6 +56,9 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     if (error) {
       // Do not reveal whether an email is already registered.
       console.warn("Supabase sign-up rejected:", error.code ?? "UNKNOWN");
+      if (error.code === "weak_password") {
+        return json({ ok: false, error: "PASSWORD_REQUIREMENTS_NOT_MET" }, 400);
+      }
       return json({ ok: false, error: "SIGNUP_FAILED" }, 400);
     }
 
