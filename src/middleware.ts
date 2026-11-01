@@ -1,4 +1,5 @@
 import { defineMiddleware } from "astro:middleware";
+import type { User } from "@supabase/supabase-js";
 import { createSupabaseSsrClient } from "./lib/supabase-ssr";
 import { localizedPath } from "./i18n";
 
@@ -81,7 +82,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return isEnglish ? next(basePath + search) : next();
   }
 
-  let user: Awaited<ReturnType<ReturnType<typeof createSupabaseSsrClient>["auth"]["getUser"]>>["data"]["user"] | null = null;
+  let user: User | null = null;
 
   try {
     const supabase = createSupabaseSsrClient(context.request, context.cookies);
