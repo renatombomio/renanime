@@ -97,7 +97,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   if (isPublicAuthPage) {
-    if (user && routePath !== "/register" && routePath !== "/register/") {
+    if (user && !context.url.searchParams.has("complete-profile") && routePath !== "/register" && routePath !== "/register/") {
       return context.redirect(isEnglish ? "/en/" : "/", 303);
     }
     return isEnglish ? next(basePath + search) : next();
