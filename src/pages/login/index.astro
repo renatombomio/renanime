@@ -16,6 +16,21 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
   description={isEnglish ? "Sign in or create your Renanime account." : "Inicia sesión o crea tu cuenta de Renanime."}
 >
   <main class="auth-shell" data-initial-recovery={recovery ? "true" : "false"} data-initial-confirmed={confirmed ? "true" : "false"} data-initial-complete-profile={completeProfile ? "true" : "false"}>
+  <section class="access-gate" id="access-gate" aria-labelledby="access-gate-title">
+    <div class="access-gate-card">
+      <a class="access-brand" href="/" aria-label="Renanime"><span>Ren</span>anime</a>
+      <p class="access-eyebrow">{isEnglish ? "PRIVATE ACCESS" : "ACCESO PRIVADO"}</p>
+      <h1 id="access-gate-title">{isEnglish ? "A world for nakamas." : "Un mundo para nakamas."}</h1>
+      <p class="access-copy">{isEnglish ? "Enter the access password to continue to Renanime." : "Introduce la contraseña de acceso para continuar a Renanime."}</p>
+      <form id="access-gate-form">
+        <label for="access-gate-password">{isEnglish ? "Access password" : "Contraseña de acceso"}</label>
+        <input id="access-gate-password" name="accessPassword" type="password" autocomplete="current-password" required />
+        <button type="submit" id="access-gate-submit">{isEnglish ? "Unlock access" : "Desbloquear acceso"}</button>
+        <p id="access-gate-feedback" class="access-gate-feedback" role="alert" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
     <a class="language-toggle-auth" data-astro-reload href={`${localizedPath(Astro.locals.lang === "es" ? "en" : "es", "/login/")}${Astro.url.search}`} hreflang={Astro.locals.lang === "es" ? "en" : "es"} aria-label={t(Astro.locals.lang === "es" ? "language.switchToEnglish" : "language.switchToSpanish")} title={t(Astro.locals.lang === "es" ? "language.switchToEnglish" : "language.switchToSpanish")}>
       {isEnglish ? "EN · ES" : "ES · EN"}
     </a>
@@ -26,7 +41,7 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
       <p class="art-caption">{isEnglish ? "YOUR ANIME WORLD. YOUR STORY." : "TU MUNDO ANIME. TU HISTORIA."}</p>
     </div>
 
-    <section class="auth-panel" aria-labelledby="auth-title">
+    <section class="auth-panel" id="auth-content" aria-labelledby="auth-title" hidden>
       <div class="mobile-brand brand"><span>Ren</span>anime</div>
       <p class="eyebrow">{isEnglish ? "WELCOME, NAKAMA" : "BIENVENIDO, NAKAMA"}</p>
       <h1 id="auth-title">{recovery ? (isEnglish ? "Choose a new password" : "Crea una nueva contraseña") : confirmed ? (isEnglish ? "Verify your email" : "Verifica tu email") : (isEnglish ? "Your anime journey starts here." : "Tu aventura anime empieza aquí.")}</h1>
@@ -76,6 +91,53 @@ const completeProfile = Astro.url.searchParams.get("complete-profile") === "1";
 </Layout>
 
 <script>
+  const accessGate = document.querySelector<HTMLElement>("#access-gate");
+  const accessContent = document.querySelector<HTMLElement>("#auth-content");
+  const accessGateForm = document.querySelector<HTMLFormElement>("#access-gate-form");
+  const accessGatePassword = document.querySelector<HTMLInputElement>("#access-gate-password");
+  const accessGateSubmit = document.querySelector<HTMLButtonElement>("#access-gate-submit");
+  const accessGateFeedback = document.querySelector<HTMLParagraphElement>("#access-gate-feedback");
+  const ACCESS_SESSION_KEY = "renanime-access-granted";
+
+  const unlockAccess = () => {
+    if (accessGate) accessGate.hidden = true;
+    if (accessContent) accessContent.hidden = false;
+  };
+
+  if (sessionStorage.getItem(ACCESS_SESSION_KEY) === "1") {
+    unlockAccess();
+  }
+
+  accessGateForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!accessGatePassword || !accessGateFeedback || !accessGateSubmit) return;
+    accessGateFeedback.textContent = "";
+    accessGateSubmit.disabled = true;
+    accessGateSubmit.textContent = isEnglish ? "Checking…" : "Comprobando…";
+    try {
+      const response = await fetch("/api/auth/access", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ accessPassword: accessGatePassword.value }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || data.ok !== true) {
+        accessGateFeedback.textContent = data.error === "INVALID_ACCESS_PASSWORD"
+          ? (isEnglish ? "Incorrect access password." : "Contraseña de acceso incorrecta.")
+          : (isEnglish ? "Access is temporarily unavailable. Try again." : "El acceso no está disponible temporalmente. Inténtalo de nuevo.");
+        return;
+      }
+      sessionStorage.setItem(ACCESS_SESSION_KEY, "1");
+      unlockAccess();
+    } catch {
+      accessGateFeedback.textContent = isEnglish ? "Could not connect. Try again." : "No se pudo conectar. Inténtalo de nuevo.";
+    } finally {
+      accessGateSubmit.disabled = false;
+      accessGateSubmit.textContent = isEnglish ? "Unlock access" : "Desbloquear acceso";
+    }
+  });
+
   const root = document.querySelector<HTMLElement>(".auth-shell");
   const initialRecovery = root?.dataset.initialRecovery === "true";
   const initialConfirmed = root?.dataset.initialConfirmed === "true";
