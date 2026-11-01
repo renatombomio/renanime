@@ -5,14 +5,14 @@ import { createSupabaseSsrClient } from "../../lib/supabase-ssr";
 
 const requestUrl = new URL(Astro.request.url);
 const code = requestUrl.searchParams.get("code");
-const requestedNext = requestUrl.searchParams.get("next") ?? "/login/";
+const requestedNext = requestUrl.searchParams.get("next") ?? "/";
 const safeNext =
   requestedNext.startsWith("/") &&
   !requestedNext.startsWith("//") &&
   !requestedNext.includes("\\") &&
   !requestedNext.includes("://")
     ? requestedNext
-    : "/login/";
+    : "/";
 
 if (!code) {
   return Astro.redirect(new URL("/login/?auth_error=callback", requestUrl.origin), 303);
