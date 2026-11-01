@@ -4,7 +4,6 @@ type CookieValue = { name: string; value: string };
 type CookieOptions = any;
 
 type AstroCookieAdapter = {
-  getAll: () => CookieValue[];
   set: (name: string, value: string, options?: CookieOptions) => void;
 };
 
@@ -27,8 +26,24 @@ export function createSupabaseSsrClient(request: Request, cookies: AstroCookieAd
   return createServerClient(supabaseUrl, supabaseKey, {
     cookies: {
       getAll() {
-        // Astro's cookie jar represents the cookies from this request.
-        return cookies.getAll().map(({ name, value }) => ({ name, value }));
+        // Astro 7's cookie jar does not expose getAll(); read the incoming
+        // Cookie header while keeping writes on Astro's response cookie API.
+        const header = request.headers.get("cookie") ?? "";
+        return header
+          .split(";")
+          .map((part) => part.trim())
+          .filter(Boolean)
+          .map((part) => {
+            const separator = part.indexOf("=");
+            const name = separator === -1 ? part : part.slice(0, separator);
+            const value = separator === -1 ? "" : part.slice(separator + 1);
+
+            try {
+              return { name, value: decodeURIComponent(value) };
+            } catch {
+              return { name, value };
+            }
+          });
       },
       setAll(cookiesToSet) {
         for (const { name, value, options } of cookiesToSet) {
