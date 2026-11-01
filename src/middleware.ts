@@ -54,9 +54,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
     // In Vercel Preview, allow page rendering for visual review while keeping every API blocked.
     // Production (main) continues to redirect all app pages to maintenance.
     if (import.meta.env.VERCEL_ENV === "preview") {
-      // Keep the original URL for explicit localized routes such as /en/login/.
-      // The English login route rewrites internally after Astro.locals.lang is set.
-      return next();
+      // Match the established i18n routing: /en/* is internally rewritten
+      // to the shared route after Astro.locals.lang has been set to "en".
+      return isEnglish ? next(basePath + search) : next();
     }
 
     return context.redirect("/maintenance/", 307);
