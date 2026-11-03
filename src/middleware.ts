@@ -101,6 +101,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
   } catch (error) {
     console.error("Supabase middleware authentication failed:", error);
     if (import.meta.env.VERCEL_ENV === "preview") {
+      // Public auth pages must remain reachable when Supabase is unavailable.
+      // Redirecting /login back to itself creates ERR_TOO_MANY_REDIRECTS.
+      if (isPublicAuthPage) return isEnglish ? next(basePath + search) : next();
       return context.redirect(localizedPath(context.locals.lang, "/login/"), 303);
     }
     return new Response("Authentication service unavailable.", {
