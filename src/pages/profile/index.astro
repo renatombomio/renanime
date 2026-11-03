@@ -129,11 +129,12 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
 <style>
   .profile-editor { margin: 0; overflow: visible; border: 0; border-radius: 0; background: transparent; }
   .cover-preview { position: relative; width: 100%; height: clamp(210px, 34vw, 340px); background: linear-gradient(135deg,#24202a,#111); background-size: cover; background-position: center; isolation: isolate; }
-  .cover-file-input { position:absolute; inset:0; z-index:3; width:100%; height:100%; opacity:0; cursor:pointer; font-size:100px; }
-  .cover-edit { pointer-events:auto; }
+  .cover-edit { position:absolute; right:1rem; bottom:1rem; z-index:5; display:none; cursor:pointer; pointer-events:auto; }
+  .cover-edit span { position:relative; z-index:0; pointer-events:none; }
+  .cover-file-input { position:absolute; inset:0; z-index:2; display:block; width:100%; height:100%; margin:0; padding:0; opacity:0; cursor:pointer; pointer-events:auto; font-size:1rem; }
   .cover-upload-feedback { position:absolute; z-index:4; left:1rem; bottom:.75rem; max-width:55%; color:#fff; font-size:.72rem; text-shadow:0 1px 5px #000; pointer-events:none; }
   .cover-preview::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: linear-gradient(180deg, rgba(0,0,0,.02) 28%, rgba(0,0,0,.22) 58%, #050505 100%); }
-   .cover-edit { position: absolute; right: 1rem; bottom: 1rem; z-index: 2; display: none; }
+
   .profile-editor.is-editing .cover-edit { display: inline-flex; }
   .profile-editor.is-editing .avatar-edit { display: grid; }
   .media-edit { display:inline-flex; align-items:center; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: .65rem .9rem; color: white; background: rgba(0,0,0,.45); backdrop-filter: blur(10px); cursor: pointer; font: inherit; font-size: .78rem; }
