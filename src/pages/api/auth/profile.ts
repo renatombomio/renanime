@@ -11,16 +11,20 @@ function json(body: unknown, status = 200) {
 }
 
 export const POST: APIRoute = async ({ request, cookies }) => {
-  let body: { aka?: unknown; bio?: unknown; location?: unknown };
+  let body: { name?: unknown; aka?: unknown; bio?: unknown; location?: unknown };
   try { body = await request.json(); }
   catch { return json({ ok: false, error: "INVALID_REQUEST" }, 400); }
 
   const updates: Record<string, unknown> = {};
+  if (body.name !== undefined) {
+    const name = typeof body.name === "string" ? body.name.trim() : "";
+    if (name.length < 2 || name.length > 40) return json({ ok: false, error: "INVALID_NAME" }, 400);
+    updates.name = name;
+  }
   if (body.aka !== undefined) {
-    const aka = typeof body.aka === "string" ? body.aka.trim() : "";
+    const aka = typeof body.aka === "string" ? body.aka.trim().replace(/^@/, "") : "";
     if (!/^[\p{L}\p{N}_-]{2,24}$/u.test(aka)) return json({ ok: false, error: "INVALID_NICKNAME" }, 400);
     updates.aka = aka;
-    updates.name = aka;
   }
   if (body.bio !== undefined) {
     if (typeof body.bio !== "string" || body.bio.length > 280) return json({ ok: false, error: "INVALID_BIO" }, 400);
@@ -41,7 +45,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       .from("profiles")
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq("id", authData.user.id)
-      .select("aka, bio, location")
+      .select("name, aka, bio, location")
       .single();
 
     if (error) {
