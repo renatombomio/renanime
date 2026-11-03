@@ -2,12 +2,11 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import type { Lang } from "../../i18n";
 
 type CommentProfile = {
-  name?: string | null;
   aka?: string | null;
   avatar_url?: string | null;
 };
 
-type CommentReaction = { id: string; comment_id: string; user_id: string; emoji: string; profiles?: { name?: string | null; aka?: string | null } | null };
+type CommentReaction = { id: string; comment_id: string; user_id: string; emoji: string; profiles?: { aka?: string | null } | null };
 
 function formatRelativeTime(value: string, lang: Lang): string {
   const timestamp = new Date(value).getTime();
@@ -281,7 +280,7 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
         <div className="anime-comments-list">
           {comments.filter(comment => !comment.parent_comment_id).slice(0, showAllComments ? comments.filter(comment => !comment.parent_comment_id).length : 5).map((comment) => {
             const profile = Array.isArray(comment.profiles) ? comment.profiles[0] : comment.profiles;
-            const author = profile?.name || (profile?.aka ? "@" + profile.aka : copy("Usuario", "User"));
+            const author = profile?.aka ? "@" + profile.aka : copy("Usuario", "User");
             const own = Boolean(viewerId && viewerId === comment.user_id);
             const commentReactions = reactions.filter(reaction => reaction.comment_id === comment.id);
             const reactionCounts = new Map<string, number>();
@@ -295,7 +294,6 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
                 <div className="anime-comment-body">
                   <div className="anime-comment-author">
                     <strong>{author}</strong>
-                    {profile?.aka && profile.name && <span>@{profile.aka}</span>}
                   </div>
                   {editingId === comment.id ? (
                     <div className="anime-comment-edit">
@@ -358,7 +356,7 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
                   {replies.length > 0 && <div className="anime-comment-replies">
                     {replies.map(reply => {
                       const replyProfile = Array.isArray(reply.profiles) ? reply.profiles[0] : reply.profiles;
-                      const replyAuthor = replyProfile?.name || (replyProfile?.aka ? "@" + replyProfile.aka : copy("Usuario", "User"));
+                      const replyAuthor = replyProfile?.aka ? "@" + replyProfile.aka : copy("Usuario", "User");
                       return <div className="anime-comment-reply" key={reply.id} id={"comment-" + reply.id}>
                         {replyProfile?.avatar_url ? <img className="anime-comment-avatar" src={replyProfile.avatar_url} alt="" loading="lazy" /> : <span className="anime-comment-avatar anime-comment-avatar-fallback">{replyAuthor.slice(0,1).toUpperCase()}</span>}
                         <div><div className="anime-comment-author"><strong>{replyAuthor}</strong></div><p>{reply.content}</p><div className="anime-comment-meta"><time className="anime-comment-date" dateTime={reply.created_at}>{new Date(reply.created_at).toLocaleDateString(en ? "en-GB" : "es-ES",{day:"numeric",month:"short",year:"numeric"})}</time></div></div>
