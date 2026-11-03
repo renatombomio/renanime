@@ -17,6 +17,30 @@ function validAnimeId(value: string | null) {
 
 export const GET: APIRoute = async ({ request, cookies }) => {
   const url = new URL(request.url);
+  const idsParam = url.searchParams.get("ids");
+  if (idsParam !== null) {
+    const animeIds = [...new Set(idsParam.split(",").map((value) => validAnimeId(value)))];
+    if (!animeIds.length || animeIds.length > 100 || animeIds.some((id) => id === null)) {
+      return json({ ok: false, error: "INVALID_ANIME_IDS" }, 400);
+    }
+
+    try {
+      const supabase = createSupabaseSsrClient(request, cookies);
+      const results = await Promise.all(animeIds.map(async (animeId) => {
+        const { count, error } = await supabase
+          .from("anime_comments")
+          .select("id", { count: "exact", head: true })
+          .eq("anime_id", animeId);
+        if (error) throw error;
+        return [String(animeId), count ?? 0] as const;
+      }));
+      return json({ ok: true, counts: Object.fromEntries(results) });
+    } catch (error) {
+      console.warn("Anime comment counts read failed:", error);
+      return json({ ok: false, error: "COMMENT_COUNTS_UNAVAILABLE" }, 503);
+    }
+  }
+
   const animeId = validAnimeId(url.searchParams.get("animeId"));
   if (!animeId) return json({ ok: false, error: "INVALID_ANIME_ID" }, 400);
 
