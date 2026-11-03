@@ -296,10 +296,10 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
                 </div>
               </article>
             );
-          })}}
+          })}
         </div>
       )}
-      {!loading && comments.length > 5 && (
+      {!loading && comments.filter(comment => !comment.parent_comment_id).length > 5 && (
         <button
           type="button"
           className="anime-comments-more"
