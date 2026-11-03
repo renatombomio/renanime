@@ -442,13 +442,15 @@ const favoritesCount = favoriteError ? 0 : (await supabase.from("anime_likes").s
     const fields = ids.map((id, index) => { variables["id" + index] = Number(id); return `a${index}: Media(id: $id${index}, type: ANIME) { id title { romaji english } coverImage { large } }`; }).join("\n");
     const definitions = ids.map((_, index) => `$id${index}: Int!`).join(", ");
     try {
-      const [animeResponse, likeResponse] = await Promise.all([
+      const [animeResponse, likeResponse, commentResponse] = await Promise.all([
         fetch("https://graphql.anilist.co", { method:"POST", headers:{"Content-Type":"application/json","Accept":"application/json"}, body:JSON.stringify({query:`query ProfileAnime(${definitions}) { ${fields} }`,variables}) }),
-        fetch("/api/anime/likes?ids="+ids.join(","), {credentials:"same-origin",cache:"no-store"})
+        fetch("/api/anime/likes?ids="+ids.join(","), {credentials:"same-origin",cache:"no-store"}),
+        fetch("/api/anime/comments?ids="+ids.join(","), {credentials:"same-origin",cache:"no-store"})
       ]);
       if (!animeResponse.ok) throw new Error("anime_fetch_failed");
       const payload = await animeResponse.json();
       const likePayload = likeResponse.ok ? await likeResponse.json() : { likes:{} };
+      const commentPayload = commentResponse.ok ? await commentResponse.json() : { counts:{} };
       const media = new Map(ids.map((id,index) => [id,payload.data?.["a"+index]]));
       grids.forEach(grid => {
         const gridIds = JSON.parse(grid.dataset.ids || "[]") as string[];
@@ -463,7 +465,7 @@ const favoritesCount = favoriteError ? 0 : (await supabase.from("anime_likes").s
           const titleNode = document.createElement("span"); titleNode.className = "profile-anime-card-title"; titleNode.textContent = title;
           const meta = document.createElement("span"); meta.className = "profile-anime-card-meta";
           const likeMeta = document.createElement("span"); likeMeta.className = "like-count"; likeMeta.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 10-8.8 10s-8.8-4.8-8.8-10a4.6 4.6 0 0 1 8.8-1.9 4.6 4.6 0 0 1 8.8 1.9Z"/></svg><span></span>'; likeMeta.querySelector("span")!.textContent = Number(counts.count||0).toLocaleString(isEnglish?"en":"es");
-          const commentMeta = document.createElement("span"); commentMeta.className = "comment-count"; commentMeta.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 8.8 8.8 0 0 1-4-.95L3 21l1.95-5.5A8.8 8.8 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3H13a8.5 8.5 0 0 1 8 8.5Z"/></svg><span>0</span>';
+          const commentMeta = document.createElement("span"); commentMeta.className = "comment-count"; commentMeta.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 8.8 8.8 0 0 1-4-.95L3 21l1.95-5.5A8.8 8.8 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3H13a8.5 8.5 0 0 1 8 8.5Z"/></svg><span></span>'; commentMeta.querySelector("span")!.textContent = Number(commentPayload.counts?.[id] || 0).toLocaleString(isEnglish?"en":"es");
           meta.append(likeMeta,commentMeta); cardCopy.append(titleNode); card.append(img,cardCopy,meta); return card;
         }).filter((card): card is HTMLAnchorElement => card instanceof HTMLAnchorElement);
         grid.replaceChildren(...(cards.length ? cards : [Object.assign(document.createElement("span"),{className:"profile-anime-empty",textContent:copy("Todavía no hay animes aquí.","No anime here yet.")})]));
