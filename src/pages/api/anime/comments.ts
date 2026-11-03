@@ -51,10 +51,10 @@ export const GET: APIRoute = async ({ request, cookies }) => {
       supabase.auth.getUser(),
       supabase
         .from("anime_comments")
-        .select("id, anime_id, user_id, content, created_at, updated_at, profiles(name, aka, avatar_url)")
+        .select("id, anime_id, user_id, parent_comment_id, content, created_at, updated_at, profiles(name, aka, avatar_url)")
         .eq("anime_id", animeId)
-        .order("created_at", { ascending: false })
-        .limit(50),
+        .order("created_at", { ascending: true })
+        .limit(100),
     ]);
 
     if (error) {
@@ -62,7 +62,15 @@ export const GET: APIRoute = async ({ request, cookies }) => {
       return json({ ok: false, error: "COMMENTS_UNAVAILABLE" }, 503);
     }
 
-    return json({ ok: true, comments: data ?? [], viewerId: authData.user?.id ?? null });
+    const commentIds = (data ?? []).map((comment) => comment.id);
+    const { data: reactions, error: reactionsError } = commentIds.length
+      ? await supabase.from("anime_comment_reactions")
+          .select("id, comment_id, user_id, emoji, profiles(name, aka)")
+          .in("comment_id", commentIds)
+      : { data: [], error: null };
+    if (reactionsError) console.warn("Anime comment reactions read failed:", reactionsError.code);
+
+    return json({ ok: true, comments: data ?? [], reactions: reactions ?? [], viewerId: authData.user?.id ?? null });
   } catch (error) {
     console.error("Anime comments read failed:", error);
     return json({ ok: false, error: "COMMENTS_UNAVAILABLE" }, 503);
@@ -70,7 +78,7 @@ export const GET: APIRoute = async ({ request, cookies }) => {
 };
 
 export const POST: APIRoute = async ({ request, cookies }) => {
-  let body: { animeId?: unknown; content?: unknown };
+  let body: { animeId?: unknown; content?: unknown; parentCommentId?: unknown };
   try { body = await request.json(); }
   catch { return json({ ok: false, error: "INVALID_REQUEST" }, 400); }
 
@@ -84,16 +92,43 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const { data: authData, error: authError } = await supabase.auth.getUser();
     if (authError || !authData.user) return json({ ok: false, error: "AUTH_REQUIRED" }, 401);
 
-    const { error } = await supabase.from("anime_comments").insert({
+    let recipientId: string | null = null;
+    let parentCommentId: string | null = null;
+    if (body.parentCommentId !== undefined && body.parentCommentId !== null) {
+      if (typeof body.parentCommentId !== "string" || !/^[0-9a-f-]{36}$/i.test(body.parentCommentId)) {
+        return json({ ok: false, error: "INVALID_PARENT_COMMENT" }, 400);
+      }
+      const { data: parent, error: parentError } = await supabase.from("anime_comments")
+        .select("id, anime_id, user_id, parent_comment_id")
+        .eq("id", body.parentCommentId)
+        .maybeSingle();
+      if (parentError || !parent || parent.anime_id !== animeId || parent.parent_comment_id) {
+        return json({ ok: false, error: "PARENT_COMMENT_NOT_FOUND" }, 404);
+      }
+      parentCommentId = parent.id;
+      recipientId = parent.user_id;
+    }
+
+    const { data: inserted, error } = await supabase.from("anime_comments").insert({
       anime_id: animeId,
       user_id: authData.user.id,
+      parent_comment_id: parentCommentId,
       content,
-    });
-    if (error) {
-      console.warn("Anime comment create failed:", error.code);
+    }).select("id").single();
+    if (error || !inserted) {
+      console.warn("Anime comment create failed:", error?.code);
       return json({ ok: false, error: "COMMENT_CREATE_FAILED" }, 503);
     }
-    return json({ ok: true }, 201);
+    if (recipientId && recipientId !== authData.user.id) {
+      const { error: notificationError } = await supabase.from("notifications").insert({
+        recipient_id: recipientId,
+        actor_id: authData.user.id,
+        comment_id: inserted.id,
+        type: "comment_reply",
+      });
+      if (notificationError) console.warn("Reply notification create failed:", notificationError.code);
+    }
+    return json({ ok: true, id: inserted.id }, 201);
   } catch (error) {
     console.error("Anime comment create failed:", error);
     return json({ ok: false, error: "COMMENT_CREATE_FAILED" }, 503);
