@@ -22,7 +22,7 @@ if (libraryError) {
 
 const { data: profileData } = await supabase
   .from("profiles")
-  .select("id, name, aka, bio, location, avatar_url, cover_url, interests, created_at")
+  .select("id, name, aka, headline, bio, location, avatar_url, cover_url, interests, created_at")
   .eq("id", user.id)
   .maybeSingle();
 const profile = { ...user, ...profileData };
@@ -42,7 +42,7 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
     <section class="profile-card">
       <section class="profile-editor" aria-labelledby="profile-editor-title">
         <div class="cover-preview" id="cover-preview" style={profile.cover_url ? `background-image: linear-gradient(0deg, rgba(5,5,5,.94), rgba(5,5,5,.08)), url("${profile.cover_url}")` : undefined}>
-          <button class="media-edit cover-edit" type="button" data-pick="cover">{isEnglish ? "Change cover" : "Cambiar banner"}</button>
+          <button class="media-edit cover-edit" type="button" data-pick="cover" aria-label={isEnglish ? "Change cover image" : "Cambiar imagen de portada"}>{isEnglish ? "Change cover" : "Cambiar banner"}</button>
           <input class="file-input" id="cover-input" type="file" accept="image/jpeg,image/png,image/webp,image/avif" />
         </div>
         <div class="identity-editor">
@@ -52,7 +52,6 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
             <input class="file-input" id="avatar-input" type="file" accept="image/jpeg,image/png,image/webp,image/avif" />
           </div>
           <div class="identity-copy">
-            <p class="eyebrow">{isEnglish ? "YOUR SPACE" : "TU ESPACIO"}</p>
             <h2 id="identity-name">{profile.name}</h2>
             <p class="handle" id="identity-aka">@{profile.aka}</p>
           </div>
@@ -68,8 +67,15 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
           <label>{isEnglish ? "Username" : "Nombre de usuario"}
             <div class="username-input"><span>@</span><input id="profile-aka" maxlength="24" value={profile.aka || ""} placeholder="username" /></div>
           </label>
-          <label>{isEnglish ? "Biography" : "Biografía"}
-            <textarea id="profile-bio" maxlength="280" placeholder={isEnglish ? "Tell the community about yourself…" : "Cuéntale a la comunidad quién eres…"}>{profile.bio || ""}</textarea>
+          <label>{isEnglish ? "Profile headline" : "Título"}
+            <input id="profile-headline" maxlength="80" value={profile.headline || ""} placeholder={isEnglish ? "A line that says something about you…" : "Una frase que te represente…"} />
+          </label>
+          <label>{isEnglish ? "About me" : "Sobre mí"}
+            <textarea id="profile-bio" maxlength="280" placeholder={isEnglish ? "Tell the community a little about yourself…" : "Cuéntale a la comunidad algo sobre ti…"}>{profile.bio || ""}</textarea>
+          </label>
+          <label>{isEnglish ? "Favourite anime genres" : "Géneros de anime favoritos"}
+            <input id="profile-interests" maxlength="180" value={(profile.interests || []).join(", ")} placeholder={isEnglish ? "Action, fantasy, psychological…" : "Acción, fantasía, psicológico…"} />
+            <span class="field-hint">{isEnglish ? "Separate genres with commas." : "Separa los géneros con comas."}</span>
           </label>
           <label>{isEnglish ? "Location (optional)" : "Ubicación (opcional)"}
             <input id="profile-location" maxlength="80" value={profile.location || ""} placeholder={isEnglish ? "City, country" : "Ciudad, país"} />
@@ -82,20 +88,30 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
         </div>
       </section>
 
-      <section class="library-section">
-        <p class="section-label">{isEnglish ? "MY RENANIME" : "MI RENANIME"}</p>
-
-        <div class="stats">
-          <article class="stat-card">
-            <span class="stat-number" data-personal-count="PENDING">{pending.length}</span>
-            <span class="stat-label">{isEnglish ? "ANIME ON MY LIST" : "ANIMES EN MI LISTA"}</span>
-          </article>
-
-          <article class="stat-card">
-            <span class="stat-number" data-personal-count="WATCHED">{watched.length}</span>
-            <span class="stat-label">{isEnglish ? "ANIME IN MY COLLECTION" : "ANIMES EN MI COLECCIÓN"}</span>
-          </article>
+      <section class="profile-about" aria-label={isEnglish ? "About" : "Sobre mí"}>
+        {profile.headline && <h1 id="profile-headline-view">{profile.headline}</h1>}
+        {profile.bio && <p id="profile-bio-view">{profile.bio}</p>}
+        {profile.location && <p class="profile-location-view">{profile.location}</p>}
+        <div class="genre-tags" id="profile-genre-tags">
+          {(profile.interests || []).map((genre: string) => <span>#{genre}</span>)}
         </div>
+      </section>
+
+      <section class="profile-stats" aria-label={isEnglish ? "Anime activity" : "Actividad anime"}>
+        <a href={localizedPath(Astro.locals.lang, "/collection/")} class="profile-stat">
+          <strong>{watched.length}</strong><span>{isEnglish ? "Viewed anime" : "Animes vistos"}</span>
+        </a>
+        <a href={localizedPath(Astro.locals.lang, "/pending/")} class="profile-stat">
+          <strong>{pending.length}</strong><span>{isEnglish ? "On my list" : "En mi lista"}</span>
+        </a>
+        <div class="profile-stat"><strong>—</strong><span>{isEnglish ? "Activity" : "Actividad"}</span></div>
+      </section>
+
+      <section class="profile-library-links">
+        <div class="profile-library-heading"><h2>{isEnglish ? "Watched anime" : "Animes vistos"}</h2><a href={localizedPath(Astro.locals.lang, "/collection/")}>{isEnglish ? "See all" : "Ver todos"}</a></div>
+        <p>{isEnglish ? "Your latest additions will appear here." : "Aquí aparecerán tus últimos animes añadidos."}</p>
+        <div class="profile-library-heading"><h2>{isEnglish ? "Watchlist" : "Mi lista"}</h2><a href={localizedPath(Astro.locals.lang, "/pending/")}>{isEnglish ? "See all" : "Ver todos"}</a></div>
+        <p>{isEnglish ? "Anime you plan to watch will appear here." : "Aquí aparecerán los animes que tienes pendientes."}</p>
       </section>
 
       <div class="profile-actions">
@@ -113,14 +129,16 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
   .profile-editor { margin: 0; overflow: visible; border: 0; border-radius: 0; background: transparent; }
   .cover-preview { position: relative; width: 100%; height: clamp(210px, 34vw, 340px); background: linear-gradient(135deg,#24202a,#111); background-size: cover; background-position: center; isolation: isolate; }
   .cover-preview::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: linear-gradient(180deg, rgba(0,0,0,.02) 28%, rgba(0,0,0,.22) 58%, #050505 100%); }
-  .cover-edit { z-index: 1; }
+   .cover-edit { position: absolute; right: 1rem; bottom: 1rem; z-index: 2; display: none; }
+  .profile-editor.is-editing .cover-edit { display: inline-flex; }
+  .profile-editor.is-editing .avatar-edit { display: grid; }
   .media-edit { border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: .65rem .9rem; color: white; background: rgba(0,0,0,.45); backdrop-filter: blur(10px); cursor: pointer; font: inherit; font-size: .78rem; }
-  .cover-edit { position: absolute; right: 1rem; bottom: 1rem; }
+
   .file-input { display: none; }
   .identity-editor { display: flex; align-items: end; gap: 1rem; padding: 0 1.5rem; margin-top: -3.4rem; position: relative; }
   .avatar-wrap { position: relative; flex: 0 0 auto; }
   .avatar-preview { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; border: 4px solid #090909; background: #242424; }
-  .avatar-edit { position: absolute; right: 2px; bottom: 8px; width: 30px; height: 30px; border: 1px solid rgba(255,255,255,.5); border-radius: 50%; background: #ec4899; color: white; font-size: 1.2rem; cursor: pointer; }
+  .avatar-edit { display: none; place-items: center; position: absolute; right: 2px; bottom: 8px; width: 30px; height: 30px; border: 1px solid rgba(255,255,255,.5); border-radius: 50%; background: #ec4899; color: white; font-size: 1.2rem; cursor: pointer; }
   .identity-copy { padding-bottom: .45rem; min-width: 0; flex: 1; }
   .profile-edit-toggle { display: grid; place-items: center; flex: 0 0 42px; width: 42px; height: 42px; margin: 0 0 .55rem auto; border: 1px solid rgba(255,255,255,.2); border-radius: 50%; background: rgba(255,255,255,.06); color: #fff; cursor: pointer; }
   .profile-edit-toggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
@@ -141,13 +159,25 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
   .upload-note { margin: 0; color: #777; font-size: .72rem; }
   .profile-page {
     min-height: 100vh;
-    padding: 80px 1.25rem 2.5rem;
+    padding: 88px 0 2.5rem;
   }
 
-  .profile-card {
-    width: min(100%, 860px);
-    margin: 0 auto;
-  }
+  .profile-card { width: min(100%, 860px); margin: 0 auto; }
+  .profile-about { padding: 1.25rem 1.5rem .5rem; }
+  .profile-about h1 { margin: 0 0 .55rem; font-size: clamp(1.35rem, 4vw, 2rem); line-height: 1.15; letter-spacing: -.025em; }
+  .profile-about p { margin: .4rem 0; color: #c5c5c5; font-size: .92rem; line-height: 1.55; }
+  .profile-location-view { color: #888 !important; font-size: .78rem !important; }
+  .genre-tags { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .9rem; }
+  .genre-tags span { padding: .42rem .65rem; border: 1px solid rgba(255,255,255,.12); border-radius: 999px; background: rgba(255,255,255,.045); color: #ddd; font-size: .68rem; }
+  .profile-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: .5rem; padding: 1rem 1.5rem; }
+  .profile-stat { display: grid; gap: .25rem; color: inherit; text-decoration: none; }
+  .profile-stat strong { font-size: 1.45rem; font-weight: 650; }
+  .profile-stat span { color: #888; font-size: .65rem; }
+  .profile-library-links { padding: .5rem 1.5rem 2rem; }
+  .profile-library-heading { display:flex; align-items:center; justify-content:space-between; margin-top:1.25rem; }
+  .profile-library-heading h2 { margin:0; font-size:1.05rem; }
+  .profile-library-heading a { color:#ec4899; font-size:.72rem; text-decoration:none; }
+  .profile-library-links > p { margin:.5rem 0; color:#777; font-size:.78rem; }
 
   .profile-header {
     padding-bottom: 1.5rem;
@@ -271,9 +301,7 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
   }
 
   @media (max-width: 520px) {
-    .profile-page {
-      padding: 80px 0 1.5rem;
-    }
+    .profile-page { padding: 68px 0 1.5rem; }
     .profile-card { width: 100%; }
     .cover-preview { height: 220px; }
     .identity-editor { padding: 0 1.25rem; }
@@ -283,9 +311,10 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
     .editor-fields { padding: 1rem 1.25rem; }
     .cover-preview { height: 220px; }
 
-    .profile-card {
-      width: min(100%, 560px);
-    }
+    .profile-card { width: 100%; }
+    .profile-about { padding: 1rem 1.25rem .4rem; }
+    .profile-stats { padding: .8rem 1.25rem; }
+    .profile-library-links { padding: .4rem 1.25rem 1.5rem; }
 
     .stats {
       grid-template-columns: 1fr 1fr;
@@ -306,11 +335,6 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
       line-height: 1.25;
     }
 
-    .eyebrow,
-    .section-label {
-      font-size: .58rem;
-    }
-
     .profile-actions {
       margin-top: .75rem;
     }
@@ -327,12 +351,14 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
 <script>
   const isEnglish = document.documentElement.lang === "en";
   const logoutButton = document.querySelector<HTMLButtonElement>("#logout-button");
+  const profileEditor = document.querySelector<HTMLElement>(".profile-editor");
   const editorToggle = document.querySelector<HTMLButtonElement>("#toggle-profile-editor");
   const editorFields = document.querySelector<HTMLElement>("#profile-editor-fields");
   editorToggle?.addEventListener("click", () => {
     if (!editorFields) return;
     const opening = editorFields.hidden;
     editorFields.hidden = !opening;
+    profileEditor?.classList.toggle("is-editing", opening);
     editorToggle.setAttribute("aria-expanded", String(opening));
     if (opening) editorFields.querySelector<HTMLInputElement>("input")?.focus();
   });
@@ -400,7 +426,9 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
           name: (document.querySelector<HTMLInputElement>("#profile-name")?.value || "").trim(),
           aka: (document.querySelector<HTMLInputElement>("#profile-aka")?.value || "").trim(),
           bio: (document.querySelector<HTMLTextAreaElement>("#profile-bio")?.value || "").trim(),
-          location: (document.querySelector<HTMLInputElement>("#profile-location")?.value || "").trim()
+          location: (document.querySelector<HTMLInputElement>("#profile-location")?.value || "").trim(),
+          headline: (document.querySelector<HTMLInputElement>("#profile-headline")?.value || "").trim(),
+          interests: (document.querySelector<HTMLInputElement>("#profile-interests")?.value || "").split(",").map(value => value.trim()).filter(Boolean)
         })
       });
       const result = await response.json();
@@ -411,6 +439,23 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
       const akaNode = document.querySelector<HTMLElement>("#identity-aka");
       if (nameNode) nameNode.textContent = savedName;
       if (akaNode) akaNode.textContent = "@" + savedAka;
+      const headline = (document.querySelector<HTMLInputElement>("#profile-headline")?.value || "").trim();
+      const bio = (document.querySelector<HTMLTextAreaElement>("#profile-bio")?.value || "").trim();
+      const interests = (document.querySelector<HTMLInputElement>("#profile-interests")?.value || "").split(",").map(value => value.trim()).filter(Boolean);
+      const headlineView = document.querySelector<HTMLElement>("#profile-headline-view");
+      if (headline && headlineView) headlineView.textContent = headline;
+      else if (headline) {
+        const node = document.createElement("h1"); node.id = "profile-headline-view"; node.textContent = headline;
+        document.querySelector(".profile-about")?.prepend(node);
+      } else headlineView?.remove();
+      const bioView = document.querySelector<HTMLElement>("#profile-bio-view");
+      if (bio && bioView) bioView.textContent = bio;
+      else if (bio) {
+        const node = document.createElement("p"); node.id = "profile-bio-view"; node.textContent = bio;
+        document.querySelector(".profile-about")?.append(node);
+      } else bioView?.remove();
+      const tags = document.querySelector<HTMLElement>("#profile-genre-tags");
+      if (tags) tags.replaceChildren(...interests.map(genre => { const tag = document.createElement("span"); tag.textContent = "#" + genre; return tag; }));
       if (feedback) feedback.textContent = copy("Perfil actualizado.", "Profile updated.");
     } catch (error) {
       if (feedback) feedback.textContent = error instanceof Error ? error.message : copy("Error al guardar.", "Save error.");
