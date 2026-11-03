@@ -42,10 +42,10 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
     <section class="profile-card">
       <section class="profile-editor" aria-labelledby="profile-editor-title">
         <div class="cover-preview" id="cover-preview" style={profile.cover_url ? `background-image: linear-gradient(0deg, rgba(5,5,5,.94), rgba(5,5,5,.08)), url("${profile.cover_url}")` : undefined}>
-          <label class="media-edit cover-edit">
-            <span>{isEnglish ? "Add cover photo" : "Añadir foto de portada"}</span>
-            <input class="cover-file-input" id="cover-input" name="cover" type="file" accept="image/jpeg,.jpg,.jpeg,.png,.webp,.avif" aria-label={isEnglish ? "Choose cover photo" : "Elegir foto de portada"} />
-          </label>
+          <button class="media-edit cover-edit" id="choose-cover-button" type="button">
+            {isEnglish ? "Add cover photo" : "Añadir foto de portada"}
+          </button>
+          <input class="cover-file-input" id="cover-input" name="cover" type="file" accept="image/jpeg,image/png,image/webp,image/avif" aria-label={isEnglish ? "Choose cover photo" : "Elegir foto de portada"} />
           <span id="cover-upload-feedback" class="cover-upload-feedback" role="status" aria-live="polite"></span>
         </div>
         <div class="identity-editor">
@@ -130,8 +130,7 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
   .profile-editor { margin: 0; overflow: visible; border: 0; border-radius: 0; background: transparent; }
   .cover-preview { position: relative; width: 100%; height: clamp(210px, 34vw, 340px); background: linear-gradient(135deg,#24202a,#111); background-size: cover; background-position: center; isolation: isolate; }
   .cover-edit { position:absolute; right:1rem; bottom:1rem; z-index:5; display:none; cursor:pointer; pointer-events:auto; }
-  .cover-edit span { position:relative; z-index:0; pointer-events:none; }
-  .cover-file-input { position:absolute; inset:0; z-index:2; display:block; width:100%; height:100%; margin:0; padding:0; opacity:0; cursor:pointer; pointer-events:auto; font-size:1rem; }
+  .cover-file-input { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
   .cover-upload-feedback { position:absolute; z-index:4; left:1rem; bottom:.75rem; max-width:55%; color:#fff; font-size:.72rem; text-shadow:0 1px 5px #000; pointer-events:none; }
   .cover-preview::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: linear-gradient(180deg, rgba(0,0,0,.02) 28%, rgba(0,0,0,.22) 58%, #050505 100%); }
 
@@ -360,16 +359,30 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
 
 <script>
   const isEnglish = document.documentElement.lang === "en";
-  const profileEditor = document.querySelector<HTMLElement>(".profile-editor");
-  const editorToggle = document.querySelector<HTMLButtonElement>("#toggle-profile-editor");
-  const editorFields = document.querySelector<HTMLElement>("#profile-editor-fields");
-  editorToggle?.addEventListener("click", () => {
-    if (!editorFields) return;
-    const opening = editorFields.hidden;
-    editorFields.hidden = !opening;
-    profileEditor?.classList.toggle("is-editing", opening);
-    editorToggle.setAttribute("aria-expanded", String(opening));
-    if (opening) editorFields.querySelector<HTMLInputElement>("input")?.focus();
+  // ClientRouter keeps the document alive between routes: delegate clicks to the
+  // persistent document so controls work on every visit to /profile/.
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const toggle = target.closest<HTMLButtonElement>("#toggle-profile-editor");
+    if (toggle) {
+      const editor = document.querySelector<HTMLElement>(".profile-editor");
+      const fields = document.querySelector<HTMLElement>("#profile-editor-fields");
+      if (!fields) return;
+      const opening = fields.hidden;
+      fields.hidden = !opening;
+      editor?.classList.toggle("is-editing", opening);
+      toggle.setAttribute("aria-expanded", String(opening));
+      if (opening) fields.querySelector<HTMLInputElement>("input")?.focus();
+      return;
+    }
+
+    const coverButton = target.closest<HTMLButtonElement>("#choose-cover-button");
+    if (coverButton) {
+      const input = document.querySelector<HTMLInputElement>("#cover-input");
+      input?.click();
+    }
   });
   const feedback = document.querySelector<HTMLElement>("#profile-feedback");
   const copy = (es: string, en: string) => isEnglish ? en : es;
