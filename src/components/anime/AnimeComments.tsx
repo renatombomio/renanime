@@ -9,6 +9,25 @@ type CommentProfile = {
 
 type CommentReaction = { id: string; comment_id: string; user_id: string; emoji: string; profiles?: { name?: string | null; aka?: string | null } | null };
 
+function formatRelativeTime(value: string, lang: Lang): string {
+  const timestamp = new Date(value).getTime();
+  if (!Number.isFinite(timestamp)) return "";
+  const seconds = Math.round((timestamp - Date.now()) / 1000);
+  const units: Array<[Intl.RelativeTimeFormatUnit, number]> = [
+    ["year", 60 * 60 * 24 * 365],
+    ["month", 60 * 60 * 24 * 30],
+    ["week", 60 * 60 * 24 * 7],
+    ["day", 60 * 60 * 24],
+    ["hour", 60 * 60],
+    ["minute", 60],
+    ["second", 1],
+  ];
+  const formatter = new Intl.RelativeTimeFormat(lang === "en" ? "en" : "es", { numeric: "auto" });
+  if (Math.abs(seconds) < 10) return lang === "en" ? "just now" : "ahora";
+  const [unit, size] = units.find(([, unitSeconds]) => Math.abs(seconds) >= unitSeconds) ?? units[units.length - 1];
+  return formatter.format(Math.round(seconds / size), unit);
+}
+
 type AnimeComment = {
   id: string;
   user_id: string;
@@ -203,7 +222,7 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
         .anime-comment-reply-link:hover{color:#f5f2ec}
         .anime-comment-social{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin-top:.45rem}
         .anime-comment-meta{display:flex;align-items:center;flex-wrap:wrap;gap:.65rem;margin-top:.45rem}
-        .anime-comment-meta .anime-comment-date{font-size:.72rem;color:#858585}
+        .anime-comment-meta .anime-comment-date{font-size:.72rem;color:#858585;white-space:nowrap;line-height:1.4}
         .anime-comment-reaction-trigger,.anime-comment-reaction-selected,.anime-comment-reaction-add{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;border:1px solid rgba(245,242,236,.16);border-radius:999px;background:rgba(10,10,10,.55);color:#ddd;padding:0 .48rem;font:inherit;font-size:.82rem;cursor:pointer;transition:border-color .18s,background .18s}
         .anime-comment-reaction-trigger:hover,.anime-comment-reaction-add:hover,.anime-comment-reaction-selected{border-color:rgba(236,72,153,.6);background:rgba(236,72,153,.08)}
         .anime-comment-reaction-selected{gap:.3rem;color:#f9a8d4}
@@ -288,7 +307,7 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
                     </div>
                   ) : <p>{comment.content}</p>}
                   <div className="anime-comment-meta">
-                    <time className="anime-comment-date" dateTime={comment.created_at}>{copy("Hace", " ") + (en ? new Date(comment.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : new Date(comment.created_at).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" }))}</time>
+                    <time className="anime-comment-date" dateTime={comment.created_at}>{formatRelativeTime(comment.created_at, lang)}</time>
                     {viewerId && <button type="button" className="anime-comment-reply-link" disabled={busy} onClick={() => { setReplyToId(replyToId === comment.id ? null : comment.id); setReplyEmojiPickerId(null); setReplyContent(""); }}>{copy("Responder", "Reply")}</button>}
                     {(() => {
                       const myReaction = commentReactions.find(reaction => reaction.user_id === viewerId);
