@@ -51,7 +51,7 @@ export const GET: APIRoute = async ({ request, cookies }) => {
       supabase.auth.getUser(),
       supabase
         .from("anime_comments")
-        .select("id, anime_id, user_id, parent_comment_id, content, created_at, updated_at, profiles(name, aka, avatar_url)")
+        .select("id, anime_id, user_id, parent_comment_id, content, created_at, updated_at, profiles(aka, avatar_url)")
         .eq("anime_id", animeId)
         .order("created_at", { ascending: false })
         .limit(100),
@@ -65,7 +65,7 @@ export const GET: APIRoute = async ({ request, cookies }) => {
     const commentIds = (data ?? []).map((comment) => comment.id);
     const { data: reactions, error: reactionsError } = commentIds.length
       ? await supabase.from("anime_comment_reactions")
-          .select("id, comment_id, user_id, emoji, profiles(name, aka)")
+          .select("id, comment_id, user_id, emoji, profiles(aka)")
           .in("comment_id", commentIds)
       : { data: [], error: null };
     if (reactionsError) console.warn("Anime comment reactions read failed:", reactionsError.code);
