@@ -1,39 +1,60 @@
-/* Renanime — Dark Cinematic Editorial design system */
+/* Renanime 2.0 — Bold social anime design system
+ * Legacy token names are retained during migration to avoid visual regressions.
+ */
 
 :root {
-  /* Color */
-  --color-ink-950: #090909;
-  --color-ink-900: #0d0d0d;
-  --color-ink-850: #121212;
-  --color-ink-800: #171717;
-  --color-ink-700: #222222;
-  --color-ink-600: #2d2d2d;
+  /* Core surfaces */
+  --color-ink-950: #09090b;
+  --color-ink-900: #101014;
+  --color-ink-850: #15151b;
+  --color-ink-800: #1b1b23;
+  --color-ink-700: #24242e;
+  --color-ink-600: #30303b;
 
-  --color-paper-50: #f5f2ec;
-  --color-paper-100: #ebe7df;
-  --color-paper-200: #d8d2c8;
-  --color-paper-300: #b9b2a7;
+  /* High-contrast neutral text */
+  --color-paper-50: #fafafa;
+  --color-paper-100: #f1f1f4;
+  --color-paper-200: #d4d4dc;
+  --color-paper-300: #b5b5c0;
 
-  --color-muted-400: #8f8a82;
-  --color-muted-500: #6f6b64;
-  --color-muted-600: #504d48;
+  /* Supporting text */
+  --color-muted-400: #92929f;
+  --color-muted-500: #6f6f7c;
+  --color-muted-600: #50505c;
 
-  --color-accent: #a48a68;
-  --color-accent-soft: #c2ae91;
+  /* Renanime signature accent */
+  --color-accent: #ec4899;
+  --color-accent-soft: #f472b6;
+  --color-accent-strong: #db2777;
+  --color-accent-subtle: rgba(236, 72, 153, 0.12);
+  --color-accent-glow: rgba(236, 72, 153, 0.28);
 
-  --color-border: rgba(245, 242, 236, 0.12);
-  --color-border-strong: rgba(245, 242, 236, 0.22);
-  --color-focus: var(--color-paper-50);
-  --color-overlay: rgba(9, 9, 9, 0.72);
+  --color-border: rgba(244, 244, 248, 0.10);
+  --color-border-strong: rgba(244, 244, 248, 0.20);
+  --color-border-accent: rgba(236, 72, 153, 0.48);
+  --color-focus: #f472b6;
+  --color-overlay: rgba(9, 9, 11, 0.78);
 
-  /* Editorial gradients */
-  --gradient-hero: linear-gradient(180deg, rgba(9, 9, 9, 0.08) 0%, rgba(9, 9, 9, 0.86) 100%);
-  --gradient-vignette: radial-gradient(circle at center, transparent 35%, rgba(9, 9, 9, 0.72) 100%);
-  --gradient-surface: linear-gradient(135deg, rgba(245, 242, 236, 0.05), rgba(245, 242, 236, 0));
+  /* Semantic aliases for new components */
+  --color-background: var(--color-ink-950);
+  --color-surface: var(--color-ink-900);
+  --color-surface-raised: var(--color-ink-850);
+  --color-surface-hover: var(--color-ink-800);
+  --color-text-primary: var(--color-paper-50);
+  --color-text-secondary: var(--color-paper-200);
+  --color-text-muted: var(--color-muted-400);
+  --color-border-subtle: var(--color-border);
+  --color-brand: var(--color-accent);
+  --color-brand-hover: var(--color-accent-soft);
+
+  /* Image treatments — kept for existing anime artwork */
+  --gradient-hero: linear-gradient(180deg, rgba(9, 9, 11, 0.04) 0%, rgba(9, 9, 11, 0.88) 100%);
+  --gradient-vignette: radial-gradient(circle at center, transparent 35%, rgba(9, 9, 11, 0.72) 100%);
+  --gradient-surface: linear-gradient(135deg, rgba(250, 250, 250, 0.035), rgba(250, 250, 250, 0));
   --gradient-grain:
-    radial-gradient(circle at 12% 18%, rgba(245, 242, 236, 0.025) 0 0.6px, transparent 0.8px),
-    radial-gradient(circle at 76% 34%, rgba(245, 242, 236, 0.02) 0 0.5px, transparent 0.75px),
-    radial-gradient(circle at 38% 82%, rgba(245, 242, 236, 0.018) 0 0.55px, transparent 0.8px);
+    radial-gradient(circle at 12% 18%, rgba(250, 250, 250, 0.018) 0 0.6px, transparent 0.8px),
+    radial-gradient(circle at 76% 34%, rgba(250, 250, 250, 0.014) 0 0.5px, transparent 0.75px),
+    radial-gradient(circle at 38% 82%, rgba(250, 250, 250, 0.012) 0 0.55px, transparent 0.8px);
 
   /* Typography */
   --font-display: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -59,12 +80,12 @@
   --tracking-tight: -0.055em;
   --tracking-heading: -0.04em;
   --tracking-body: 0;
-  --tracking-label: 0.14em;
-  --tracking-meta: 0.04em;
+  --tracking-label: 0.10em;
+  --tracking-meta: 0.035em;
 
   --leading-tight: 0.94;
   --leading-snug: 1.15;
-  --leading-body: 1.6;
+  --leading-body: 1.55;
   --leading-meta: 1.2;
 
   /* Spacing */
@@ -82,16 +103,16 @@
   --space-24: 6rem;
   --space-32: 8rem;
 
-  --section-space: clamp(5rem, 10vw, 10rem);
-  --section-space-compact: clamp(3.5rem, 7vw, 6rem);
+  --section-space: clamp(3rem, 7vw, 6rem);
+  --section-space-compact: clamp(2rem, 4vw, 3.5rem);
 
   /* Layout */
   --container-max: 1440px;
   --content-max: 960px;
   --reading-max: 680px;
-  --gutter: clamp(1.25rem, 4vw, 4rem);
-  --grid-gap: clamp(0.75rem, 1.5vw, 1.5rem);
-  --grid-gap-lg: clamp(1.5rem, 3vw, 3rem);
+  --gutter: clamp(1rem, 3vw, 2.5rem);
+  --grid-gap: clamp(0.65rem, 1.4vw, 1.25rem);
+  --grid-gap-lg: clamp(1.25rem, 2.5vw, 2.5rem);
 
   /* Responsive breakpoints */
   --breakpoint-mobile: 560px;
@@ -100,40 +121,42 @@
   --breakpoint-wide: 1280px;
 
   /* Shape */
-  --radius-sm: 2px;
-  --radius-md: 6px;
-  --radius-lg: 12px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
   --radius-pill: 999px;
 
   /* Shadows / depth */
-  --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.18);
-  --shadow-deep: 0 24px 80px rgba(0, 0, 0, 0.32);
-  --shadow-image: 0 18px 50px rgba(0, 0, 0, 0.28);
-  --shadow-overlay: 0 24px 60px rgba(0, 0, 0, 0.45);
+  --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.22);
+  --shadow-deep: 0 24px 80px rgba(0, 0, 0, 0.42);
+  --shadow-image: 0 18px 50px rgba(0, 0, 0, 0.32);
+  --shadow-overlay: 0 24px 60px rgba(0, 0, 0, 0.56);
+  --shadow-accent: 0 8px 28px rgba(236, 72, 153, 0.18);
 
   /* Opacity */
   --opacity-disabled: 0.42;
   --opacity-muted: 0.68;
-  --opacity-overlay: 0.72;
-  --opacity-hover: 0.88;
+  --opacity-overlay: 0.76;
+  --opacity-hover: 0.90;
   --opacity-full: 1;
 
-  /* Motion language */
+  /* Motion */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-linear: linear;
 
   --duration-instant: 0ms;
-  --duration-fast: 180ms;
-  --duration-base: 400ms;
-  --duration-slow: 800ms;
-  --duration-cinematic: 1200ms;
-  --duration-crossfade: 1600ms;
+  --duration-fast: 160ms;
+  --duration-base: 240ms;
+  --duration-slow: 420ms;
+  --duration-cinematic: 700ms;
+  --duration-crossfade: 500ms;
 
-  --motion-distance-sm: 10px;
-  --motion-distance-md: 24px;
-  --motion-distance-lg: 48px;
-  --motion-stagger-step: 55ms;
+  --motion-distance-sm: 8px;
+  --motion-distance-md: 18px;
+  --motion-distance-lg: 32px;
+  --motion-stagger-step: 45ms;
 
   /* Layering */
   --z-base: 0;
@@ -144,11 +167,11 @@
 }
 
 @media (min-width: 768px) {
-  :root { --gutter: clamp(2rem, 5vw, 5rem); }
+  :root { --gutter: clamp(1.5rem, 4vw, 3.5rem); }
 }
 
 @media (min-width: 1280px) {
-  :root { --grid-gap: 1.5rem; }
+  :root { --grid-gap: 1.25rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
