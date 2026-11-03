@@ -11,7 +11,7 @@ function json(body: unknown, status = 200) {
 }
 
 export const POST: APIRoute = async ({ request, cookies }) => {
-  let body: { name?: unknown; aka?: unknown; headline?: unknown; bio?: unknown; location?: unknown; interests?: unknown };
+  let body: { name?: unknown; aka?: unknown; headline?: unknown; bio?: unknown; location?: unknown; interests?: unknown; isPrivate?: unknown };
   try { body = await request.json(); }
   catch { return json({ ok: false, error: "INVALID_REQUEST" }, 400); }
 
@@ -44,6 +44,10 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     if (typeof body.location !== "string" || body.location.length > 80) return json({ ok: false, error: "INVALID_LOCATION" }, 400);
     updates.location = body.location.trim() || null;
   }
+  if (body.isPrivate !== undefined) {
+    if (typeof body.isPrivate !== "boolean") return json({ ok: false, error: "INVALID_PRIVACY_SETTING" }, 400);
+    updates.is_private = body.isPrivate;
+  }
   if (!Object.keys(updates).length) return json({ ok: false, error: "NO_CHANGES" }, 400);
 
   try {
@@ -55,7 +59,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       .from("profiles")
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq("id", authData.user.id)
-      .select("name, aka, headline, bio, location, interests")
+      .select("name, aka, headline, bio, location, interests, is_private")
       .single();
 
     if (error) {
