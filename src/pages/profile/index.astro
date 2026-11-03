@@ -201,15 +201,18 @@ const favoritesCount = favoriteError ? 0 : (await supabase.from("anime_likes").s
   .profile-library-heading h2 { margin:0; font-size:1.05rem; }
   .profile-library-heading a { color:#ec4899; font-size:.72rem; text-decoration:none; }
   .profile-anime-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.55rem; margin-top:.75rem; }
-  .profile-anime-card { display:flex; align-items:center; gap:.6rem; min-width:0; min-height:66px; padding:.35rem; border-radius:9px; background:rgba(255,255,255,.035); color:#eee; text-decoration:none; }
-  .profile-anime-card img { width:58px; height:58px; flex:0 0 58px; display:block; object-fit:cover; border-radius:6px; background:#171717; }
-  .profile-anime-card-copy { display:grid; gap:.35rem; min-width:0; }
-  .profile-anime-card-title { overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; font-size:.72rem; line-height:1.2; }
-  .profile-anime-card-meta { display:flex; align-items:center; gap:.65rem; color:#999; font-size:.62rem; }
-  .profile-anime-card-meta span { display:inline-flex; align-items:center; gap:.2rem; }
-  .profile-anime-card-meta svg { width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:1.7; }
+  .profile-anime-card { display:grid; grid-template-columns:48px minmax(0,1fr) 27px; align-items:center; gap:.48rem; min-width:0; min-height:66px; padding:.38rem; border:1px solid rgba(255,255,255,.07); border-radius:9px; background:rgba(255,255,255,.035); color:#eee; text-decoration:none; transition:background .18s ease,border-color .18s ease; }
+  .profile-anime-card:hover { background:rgba(255,255,255,.065); border-color:rgba(255,255,255,.14); }
+  .profile-anime-card img { width:48px; height:66px; flex:0 0 48px; display:block; object-fit:cover; border-radius:5px; background:#171717; }
+  .profile-anime-card-copy { display:block; min-width:0; }
+  .profile-anime-card-title { display:-webkit-box; overflow:hidden; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow-wrap:anywhere; font-size:.68rem; line-height:1.25; font-weight:550; }
+  .profile-anime-card-meta { display:grid; justify-items:center; align-content:center; gap:.45rem; min-width:0; color:#a5a5a5; font-size:.58rem; }
+  .profile-anime-card-meta span { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.08rem; line-height:1; }
+  .profile-anime-card-meta svg { width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:1.7; }
   .profile-anime-card-meta .like-count svg { color:#ec4899; }
+  .profile-anime-card-meta .comment-count svg { color:#aaa; }
   .profile-anime-empty { grid-column:1/-1; padding:.8rem 0; color:#777; font-size:.75rem; }
+  @media(max-width:380px) { .profile-anime-grid { gap:.4rem; } .profile-anime-card { grid-template-columns:42px minmax(0,1fr) 24px; gap:.35rem; padding:.3rem; } .profile-anime-card img { width:42px; height:60px; } .profile-anime-card-title { font-size:.64rem; } }
   .profile-anime-empty { grid-column:1/-1; padding:.8rem 0; color:#777; font-size:.75rem; }
   .field-hint { color:#777; font-size:.68rem; }
   
@@ -452,7 +455,7 @@ const favoritesCount = favoriteError ? 0 : (await supabase.from("anime_likes").s
           const meta = document.createElement("span"); meta.className = "profile-anime-card-meta";
           const likeMeta = document.createElement("span"); likeMeta.className = "like-count"; likeMeta.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 10-8.8 10s-8.8-4.8-8.8-10a4.6 4.6 0 0 1 8.8-1.9 4.6 4.6 0 0 1 8.8 1.9Z"/></svg><span></span>'; likeMeta.querySelector("span")!.textContent = Number(counts.count||0).toLocaleString(isEnglish?"en":"es");
           const commentMeta = document.createElement("span"); commentMeta.className = "comment-count"; commentMeta.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 8.8 8.8 0 0 1-4-.95L3 21l1.95-5.5A8.8 8.8 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3H13a8.5 8.5 0 0 1 8 8.5Z"/></svg><span>0</span>';
-          meta.append(likeMeta,commentMeta); cardCopy.append(titleNode,meta); card.append(img,cardCopy); return card;
+          meta.append(likeMeta,commentMeta); cardCopy.append(titleNode); card.append(img,cardCopy,meta); return card;
         }).filter((card): card is HTMLAnchorElement => card instanceof HTMLAnchorElement);
         grid.replaceChildren(...(cards.length ? cards : [Object.assign(document.createElement("span"),{className:"profile-anime-empty",textContent:copy("Todavía no hay animes aquí.","No anime here yet.")})]));
       });
