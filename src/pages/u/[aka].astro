@@ -1,0 +1,182 @@
+---
+export const prerender = false;
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/layout/Navbar.astro";
+import { createSupabaseSsrClient } from "../../lib/supabase-ssr";
+import { localizedPath } from "../../i18n";
+
+const lang = Astro.locals.lang;
+const en = lang === "en";
+const aka = Astro.params.aka || "";
+const supabase = createSupabaseSsrClient(Astro.request, Astro.cookies);
+const { data: profile, error: profileError } = await supabase
+  .from("profiles")
+  .select("id, name, aka, headline, bio, location, avatar_url, cover_url, interests, created_at, last_seen_at, is_private")
+  .eq("aka", aka)
+  .maybeSingle();
+
+if (profileError) console.error("Public profile lookup error:", profileError.message);
+if (!profile) return new Response(en ? "Profile not found" : "Perfil no encontrado", { status: 404 });
+
+const { data: libraryData, error: libraryError } = await supabase
+  .from("user_anime")
+  .select("anime_id, status, updated_at")
+  .eq("user_id", profile.id)
+  .order("updated_at", { ascending: false });
+if (libraryError) console.error("Public profile library error:", libraryError.message);
+const library = Array.isArray(libraryData) ? libraryData : [];
+const watched = library.filter((entry: any) => entry.status === "seen");
+const pending = library.filter((entry: any) => entry.status === "pending");
+const { data: favoriteData, count: favoritesCount, error: favoriteError } = await supabase
+  .from("anime_likes")
+  .select("anime_id, created_at", { count: "exact" })
+  .eq("user_id", profile.id)
+  .order("created_at", { ascending: false })
+  .limit(4);
+if (favoriteError) console.error("Public profile favorites error:", favoriteError.message);
+const favorites = Array.isArray(favoriteData) ? favoriteData : [];
+const { count: commentsCount, error: commentsError } = await supabase
+  .from("anime_comments")
+  .select("id", { count: "exact", head: true })
+  .eq("user_id", profile.id);
+if (commentsError) console.error("Public profile comments error:", commentsError.message);
+const online = profile.last_seen_at && new Date(profile.last_seen_at).getTime() >= Date.now() - 5 * 60 * 1000;
+const displayTitle = profile.name || `@${profile.aka}`;
+const pageTitle = `@${profile.aka} — Renanime`;
+---
+
+<Layout title={pageTitle} description={profile.headline || profile.bio || (en ? "Anime fan on Renanime." : "Fan del anime en Renanime.")}>
+  <Navbar />
+  <main class="public-profile-page">
+    <article class="public-profile">
+      <div class="public-cover" style={profile.cover_url ? `background-image: linear-gradient(0deg,rgba(0,0,0,.94),rgba(0,0,0,.08)),url("${profile.cover_url}")` : undefined}>
+        {online && <span class="public-online"><i></i>{en ? "Online" : "En línea"}</span>}
+      </div>
+      <header class="public-identity">
+        <img src={profile.avatar_url || "/images/profile-avatar-placeholder.svg"} alt={en ? "Profile picture" : "Foto de perfil"} />
+        <div class="public-identity-copy">
+          <h1>{displayTitle}</h1>
+          <p>@{profile.aka}</p>
+        </div>
+      </header>
+
+      <section class="public-about">
+        {profile.headline && <h2>{profile.headline}</h2>}
+        {profile.bio && <p>{profile.bio}</p>}
+        {profile.location && <span class="public-location">{profile.location}</span>}
+        {profile.interests?.length > 0 && <div class="public-interests">{profile.interests.map((interest: string) => <span>#{interest}</span>)}</div>}
+        {profile.is_private && <p class="private-note">{en ? "This is your private profile. Other members cannot see your library." : "Este es tu perfil privado. Los demás usuarios no pueden ver tu biblioteca."}</p>}
+      </section>
+
+      <section class="public-stats" aria-label={en ? "Anime activity" : "Actividad anime"}>
+        <div><strong>{watched.length}</strong><span>{en ? "Watched" : "Vistos"}</span></div>
+        <div><strong>{pending.length}</strong><span>{en ? "Watchlist" : "Pendientes"}</span></div>
+        <div><strong>{favoritesCount ?? 0}</strong><span>{en ? "Favorites" : "Favoritos"}</span></div>
+        <div><strong>{commentsCount ?? 0}</strong><span>{en ? "Comments" : "Comentarios"}</span></div>
+      </section>
+
+      <section class="public-library">
+        <div class="public-library-heading"><h2>{en ? "Collection" : "Colección"}</h2><span>{watched.length}</span></div>
+        <div class="public-anime-grid" data-ids={JSON.stringify(watched.slice(0, 8).map((entry: any) => String(entry.anime_id)))}></div>
+
+        <div class="public-library-heading"><h2>{en ? "Watchlist" : "Lista"}</h2><span>{pending.length}</span></div>
+        <div class="public-anime-grid" data-ids={JSON.stringify(pending.slice(0, 8).map((entry: any) => String(entry.anime_id)))}></div>
+
+        <div class="public-library-heading"><h2>{en ? "Favorite anime" : "Animes favoritos"}</h2><span>{favoritesCount ?? 0}</span></div>
+        <div class="public-anime-grid" data-ids={JSON.stringify(favorites.map((entry: any) => String(entry.anime_id)))}></div>
+      </section>
+    </article>
+  </main>
+</Layout>
+
+<style>
+  :global(html:has(.public-profile-page)),:global(body:has(.public-profile-page)){background:#000!important}
+  .public-profile-page{min-height:100vh;padding:88px 0 3rem;background:#000}
+  .public-profile{width:min(100%,860px);margin:0 auto;background:#000;color:#f5f2ec}
+  .public-cover{position:relative;height:clamp(210px,34vw,340px);background:linear-gradient(135deg,#24202a,#111);background-size:cover;background-position:center}
+  .public-cover:after{position:absolute;inset:0;content:"";background:linear-gradient(180deg,transparent 35%,#050505 100%);pointer-events:none}
+  .public-online{position:absolute;z-index:1;top:1rem;right:1.2rem;display:flex;align-items:center;gap:.4rem;padding:.45rem .7rem;border:1px solid #ffffff35;border-radius:999px;background:#0009;color:#a5ddb0;font-size:.68rem}
+  .public-online i{width:7px;height:7px;border-radius:50%;background:#35d06f}
+  .public-identity{position:relative;display:flex;align-items:end;gap:1rem;padding:0 1.5rem;margin-top:-3.4rem}
+  .public-identity img{width:112px;height:112px;flex:0 0 auto;border:4px solid #090909;border-radius:50%;object-fit:cover;background:#222}
+  .public-identity-copy{min-width:0;padding-bottom:.45rem}
+  .public-identity h1{margin:0;font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.05;letter-spacing:-.04em;overflow-wrap:anywhere}
+  .public-identity p{margin:.25rem 0 0;color:#aaa;font-size:.85rem}
+  .public-about{padding:1.25rem 1.5rem .5rem}
+  .public-about h2{margin:0 0 .5rem;font-size:1.3rem}
+  .public-about p{margin:.4rem 0;color:#c5c5c5;font-size:.9rem;line-height:1.55}
+  .public-location{display:block;margin-top:.5rem;color:#888;font-size:.76rem}
+  .public-interests{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.8rem}
+  .public-interests span{padding:.4rem .65rem;border:1px solid #ffffff20;border-radius:999px;color:#ddd;font-size:.67rem}
+  .private-note{color:#d9a0ba!important;font-size:.76rem!important}
+  .public-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.5rem;padding:1rem 1.5rem}
+  .public-stats div{display:grid;gap:.25rem}
+  .public-stats strong{font-size:1.4rem;font-weight:650}
+  .public-stats span{color:#888;font-size:.65rem}
+  .public-library{padding:.5rem 1.5rem 2rem}
+  .public-library-heading{display:flex;align-items:center;justify-content:space-between;margin-top:1.25rem}
+  .public-library-heading h2{margin:0;font-size:1.05rem}
+  .public-library-heading span{color:#777;font-size:.7rem}
+  .public-anime-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem 1rem;margin-top:.75rem}
+  .public-anime-card{display:grid;grid-template-columns:64px minmax(0,1fr);grid-template-rows:auto auto;grid-template-areas:"cover title" "cover meta";align-items:center;gap:.25rem .65rem;min-width:0;color:#f5f2ec;text-decoration:none}
+  .public-anime-card img{grid-area:cover;width:64px;height:64px;border-radius:7px;object-fit:cover;background:#111}
+  .public-anime-title{grid-area:title;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:.78rem;line-height:1.2;font-weight:650}
+  .public-anime-meta{grid-area:meta;color:#999;font-size:.68rem}
+  .public-anime-empty{grid-column:1/-1;padding:.6rem 0;color:#777;font-size:.75rem}
+  @media(max-width:520px){.public-profile-page{padding-top:68px}.public-cover{height:220px}.public-identity{padding:0 1.25rem;margin-top:-2.8rem;gap:.75rem}.public-identity img{width:88px;height:88px}.public-about{padding:1rem 1.25rem}.public-stats{padding:.8rem 1.25rem}.public-library{padding:.4rem 1.25rem 1.5rem}.public-anime-grid{column-gap:.65rem}.public-anime-card{grid-template-columns:56px minmax(0,1fr);gap:.2rem .5rem}.public-anime-card img{width:56px;height:56px}.public-anime-title{font-size:.72rem}}
+</style>
+
+<script>
+  const en = document.documentElement.lang === "en";
+  const grids = [...document.querySelectorAll<HTMLElement>(".public-anime-grid")];
+  const ids = [...new Set(grids.flatMap(grid => JSON.parse(grid.dataset.ids || "[]") as string[]))].filter(id => /^\d+$/.test(id));
+  const copy = (es: string, english: string) => en ? english : es;
+
+  async function loadAnime() {
+    if (!ids.length) {
+      grids.forEach(grid => grid.innerHTML = '<span class="public-anime-empty">' + copy("Todavía no hay animes aquí.", "No anime here yet.") + '</span>');
+      return;
+    }
+    const variables: Record<string, number> = {};
+    const fields = ids.map((id,index) => { variables["id"+index] = Number(id); return `a${index}: Media(id: $id${index}, type: ANIME) { id title { romaji english } coverImage { large } }`; }).join("\n");
+    const definitions = ids.map((_,index) => `$id${index}: Int!`).join(", ");
+    try {
+      const [animeResponse,likesResponse,commentsResponse] = await Promise.all([
+        fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({query:`query PublicProfileAnime(${definitions}) { ${fields} }`,variables})}),
+        fetch("/api/anime/likes?ids="+ids.join(","),{credentials:"same-origin",cache:"no-store"}),
+        fetch("/api/anime/comments?ids="+ids.join(","),{credentials:"same-origin",cache:"no-store"})
+      ]);
+      if (!animeResponse.ok) throw new Error("anime_fetch_failed");
+      const payload = await animeResponse.json();
+      const likes = likesResponse.ok ? await likesResponse.json() : {likes:{}};
+      const comments = commentsResponse.ok ? await commentsResponse.json() : {counts:{}};
+      const media = new Map(ids.map((id,index)=>[id,payload.data?.["a"+index]]));
+      grids.forEach(grid => {
+        const gridIds = JSON.parse(grid.dataset.ids || "[]") as string[];
+        const cards = gridIds.map(id => {
+          const anime = media.get(id);
+          if (!anime) return null;
+          const card = document.createElement("a");
+          card.className = "public-anime-card";
+          card.href = (en ? "/en" : "") + "/anime/" + id;
+          const image = document.createElement("img");
+          image.src = anime.coverImage?.large || "";
+          image.alt = "";
+          image.loading = "lazy";
+          const title = document.createElement("strong");
+          title.className = "public-anime-title";
+          title.textContent = en ? anime.title?.english || anime.title?.romaji || "Anime" : anime.title?.romaji || anime.title?.english || "Anime";
+          const meta = document.createElement("span");
+          meta.className = "public-anime-meta";
+          meta.textContent = "♥ " + Number(likes.likes?.[id]?.count || 0).toLocaleString(en?"en":"es") + " · " + Number(comments.counts?.[id] || 0).toLocaleString(en?"en":"es") + " comments";
+          card.append(image,title,meta);
+          return card;
+        }).filter((card): card is HTMLAnchorElement => card instanceof HTMLAnchorElement);
+        grid.replaceChildren(...(cards.length ? cards : [Object.assign(document.createElement("span"),{className:"public-anime-empty",textContent:copy("No se pudieron cargar los animes.","Could not load anime.")})]));
+      });
+    } catch {
+      grids.forEach(grid => grid.innerHTML = '<span class="public-anime-empty">' + copy("No se pudieron cargar los animes.", "Could not load anime.") + '</span>');
+    }
+  }
+  void loadAnime();
+</script>
