@@ -31,12 +31,13 @@ const watched = library.filter((entry: any) => entry?.status === "seen");
 const pending = library.filter((entry: any) => entry?.status === "pending");
 const { data: favoriteData, error: favoriteError } = await supabase
   .from("anime_likes")
-  .select("anime_id, created_at")
+  .select("anime_id, created_at", { count: "exact" })
   .eq("user_id", user.id)
   .order("created_at", { ascending: false })
   .limit(4);
 if (favoriteError) console.error("Renanime profile favorites error:", favoriteError.message);
 const favorites = Array.isArray(favoriteData) ? favoriteData : [];
+const favoritesCount = favoriteError ? 0 : (await supabase.from("anime_likes").select("anime_id", { count: "exact", head: true }).eq("user_id", user.id)).count ?? 0;
 
 ---
 
@@ -118,7 +119,7 @@ const favorites = Array.isArray(favoriteData) ? favoriteData : [];
         <a href={localizedPath(Astro.locals.lang, "/pending/")} class="profile-stat">
           <strong>{pending.length}</strong><span>{isEnglish ? "On my list" : "En mi lista"}</span>
         </a>
-        <a href="#profile-favorites-grid" class="profile-stat"><strong>{favorites.length}</strong><span>{isEnglish ? "Favorites" : "Favoritos"}</span></a>
+        <a href="#profile-favorites-grid" class="profile-stat"><strong>{favoritesCount}</strong><span>{isEnglish ? "Favorites" : "Favoritos"}</span></a>
       </section>
 
       <section class="profile-library-links">
@@ -420,7 +421,7 @@ const favorites = Array.isArray(favoriteData) ? favoriteData : [];
   async function loadProfileAnime() {
     const grids = ["#profile-watched-grid", "#profile-pending-grid", "#profile-favorites-grid"]
       .map(selector => document.querySelector<HTMLElement>(selector)).filter(Boolean) as HTMLElement[];
-    const ids = [...new Set(grids.flatMap(grid => JSON.parse(grid.dataset.ids || "[]") as string[]))].filter(id => /^\\d+$/.test(id));
+    const ids = [...new Set(grids.flatMap(grid => JSON.parse(grid.dataset.ids || "[]") as string[]))].filter(id => /^\d+$/.test(id));
     if (!ids.length) {
       grids.forEach(grid => { grid.innerHTML = '<span class="profile-anime-empty">' + copy("Todavía no hay animes aquí.", "No anime here yet.") + '</span>'; });
       return;
@@ -446,12 +447,12 @@ const favorites = Array.isArray(favoriteData) ? favoriteData : [];
           const counts = likePayload.likes?.[id] || {count:0,liked:false};
           const card = document.createElement("a"); card.className = "profile-anime-card"; card.href = (isEnglish ? "/en" : "") + "/anime/" + id; card.setAttribute("aria-label",title);
           const img = document.createElement("img"); img.src = anime.coverImage?.large || ""; img.alt = ""; img.loading = "lazy";
-          const copy = document.createElement("span"); copy.className = "profile-anime-card-copy";
+          const cardCopy = document.createElement("span"); cardCopy.className = "profile-anime-card-copy";
           const titleNode = document.createElement("span"); titleNode.className = "profile-anime-card-title"; titleNode.textContent = title;
           const meta = document.createElement("span"); meta.className = "profile-anime-card-meta";
           const likeMeta = document.createElement("span"); likeMeta.className = "like-count"; likeMeta.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 10-8.8 10s-8.8-4.8-8.8-10a4.6 4.6 0 0 1 8.8-1.9 4.6 4.6 0 0 1 8.8 1.9Z"/></svg><span></span>'; likeMeta.querySelector("span")!.textContent = Number(counts.count||0).toLocaleString(isEnglish?"en":"es");
           const commentMeta = document.createElement("span"); commentMeta.className = "comment-count"; commentMeta.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 8.8 8.8 0 0 1-4-.95L3 21l1.95-5.5A8.8 8.8 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3H13a8.5 8.5 0 0 1 8 8.5Z"/></svg><span>0</span>';
-          meta.append(likeMeta,commentMeta); copy.append(titleNode,meta); card.append(img,copy); return card;
+          meta.append(likeMeta,commentMeta); cardCopy.append(titleNode,meta); card.append(img,cardCopy); return card;
         }).filter((card): card is HTMLAnchorElement => card instanceof HTMLAnchorElement);
         grid.replaceChildren(...(cards.length ? cards : [Object.assign(document.createElement("span"),{className:"profile-anime-empty",textContent:copy("Todavía no hay animes aquí.","No anime here yet.")})]));
       });
