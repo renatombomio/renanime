@@ -23,6 +23,7 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
   const [comments, setComments] = useState<AnimeComment[]>([]);
   const [reactions, setReactions] = useState<CommentReaction[]>([]);
   const [replyToId, setReplyToId] = useState<string | null>(null);
+  const [reactionPickerId, setReactionPickerId] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState("");
   const [showAllComments, setShowAllComments] = useState(false);
   const [viewerId, setViewerId] = useState<string | null>(null);
@@ -198,8 +199,14 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
         .anime-comment-body>p{margin:0;color:#d4d4d4;font-size:.82rem;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
         .anime-comment-actions{display:flex;gap:.45rem;margin-top:.5rem}
         .anime-comment-social{display:flex;align-items:center;flex-wrap:wrap;gap:.35rem;margin-top:.55rem}
-        .anime-comment-social button{border:1px solid rgba(245,242,236,.15);border-radius:999px;background:transparent;color:#aaa;padding:.22rem .48rem;font:inherit;font-size:.65rem;cursor:pointer}
-        .anime-comment-social button.active{border-color:rgba(236,72,153,.65);color:#f9a8d4;background:rgba(236,72,153,.08)}
+        .anime-comment-reaction-trigger,.anime-comment-reaction-selected,.anime-comment-reaction-add{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;border:1px solid rgba(245,242,236,.16);border-radius:999px;background:rgba(10,10,10,.55);color:#ddd;padding:0 .48rem;font:inherit;font-size:.82rem;cursor:pointer;transition:border-color .18s,background .18s}
+        .anime-comment-reaction-trigger:hover,.anime-comment-reaction-add:hover,.anime-comment-reaction-selected{border-color:rgba(236,72,153,.6);background:rgba(236,72,153,.08)}
+        .anime-comment-reaction-selected{gap:.3rem;color:#f9a8d4}
+        .anime-comment-reaction-count{font-size:.65rem;color:#e8a5c6}
+        .anime-comment-reaction-add{min-width:28px;width:28px;height:28px;font-size:1rem;color:#aaa}
+        .anime-comment-reaction-picker{display:flex;align-items:center;flex-wrap:wrap;gap:.3rem;padding:.28rem;border:1px solid rgba(245,242,236,.12);border-radius:999px;background:#111}
+        .anime-comment-reaction-picker button{display:grid;place-items:center;width:30px;height:30px;border:0;border-radius:50%;background:transparent;color:#fff;font-size:.95rem;cursor:pointer}
+        .anime-comment-reaction-picker button:hover{background:rgba(236,72,153,.16)}
         .anime-comment-reply-form{display:grid;gap:.4rem;margin-top:.6rem}
         .anime-comment-reply-form textarea{width:100%;min-height:58px;border:1px solid rgba(245,242,236,.15);border-radius:8px;background:#080808;color:#f5f2ec;padding:.55rem;font:inherit;font-size:.75rem}
         .anime-comment-replies{display:grid;gap:.75rem;margin:.85rem 0 0 1rem;padding-left:.75rem;border-left:1px solid rgba(245,242,236,.12)}
@@ -266,11 +273,49 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
                     </div>
                   ) : <p>{comment.content}</p>}
                   <div className="anime-comment-social">
-                    {["❤️","😂","🔥","😭","👏","😮","👍"].map(emoji => {
-                      const count = reactionCounts.get(emoji) || 0;
-                      const active = commentReactions.some(reaction => reaction.user_id === viewerId && reaction.emoji === emoji);
-                      return <button key={emoji} type="button" className={active ? "active" : ""} disabled={busy} aria-label={copy("Reaccionar con " + emoji, "React with " + emoji)} onClick={() => void toggleReaction(comment.id, emoji)}>{emoji}{count > 0 ? " " + count : ""}</button>;
-                    })}
+                    {(() => {
+                      const myReaction = commentReactions.find(reaction => reaction.user_id === viewerId);
+                      const selectedCount = myReaction ? reactionCounts.get(myReaction.emoji) || 0 : 0;
+                      return (
+                        <>
+                          {myReaction ? (
+                            <button
+                              type="button"
+                              className="anime-comment-reaction-selected"
+                              disabled={busy}
+                              aria-label={copy("Quitar reacción " + myReaction.emoji, "Remove reaction " + myReaction.emoji)}
+                              onClick={() => void toggleReaction(comment.id, myReaction.emoji)}
+                            >
+                              {myReaction.emoji}{selectedCount > 0 && <span className="anime-comment-reaction-count">{selectedCount}</span>}
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              className="anime-comment-reaction-trigger"
+                              disabled={busy}
+                              aria-label={copy("Añadir reacción", "Add reaction")}
+                              onClick={() => viewerId ? setReactionPickerId(reactionPickerId === comment.id ? null : comment.id) : setNotice(copy("Inicia sesión para reaccionar.", "Sign in to react."))}
+                            >
+                              ☺
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            className="anime-comment-reaction-add"
+                            disabled={busy}
+                            aria-label={copy("Ver emoticonos", "Choose an emoji")}
+                            onClick={() => viewerId ? setReactionPickerId(reactionPickerId === comment.id ? null : comment.id) : setNotice(copy("Inicia sesión para reaccionar.", "Sign in to react."))}
+                          >+</button>
+                          {reactionPickerId === comment.id && (
+                            <span className="anime-comment-reaction-picker" role="group" aria-label={copy("Elige una reacción", "Choose a reaction")}>
+                              {["❤️","😂","🔥","😭","👏","😮","👍"].map(emoji => (
+                                <button key={emoji} type="button" disabled={busy} aria-label={emoji} onClick={() => { setReactionPickerId(null); void toggleReaction(comment.id, emoji); }}>{emoji}</button>
+                              ))}
+                            </span>
+                          )}
+                        </>
+                      );
+                    })()}
                     {viewerId && <button type="button" disabled={busy} onClick={() => { setReplyToId(replyToId === comment.id ? null : comment.id); setReplyContent(""); }}>{copy("Responder", "Reply")}</button>}
                   </div>
                   {replyToId === comment.id && <form className="anime-comment-reply-form" onSubmit={submitReply}>
