@@ -5,9 +5,6 @@ import Navbar from "../../components/layout/Navbar.astro";
 import Container from "../../components/ui/Container.astro";
 import SectionHeader from "../../components/ui/SectionHeader.astro";
 import GenresView from "../../components/genres/GenresView";
-import { getWatchedLibrary } from "../../data/library";
-
-const entries = getWatchedLibrary();
 const t = useT(Astro.locals.lang);
 ---
 
@@ -21,7 +18,7 @@ const t = useT(Astro.locals.lang);
         description={t("genres.description")}
       />
       <div class="genres-page-content">
-        <GenresView entries={entries} lang={Astro.locals.lang} client:load />
+        <GenresView lang={Astro.locals.lang} client:load />
       </div>
     </Container>
   </main>
