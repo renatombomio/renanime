@@ -5,6 +5,7 @@ import { getPersonalFranchiseEntries } from "../../data/franchise";
 import PersonalLibraryActions from "../personal-library/PersonalLibraryActions";
 import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
 import { useT, type Lang } from "../../i18n";
+import AnimeComments from "./AnimeComments";
 
 interface Media {
   id: number;
@@ -455,6 +456,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
           </div>
         </section> : null;
        })()}
+       {media?.id && <AnimeComments animeId={media.id} lang={lang} />}
     </div>
    </div>
   </section>
