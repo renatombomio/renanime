@@ -57,8 +57,9 @@ const otherLang = lang === "es" ? "en" : "es";
     z-index: 50;
     width: 100%;
     height: 88px;
-    background: #050505;
-    border-bottom: 1px solid rgba(245, 242, 236, 0.1);
+    background: rgba(9, 9, 11, 0.94);
+    border-bottom: 1px solid var(--color-border);
+    backdrop-filter: blur(16px);
   }
 
   .header-inner {
@@ -71,7 +72,7 @@ const otherLang = lang === "es" ? "en" : "es";
 
   .brand {
     flex: 0 0 auto;
-    color: #f5f2ec;
+    color: var(--color-text-primary);
     font-family: var(--font-heading);
     font-size: 23px;
     font-weight: 600;
@@ -82,7 +83,7 @@ const otherLang = lang === "es" ? "en" : "es";
   }
 
   .brand-accent {
-    color: #ec4899;
+    color: var(--color-accent);
   }
 
   .brand:hover,
@@ -112,13 +113,12 @@ const otherLang = lang === "es" ? "en" : "es";
     position: relative;
     display: inline-block;
     padding: 10px 0;
-    color: #8f8a82;
-    font-family: var(--font-meta);
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.075em;
+    color: var(--color-text-muted);
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
     line-height: 1;
-    text-transform: uppercase;
     white-space: nowrap;
     transition: color 180ms ease, transform 180ms ease;
   }
@@ -129,7 +129,7 @@ const otherLang = lang === "es" ? "en" : "es";
     bottom: 1px;
     left: 0;
     height: 1px;
-    background: #a48a68;
+    background: var(--color-accent);
     content: "";
     transform: scaleX(0);
     transform-origin: center;
@@ -170,12 +170,12 @@ const otherLang = lang === "es" ? "en" : "es";
     flex: 0 0 auto;
     margin-left: clamp(1rem, 2vw, 1.75rem);
     padding: 0.55rem 0.65rem;
-    border: 1px solid rgba(245, 242, 236, 0.24);
+    border: 1px solid var(--color-border-strong);
     border-radius: 999px;
     background: transparent;
-    color: #f5f2ec;
-    font-family: var(--font-meta);
-    font-size: 0.62rem;
+    color: var(--color-text-secondary);
+    font-family: var(--font-body);
+    font-size: 0.68rem;
     font-weight: 600;
     letter-spacing: 0.08em;
     cursor: pointer;
@@ -189,8 +189,8 @@ const otherLang = lang === "es" ? "en" : "es";
 
   .language-toggle:hover,
   .language-toggle:focus-visible {
-    border-color: #ec4899;
-    outline-color: #ec4899;
+    border-color: var(--color-accent);
+    outline-color: var(--color-accent);
   }
 
   .site-header--ghibli .language-toggle {
