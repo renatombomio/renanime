@@ -352,7 +352,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
  const relations=(media?.relations?.edges??[]).filter(edge=>edge?.node?.type==="ANIME"&&edge.node.id!==media?.id);
  return <div className="anime-detail">
   <style>{`
-    .anime-detail:not(.anime-detail--ghibli) .anime-detail-synopsis-wrap{max-width:42rem;margin-top:1.35rem;padding:1rem 1.15rem 1.1rem;border:1px solid rgba(245,242,236,.18);border-radius:14px;background:rgba(9,9,9,.42);box-shadow:0 12px 34px rgba(0,0,0,.16);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+    .anime-detail:not(.anime-detail--ghibli) .anime-detail-synopsis-wrap{max-width:42rem;margin-top:1.35rem;padding:1rem 0 1.1rem;border:0;border-radius:0;background:transparent;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
     .anime-detail:not(.anime-detail--ghibli) .anime-detail-synopsis{margin:0;color:var(--color-paper-50)}
     .anime-detail:not(.anime-detail--ghibli) .anime-detail-translate{border-color:rgba(245,242,236,.28);background:rgba(245,242,236,.06);color:var(--color-paper-200)}
     .anime-detail-recommendations{grid-column:1 / -1;margin-top:2rem;width:100%;min-width:0}
