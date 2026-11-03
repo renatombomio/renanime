@@ -413,11 +413,11 @@ body.theme-ghibli .soundtrack-player__modes button.is-active {
 
 /* QA/polish: compact global player by default. Expand on demand. */
 .soundtrack-player {
-  width: min(218px, calc(100vw - 1.3rem));
-  right: auto;
-  left: 50%;
+  width: min(164px, calc(100vw - 1.3rem));
+  right: .65rem;
+  left: auto;
   bottom: .65rem;
-  transform: translateX(-50%);
+  transform: translate(var(--player-drag-x, 0px), var(--player-drag-y, 0px));
 }
 
 .soundtrack-player__inner {
@@ -425,9 +425,26 @@ body.theme-ghibli .soundtrack-player__modes button.is-active {
 }
 
 .soundtrack-player__top {
-  gap: .35rem;
-  padding: .32rem .4rem;
+  display:grid;
+  grid-template-columns: 18px 27px minmax(0,1fr) auto;
+  gap: .22rem;
+  padding: .28rem .32rem;
 }
+.soundtrack-player__drag {
+  display:grid;
+  place-items:center;
+  width:18px;
+  height:25px;
+  padding:0;
+  border:0;
+  border-radius:5px;
+  background:transparent;
+  color:var(--player-muted);
+  font-size:.8rem;
+  cursor:grab;
+  touch-action:none;
+}
+.soundtrack-player__drag:active { cursor:grabbing; }
 
 .soundtrack-player__main-button {
   min-width: 30px;
@@ -466,7 +483,7 @@ body.theme-ghibli .soundtrack-player__modes button.is-active {
 }
 
 .soundtrack-player.is-open {
-  width: min(360px, calc(100vw - 1.3rem));
+  width: min(340px, calc(100vw - 1.3rem));
 }
 
 .soundtrack-player.is-open .soundtrack-player__inner {
@@ -504,10 +521,11 @@ body.theme-ghibli .soundtrack-player__modes button.is-active {
 
 @media (max-width: 640px) {
   .soundtrack-player.is-open {
-    width: min(360px, calc(100vw - 1.3rem));
+    width: min(340px, calc(100vw - 1.3rem));
   }
 
   .soundtrack-player.is-open .soundtrack-player__top {
+    grid-template-columns: 18px auto minmax(0,1fr) auto;
     gap: .35rem;
     padding: .6rem .55rem .4rem;
   }
