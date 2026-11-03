@@ -11,7 +11,7 @@ function json(body: unknown, status = 200) {
 }
 
 export const POST: APIRoute = async ({ request, cookies }) => {
-  let body: { name?: unknown; aka?: unknown; bio?: unknown; location?: unknown };
+  let body: { name?: unknown; aka?: unknown; headline?: unknown; bio?: unknown; location?: unknown; interests?: unknown };
   try { body = await request.json(); }
   catch { return json({ ok: false, error: "INVALID_REQUEST" }, 400); }
 
@@ -25,6 +25,16 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const aka = typeof body.aka === "string" ? body.aka.trim().replace(/^@/, "") : "";
     if (!/^[\p{L}\p{N}_-]{2,24}$/u.test(aka)) return json({ ok: false, error: "INVALID_NICKNAME" }, 400);
     updates.aka = aka;
+  }
+  if (body.headline !== undefined) {
+    if (typeof body.headline !== "string" || body.headline.length > 80) return json({ ok: false, error: "INVALID_HEADLINE" }, 400);
+    updates.headline = body.headline.trim() || null;
+  }
+  if (body.interests !== undefined) {
+    if (!Array.isArray(body.interests) || body.interests.length > 8 || body.interests.some((item) => typeof item !== "string" || item.trim().length > 24)) {
+      return json({ ok: false, error: "INVALID_INTERESTS" }, 400);
+    }
+    updates.interests = [...new Set(body.interests.map((item: string) => item.trim()).filter(Boolean))];
   }
   if (body.bio !== undefined) {
     if (typeof body.bio !== "string" || body.bio.length > 280) return json({ ok: false, error: "INVALID_BIO" }, 400);
@@ -45,7 +55,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       .from("profiles")
       .update({ ...updates, updated_at: new Date().toISOString() })
       .eq("id", authData.user.id)
-      .select("name, aka, bio, location")
+      .select("name, aka, headline, bio, location, interests")
       .single();
 
     if (error) {
