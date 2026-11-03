@@ -1,7 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/layout/Navbar.astro";
-import Footer from "../../components/layout/Footer.astro";
 import AnimeDetail from "../../components/anime/AnimeDetail";
 import { getLibrary } from "../../data/library";
 import type { LibraryEntry } from "../../types/personal";
@@ -58,5 +57,4 @@ if (!entry) {
   <main id="main-content" class="anime-detail-page">
     <AnimeDetail entry={entry} lang={Astro.locals.lang} client:load />
   </main>
-  <Footer />
 </Layout>
