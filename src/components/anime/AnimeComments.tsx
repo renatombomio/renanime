@@ -18,6 +18,7 @@ type AnimeComment = {
 
 export default function AnimeComments({ animeId, lang = "es" }: { animeId: number; lang?: Lang }) {
   const [comments, setComments] = useState<AnimeComment[]>([]);
+  const [showAllComments, setShowAllComments] = useState(false);
   const [viewerId, setViewerId] = useState<string | null>(null);
   const [content, setContent] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -148,6 +149,8 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
         .anime-comment-edit textarea{min-height:70px}
         .anime-comment-edit>div{display:flex;gap:.45rem}
         .anime-comments-empty,.anime-comments-loading{color:#888;font-size:.78rem}
+        .anime-comments-more{margin-top:1.1rem;border:1px solid rgba(245,242,236,.2);border-radius:999px;background:transparent;color:#c7c7c7;padding:.5rem .9rem;font:inherit;font-size:.72rem;cursor:pointer;transition:border-color .2s,color .2s}
+        .anime-comments-more:hover{border-color:rgba(236,72,153,.65);color:#fff}
         .anime-comments-notice{margin:.2rem 0;color:#f3a3bd;font-size:.72rem}
         @media(max-width:760px){.anime-comments{margin-top:1.5rem}.anime-comments-head h2{font-size:1rem}}
       `}</style>
@@ -172,7 +175,7 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
         <p className="anime-comments-empty">{copy("Todavía no hay comentarios. Abre la conversación.", "No comments yet. Start the conversation.")}</p>
       ) : (
         <div className="anime-comments-list">
-          {comments.map((comment) => {
+          {comments.slice(0, showAllComments ? comments.length : 5).map((comment) => {
             const profile = Array.isArray(comment.profiles) ? comment.profiles[0] : comment.profiles;
             const author = profile?.name || (profile?.aka ? "@" + profile.aka : copy("Usuario", "User"));
             const own = Boolean(viewerId && viewerId === comment.user_id);
@@ -207,6 +210,15 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
             );
           })}
         </div>
+      )}
+      {!loading && comments.length > 5 && (
+        <button
+          type="button"
+          className="anime-comments-more"
+          onClick={() => setShowAllComments((current) => !current)}
+        >
+          {showAllComments ? copy("Ver menos comentarios", "Show fewer comments") : copy("Ver más comentarios", "View more comments")}
+        </button>
       )}
     </section>
   );
