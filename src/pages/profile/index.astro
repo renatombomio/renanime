@@ -48,7 +48,9 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
         <div class="identity-editor">
           <div class="avatar-wrap">
             <img id="avatar-preview" class="avatar-preview" src={profile.avatar_url || "/images/profile-avatar-placeholder.svg"} alt={isEnglish ? "Profile picture" : "Foto de perfil"} />
-            <button class="avatar-edit" type="button" data-pick="avatar" aria-label={isEnglish ? "Change profile picture" : "Cambiar foto de perfil"}>+</button>
+            <button class="avatar-edit" type="button" data-pick="avatar" aria-label={isEnglish ? "Change profile picture" : "Cambiar foto de perfil"} title={isEnglish ? "Change profile picture" : "Cambiar foto de perfil"}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h3l1.5-2h7l1.5 2h3v11H4z"/><circle cx="12" cy="13" r="3.2"/></svg>
+            </button>
             <input class="file-input" id="avatar-input" type="file" accept="image/jpeg,image/png,image/webp,image/avif" />
           </div>
           <div class="identity-copy">
@@ -132,11 +134,12 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
   .profile-editor.is-editing .avatar-edit { display: grid; }
   .media-edit { border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: .65rem .9rem; color: white; background: rgba(0,0,0,.45); backdrop-filter: blur(10px); cursor: pointer; font: inherit; font-size: .78rem; }
 
-  .file-input { display: none; }
+  .file-input { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; opacity: 0; }
   .identity-editor { display: flex; align-items: end; gap: 1rem; padding: 0 1.5rem; margin-top: -3.4rem; position: relative; }
   .avatar-wrap { position: relative; flex: 0 0 auto; }
   .avatar-preview { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; border: 4px solid #090909; background: #242424; }
-  .avatar-edit { display: none; place-items: center; position: absolute; right: 2px; bottom: 8px; width: 30px; height: 30px; border: 1px solid rgba(255,255,255,.5); border-radius: 50%; background: #ec4899; color: white; font-size: 1.2rem; cursor: pointer; }
+  .avatar-edit { display: none; place-items: center; position: absolute; right: -2px; bottom: 5px; width: 36px; height: 36px; border: 2px solid #090909; border-radius: 50%; background: #ec4899; color: white; cursor: pointer; box-shadow: 0 3px 12px rgba(0,0,0,.4); }
+  .avatar-edit svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   .identity-copy { padding-bottom: .45rem; min-width: 0; flex: 1; }
   .profile-edit-toggle { display: grid; place-items: center; flex: 0 0 42px; width: 42px; height: 42px; margin: 0 0 .55rem auto; border: 1px solid rgba(255,255,255,.2); border-radius: 50%; background: rgba(255,255,255,.06); color: #fff; cursor: pointer; }
   .profile-edit-toggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
@@ -403,13 +406,6 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
   }
   void loadProfileAnime();
 
-  document.querySelectorAll<HTMLButtonElement>("[data-pick]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const kind = button.dataset.pick;
-      document.querySelector<HTMLInputElement>(kind === "avatar" ? "#avatar-input" : "#cover-input")?.click();
-    });
-  });
-
   async function uploadImage(kind: "avatar" | "cover", file: File) {
     if (file.size > 5 * 1024 * 1024) throw new Error(copy("La imagen supera el límite de 5 MB.", "Image exceeds the 5 MB limit."));
     const form = new FormData();
@@ -424,33 +420,38 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
     return result.url as string;
   }
 
-  document.querySelector<HTMLInputElement>("#avatar-input")?.addEventListener("change", async (event) => {
-    const input = event.currentTarget as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-    try {
-      if (feedback) feedback.textContent = copy("Subiendo foto…", "Uploading picture…");
-      const url = await uploadImage("avatar", file);
-      const preview = document.querySelector<HTMLImageElement>("#avatar-preview");
-      if (preview) preview.src = url;
-      if (feedback) feedback.textContent = copy("Foto de perfil actualizada.", "Profile picture updated.");
-    } catch (error) {
-      if (feedback) feedback.textContent = error instanceof Error ? error.message : copy("Error al subir.", "Upload error.");
-    } finally { input.value = ""; }
+  // Delegate media controls: Astro ClientRouter swaps page DOM without rerunning this module.
+  document.addEventListener("click", (event) => {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-pick]");
+    if (!button) return;
+    event.preventDefault();
+    const inputId = button.dataset.pick === "avatar" ? "#avatar-input" : "#cover-input";
+    document.querySelector<HTMLInputElement>(inputId)?.click();
   });
 
-  document.querySelector<HTMLInputElement>("#cover-input")?.addEventListener("change", async (event) => {
-    const input = event.currentTarget as HTMLInputElement;
+  document.addEventListener("change", async (event) => {
+    const input = event.target;
+    if (!(input instanceof HTMLInputElement) || (input.id !== "avatar-input" && input.id !== "cover-input")) return;
     const file = input.files?.[0];
     if (!file) return;
+    const kind = input.id === "avatar-input" ? "avatar" : "cover";
+    const status = document.querySelector<HTMLElement>("#profile-feedback");
     try {
-      if (feedback) feedback.textContent = copy("Subiendo banner…", "Uploading cover…");
-      const url = await uploadImage("cover", file);
-      const preview = document.querySelector<HTMLElement>("#cover-preview");
-      if (preview) preview.style.backgroundImage = `linear-gradient(0deg, rgba(5,5,5,.94), rgba(5,5,5,.08)), url("${url}")`;
-      if (feedback) feedback.textContent = copy("Banner actualizado.", "Cover updated.");
+      if (status) status.textContent = kind === "avatar" ? copy("Subiendo foto…", "Uploading picture…") : copy("Subiendo banner…", "Uploading cover…");
+      const url = await uploadImage(kind, file);
+      if (kind === "avatar") {
+        const preview = document.querySelector<HTMLImageElement>("#avatar-preview");
+        if (preview) preview.src = url;
+      } else {
+        const preview = document.querySelector<HTMLElement>("#cover-preview");
+        if (preview) {
+          preview.style.backgroundImage = `url("${url}")`;
+          preview.dataset.coverUrl = url;
+        }
+      }
+      if (status) status.textContent = kind === "avatar" ? copy("Foto de perfil actualizada.", "Profile picture updated.") : copy("Banner actualizado.", "Cover updated.");
     } catch (error) {
-      if (feedback) feedback.textContent = error instanceof Error ? error.message : copy("Error al subir.", "Upload error.");
+      if (status) status.textContent = error instanceof Error ? error.message : copy("Error al subir.", "Upload error.");
     } finally { input.value = ""; }
   });
 
