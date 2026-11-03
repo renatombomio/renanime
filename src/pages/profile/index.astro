@@ -53,12 +53,21 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
           </div>
           <div class="identity-copy">
             <p class="eyebrow">{isEnglish ? "YOUR SPACE" : "TU ESPACIO"}</p>
-            <h2>{profile.name}</h2>
-            <p class="handle">@{profile.aka}</p>
+            <h2 id="identity-name">{profile.name}</h2>
+            <p class="handle" id="identity-aka">@{profile.aka}</p>
           </div>
+          <button class="profile-edit-toggle" id="toggle-profile-editor" type="button" aria-expanded="false" aria-controls="profile-editor-fields" aria-label={isEnglish ? "Edit profile information" : "Editar información del perfil"} title={isEnglish ? "Edit profile" : "Editar perfil"}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
+          </button>
         </div>
-        <div class="editor-fields">
-          <h2 id="profile-editor-title">{isEnglish ? "Personalize your profile" : "Personaliza tu perfil"}</h2>
+        <div class="editor-fields" id="profile-editor-fields" hidden>
+          <h2 id="profile-editor-title">{isEnglish ? "Edit your information" : "Editar tu información"}</h2>
+          <label>{isEnglish ? "Display name" : "Nombre"}
+            <input id="profile-name" maxlength="40" value={profile.name || ""} placeholder={isEnglish ? "Your name" : "Tu nombre"} />
+          </label>
+          <label>{isEnglish ? "Username" : "Nombre de usuario"}
+            <div class="username-input"><span>@</span><input id="profile-aka" maxlength="24" value={profile.aka || ""} placeholder="username" /></div>
+          </label>
           <label>{isEnglish ? "Biography" : "Biografía"}
             <textarea id="profile-bio" maxlength="280" placeholder={isEnglish ? "Tell the community about yourself…" : "Cuéntale a la comunidad quién eres…"}>{profile.bio || ""}</textarea>
           </label>
@@ -102,7 +111,9 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
 
 <style>
   .profile-editor { margin: 0; overflow: visible; border: 0; border-radius: 0; background: transparent; }
-  .cover-preview { position: relative; height: clamp(190px, 34vw, 340px); background: linear-gradient(135deg,#24202a,#111); background-size: cover; background-position: center; }
+  .cover-preview { position: relative; width: 100%; height: clamp(210px, 34vw, 340px); background: linear-gradient(135deg,#24202a,#111); background-size: cover; background-position: center; isolation: isolate; }
+  .cover-preview::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: linear-gradient(180deg, rgba(0,0,0,.02) 28%, rgba(0,0,0,.22) 58%, #050505 100%); }
+  .cover-edit { z-index: 1; }
   .media-edit { border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: .65rem .9rem; color: white; background: rgba(0,0,0,.45); backdrop-filter: blur(10px); cursor: pointer; font: inherit; font-size: .78rem; }
   .cover-edit { position: absolute; right: 1rem; bottom: 1rem; }
   .file-input { display: none; }
@@ -110,10 +121,15 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
   .avatar-wrap { position: relative; flex: 0 0 auto; }
   .avatar-preview { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; border: 4px solid #090909; background: #242424; }
   .avatar-edit { position: absolute; right: 2px; bottom: 8px; width: 30px; height: 30px; border: 1px solid rgba(255,255,255,.5); border-radius: 50%; background: #ec4899; color: white; font-size: 1.2rem; cursor: pointer; }
-  .identity-copy { padding-bottom: .45rem; min-width: 0; }
+  .identity-copy { padding-bottom: .45rem; min-width: 0; flex: 1; }
+  .profile-edit-toggle { display: grid; place-items: center; flex: 0 0 42px; width: 42px; height: 42px; margin: 0 0 .55rem auto; border: 1px solid rgba(255,255,255,.2); border-radius: 50%; background: rgba(255,255,255,.06); color: #fff; cursor: pointer; }
+  .profile-edit-toggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .username-input { display: flex; align-items: center; gap: .5rem; padding-left: 1rem; border: 1px solid rgba(255,255,255,.13); border-radius: 12px; background: rgba(255,255,255,.04); color: #888; }
+  .username-input input { border: 0; background: transparent; padding-left: 0; }
   .identity-copy h2 { margin: .2rem 0; font-size: clamp(1.4rem,3vw,2rem); }
   .handle { margin: 0; color: #aaa; font-size: .85rem; }
   .editor-fields { display: grid; gap: 1rem; padding: 1.5rem; }
+  .editor-fields[hidden] { display: none; }
   .editor-fields h2 { margin: 0; font-size: 1.15rem; }
   .editor-fields label { display: grid; gap: .45rem; color: #aaa; font-size: .78rem; }
   .editor-fields textarea,.editor-fields input { width: 100%; border: 1px solid rgba(255,255,255,.13); border-radius: 12px; padding: .85rem 1rem; background: rgba(255,255,255,.04); color: white; font: inherit; font-size: .9rem; }
@@ -256,12 +272,16 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
 
   @media (max-width: 520px) {
     .profile-page {
-      padding: 80px .9rem 1.5rem;
+      padding: 80px 0 1.5rem;
     }
-    .identity-editor { padding: 0 1rem; margin-top: -2.8rem; gap: .75rem; }
+    .profile-card { width: 100%; }
+    .cover-preview { height: 220px; }
+    .identity-editor { padding: 0 1.25rem; }
+    .editor-fields { padding: 1rem 1.25rem; }
+    .identity-editor { padding: 0 1.25rem; margin-top: -2.8rem; gap: .75rem; }
     .avatar-preview { width: 88px; height: 88px; }
-    .editor-fields { padding: 1rem; }
-    .cover-preview { height: 190px; }
+    .editor-fields { padding: 1rem 1.25rem; }
+    .cover-preview { height: 220px; }
 
     .profile-card {
       width: min(100%, 560px);
@@ -307,6 +327,15 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
 <script>
   const isEnglish = document.documentElement.lang === "en";
   const logoutButton = document.querySelector<HTMLButtonElement>("#logout-button");
+  const editorToggle = document.querySelector<HTMLButtonElement>("#toggle-profile-editor");
+  const editorFields = document.querySelector<HTMLElement>("#profile-editor-fields");
+  editorToggle?.addEventListener("click", () => {
+    if (!editorFields) return;
+    const opening = editorFields.hidden;
+    editorFields.hidden = !opening;
+    editorToggle.setAttribute("aria-expanded", String(opening));
+    if (opening) editorFields.querySelector<HTMLInputElement>("input")?.focus();
+  });
   const feedback = document.querySelector<HTMLElement>("#profile-feedback");
   const copy = (es: string, en: string) => isEnglish ? en : es;
 
@@ -368,12 +397,20 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
         headers: { "Content-Type": "application/json" },
         credentials: "same-origin",
         body: JSON.stringify({
+          name: (document.querySelector<HTMLInputElement>("#profile-name")?.value || "").trim(),
+          aka: (document.querySelector<HTMLInputElement>("#profile-aka")?.value || "").trim(),
           bio: (document.querySelector<HTMLTextAreaElement>("#profile-bio")?.value || "").trim(),
           location: (document.querySelector<HTMLInputElement>("#profile-location")?.value || "").trim()
         })
       });
       const result = await response.json();
       if (!response.ok || !result.ok) throw new Error(copy("No se pudieron guardar los cambios.", "Could not save changes."));
+      const savedName = result.profile?.name || (document.querySelector<HTMLInputElement>("#profile-name")?.value || "").trim();
+      const savedAka = result.profile?.aka || (document.querySelector<HTMLInputElement>("#profile-aka")?.value || "").trim();
+      const nameNode = document.querySelector<HTMLElement>("#identity-name");
+      const akaNode = document.querySelector<HTMLElement>("#identity-aka");
+      if (nameNode) nameNode.textContent = savedName;
+      if (akaNode) akaNode.textContent = "@" + savedAka;
       if (feedback) feedback.textContent = copy("Perfil actualizado.", "Profile updated.");
     } catch (error) {
       if (feedback) feedback.textContent = error instanceof Error ? error.message : copy("Error al guardar.", "Save error.");
