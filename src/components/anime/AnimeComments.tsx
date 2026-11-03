@@ -199,7 +199,11 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
         .anime-comment-author span,.anime-comment-date{color:#858585;font-size:.65rem}
         .anime-comment-body>p{margin:0;color:#d4d4d4;font-size:.82rem;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
         .anime-comment-actions{display:flex;gap:.45rem;margin-top:.5rem}
-        .anime-comment-social{display:flex;align-items:center;flex-wrap:wrap;gap:.35rem;margin-top:.55rem}
+        .anime-comment-reply-link{border:0;background:transparent;color:#999;padding:0;font:inherit;font-size:.78rem;cursor:pointer}
+        .anime-comment-reply-link:hover{color:#f5f2ec}
+        .anime-comment-social{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin-top:.45rem}
+        .anime-comment-meta{display:flex;align-items:center;flex-wrap:wrap;gap:.65rem;margin-top:.45rem}
+        .anime-comment-meta .anime-comment-date{font-size:.72rem;color:#858585}
         .anime-comment-reaction-trigger,.anime-comment-reaction-selected,.anime-comment-reaction-add{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;border:1px solid rgba(245,242,236,.16);border-radius:999px;background:rgba(10,10,10,.55);color:#ddd;padding:0 .48rem;font:inherit;font-size:.82rem;cursor:pointer;transition:border-color .18s,background .18s}
         .anime-comment-reaction-trigger:hover,.anime-comment-reaction-add:hover,.anime-comment-reaction-selected{border-color:rgba(236,72,153,.6);background:rgba(236,72,153,.08)}
         .anime-comment-reaction-selected{gap:.3rem;color:#f9a8d4}
@@ -273,7 +277,6 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
                   <div className="anime-comment-author">
                     <strong>{author}</strong>
                     {profile?.aka && profile.name && <span>@{profile.aka}</span>}
-                    <time className="anime-comment-date" dateTime={comment.created_at}>{new Date(comment.created_at).toLocaleDateString(en ? "en-GB" : "es-ES", { day: "numeric", month: "short", year: "numeric" })}</time>
                   </div>
                   {editingId === comment.id ? (
                     <div className="anime-comment-edit">
@@ -284,51 +287,24 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
                       </div>
                     </div>
                   ) : <p>{comment.content}</p>}
-                  <div className="anime-comment-social">
+                  <div className="anime-comment-meta">
+                    <time className="anime-comment-date" dateTime={comment.created_at}>{copy("Hace", " ") + (en ? new Date(comment.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : new Date(comment.created_at).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" }))}</time>
+                    {viewerId && <button type="button" className="anime-comment-reply-link" disabled={busy} onClick={() => { setReplyToId(replyToId === comment.id ? null : comment.id); setReplyEmojiPickerId(null); setReplyContent(""); }}>{copy("Responder", "Reply")}</button>}
                     {(() => {
                       const myReaction = commentReactions.find(reaction => reaction.user_id === viewerId);
                       const selectedCount = myReaction ? reactionCounts.get(myReaction.emoji) || 0 : 0;
-                      return (
-                        <>
-                          {myReaction ? (
-                            <button
-                              type="button"
-                              className="anime-comment-reaction-selected"
-                              disabled={busy}
-                              aria-label={copy("Quitar reacción " + myReaction.emoji, "Remove reaction " + myReaction.emoji)}
-                              onClick={() => void toggleReaction(comment.id, myReaction.emoji)}
-                            >
-                              {myReaction.emoji}{selectedCount > 0 && <span className="anime-comment-reaction-count">{selectedCount}</span>}
-                            </button>
-                          ) : (
-                            <button
-                              type="button"
-                              className="anime-comment-reaction-trigger"
-                              disabled={busy}
-                              aria-label={copy("Añadir reacción", "Add reaction")}
-                              onClick={() => viewerId ? setReactionPickerId(reactionPickerId === comment.id ? null : comment.id) : setNotice(copy("Inicia sesión para reaccionar.", "Sign in to react."))}
-                            >
-                              ☺
-                            </button>
-                          )}
-                          <button
-                            type="button"
-                            className="anime-comment-reaction-add"
-                            disabled={busy}
-                            aria-label={copy("Ver emoticonos", "Choose an emoji")}
-                            onClick={() => viewerId ? setReactionPickerId(reactionPickerId === comment.id ? null : comment.id) : setNotice(copy("Inicia sesión para reaccionar.", "Sign in to react."))}
-                          >+</button>
-                          {reactionPickerId === comment.id && (
-                            <span className="anime-comment-reaction-picker" role="group" aria-label={copy("Elige una reacción", "Choose a reaction")}>
-                              {["❤️","😂","🔥","😭","👏","😮","👍"].map(emoji => (
-                                <button key={emoji} type="button" disabled={busy} aria-label={emoji} onClick={() => { setReactionPickerId(null); void toggleReaction(comment.id, emoji); }}>{emoji}</button>
-                              ))}
-                            </span>
-                          )}
-                        </>
-                      );
+                      return myReaction ? (
+                        <button
+                          type="button"
+                          className="anime-comment-reaction-selected"
+                          disabled={busy}
+                          aria-label={copy("Quitar reacción " + myReaction.emoji, "Remove reaction " + myReaction.emoji)}
+                          onClick={() => void toggleReaction(comment.id, myReaction.emoji)}
+                        >
+                          {myReaction.emoji}{selectedCount > 0 && <span className="anime-comment-reaction-count">{selectedCount}</span>}
+                        </button>
+                      ) : null;
                     })()}
-                    {viewerId && <button type="button" disabled={busy} onClick={() => { setReplyToId(replyToId === comment.id ? null : comment.id); setReplyContent(""); }}>{copy("Responder", "Reply")}</button>}
                   </div>
                   {replyToId === comment.id && <form className="anime-comment-reply-form" onSubmit={submitReply}>
                     <div className="anime-comment-reply-composer">
@@ -366,7 +342,7 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
                       const replyAuthor = replyProfile?.name || (replyProfile?.aka ? "@" + replyProfile.aka : copy("Usuario", "User"));
                       return <div className="anime-comment-reply" key={reply.id} id={"comment-" + reply.id}>
                         {replyProfile?.avatar_url ? <img className="anime-comment-avatar" src={replyProfile.avatar_url} alt="" loading="lazy" /> : <span className="anime-comment-avatar anime-comment-avatar-fallback">{replyAuthor.slice(0,1).toUpperCase()}</span>}
-                        <div><div className="anime-comment-author"><strong>{replyAuthor}</strong><time className="anime-comment-date" dateTime={reply.created_at}>{new Date(reply.created_at).toLocaleDateString(en ? "en-GB" : "es-ES",{day:"numeric",month:"short",year:"numeric"})}</time></div><p>{reply.content}</p></div>
+                        <div><div className="anime-comment-author"><strong>{replyAuthor}</strong></div><p>{reply.content}</p><div className="anime-comment-meta"><time className="anime-comment-date" dateTime={reply.created_at}>{new Date(reply.created_at).toLocaleDateString(en ? "en-GB" : "es-ES",{day:"numeric",month:"short",year:"numeric"})}</time></div></div>
                       </div>;
                     })}
                   </div>}
