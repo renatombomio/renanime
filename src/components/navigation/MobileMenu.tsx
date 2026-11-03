@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { localizedPath, useT, type Lang } from "../../i18n";
 
-interface Props { variant?: "default" | "ghibli"; lang: Lang; }
+interface Props { variant?: "default" | "ghibli"; lang: Lang; showLogout?: boolean; }
 
 const links = [
   { key: "nav.home", href: "/" },
@@ -15,7 +15,7 @@ const links = [
   { key: "nav.renSecret", href: "/ghibli/" }
 ] as const;
 
-export default function MobileMenu({ variant = "default", lang }: Props) {
+export default function MobileMenu({ variant = "default", lang, showLogout = false }: Props) {
   const t = useT(lang);
   const [open, setOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState<string | null>(null);
@@ -75,6 +75,10 @@ export default function MobileMenu({ variant = "default", lang }: Props) {
               <span>{t(link.key)}</span>
             </a>
           ))}
+          {showLogout && <button className="mobile-logout" type="button" tabIndex={open ? 0 : -1} onClick={async () => {
+            const response = await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" });
+            if (response.ok) window.location.href = lang === "en" ? "/en/login/" : "/login/";
+          }}>{lang === "en" ? "Log out" : "Cerrar sesión"}</button>}
         </nav>
       </div>
 
@@ -140,6 +144,7 @@ export default function MobileMenu({ variant = "default", lang }: Props) {
           transition-delay: calc(70ms + (var(--menu-index) * 48ms));
         }
         .mobile-link:active { color: #f5f2ec; }
+        .mobile-logout { min-height:54px; padding:13px 0; border:0; border-bottom:1px solid rgba(245,242,236,.1); background:transparent; color:#ec4899; text-align:left; font:inherit; font-family:var(--font-meta); font-size:12px; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; }
         .mobile-link[aria-current="page"] { color: #f5f2ec; }
         .mobile-link[aria-current="page"]::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: #a48a68; }
         .mobile-link--secret i {
@@ -154,6 +159,7 @@ export default function MobileMenu({ variant = "default", lang }: Props) {
         .mobile-nav--ghibli .mobile-backdrop { background: rgba(25,54,47,.16); }
         .mobile-nav--ghibli .mobile-panel { background: #fffdf8; color: #19362f; }
         .mobile-nav--ghibli .mobile-link { color: #527066; border-bottom-color: rgba(25,54,47,.12); }
+        .mobile-nav--ghibli .mobile-logout { color:#c43c55; border-bottom-color:rgba(25,54,47,.12); }
         .mobile-nav--ghibli .mobile-link:active { color: #18528a; }
         .mobile-nav--ghibli .mobile-link[aria-current="page"] { color: #18528a; }
         .mobile-nav--ghibli .mobile-link[aria-current="page"]::after { background: #f45164; }
