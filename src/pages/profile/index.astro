@@ -38,6 +38,12 @@ const { data: favoriteData, error: favoriteError } = await supabase
 if (favoriteError) console.error("Renanime profile favorites error:", favoriteError.message);
 const favorites = Array.isArray(favoriteData) ? favoriteData : [];
 const favoritesCount = favoriteError ? 0 : (await supabase.from("anime_likes").select("anime_id", { count: "exact", head: true }).eq("user_id", user.id)).count ?? 0;
+const { count: commentsCount, error: commentsCountError } = await supabase
+  .from("anime_comments")
+  .select("id", { count: "exact", head: true })
+  .eq("user_id", user.id);
+if (commentsCountError) console.error("Renanime profile comments count error:", commentsCountError.message);
+const profileCommentsCount = commentsCountError ? 0 : commentsCount ?? 0;
 
 ---
 
@@ -120,6 +126,7 @@ const favoritesCount = favoriteError ? 0 : (await supabase.from("anime_likes").s
           <strong>{pending.length}</strong><span>{isEnglish ? "On my list" : "En mi lista"}</span>
         </a>
         <a href="#profile-favorites-grid" class="profile-stat"><strong>{favoritesCount}</strong><span>{isEnglish ? "Favorites" : "Favoritos"}</span></a>
+        <div class="profile-stat"><strong>{profileCommentsCount}</strong><span>{isEnglish ? "Comments" : "Comentarios"}</span></div>
       </section>
 
       <section class="profile-library-links">
@@ -198,7 +205,7 @@ const favoritesCount = favoriteError ? 0 : (await supabase.from("anime_likes").s
   .profile-location-view { color: #888 !important; font-size: .78rem !important; }
   .genre-tags { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .9rem; }
   .genre-tags span { padding: .42rem .65rem; border: 1px solid rgba(255,255,255,.12); border-radius: 999px; background: rgba(255,255,255,.045); color: #ddd; font-size: .68rem; }
-  .profile-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: .5rem; padding: 1rem 1.5rem; }
+  .profile-stats { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: .5rem; padding: 1rem 1.5rem; }
   .profile-stat { display: grid; gap: .25rem; color: inherit; text-decoration: none; }
   .profile-stat strong { font-size: 1.45rem; font-weight: 650; }
   .profile-stat span { color: #888; font-size: .65rem; }
