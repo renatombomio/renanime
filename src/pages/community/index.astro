@@ -2,7 +2,6 @@
 export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/layout/Navbar.astro";
-import SectionHeader from "../../components/ui/SectionHeader.astro";
 import { createSupabaseSsrClient } from "../../lib/supabase-ssr";
 
 const lang = Astro.locals.lang;
@@ -25,9 +24,6 @@ const onlineCutoff = Date.now() - 5 * 60 * 1000;
 <Layout title={`${title} — Renanime's Gallery`}>
   <Navbar />
   <main id="main-content" class="community-page">
-    <div class="community-header">
-      <SectionHeader variant="ren" title={title} />
-    </div>
     <section class="community-directory" aria-label={title}>
       <div class="community-tools">
         <label class="community-search">
@@ -64,8 +60,7 @@ const onlineCutoff = Date.now() - 5 * 60 * 1000;
 
 <style>
   .community-page{min-height:70vh;padding-block:clamp(6rem,11vw,10rem) var(--section-space)}
-  .community-header,.community-directory{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin-inline:auto}
-  .community-directory{margin-top:clamp(1.75rem,3vw,2.5rem)}
+  .community-directory{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin:0 auto}
   .community-tools{display:flex;justify-content:flex-end;margin-bottom:1.25rem}
   .community-search{display:flex;align-items:center;gap:.65rem;width:min(100%,440px);height:42px;padding:0 .9rem;border:1px solid rgba(245,242,236,.16);border-radius:999px;background:#0b0b0b;color:#999}
   .community-search svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.6;flex:0 0 auto}
