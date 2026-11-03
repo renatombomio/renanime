@@ -389,15 +389,15 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
       const media = new Map(ids.map((id,index) => [id,payload.data?.["a"+index]]));
       grids.forEach(grid => {
         const gridIds = JSON.parse(grid.dataset.ids || "[]") as string[];
-        const cards = gridIds.map(id => {
+        const cards: HTMLElement[] = gridIds.map(id => {
           const anime = media.get(id);
-          if (!anime) return "";
+          if (!anime) return null;
           const title = anime.title?.english || anime.title?.romaji || "Anime";
           const card = document.createElement("a"); card.className = "profile-anime-card"; card.href = (isEnglish ? "/en" : "") + "/anime/" + id; card.setAttribute("aria-label",title);
           const img = document.createElement("img"); img.src = anime.coverImage?.large || ""; img.alt = ""; img.loading = "lazy";
           const label = document.createElement("span"); label.textContent = title;
           card.append(img,label); return card;
-        }).filter(Boolean);
+        }).filter((card): card is HTMLAnchorElement => card instanceof HTMLAnchorElement);
         grid.replaceChildren(...(cards.length ? cards : [Object.assign(document.createElement("span"),{className:"profile-anime-empty",textContent:copy("No se pudieron cargar los animes.","Could not load anime.")})]));
       });
     } catch {
