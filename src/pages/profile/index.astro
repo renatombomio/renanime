@@ -427,7 +427,7 @@ const favoritesCount = favoriteError ? 0 : (await supabase.from("anime_likes").s
       return;
     }
     const variables: Record<string, number> = {};
-    const fields = ids.map((id, index) => { variables["id" + index] = Number(id); return `a${index}: Media(id: $id${index}, type: ANIME) { id title { romaji english } coverImage { large } }`; }).join("\\n");
+    const fields = ids.map((id, index) => { variables["id" + index] = Number(id); return `a${index}: Media(id: $id${index}, type: ANIME) { id title { romaji english } coverImage { large } }`; }).join("\n");
     const definitions = ids.map((_, index) => `$id${index}: Int!`).join(", ");
     try {
       const [animeResponse, likeResponse] = await Promise.all([
