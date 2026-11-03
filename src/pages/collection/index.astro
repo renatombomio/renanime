@@ -3,7 +3,6 @@ export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 import { useT } from "../../i18n";
 import Navbar from "../../components/layout/Navbar.astro";
-import Footer from "../../components/layout/Footer.astro";
 import SectionHeader from "../../components/ui/SectionHeader.astro";
 import PersonalLibraryView from "../../components/personal-library/PersonalLibraryView";
 const t = useT(Astro.locals.lang);
@@ -25,8 +24,6 @@ const t = useT(Astro.locals.lang);
       <PersonalLibraryView mode="WATCHED" lang={Astro.locals.lang} client:load />
     </section>
   </main>
-
-  <Footer />
 </Layout>
 
 <style>
