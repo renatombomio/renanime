@@ -111,7 +111,7 @@ export default function SoundtrackPlayer({ lang }: { lang: Lang }) {
   const [muted, setMuted] = useState(false);
   const [shuffle, setShuffle] = useState(false);
   const [repeat, setRepeat] = useState<RepeatMode>("all");
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);\n  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });\n  const dragStartRef = useRef<{ x: number; y: number; originX: number; originY: number } | null>(null);
   const [available, setAvailable] = useState(true);
 
   const tracks = PLAYLISTS[playlistKey];
@@ -473,7 +473,7 @@ export default function SoundtrackPlayer({ lang }: { lang: Lang }) {
       <audio ref={audioRef} preload="metadata" aria-hidden="true" />
 
       <div className="soundtrack-player__inner">
-        <div className="soundtrack-player__top">
+        <div className="soundtrack-player__top">\n          <button className="soundtrack-player__drag" type="button" aria-label={lang === "en" ? "Move music player" : "Mover reproductor"} onPointerDown={handleDragStart} onPointerMove={handleDragMove} onPointerUp={handleDragEnd} onPointerCancel={handleDragEnd}>⠿</button>
           <button
             className="soundtrack-player__main-button"
             type="button"
