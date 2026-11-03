@@ -32,13 +32,14 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       .from("anime_comments").select("id, user_id").eq("id", commentId).maybeSingle();
     if (commentError || !comment) return json({ ok: false, error: "COMMENT_NOT_FOUND" }, 404);
 
-    const { data: existing, error: existingError } = await supabase
-      .from("anime_comment_reactions").select("id")
-      .eq("comment_id", commentId).eq("user_id", authData.user.id).eq("emoji", emoji).maybeSingle();
+    const { data: existingReactions, error: existingError } = await supabase
+      .from("anime_comment_reactions").select("id, emoji")
+      .eq("comment_id", commentId).eq("user_id", authData.user.id);
     if (existingError) return json({ ok: false, error: "REACTION_LOOKUP_FAILED" }, 503);
 
-    if (existing) {
-      const { error } = await supabase.from("anime_comment_reactions").delete().eq("id", existing.id);
+    const selectedReaction = existingReactions?.find(reaction => reaction.emoji === emoji);
+    if (selectedReaction) {
+      const { error } = await supabase.from("anime_comment_reactions").delete().eq("id", selectedReaction.id);
       if (error) return json({ ok: false, error: "REACTION_REMOVE_FAILED" }, 503);
       if (comment.user_id !== authData.user.id) {
         const { error: notificationError } = await supabase.from("notifications").delete()
@@ -47,6 +48,19 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         if (notificationError) console.warn("Reaction notification cleanup failed:", notificationError.code);
       }
       return json({ ok: true, active: false });
+    }
+
+    if (existingReactions?.length) {
+      const previousEmojis = existingReactions.map(reaction => reaction.emoji);
+      const { error: removeError } = await supabase.from("anime_comment_reactions").delete()
+        .eq("comment_id", commentId).eq("user_id", authData.user.id);
+      if (removeError) return json({ ok: false, error: "REACTION_REPLACE_FAILED" }, 503);
+      if (comment.user_id !== authData.user.id) {
+        const { error: notificationError } = await supabase.from("notifications").delete()
+          .eq("recipient_id", comment.user_id).eq("actor_id", authData.user.id)
+          .eq("comment_id", commentId).eq("type", "comment_reaction").in("emoji", previousEmojis);
+        if (notificationError) console.warn("Previous reaction notification cleanup failed:", notificationError.code);
+      }
     }
 
     const { error: insertError } = await supabase.from("anime_comment_reactions").insert({
