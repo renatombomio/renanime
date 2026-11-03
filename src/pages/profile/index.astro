@@ -419,8 +419,11 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
     form.set("kind", kind);
     form.set("file", file);
     const response = await fetch("/api/auth/profile/media", { method: "POST", body: form, credentials: "same-origin" });
-    const result = await response.json();
-    if (!response.ok || !result.ok) throw new Error(copy("No se pudo subir la imagen.", "Image upload failed."));
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || !result.ok) {
+      const reason = typeof result.error === "string" ? result.error : "UPLOAD_FAILED";
+      throw new Error(copy("No se pudo subir la imagen (" + reason + ").", "Image upload failed (" + reason + ")."));
+    }
     return result.url as string;
   }
 
