@@ -30,13 +30,6 @@ const library = Array.isArray(libraryData) ? libraryData : [];
 const watched = library.filter((entry: any) => entry?.status === "seen");
 const pending = library.filter((entry: any) => entry?.status === "pending");
 
-const joinedDate = profile.created_at
-  ? new Intl.DateTimeFormat(isEnglish ? "en-GB" : "es-ES", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }).format(new Date(profile.created_at))
-  : "—";
 ---
 
 <Layout
@@ -47,14 +40,6 @@ const joinedDate = profile.created_at
 
   <main class="profile-page">
     <section class="profile-card">
-      <header class="profile-header">
-        <p class="eyebrow">{isEnglish ? "MY PROFILE" : "MI PERFIL"}</p>
-        <h1>{profile.name}</h1>
-        <p class="community-line">
-          {isEnglish ? "Part of the otaku community since" : "Miembro de la comunidad otaku desde"} <strong>{joinedDate}</strong>.
-        </p>
-      </header>
-
       <section class="profile-editor" aria-labelledby="profile-editor-title">
         <div class="cover-preview" id="cover-preview" style={profile.cover_url ? `background-image: linear-gradient(0deg, rgba(5,5,5,.94), rgba(5,5,5,.08)), url("${profile.cover_url}")` : undefined}>
           <button class="media-edit cover-edit" type="button" data-pick="cover">{isEnglish ? "Change cover" : "Cambiar banner"}</button>
@@ -116,8 +101,8 @@ const joinedDate = profile.created_at
 </Layout>
 
 <style>
-  .profile-editor { margin-top: 1.5rem; overflow: hidden; border: 1px solid rgba(255,255,255,.1); border-radius: 22px; background: rgba(255,255,255,.025); }
-  .cover-preview { position: relative; height: clamp(180px, 32vw, 320px); background: linear-gradient(135deg,#24202a,#111); background-size: cover; background-position: center; }
+  .profile-editor { margin: 0; overflow: visible; border: 0; border-radius: 0; background: transparent; }
+  .cover-preview { position: relative; height: clamp(190px, 34vw, 340px); background: linear-gradient(135deg,#24202a,#111); background-size: cover; background-position: center; }
   .media-edit { border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: .65rem .9rem; color: white; background: rgba(0,0,0,.45); backdrop-filter: blur(10px); cursor: pointer; font: inherit; font-size: .78rem; }
   .cover-edit { position: absolute; right: 1rem; bottom: 1rem; }
   .file-input { display: none; }
@@ -140,7 +125,7 @@ const joinedDate = profile.created_at
   .upload-note { margin: 0; color: #777; font-size: .72rem; }
   .profile-page {
     min-height: 100vh;
-    padding: 108px 1.25rem 2.5rem;
+    padding: 80px 1.25rem 2.5rem;
   }
 
   .profile-card {
@@ -271,7 +256,7 @@ const joinedDate = profile.created_at
 
   @media (max-width: 520px) {
     .profile-page {
-      padding: 88px .9rem 1.5rem;
+      padding: 80px .9rem 1.5rem;
     }
     .identity-editor { padding: 0 1rem; margin-top: -2.8rem; gap: .75rem; }
     .avatar-preview { width: 88px; height: 88px; }
@@ -301,18 +286,9 @@ const joinedDate = profile.created_at
       line-height: 1.25;
     }
 
-    .profile-header {
-      padding-bottom: 1.15rem;
-    }
-
     .eyebrow,
     .section-label {
       font-size: .58rem;
-    }
-
-    .community-line {
-      font-size: .78rem;
-      line-height: 1.45;
     }
 
     .profile-actions {
