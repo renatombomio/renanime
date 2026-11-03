@@ -121,6 +121,31 @@ export default function SoundtrackPlayer({ lang }: { lang: Lang }) {
 
   settingsRef.current = { enabled, volume, muted, shuffle, repeat };
 
+  const handleDragStart = (event: React.PointerEvent<HTMLButtonElement>) => {
+    if (event.button !== 0) return;
+    event.preventDefault();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dragStartRef.current = {
+      x: event.clientX,
+      y: event.clientY,
+      originX: dragOffset.x,
+      originY: dragOffset.y,
+    };
+  };
+
+  const handleDragMove = (event: React.PointerEvent<HTMLButtonElement>) => {
+    const start = dragStartRef.current;
+    if (!start) return;
+    setDragOffset({
+      x: start.originX + event.clientX - start.x,
+      y: start.originY + event.clientY - start.y,
+    });
+  };
+
+  const handleDragEnd = () => {
+    dragStartRef.current = null;
+  };
+
   const progress = useMemo(
     () => (duration > 0 ? Math.min(100, (position / duration) * 100) : 0),
     [position, duration],
@@ -471,11 +496,13 @@ export default function SoundtrackPlayer({ lang }: { lang: Lang }) {
     <aside
       className={`soundtrack-player ${playing ? "is-playing" : ""} ${open ? "is-open" : ""}`}
       aria-label={t("player.label")}
+      style={{ transform: `translate(var(--player-drag-x, 0px), var(--player-drag-y, 0px))` }}
     >
       <audio ref={audioRef} preload="metadata" aria-hidden="true" />
 
       <div className="soundtrack-player__inner">
-        <div className="soundtrack-player__top">\n          <button className="soundtrack-player__drag" type="button" aria-label={lang === "en" ? "Move music player" : "Mover reproductor"} onPointerDown={handleDragStart} onPointerMove={handleDragMove} onPointerUp={handleDragEnd} onPointerCancel={handleDragEnd}>⠿</button>
+        <div className="soundtrack-player__top">
+          <button className="soundtrack-player__drag" type="button" aria-label={lang === "en" ? "Move music player" : "Mover reproductor"} onPointerDown={handleDragStart} onPointerMove={handleDragMove} onPointerUp={handleDragEnd} onPointerCancel={handleDragEnd}>⠿</button>
           <button
             className="soundtrack-player__main-button"
             type="button"
