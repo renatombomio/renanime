@@ -370,34 +370,7 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
 
 <script>
   const isEnglish = document.documentElement.lang === "en";
-  let presenceTimer: number | undefined;
-  const updatePresence = async () => {
-    if (document.visibilityState !== "visible") return;
-    try {
-      const response = await fetch("/api/auth/presence", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        body: "{}",
-      });
-      if (response.ok) {
-        const status = document.querySelector<HTMLElement>("#profile-presence");
-        if (status) status.hidden = false;
-      }
-    } catch {
-      // Presence is best-effort; profile rendering must not depend on it.
-    }
-  };
-  const startPresence = () => {
-    if (presenceTimer) window.clearInterval(presenceTimer);
-    void updatePresence();
-    presenceTimer = window.setInterval(updatePresence, 45_000);
-  };
-  document.addEventListener("astro:page-load", startPresence);
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") void updatePresence();
-  });
-  startPresence();
+
 
 
   // ClientRouter keeps the document alive between routes: delegate clicks to the

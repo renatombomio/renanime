@@ -11,6 +11,7 @@ const {
 } = Astro.props;
 const isGhibli = basePath.startsWith("/ghibli");
 const isAuth = basePath === "/login" || basePath === "/login/";
+const isAuthenticated = Boolean(Astro.locals.renanimeUser);
 
 import "../styles/global.css";
 import { ClientRouter } from "astro:transitions";
@@ -31,7 +32,7 @@ import Analytics from '@vercel/analytics/astro';
     <title>{title}</title>
   </head>
 
-  <body class:list={["texture-grain", isGhibli && "theme-ghibli"]}>
+  <body class:list={["texture-grain", isGhibli && "theme-ghibli"]} data-authenticated={isAuthenticated ? "true" : "false"}>
     <a class="skip-link" href="#main-content">{lang === "en" ? "Skip to content" : "Saltar al contenido"}</a>
     <slot />
     <Analytics />
@@ -71,3 +72,34 @@ import Analytics from '@vercel/analytics/astro';
     transform: translateY(0);
   }
 </style>
+
+<script>
+  let renanimePresenceTimer: number | undefined;
+  const sendPresenceHeartbeat = async () => {
+    if (document.body.dataset.authenticated !== "true" || document.visibilityState !== "visible") return;
+    try {
+      const response = await fetch("/api/auth/presence", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+      if (response.ok) {
+        const status = document.querySelector<HTMLElement>("#profile-presence");
+        if (status) status.hidden = false;
+      }
+    } catch {
+      // Presence is best-effort and must never block page rendering.
+    }
+  };
+  const startRenanimePresence = () => {
+    if (renanimePresenceTimer) window.clearInterval(renanimePresenceTimer);
+    void sendPresenceHeartbeat();
+    renanimePresenceTimer = window.setInterval(sendPresenceHeartbeat, 45_000);
+  };
+  document.addEventListener("astro:page-load", startRenanimePresence);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") void sendPresenceHeartbeat();
+  });
+  startRenanimePresence();
+</script>
