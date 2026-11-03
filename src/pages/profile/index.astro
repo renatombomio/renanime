@@ -42,15 +42,15 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
     <section class="profile-card">
       <section class="profile-editor" aria-labelledby="profile-editor-title">
         <div class="cover-preview" id="cover-preview" style={profile.cover_url ? `background-image: linear-gradient(0deg, rgba(5,5,5,.94), rgba(5,5,5,.08)), url("${profile.cover_url}")` : undefined}>
-          <button class="media-edit cover-edit" type="button" data-pick="cover" aria-label={isEnglish ? "Change cover image" : "Cambiar imagen de portada"}>{isEnglish ? "Change cover" : "Cambiar banner"}</button>
+          <label class="media-edit cover-edit" for="cover-input">{isEnglish ? "Add cover photo" : "Añadir foto de portada"}</label>
           <input class="file-input" id="cover-input" type="file" accept="image/jpeg,image/png,image/webp,image/avif" />
         </div>
         <div class="identity-editor">
           <div class="avatar-wrap">
             <img id="avatar-preview" class="avatar-preview" src={profile.avatar_url || "/images/profile-avatar-placeholder.svg"} alt={isEnglish ? "Profile picture" : "Foto de perfil"} />
-            <button class="avatar-edit" type="button" data-pick="avatar" aria-label={isEnglish ? "Change profile picture" : "Cambiar foto de perfil"} title={isEnglish ? "Change profile picture" : "Cambiar foto de perfil"}>
+            <label class="avatar-edit" for="avatar-input" aria-label={isEnglish ? "Change profile picture" : "Cambiar foto de perfil"} title={isEnglish ? "Change profile picture" : "Cambiar foto de perfil"}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h3l1.5-2h7l1.5 2h3v11H4z"/><circle cx="12" cy="13" r="3.2"/></svg>
-            </button>
+            </label>
             <input class="file-input" id="avatar-input" type="file" accept="image/jpeg,image/png,image/webp,image/avif" />
           </div>
           <div class="identity-copy">
@@ -117,9 +117,7 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
       </section>
 
       <div class="profile-actions">
-        <a href={localizedPath(Astro.locals.lang, "/collection/")}>{isEnglish ? "View my collection" : "Ver mi colección"}</a>
-        <a href={localizedPath(Astro.locals.lang, "/pending/")}>{isEnglish ? "View my list" : "Ver mi lista"}</a>
-        <button id="logout-button" type="button">{isEnglish ? "Log out" : "Cerrar sesión"}</button>
+        <button class="delete-account-button" id="delete-account-button" type="button">{isEnglish ? "Delete account" : "Eliminar cuenta"}</button>
       </div>
     </section>
   </main>
@@ -132,7 +130,7 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
    .cover-edit { position: absolute; right: 1rem; bottom: 1rem; z-index: 2; display: none; }
   .profile-editor.is-editing .cover-edit { display: inline-flex; }
   .profile-editor.is-editing .avatar-edit { display: grid; }
-  .media-edit { border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: .65rem .9rem; color: white; background: rgba(0,0,0,.45); backdrop-filter: blur(10px); cursor: pointer; font: inherit; font-size: .78rem; }
+  .media-edit { display:inline-flex; align-items:center; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: .65rem .9rem; color: white; background: rgba(0,0,0,.45); backdrop-filter: blur(10px); cursor: pointer; font: inherit; font-size: .78rem; }
 
   .file-input { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; opacity: 0; }
   .identity-editor { display: flex; align-items: end; gap: 1rem; padding: 0 1.5rem; margin-top: -3.4rem; position: relative; }
@@ -302,10 +300,8 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
     background: rgba(255, 79, 139, 0.06);
   }
 
-  .profile-actions button:disabled {
-    cursor: wait;
-    opacity: 0.55;
-  }
+  .profile-actions button:disabled { cursor: wait; opacity: 0.55; }
+  .profile-actions .delete-account-button { border-color: rgba(239,68,68,.35); color:#fca5a5; }
 
   @media (max-width: 520px) {
     .profile-page { padding: 68px 0 1.5rem; }
@@ -357,7 +353,6 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
 
 <script>
   const isEnglish = document.documentElement.lang === "en";
-  const logoutButton = document.querySelector<HTMLButtonElement>("#logout-button");
   const profileEditor = document.querySelector<HTMLElement>(".profile-editor");
   const editorToggle = document.querySelector<HTMLButtonElement>("#toggle-profile-editor");
   const editorFields = document.querySelector<HTMLElement>("#profile-editor-fields");
@@ -421,13 +416,7 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
   }
 
   // Delegate media controls: Astro ClientRouter swaps page DOM without rerunning this module.
-  document.addEventListener("click", (event) => {
-    const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-pick]");
-    if (!button) return;
-    event.preventDefault();
-    const inputId = button.dataset.pick === "avatar" ? "#avatar-input" : "#cover-input";
-    document.querySelector<HTMLInputElement>(inputId)?.click();
-  });
+
 
   document.addEventListener("change", async (event) => {
     const input = event.target;
@@ -504,16 +493,5 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
     } finally { button.disabled = false; }
   });
 
-  logoutButton?.addEventListener("click", async () => {
-    logoutButton.disabled = true;
-    logoutButton.textContent = isEnglish ? "Logging out…" : "Cerrando sesión…";
-    try {
-      const response = await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" });
-      if (!response.ok) throw new Error("logout_failed");
-      window.location.href = isEnglish ? "/en/login/" : "/login/";
-    } catch {
-      logoutButton.disabled = false;
-      logoutButton.textContent = isEnglish ? "Log out" : "Cerrar sesión";
-    }
-  });
+
 </script>
