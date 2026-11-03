@@ -100,6 +100,10 @@ const profileCommentsCount = commentsCountError ? 0 : commentsCount ?? 0;
           <label>{isEnglish ? "Location (optional)" : "Ubicación (opcional)"}
             <input id="profile-location" maxlength="80" value={profile.location || ""} placeholder={isEnglish ? "City, country" : "Ciudad, país"} />
           </label>
+          <label class="privacy-setting">
+            <input id="profile-private" type="checkbox" checked={Boolean(profile.is_private)} />
+            <span><strong>{isEnglish ? "Private profile" : "Perfil privado"}</strong><small>{isEnglish ? "Only you can see your anime collection and watchlist. Your profile will not appear in the community directory." : "Solo tú podrás ver tu colección y lista de anime. Tu perfil no aparecerá en el directorio de la comunidad."}</small></span>
+          </label>
           <div class="editor-actions">
             <button class="save-profile" id="save-profile" type="button">{isEnglish ? "Save changes" : "Guardar cambios"}</button>
             <p id="profile-feedback" role="status" aria-live="polite"></p>
@@ -233,6 +237,11 @@ const profileCommentsCount = commentsCountError ? 0 : commentsCount ?? 0;
   @media(max-width:380px) { .profile-anime-grid { column-gap:.6rem; } :global(.profile-anime-card) { grid-template-columns:56px minmax(0,1fr); column-gap:.5rem; } :global(.profile-anime-card img) { width:56px; height:56px; } :global(.profile-anime-card-title) { font-size:.74rem; } }
   .profile-anime-empty { grid-column:1/-1; padding:.8rem 0; color:#777; font-size:.75rem; }
   .field-hint { color:#777; font-size:.68rem; }
+  .privacy-setting{display:flex!important;align-items:flex-start;gap:.75rem;padding:.9rem 1rem;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:rgba(255,255,255,.025)}
+  .privacy-setting input{width:17px!important;height:17px;flex:0 0 auto;margin:.15rem 0 0;accent-color:#ec4899}
+  .privacy-setting span{display:grid;gap:.3rem}
+  .privacy-setting strong{color:#eee;font-size:.8rem;font-weight:600}
+  .privacy-setting small{color:#888;font-size:.7rem;line-height:1.45}
   
 
   .profile-header {
@@ -543,7 +552,8 @@ const profileCommentsCount = commentsCountError ? 0 : commentsCount ?? 0;
           bio: (document.querySelector<HTMLTextAreaElement>("#profile-bio")?.value || "").trim(),
           location: (document.querySelector<HTMLInputElement>("#profile-location")?.value || "").trim(),
           headline: (document.querySelector<HTMLInputElement>("#profile-headline")?.value || "").trim(),
-          interests: (document.querySelector<HTMLInputElement>("#profile-interests")?.value || "").split(",").map(value => value.trim()).filter(Boolean)
+          interests: (document.querySelector<HTMLInputElement>("#profile-interests")?.value || "").split(",").map(value => value.trim()).filter(Boolean),
+          isPrivate: Boolean(document.querySelector<HTMLInputElement>("#profile-private")?.checked)
         })
       });
       const result = await response.json();
