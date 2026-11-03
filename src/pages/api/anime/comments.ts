@@ -19,10 +19,11 @@ export const GET: APIRoute = async ({ request, cookies }) => {
   const url = new URL(request.url);
   const idsParam = url.searchParams.get("ids");
   if (idsParam !== null) {
-    const animeIds = [...new Set(idsParam.split(",").map((value) => validAnimeId(value)))];
-    if (!animeIds.length || animeIds.length > 100 || animeIds.some((id) => id === null)) {
+    const parsedIds = idsParam.split(",").map((value) => validAnimeId(value));
+    if (!parsedIds.length || parsedIds.length > 100 || parsedIds.some((id) => id === null)) {
       return json({ ok: false, error: "INVALID_ANIME_IDS" }, 400);
     }
+    const animeIds = [...new Set(parsedIds as number[])];
 
     try {
       const supabase = createSupabaseSsrClient(request, cookies);
