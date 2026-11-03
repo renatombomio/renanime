@@ -42,8 +42,11 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
     <section class="profile-card">
       <section class="profile-editor" aria-labelledby="profile-editor-title">
         <div class="cover-preview" id="cover-preview" style={profile.cover_url ? `background-image: linear-gradient(0deg, rgba(5,5,5,.94), rgba(5,5,5,.08)), url("${profile.cover_url}")` : undefined}>
-          <label class="media-edit cover-edit" for="cover-input">{isEnglish ? "Add cover photo" : "Añadir foto de portada"}</label>
-          <input class="file-input" id="cover-input" type="file" accept="image/jpeg,image/png,image/webp,image/avif" />
+          <label class="media-edit cover-edit" for="cover-input">
+            <span>{isEnglish ? "Add cover photo" : "Añadir foto de portada"}</span>
+          </label>
+          <input class="cover-file-input" id="cover-input" name="cover" type="file" accept="image/jpeg,.jpg,.jpeg,.png,.webp,.avif" aria-label={isEnglish ? "Choose cover photo" : "Elegir foto de portada"} />
+          <span id="cover-upload-feedback" class="cover-upload-feedback" role="status" aria-live="polite"></span>
         </div>
         <div class="identity-editor">
           <div class="avatar-wrap">
@@ -126,6 +129,9 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
 <style>
   .profile-editor { margin: 0; overflow: visible; border: 0; border-radius: 0; background: transparent; }
   .cover-preview { position: relative; width: 100%; height: clamp(210px, 34vw, 340px); background: linear-gradient(135deg,#24202a,#111); background-size: cover; background-position: center; isolation: isolate; }
+  .cover-file-input { position:absolute; inset:0; z-index:3; width:100%; height:100%; opacity:0; cursor:pointer; font-size:100px; }
+  .cover-edit { pointer-events:none; }
+  .cover-upload-feedback { position:absolute; z-index:4; left:1rem; bottom:.75rem; max-width:55%; color:#fff; font-size:.72rem; text-shadow:0 1px 5px #000; pointer-events:none; }
   .cover-preview::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; background: linear-gradient(180deg, rgba(0,0,0,.02) 28%, rgba(0,0,0,.22) 58%, #050505 100%); }
    .cover-edit { position: absolute; right: 1rem; bottom: 1rem; z-index: 2; display: none; }
   .profile-editor.is-editing .cover-edit { display: inline-flex; }
@@ -424,7 +430,7 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
     const file = input.files?.[0];
     if (!file) return;
     const kind = input.id === "avatar-input" ? "avatar" : "cover";
-    const status = document.querySelector<HTMLElement>("#profile-feedback");
+    const status = document.querySelector<HTMLElement>("#profile-feedback") || document.querySelector<HTMLElement>("#cover-upload-feedback");
     try {
       if (status) status.textContent = kind === "avatar" ? copy("Subiendo foto…", "Uploading picture…") : copy("Subiendo banner…", "Uploading cover…");
       const url = await uploadImage(kind, file);
