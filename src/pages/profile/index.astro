@@ -22,7 +22,7 @@ if (libraryError) {
 
 const { data: profileData } = await supabase
   .from("profiles")
-  .select("id, name, aka, headline, bio, location, avatar_url, cover_url, interests, created_at")
+  .select("id, name, aka, headline, bio, location, avatar_url, cover_url, interests, created_at, last_seen_at")
   .eq("id", user.id)
   .maybeSingle();
 const profile = { ...user, ...profileData };
@@ -57,7 +57,10 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
             <input class="file-input" id="avatar-input" type="file" accept="image/jpeg,image/png,image/webp,image/avif" />
           </div>
           <div class="identity-copy">
-            <h2 id="identity-name">{profile.name}</h2>
+            <div class="identity-name-row">
+              <h2 id="identity-name">{profile.name}</h2>
+              <span class="presence-status" id="profile-presence" aria-label={isEnglish ? "Online" : "En línea"} hidden><span class="presence-dot"></span><span>{isEnglish ? "Online" : "En línea"}</span></span>
+            </div>
             <p class="handle" id="identity-aka">@{profile.aka}</p>
           </div>
           <button class="profile-edit-toggle" id="toggle-profile-editor" type="button" aria-expanded="false" aria-controls="profile-editor-fields" aria-label={isEnglish ? "Edit profile information" : "Editar información del perfil"} title={isEnglish ? "Edit profile" : "Editar perfil"}>
@@ -151,7 +154,11 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
   .profile-edit-toggle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   .username-input { display: flex; align-items: center; gap: .5rem; padding-left: 1rem; border: 1px solid rgba(255,255,255,.13); border-radius: 12px; background: rgba(255,255,255,.04); color: #888; }
   .username-input input { border: 0; background: transparent; padding-left: 0; }
-  .identity-copy h2 { margin: .2rem 0; font-size: clamp(1.4rem,3vw,2rem); }
+  .identity-copy h2 { margin: .2rem 0; font-size: clamp(1.9rem,5vw,2.65rem); line-height:1.02; letter-spacing:-.045em; font-weight:750; }
+  .identity-name-row { display:flex; align-items:center; flex-wrap:wrap; gap:.65rem; }
+  .presence-status { display:inline-flex; align-items:center; gap:.35rem; color:#9bd7a9; font-size:.68rem; font-weight:550; white-space:nowrap; }
+  .presence-status[hidden] { display:none; }
+  .presence-dot { width:8px; height:8px; border-radius:50%; background:#35d06f; box-shadow:0 0 9px rgba(53,208,111,.65); }
   .handle { margin: 0; color: #aaa; font-size: .85rem; }
   .editor-fields { display: grid; gap: 1rem; padding: 1.5rem; }
   .editor-fields[hidden] { display: none; }
@@ -319,6 +326,7 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
     .editor-fields { padding: 1rem 1.25rem; }
     .identity-editor { padding: 0 1.25rem; margin-top: -2.8rem; gap: .75rem; }
     .avatar-preview { width: 88px; height: 88px; }
+    .identity-copy h2 { font-size:clamp(1.75rem,6vw,2.25rem); }
     .editor-fields { padding: 1rem 1.25rem; }
     .cover-preview { height: 220px; }
 
@@ -362,6 +370,36 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
 
 <script>
   const isEnglish = document.documentElement.lang === "en";
+  let presenceTimer: number | undefined;
+  const updatePresence = async () => {
+    if (document.visibilityState !== "visible") return;
+    try {
+      const response = await fetch("/api/auth/presence", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+      if (response.ok) {
+        const status = document.querySelector<HTMLElement>("#profile-presence");
+        if (status) status.hidden = false;
+      }
+    } catch {
+      // Presence is best-effort; profile rendering must not depend on it.
+    }
+  };
+  const startPresence = () => {
+    if (presenceTimer) window.clearInterval(presenceTimer);
+    void updatePresence();
+    presenceTimer = window.setInterval(updatePresence, 45_000);
+  };
+  document.addEventListener("astro:page-load", startPresence);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") void updatePresence();
+  });
+  startPresence();
+
+
   // ClientRouter keeps the document alive between routes: delegate clicks to the
   // persistent document so controls work on every visit to /profile/.
   document.addEventListener("click", (event) => {
