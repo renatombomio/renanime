@@ -9,9 +9,7 @@ const links = [
   { key: "nav.renFavorites", href: "/favorites/" },
   { key: "nav.renGenres", href: "/genres/" },
   { key: "nav.search", href: "/search/" },
-  { key: "nav.myList", href: "/pending/" },
-  { key: "nav.myCollection", href: "/collection/" },
-  { key: "nav.profile", href: "/profile/" },
+  { key: "nav.community", href: "/community/" },
   { key: "nav.renSecret", href: "/ghibli/" }
 ] as const;
 
@@ -115,7 +113,7 @@ export default function MobileMenu({ variant = "default", lang, showLogout = fal
         .mobile-panel {
           position: fixed; top: 68px; right: 0; left: 0; z-index: 2;
           min-height: calc(100dvh - 68px); max-height: calc(100dvh - 68px);
-          padding: 12px 24px 40px; overflow-y: auto; overscroll-behavior: contain;
+          padding: 8px 24px 28px; overflow-y: auto; overscroll-behavior: contain;
           background: #090909; color: #f5f2ec; opacity: 0; visibility: hidden;
           pointer-events: none; transform: translateY(-18px);
           transition: opacity 360ms ease, transform 480ms cubic-bezier(.22,1,.36,1), visibility 0s linear 480ms;
@@ -130,10 +128,10 @@ export default function MobileMenu({ variant = "default", lang, showLogout = fal
 
         .mobile-link {
           display: flex; align-items: center; justify-content: space-between;
-          min-height: 54px; padding: 13px 0;
+          min-height: 44px; padding: 9px 0;
           border-bottom: 1px solid rgba(245,242,236,.1);
-          color: #b9b2a7; font-family: var(--font-meta); font-size: 12px;
-          font-weight: 500; letter-spacing: .08em; line-height: 1.2;
+          color: #b9b2a7; font-family: var(--font-meta); font-size: 11px;
+          font-weight: 500; letter-spacing: .075em; line-height: 1.2;
           text-transform: uppercase; text-decoration: none; opacity: 0;
           transform: translateY(14px);
           transition: color 180ms ease, opacity 420ms cubic-bezier(.22,1,.36,1), transform 420ms cubic-bezier(.22,1,.36,1);
