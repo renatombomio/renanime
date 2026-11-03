@@ -25,14 +25,14 @@ import Analytics from '@vercel/analytics/astro';
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content={isGhibli ? "#FFF7E8" : "#090909"} />
+    <meta name="theme-color" content={isGhibli ? "#FFF7E8" : "#09090b"} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <ClientRouter />
     <title>{title}</title>
   </head>
 
-  <body class:list={["texture-grain", isGhibli && "theme-ghibli"]} data-authenticated={isAuthenticated ? "true" : "false"}>
+  <body class:list={[isGhibli && "theme-ghibli"]} data-authenticated={isAuthenticated ? "true" : "false"}>
     <a class="skip-link" href="#main-content">{lang === "en" ? "Skip to content" : "Saltar al contenido"}</a>
     <slot />
     <Analytics />
