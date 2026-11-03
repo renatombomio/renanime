@@ -20,7 +20,12 @@ if (libraryError) {
   console.error("Renanime profile library error:", libraryError.message);
 }
 
-const profile = user;
+const { data: profileData } = await supabase
+  .from("profiles")
+  .select("id, name, aka, bio, location, avatar_url, cover_url, interests, created_at")
+  .eq("id", user.id)
+  .maybeSingle();
+const profile = { ...user, ...profileData };
 const library = Array.isArray(libraryData) ? libraryData : [];
 const watched = library.filter((entry: any) => entry?.status === "seen");
 const pending = library.filter((entry: any) => entry?.status === "pending");
@@ -50,6 +55,39 @@ const joinedDate = profile.created_at
         </p>
       </header>
 
+      <section class="profile-editor" aria-labelledby="profile-editor-title">
+        <div class="cover-preview" id="cover-preview" style={profile.cover_url ? `background-image: linear-gradient(0deg, rgba(5,5,5,.94), rgba(5,5,5,.08)), url("${profile.cover_url}")` : undefined}>
+          <button class="media-edit cover-edit" type="button" data-pick="cover">{isEnglish ? "Change cover" : "Cambiar banner"}</button>
+          <input class="file-input" id="cover-input" type="file" accept="image/jpeg,image/png,image/webp,image/avif" />
+        </div>
+        <div class="identity-editor">
+          <div class="avatar-wrap">
+            <img id="avatar-preview" class="avatar-preview" src={profile.avatar_url || "/images/profile-avatar-placeholder.svg"} alt={isEnglish ? "Profile picture" : "Foto de perfil"} />
+            <button class="avatar-edit" type="button" data-pick="avatar" aria-label={isEnglish ? "Change profile picture" : "Cambiar foto de perfil"}>+</button>
+            <input class="file-input" id="avatar-input" type="file" accept="image/jpeg,image/png,image/webp,image/avif" />
+          </div>
+          <div class="identity-copy">
+            <p class="eyebrow">{isEnglish ? "YOUR SPACE" : "TU ESPACIO"}</p>
+            <h2>{profile.name}</h2>
+            <p class="handle">@{profile.aka}</p>
+          </div>
+        </div>
+        <div class="editor-fields">
+          <h2 id="profile-editor-title">{isEnglish ? "Personalize your profile" : "Personaliza tu perfil"}</h2>
+          <label>{isEnglish ? "Biography" : "Biografía"}
+            <textarea id="profile-bio" maxlength="280" placeholder={isEnglish ? "Tell the community about yourself…" : "Cuéntale a la comunidad quién eres…"}>{profile.bio || ""}</textarea>
+          </label>
+          <label>{isEnglish ? "Location (optional)" : "Ubicación (opcional)"}
+            <input id="profile-location" maxlength="80" value={profile.location || ""} placeholder={isEnglish ? "City, country" : "Ciudad, país"} />
+          </label>
+          <div class="editor-actions">
+            <button class="save-profile" id="save-profile" type="button">{isEnglish ? "Save changes" : "Guardar cambios"}</button>
+            <p id="profile-feedback" role="status" aria-live="polite"></p>
+          </div>
+          <p class="upload-note">{isEnglish ? "JPG, PNG, WebP or AVIF · Max. 5 MB per image." : "JPG, PNG, WebP o AVIF · Máximo 5 MB por imagen."}</p>
+        </div>
+      </section>
+
       <section class="library-section">
         <p class="section-label">{isEnglish ? "MY RENANIME" : "MI RENANIME"}</p>
 
@@ -78,6 +116,28 @@ const joinedDate = profile.created_at
 </Layout>
 
 <style>
+  .profile-editor { margin-top: 1.5rem; overflow: hidden; border: 1px solid rgba(255,255,255,.1); border-radius: 22px; background: rgba(255,255,255,.025); }
+  .cover-preview { position: relative; height: clamp(180px, 32vw, 320px); background: linear-gradient(135deg,#24202a,#111); background-size: cover; background-position: center; }
+  .media-edit { border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: .65rem .9rem; color: white; background: rgba(0,0,0,.45); backdrop-filter: blur(10px); cursor: pointer; font: inherit; font-size: .78rem; }
+  .cover-edit { position: absolute; right: 1rem; bottom: 1rem; }
+  .file-input { display: none; }
+  .identity-editor { display: flex; align-items: end; gap: 1rem; padding: 0 1.5rem; margin-top: -3.4rem; position: relative; }
+  .avatar-wrap { position: relative; flex: 0 0 auto; }
+  .avatar-preview { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; border: 4px solid #090909; background: #242424; }
+  .avatar-edit { position: absolute; right: 2px; bottom: 8px; width: 30px; height: 30px; border: 1px solid rgba(255,255,255,.5); border-radius: 50%; background: #ec4899; color: white; font-size: 1.2rem; cursor: pointer; }
+  .identity-copy { padding-bottom: .45rem; min-width: 0; }
+  .identity-copy h2 { margin: .2rem 0; font-size: clamp(1.4rem,3vw,2rem); }
+  .handle { margin: 0; color: #aaa; font-size: .85rem; }
+  .editor-fields { display: grid; gap: 1rem; padding: 1.5rem; }
+  .editor-fields h2 { margin: 0; font-size: 1.15rem; }
+  .editor-fields label { display: grid; gap: .45rem; color: #aaa; font-size: .78rem; }
+  .editor-fields textarea,.editor-fields input { width: 100%; border: 1px solid rgba(255,255,255,.13); border-radius: 12px; padding: .85rem 1rem; background: rgba(255,255,255,.04); color: white; font: inherit; font-size: .9rem; }
+  .editor-fields textarea { min-height: 96px; resize: vertical; }
+  .editor-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; }
+  .save-profile { border: 0; border-radius: 999px; padding: .8rem 1.2rem; background: #ec4899; color: white; font: inherit; font-size: .82rem; font-weight: 650; cursor: pointer; }
+  .save-profile:disabled { opacity: .55; cursor: wait; }
+  #profile-feedback { margin: 0; color: #9ed9b0; font-size: .8rem; }
+  .upload-note { margin: 0; color: #777; font-size: .72rem; }
   .profile-page {
     min-height: 100vh;
     padding: 108px 1.25rem 2.5rem;
@@ -213,6 +273,10 @@ const joinedDate = profile.created_at
     .profile-page {
       padding: 88px .9rem 1.5rem;
     }
+    .identity-editor { padding: 0 1rem; margin-top: -2.8rem; gap: .75rem; }
+    .avatar-preview { width: 88px; height: 88px; }
+    .editor-fields { padding: 1rem; }
+    .cover-preview { height: 190px; }
 
     .profile-card {
       width: min(100%, 560px);
@@ -267,15 +331,86 @@ const joinedDate = profile.created_at
 <script>
   const isEnglish = document.documentElement.lang === "en";
   const logoutButton = document.querySelector<HTMLButtonElement>("#logout-button");
+  const feedback = document.querySelector<HTMLElement>("#profile-feedback");
+  const copy = (es: string, en: string) => isEnglish ? en : es;
+
+  document.querySelectorAll<HTMLButtonElement>("[data-pick]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const kind = button.dataset.pick;
+      document.querySelector<HTMLInputElement>(kind === "avatar" ? "#avatar-input" : "#cover-input")?.click();
+    });
+  });
+
+  async function uploadImage(kind: "avatar" | "cover", file: File) {
+    if (file.size > 5 * 1024 * 1024) throw new Error(copy("La imagen supera el límite de 5 MB.", "Image exceeds the 5 MB limit."));
+    const form = new FormData();
+    form.set("kind", kind);
+    form.set("file", file);
+    const response = await fetch("/api/auth/profile/media", { method: "POST", body: form, credentials: "same-origin" });
+    const result = await response.json();
+    if (!response.ok || !result.ok) throw new Error(copy("No se pudo subir la imagen.", "Image upload failed."));
+    return result.url as string;
+  }
+
+  document.querySelector<HTMLInputElement>("#avatar-input")?.addEventListener("change", async (event) => {
+    const input = event.currentTarget as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    try {
+      if (feedback) feedback.textContent = copy("Subiendo foto…", "Uploading picture…");
+      const url = await uploadImage("avatar", file);
+      const preview = document.querySelector<HTMLImageElement>("#avatar-preview");
+      if (preview) preview.src = url;
+      if (feedback) feedback.textContent = copy("Foto de perfil actualizada.", "Profile picture updated.");
+    } catch (error) {
+      if (feedback) feedback.textContent = error instanceof Error ? error.message : copy("Error al subir.", "Upload error.");
+    } finally { input.value = ""; }
+  });
+
+  document.querySelector<HTMLInputElement>("#cover-input")?.addEventListener("change", async (event) => {
+    const input = event.currentTarget as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    try {
+      if (feedback) feedback.textContent = copy("Subiendo banner…", "Uploading cover…");
+      const url = await uploadImage("cover", file);
+      const preview = document.querySelector<HTMLElement>("#cover-preview");
+      if (preview) preview.style.backgroundImage = `linear-gradient(0deg, rgba(5,5,5,.94), rgba(5,5,5,.08)), url("${url}")`;
+      if (feedback) feedback.textContent = copy("Banner actualizado.", "Cover updated.");
+    } catch (error) {
+      if (feedback) feedback.textContent = error instanceof Error ? error.message : copy("Error al subir.", "Upload error.");
+    } finally { input.value = ""; }
+  });
+
+  document.querySelector<HTMLButtonElement>("#save-profile")?.addEventListener("click", async (event) => {
+    const button = event.currentTarget as HTMLButtonElement;
+    button.disabled = true;
+    if (feedback) feedback.textContent = copy("Guardando…", "Saving…");
+    try {
+      const response = await fetch("/api/auth/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({
+          bio: (document.querySelector<HTMLTextAreaElement>("#profile-bio")?.value || "").trim(),
+          location: (document.querySelector<HTMLInputElement>("#profile-location")?.value || "").trim()
+        })
+      });
+      const result = await response.json();
+      if (!response.ok || !result.ok) throw new Error(copy("No se pudieron guardar los cambios.", "Could not save changes."));
+      if (feedback) feedback.textContent = copy("Perfil actualizado.", "Profile updated.");
+    } catch (error) {
+      if (feedback) feedback.textContent = error instanceof Error ? error.message : copy("Error al guardar.", "Save error.");
+    } finally { button.disabled = false; }
+  });
 
   logoutButton?.addEventListener("click", async () => {
     logoutButton.disabled = true;
     logoutButton.textContent = isEnglish ? "Logging out…" : "Cerrando sesión…";
-
     try {
       const response = await fetch("/api/auth/logout", { method: "POST", credentials: "same-origin" });
       if (!response.ok) throw new Error("logout_failed");
-      window.location.href = document.documentElement.lang === "en" ? "/en/login/" : "/login/";
+      window.location.href = isEnglish ? "/en/login/" : "/login/";
     } catch {
       logoutButton.disabled = false;
       logoutButton.textContent = isEnglish ? "Log out" : "Cerrar sesión";
