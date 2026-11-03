@@ -200,19 +200,19 @@ const favoritesCount = favoriteError ? 0 : (await supabase.from("anime_likes").s
   .profile-library-heading { display:flex; align-items:center; justify-content:space-between; margin-top:1.25rem; }
   .profile-library-heading h2 { margin:0; font-size:1.05rem; }
   .profile-library-heading a { color:#ec4899; font-size:.72rem; text-decoration:none; }
-  .profile-anime-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.55rem; margin-top:.75rem; }
-  .profile-anime-card { display:grid; grid-template-columns:48px minmax(0,1fr) 27px; align-items:center; gap:.48rem; min-width:0; min-height:66px; padding:.38rem; border:1px solid rgba(255,255,255,.07); border-radius:9px; background:rgba(255,255,255,.035); color:#eee; text-decoration:none; transition:background .18s ease,border-color .18s ease; }
-  .profile-anime-card:hover { background:rgba(255,255,255,.065); border-color:rgba(255,255,255,.14); }
-  .profile-anime-card img { width:48px; height:66px; flex:0 0 48px; display:block; object-fit:cover; border-radius:5px; background:#171717; }
-  .profile-anime-card-copy { display:block; min-width:0; }
-  .profile-anime-card-title { display:-webkit-box; overflow:hidden; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow-wrap:anywhere; font-size:.68rem; line-height:1.25; font-weight:550; }
-  .profile-anime-card-meta { display:grid; justify-items:center; align-content:center; gap:.45rem; min-width:0; color:#a5a5a5; font-size:.58rem; }
-  .profile-anime-card-meta span { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.08rem; line-height:1; }
-  .profile-anime-card-meta svg { width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:1.7; }
-  .profile-anime-card-meta .like-count svg { color:#ec4899; }
-  .profile-anime-card-meta .comment-count svg { color:#aaa; }
-  .profile-anime-empty { grid-column:1/-1; padding:.8rem 0; color:#777; font-size:.75rem; }
-  @media(max-width:380px) { .profile-anime-grid { gap:.4rem; } .profile-anime-card { grid-template-columns:42px minmax(0,1fr) 24px; gap:.35rem; padding:.3rem; } .profile-anime-card img { width:42px; height:60px; } .profile-anime-card-title { font-size:.64rem; } }
+  .profile-anime-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.5rem; margin-top:.7rem; }
+  :global(.profile-anime-card) { display:grid; grid-template-columns:44px minmax(0,1fr) 24px; align-items:center; gap:.45rem; min-width:0; min-height:54px; padding:.32rem; border:1px solid rgba(255,255,255,.07); border-radius:8px; background:rgba(255,255,255,.035); color:#eee; text-decoration:none; transition:background .18s ease,border-color .18s ease; }
+  :global(.profile-anime-card:hover) { background:rgba(255,255,255,.065); border-color:rgba(255,255,255,.14); }
+  :global(.profile-anime-card img) { width:44px; height:44px; display:block; object-fit:cover; border-radius:5px; background:#171717; }
+  :global(.profile-anime-card-copy) { display:block; min-width:0; }
+  :global(.profile-anime-card-title) { display:-webkit-box; overflow:hidden; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow-wrap:anywhere; font-size:.66rem; line-height:1.22; font-weight:550; }
+  :global(.profile-anime-card-meta) { display:grid; justify-items:center; align-content:center; gap:.35rem; min-width:0; color:#a5a5a5; font-size:.56rem; }
+  :global(.profile-anime-card-meta span) { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.08rem; line-height:1; }
+  :global(.profile-anime-card-meta svg) { display:block; width:15px; height:15px; flex:0 0 15px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  :global(.profile-anime-card-meta .like-count svg) { color:#ec4899; }
+  :global(.profile-anime-card-meta .comment-count svg) { color:#aaa; }
+  :global(.profile-anime-empty) { grid-column:1/-1; padding:.8rem 0; color:#777; font-size:.75rem; }
+  @media(max-width:380px) { .profile-anime-grid { gap:.38rem; } :global(.profile-anime-card) { grid-template-columns:40px minmax(0,1fr) 22px; gap:.32rem; padding:.28rem; } :global(.profile-anime-card img) { width:40px; height:40px; } :global(.profile-anime-card-title) { font-size:.62rem; } :global(.profile-anime-card-meta svg) { width:14px; height:14px; } }
   .profile-anime-empty { grid-column:1/-1; padding:.8rem 0; color:#777; font-size:.75rem; }
   .field-hint { color:#777; font-size:.68rem; }
   
