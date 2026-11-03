@@ -139,7 +139,9 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
   .media-edit { display:inline-flex; align-items:center; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: .65rem .9rem; color: white; background: rgba(0,0,0,.45); backdrop-filter: blur(10px); cursor: pointer; font: inherit; font-size: .78rem; }
 
   .file-input { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; opacity: 0; }
-  .identity-editor { display: flex; align-items: end; gap: 1rem; padding: 0 1.5rem; margin-top: -3.4rem; position: relative; }
+  .identity-editor { display: flex; align-items: end; gap: 1rem; padding: 0 1.5rem; margin-top: -3.4rem; position: relative; pointer-events: none; }
+  .identity-editor .avatar-wrap, .identity-editor .avatar-edit, .identity-editor .profile-edit-toggle,
+  .identity-editor a, .identity-editor button, .identity-editor label { pointer-events: auto; }
   .avatar-wrap { position: relative; flex: 0 0 auto; }
   .avatar-preview { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; border: 4px solid #090909; background: #242424; }
   .avatar-edit { display: none; place-items: center; position: absolute; right: -2px; bottom: 5px; width: 36px; height: 36px; border: 2px solid #090909; border-radius: 50%; background: #ec4899; color: white; cursor: pointer; box-shadow: 0 3px 12px rgba(0,0,0,.4); }
