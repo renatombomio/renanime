@@ -323,7 +323,7 @@ function format(value:string|null|undefined,lang:Lang){if(value==="MOVIE")return
 
 export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:Lang}){
  const t=useT(lang);
- const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translatedSynopsis,setTranslatedSynopsis]=useState(""),[translating,setTranslating]=useState(false),[franchiseMedia,setFranchiseMedia]=useState<Record<string,Media|null>>({});
+ const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translatedSynopsis,setTranslatedSynopsis]=useState(""),[translating,setTranslating]=useState(false),[franchiseMedia,setFranchiseMedia]=useState<Record<string,Media|null>>({}),[likeCount,setLikeCount]=useState(0),[liked,setLiked]=useState(false),[likeBusy,setLikeBusy]=useState(false),[likeNotice,setLikeNotice]=useState("");
  const cleanSynopsis=media?.description?cleanDescription(media.description):"";
  const hasSynopsis=cleanSynopsis.replace(/[\s\\n\\r]+/g,"").length>0;
  const franchiseEntries=getPersonalFranchiseEntries(entry,getLibrary());
@@ -344,6 +344,31 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
   }
   return()=>{cancelled=true};
  },[entry.animeId]);
+ useEffect(()=>{
+  if(!media?.id) return;
+  let cancelled=false;
+  fetch("/api/anime/likes?ids="+media.id,{credentials:"same-origin",cache:"no-store"})
+   .then(response=>response.ok?response.json():null)
+   .then(payload=>{
+    if(cancelled||!payload?.likes?.[media.id]) return;
+    setLikeCount(payload.likes[media.id].count||0);
+    setLiked(Boolean(payload.likes[media.id].liked));
+   }).catch(()=>{});
+  return()=>{cancelled=true};
+ },[media?.id]);
+ const toggleLike=async()=>{
+  if(!media?.id||likeBusy) return;
+  setLikeBusy(true); setLikeNotice("");
+  try{
+   const response=await fetch("/api/anime/likes",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({animeId:media.id})});
+   const payload=await response.json().catch(()=>({}));
+   if(response.status===401){setLikeNotice(lang==="en"?"Sign in to like this anime.":"Inicia sesión para dar like.");return;}
+   if(!response.ok||!payload.ok) throw new Error("like_failed");
+   setLiked(Boolean(payload.liked)); setLikeCount(Number(payload.count)||0);
+  }catch{
+   setLikeNotice(lang==="en"?"Could not update your like. Try again.":"No se pudo actualizar el like. Inténtalo de nuevo.");
+  }finally{setLikeBusy(false)}
+ };
  const translateSynopsis=async()=>{if(lang==="en"||!media?.description||translating)return;setTranslating(true);const value=await translateToSpanish(media.description);setTranslatedSynopsis(value);setTranslating(false)};
  const title=FRANCHISE_MEDIA_ALIASES[entry.animeId]?entry.title:(lang==="en"?(media?.title?.english||media?.title?.romaji||entry.title):(media?.title?.romaji||media?.title?.english||entry.title));
  const poster=media?.coverImage?.extraLarge||media?.coverImage?.large;
@@ -355,6 +380,13 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
     .anime-detail:not(.anime-detail--ghibli) .anime-detail-synopsis-wrap{max-width:42rem;margin-top:1.35rem;padding:1rem 0 1.1rem;border:0;border-radius:0;background:transparent;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
     .anime-detail:not(.anime-detail--ghibli) .anime-detail-synopsis{margin:0;color:var(--color-paper-50)}
     .anime-detail:not(.anime-detail--ghibli) .anime-detail-translate{border-color:rgba(245,242,236,.28);background:rgba(245,242,236,.06);color:var(--color-paper-200)}
+    .anime-detail-poster{position:relative}
+    .anime-detail-like{position:absolute;right:.55rem;bottom:.55rem;z-index:3;display:inline-flex;align-items:center;gap:.35rem;padding:.45rem .6rem;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(0,0,0,.72);color:#fff;font:inherit;font-size:.72rem;backdrop-filter:blur(8px);cursor:pointer}
+    .anime-detail-like svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .anime-detail-like.is-liked{color:#ff4f91;border-color:rgba(255,79,145,.5)}
+    .anime-detail-like.is-liked svg{fill:currentColor}
+    .anime-detail-like:disabled{opacity:.55;cursor:wait}
+    .anime-detail-like-notice{margin:.45rem 0 0;color:#f3a3bd;font-size:.72rem}
     .anime-detail-recommendations{grid-column:1 / -1;margin-top:2rem;width:100%;min-width:0}
     .anime-detail-recommendations-head{margin-bottom:.8rem}
     .anime-detail-recommendations-track{display:flex;gap:.7rem;min-height:0;overflow-x:auto;padding:.15rem 0 .65rem;scroll-snap-type:x mandatory;scrollbar-width:thin;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
@@ -370,7 +402,10 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
    <div className="anime-detail-inner">
     <div className="anime-detail-layout">
       <div className="anime-detail-poster-column">
-      <div className="anime-detail-poster">{poster?<img src={poster} alt={title}/>:<div className="anime-detail-placeholder">RENANIME</div>}</div>
+      <div className="anime-detail-poster">{poster?<img src={poster} alt={title}/>:<div className="anime-detail-placeholder">RENANIME</div>}
+        {media?.id&&<button type="button" className={"anime-detail-like"+(liked?" is-liked":"")} onClick={toggleLike} disabled={likeBusy} aria-pressed={liked} aria-label={liked?(lang==="en"?"Unlike anime":"Quitar like"):(lang==="en"?"Like anime":"Dar like")}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 10-8.8 10s-8.8-4.8-8.8-10a4.6 4.6 0 0 1 8.8-1.9 4.6 4.6 0 0 1 8.8 1.9Z"/></svg><span>{likeCount.toLocaleString(lang==="en"?"en":"es")}</span></button>}
+       </div>
+       {likeNotice&&<p className="anime-detail-like-notice" role="status">{likeNotice}</p>}
        {media?.id && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} lang={lang} /></div>}
       </div>
       <div className="anime-detail-copy">

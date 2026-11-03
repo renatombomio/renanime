@@ -29,6 +29,14 @@ const profile = { ...user, ...profileData };
 const library = Array.isArray(libraryData) ? libraryData : [];
 const watched = library.filter((entry: any) => entry?.status === "seen");
 const pending = library.filter((entry: any) => entry?.status === "pending");
+const { data: favoriteData, error: favoriteError } = await supabase
+  .from("anime_likes")
+  .select("anime_id, created_at")
+  .eq("user_id", user.id)
+  .order("created_at", { ascending: false })
+  .limit(4);
+if (favoriteError) console.error("Renanime profile favorites error:", favoriteError.message);
+const favorites = Array.isArray(favoriteData) ? favoriteData : [];
 
 ---
 
@@ -110,14 +118,16 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
         <a href={localizedPath(Astro.locals.lang, "/pending/")} class="profile-stat">
           <strong>{pending.length}</strong><span>{isEnglish ? "On my list" : "En mi lista"}</span>
         </a>
-        <div class="profile-stat"><strong>—</strong><span>{isEnglish ? "Activity" : "Actividad"}</span></div>
+        <a href="#profile-favorites-grid" class="profile-stat"><strong>{favorites.length}</strong><span>{isEnglish ? "Favorites" : "Favoritos"}</span></a>
       </section>
 
       <section class="profile-library-links">
-        <div class="profile-library-heading"><h2>{isEnglish ? "Watched anime" : "Animes vistos"}</h2><a href={localizedPath(Astro.locals.lang, "/collection/")}>{isEnglish ? "See all" : "Ver todos"}</a></div>
+        <div class="profile-library-heading"><h2>{isEnglish ? "My collection" : "Mi colección"}</h2><a href={localizedPath(Astro.locals.lang, "/collection/")}>{isEnglish ? "See all" : "Ver todos"}</a></div>
         <div class="profile-anime-grid" id="profile-watched-grid" data-ids={JSON.stringify(watched.slice(0, 4).map((entry: any) => String(entry.anime_id)))}></div>
-        <div class="profile-library-heading"><h2>{isEnglish ? "Watchlist" : "Mi lista"}</h2><a href={localizedPath(Astro.locals.lang, "/pending/")}>{isEnglish ? "See all" : "Ver todos"}</a></div>
+        <div class="profile-library-heading"><h2>{isEnglish ? "My list" : "Mi lista"}</h2><a href={localizedPath(Astro.locals.lang, "/pending/")}>{isEnglish ? "See all" : "Ver todos"}</a></div>
         <div class="profile-anime-grid" id="profile-pending-grid" data-ids={JSON.stringify(pending.slice(0, 4).map((entry: any) => String(entry.anime_id)))}></div>
+        <div class="profile-library-heading"><h2>{isEnglish ? "Favorite anime" : "Animes favoritos"}</h2></div>
+        <div class="profile-anime-grid" id="profile-favorites-grid" data-ids={JSON.stringify(favorites.map((entry: any) => String(entry.anime_id)))}></div>
       </section>
 
       <div class="profile-actions">
@@ -189,10 +199,16 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
   .profile-library-heading { display:flex; align-items:center; justify-content:space-between; margin-top:1.25rem; }
   .profile-library-heading h2 { margin:0; font-size:1.05rem; }
   .profile-library-heading a { color:#ec4899; font-size:.72rem; text-decoration:none; }
-  .profile-anime-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.55rem; margin-top:.8rem; }
-  .profile-anime-card { display:block; min-width:0; overflow:hidden; border-radius:9px; aspect-ratio:2/3; background:#171717; color:#eee; text-decoration:none; position:relative; }
-  .profile-anime-card img { width:100%; height:100%; display:block; object-fit:cover; }
-  .profile-anime-card span { position:absolute; inset:auto 0 0; padding:1.2rem .4rem .45rem; background:linear-gradient(transparent,rgba(0,0,0,.9)); font-size:.62rem; line-height:1.2; }
+  .profile-anime-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.55rem; margin-top:.75rem; }
+  .profile-anime-card { display:flex; align-items:center; gap:.6rem; min-width:0; min-height:66px; padding:.35rem; border-radius:9px; background:rgba(255,255,255,.035); color:#eee; text-decoration:none; }
+  .profile-anime-card img { width:58px; height:58px; flex:0 0 58px; display:block; object-fit:cover; border-radius:6px; background:#171717; }
+  .profile-anime-card-copy { display:grid; gap:.35rem; min-width:0; }
+  .profile-anime-card-title { overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; font-size:.72rem; line-height:1.2; }
+  .profile-anime-card-meta { display:flex; align-items:center; gap:.65rem; color:#999; font-size:.62rem; }
+  .profile-anime-card-meta span { display:inline-flex; align-items:center; gap:.2rem; }
+  .profile-anime-card-meta svg { width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:1.7; }
+  .profile-anime-card-meta .like-count svg { color:#ec4899; }
+  .profile-anime-empty { grid-column:1/-1; padding:.8rem 0; color:#777; font-size:.75rem; }
   .profile-anime-empty { grid-column:1/-1; padding:.8rem 0; color:#777; font-size:.75rem; }
   .field-hint { color:#777; font-size:.68rem; }
   
@@ -402,19 +418,24 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
   const copy = (es: string, en: string) => isEnglish ? en : es;
 
   async function loadProfileAnime() {
-    const grids = ["#profile-watched-grid", "#profile-pending-grid"].map(selector => document.querySelector<HTMLElement>(selector)).filter(Boolean) as HTMLElement[];
-    const ids = [...new Set(grids.flatMap(grid => JSON.parse(grid.dataset.ids || "[]") as string[]))].filter(id => /^\d+$/.test(id));
+    const grids = ["#profile-watched-grid", "#profile-pending-grid", "#profile-favorites-grid"]
+      .map(selector => document.querySelector<HTMLElement>(selector)).filter(Boolean) as HTMLElement[];
+    const ids = [...new Set(grids.flatMap(grid => JSON.parse(grid.dataset.ids || "[]") as string[]))].filter(id => /^\\d+$/.test(id));
     if (!ids.length) {
       grids.forEach(grid => { grid.innerHTML = '<span class="profile-anime-empty">' + copy("Todavía no hay animes aquí.", "No anime here yet.") + '</span>'; });
       return;
     }
     const variables: Record<string, number> = {};
-    const fields = ids.map((id, index) => { variables["id" + index] = Number(id); return `a${index}: Media(id: $id${index}, type: ANIME) { id title { romaji english } coverImage { large } }`; }).join("\n");
+    const fields = ids.map((id, index) => { variables["id" + index] = Number(id); return `a${index}: Media(id: $id${index}, type: ANIME) { id title { romaji english } coverImage { large } }`; }).join("\\n");
     const definitions = ids.map((_, index) => `$id${index}: Int!`).join(", ");
     try {
-      const response = await fetch("https://graphql.anilist.co", { method:"POST", headers:{"Content-Type":"application/json","Accept":"application/json"}, body:JSON.stringify({query:`query ProfileAnime(${definitions}) { ${fields} }`,variables}) });
-      if (!response.ok) throw new Error("anime_fetch_failed");
-      const payload = await response.json();
+      const [animeResponse, likeResponse] = await Promise.all([
+        fetch("https://graphql.anilist.co", { method:"POST", headers:{"Content-Type":"application/json","Accept":"application/json"}, body:JSON.stringify({query:`query ProfileAnime(${definitions}) { ${fields} }`,variables}) }),
+        fetch("/api/anime/likes?ids="+ids.join(","), {credentials:"same-origin",cache:"no-store"})
+      ]);
+      if (!animeResponse.ok) throw new Error("anime_fetch_failed");
+      const payload = await animeResponse.json();
+      const likePayload = likeResponse.ok ? await likeResponse.json() : { likes:{} };
       const media = new Map(ids.map((id,index) => [id,payload.data?.["a"+index]]));
       grids.forEach(grid => {
         const gridIds = JSON.parse(grid.dataset.ids || "[]") as string[];
@@ -422,12 +443,17 @@ const pending = library.filter((entry: any) => entry?.status === "pending");
           const anime = media.get(id);
           if (!anime) return null;
           const title = anime.title?.english || anime.title?.romaji || "Anime";
+          const counts = likePayload.likes?.[id] || {count:0,liked:false};
           const card = document.createElement("a"); card.className = "profile-anime-card"; card.href = (isEnglish ? "/en" : "") + "/anime/" + id; card.setAttribute("aria-label",title);
           const img = document.createElement("img"); img.src = anime.coverImage?.large || ""; img.alt = ""; img.loading = "lazy";
-          const label = document.createElement("span"); label.textContent = title;
-          card.append(img,label); return card;
+          const copy = document.createElement("span"); copy.className = "profile-anime-card-copy";
+          const titleNode = document.createElement("span"); titleNode.className = "profile-anime-card-title"; titleNode.textContent = title;
+          const meta = document.createElement("span"); meta.className = "profile-anime-card-meta";
+          const likeMeta = document.createElement("span"); likeMeta.className = "like-count"; likeMeta.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 10-8.8 10s-8.8-4.8-8.8-10a4.6 4.6 0 0 1 8.8-1.9 4.6 4.6 0 0 1 8.8 1.9Z"/></svg><span></span>'; likeMeta.querySelector("span")!.textContent = Number(counts.count||0).toLocaleString(isEnglish?"en":"es");
+          const commentMeta = document.createElement("span"); commentMeta.className = "comment-count"; commentMeta.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 8.8 8.8 0 0 1-4-.95L3 21l1.95-5.5A8.8 8.8 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3H13a8.5 8.5 0 0 1 8 8.5Z"/></svg><span>0</span>';
+          meta.append(likeMeta,commentMeta); copy.append(titleNode,meta); card.append(img,copy); return card;
         }).filter((card): card is HTMLAnchorElement => card instanceof HTMLAnchorElement);
-        grid.replaceChildren(...(cards.length ? cards : [Object.assign(document.createElement("span"),{className:"profile-anime-empty",textContent:copy("No se pudieron cargar los animes.","Could not load anime.")})]));
+        grid.replaceChildren(...(cards.length ? cards : [Object.assign(document.createElement("span"),{className:"profile-anime-empty",textContent:copy("Todavía no hay animes aquí.","No anime here yet.")})]));
       });
     } catch {
       grids.forEach(grid => { grid.innerHTML = '<span class="profile-anime-empty">' + copy("No se pudieron cargar los animes.", "Could not load anime.") + '</span>'; });
