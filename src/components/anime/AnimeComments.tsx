@@ -24,6 +24,7 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
   const [reactions, setReactions] = useState<CommentReaction[]>([]);
   const [replyToId, setReplyToId] = useState<string | null>(null);
   const [reactionPickerId, setReactionPickerId] = useState<string | null>(null);
+  const [replyEmojiPickerId, setReplyEmojiPickerId] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState("");
   const [showAllComments, setShowAllComments] = useState(false);
   const [viewerId, setViewerId] = useState<string | null>(null);
@@ -207,8 +208,19 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
         .anime-comment-reaction-picker{display:flex;align-items:center;flex-wrap:wrap;gap:.3rem;padding:.28rem;border:1px solid rgba(245,242,236,.12);border-radius:999px;background:#111}
         .anime-comment-reaction-picker button{display:grid;place-items:center;width:30px;height:30px;border:0;border-radius:50%;background:transparent;color:#fff;font-size:.95rem;cursor:pointer}
         .anime-comment-reaction-picker button:hover{background:rgba(236,72,153,.16)}
-        .anime-comment-reply-form{display:grid;gap:.4rem;margin-top:.6rem}
-        .anime-comment-reply-form textarea{width:100%;min-height:58px;border:1px solid rgba(245,242,236,.15);border-radius:8px;background:#080808;color:#f5f2ec;padding:.55rem;font:inherit;font-size:.75rem}
+        .anime-comment-reply-form{position:relative;display:flex;align-items:center;gap:.45rem;margin-top:.65rem;min-width:0}
+        .anime-comment-reply-composer{display:flex;align-items:center;gap:.35rem;flex:1;min-width:0;height:42px;padding:0 .45rem 0 .8rem;border:1px solid rgba(245,242,236,.35);border-radius:999px;background:#303030}
+        .anime-comment-reply-composer input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#f5f2ec;font:inherit;font-size:.82rem}
+        .anime-comment-reply-composer input::placeholder{color:#929292}
+        .anime-comment-reply-composer button,.anime-comment-reply-cancel,.anime-comment-reply-send{display:grid;place-items:center;flex:0 0 auto;width:30px;height:30px;border:0;border-radius:50%;background:transparent;color:#f5f2ec;font-size:1.05rem;cursor:pointer}
+        .anime-comment-reply-composer button:hover{background:rgba(255,255,255,.1)}
+        .anime-comment-reply-send{width:34px;height:34px;background:#8f263f;color:#fff;font-size:1.15rem}
+        .anime-comment-reply-send:disabled{opacity:.4;cursor:wait}
+        .anime-comment-reply-cancel{width:26px;height:34px;color:#ddd;font-size:1.35rem}
+        .anime-comment-reply-emoji-picker{position:absolute;right:2.7rem;bottom:calc(100% + .45rem);z-index:5;display:flex;gap:.2rem;padding:.35rem;border:1px solid rgba(245,242,236,.16);border-radius:999px;background:#171717;box-shadow:0 8px 24px #0009}
+        .anime-comment-reply-emoji-picker button{display:grid;place-items:center;width:30px;height:30px;border:0;border-radius:50%;background:transparent;color:#fff;font-size:1rem;cursor:pointer}
+        .anime-comment-reply-emoji-picker button:hover{background:rgba(236,72,153,.18)}
+        @media(max-width:420px){.anime-comment-reply-form{gap:.25rem}.anime-comment-reply-composer{padding-left:.65rem}.anime-comment-reply-composer input{font-size:.76rem}}
         .anime-comment-replies{display:grid;gap:.75rem;margin:.85rem 0 0 1rem;padding-left:.75rem;border-left:1px solid rgba(245,242,236,.12)}
         .anime-comment-reply{display:grid;grid-template-columns:26px minmax(0,1fr);gap:.5rem}
         .anime-comment-reply .anime-comment-avatar{width:26px;height:26px}
@@ -319,8 +331,28 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
                     {viewerId && <button type="button" disabled={busy} onClick={() => { setReplyToId(replyToId === comment.id ? null : comment.id); setReplyContent(""); }}>{copy("Responder", "Reply")}</button>}
                   </div>
                   {replyToId === comment.id && <form className="anime-comment-reply-form" onSubmit={submitReply}>
-                    <textarea value={replyContent} onChange={event => setReplyContent(event.target.value)} maxLength={1000} placeholder={copy("Escribe tu respuesta…", "Write your reply…")} />
-                    <div className="anime-comment-actions"><button type="submit" disabled={busy || !replyContent.trim()}>{copy("Enviar respuesta", "Post reply")}</button><button type="button" onClick={() => setReplyToId(null)}>{copy("Cancelar", "Cancel")}</button></div>
+                    <div className="anime-comment-reply-composer">
+                      <input
+                        autoFocus
+                        value={replyContent}
+                        onChange={event => setReplyContent(event.target.value)}
+                        maxLength={1000}
+                        placeholder={copy("Añadir una respuesta…", "Add a reply…")}
+                        aria-label={copy("Añadir una respuesta", "Add a reply")}
+                      />
+                      <button
+                        type="button"
+                        aria-label={copy("Añadir emoji", "Add emoji")}
+                        onClick={() => setReplyEmojiPickerId(replyEmojiPickerId === comment.id ? null : comment.id)}
+                      >☺</button>
+                    </div>
+                    <button className="anime-comment-reply-send" type="submit" disabled={busy || !replyContent.trim()} aria-label={copy("Enviar respuesta", "Send reply")}>↑</button>
+                    <button className="anime-comment-reply-cancel" type="button" aria-label={copy("Cancelar respuesta", "Cancel reply")} onClick={() => { setReplyToId(null); setReplyEmojiPickerId(null); setReplyContent(""); }}>×</button>
+                    {replyEmojiPickerId === comment.id && <span className="anime-comment-reply-emoji-picker" role="group" aria-label={copy("Elige un emoji", "Choose an emoji")}>
+                      {["😀","😂","🥹","😍","❤️","🔥","😭","👏","👍","✨"].map(emoji => (
+                        <button key={emoji} type="button" onClick={() => { setReplyContent(current => (current ? current + " " : "") + emoji); setReplyEmojiPickerId(null); }}>{emoji}</button>
+                      ))}
+                    </span>}
                   </form>}
                   {own && editingId !== comment.id && (
                     <div className="anime-comment-actions">
