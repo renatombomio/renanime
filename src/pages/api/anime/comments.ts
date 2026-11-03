@@ -53,7 +53,7 @@ export const GET: APIRoute = async ({ request, cookies }) => {
         .from("anime_comments")
         .select("id, anime_id, user_id, parent_comment_id, content, created_at, updated_at, profiles(name, aka, avatar_url)")
         .eq("anime_id", animeId)
-        .order("created_at", { ascending: true })
+        .order("created_at", { ascending: false })
         .limit(100),
     ]);
 
