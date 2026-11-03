@@ -1,52 +1,114 @@
 ---
+export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/layout/Navbar.astro";
 import SectionHeader from "../../components/ui/SectionHeader.astro";
-import { useT } from "../../i18n";
+import { createSupabaseSsrClient } from "../../lib/supabase-ssr";
 
 const lang = Astro.locals.lang;
-const t = useT(lang);
-const title = lang === "en" ? "My community" : "Mi comunidad";
-const description = lang === "en"
-  ? "Your space to connect with anime fans, discover profiles, and follow conversations."
-  : "Tu espacio para conectar con otros fans del anime, descubrir perfiles y seguir conversaciones.";
+const isEnglish = lang === "en";
+const title = isEnglish ? "My community" : "Mi comunidad";
+const description = isEnglish
+  ? "Discover anime fans, explore their profiles, and find people who share your interests."
+  : "Descubre a otros fans del anime, explora sus perfiles y encuentra personas con tus mismos intereses.";
+const supabase = createSupabaseSsrClient(Astro.request, Astro.cookies);
+const { data: members, error } = await supabase
+  .from("profiles")
+  .select("id, aka, headline, bio, avatar_url, interests, last_seen_at")
+  .eq("is_private", false)
+  .not("aka", "is", null)
+  .order("last_seen_at", { ascending: false, nullsFirst: false })
+  .order("created_at", { ascending: false })
+  .limit(60);
+if (error) console.error("Community directory error:", error.message);
+const profiles = Array.isArray(members) ? members : [];
+const onlineCutoff = Date.now() - 5 * 60 * 1000;
 ---
 
 <Layout title={`${title} — Renanime's Gallery`} description={description}>
   <Navbar />
   <main id="main-content" class="community-page">
-    <SectionHeader variant="ren" title={title} description={description} />
-    <section class="community-intro" aria-label={title}>
-      <p>{lang === "en" ? "The community is taking shape." : "La comunidad está tomando forma."}</p>
-      <span>{lang === "en" ? "Profiles, followers, and anime conversations will live here." : "Aquí reuniremos perfiles, seguidores y conversaciones sobre anime."}</span>
+    <div class="community-header">
+      <SectionHeader variant="ren" title={title} description={description} />
+    </div>
+    <section class="community-directory" aria-label={title}>
+      <div class="community-tools">
+        <label class="community-search">
+          <span class="sr-only">{isEnglish ? "Search community" : "Buscar en la comunidad"}</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
+          <input id="community-search" type="search" autocomplete="off" placeholder={isEnglish ? "Search by username or interest…" : "Buscar por usuario o interés…"} />
+        </label>
+        <span class="community-count">{profiles.length} {isEnglish ? "public profiles" : "perfiles públicos"}</span>
+      </div>
+      {error ? (
+        <p class="community-empty">{isEnglish ? "We couldn't load the community right now." : "No se ha podido cargar la comunidad."}</p>
+      ) : profiles.length ? (
+        <div class="community-grid" id="community-grid">
+          {profiles.map((member) => {
+            const online = member.last_seen_at && new Date(member.last_seen_at).getTime() >= onlineCutoff;
+            const searchable = [member.aka, member.headline, member.bio, ...(member.interests || [])].filter(Boolean).join(" ").toLocaleLowerCase();
+            return (
+              <a class="community-member" href={`${isEnglish ? "/en" : ""}/u/${encodeURIComponent(member.aka)}/`} data-search={searchable}>
+                <div class="community-avatar-wrap">
+                  <img src={member.avatar_url || "/images/profile-avatar-placeholder.svg"} alt="" loading="lazy" />
+                  {online && <span class="community-online" aria-label={isEnglish ? "Online" : "En línea"} />}
+                </div>
+                <div class="community-member-copy">
+                  <strong>@{member.aka}</strong>
+                  {member.headline && <span class="community-headline">{member.headline}</span>}
+                  {member.interests?.length > 0 && <span class="community-interests">{member.interests.slice(0, 3).map((interest: string) => `#${interest}`).join(" · ")}</span>}
+                </div>
+                <span class="community-arrow" aria-hidden="true">↗</span>
+              </a>
+            );
+          })}
+        </div>
+      ) : (
+        <p class="community-empty">{isEnglish ? "No public profiles yet. Be the first to open your profile to the community." : "Todavía no hay perfiles públicos. Puedes ser el primero en abrir tu perfil a la comunidad."}</p>
+      )}
+      <p class="community-no-results" id="community-no-results" hidden>{isEnglish ? "No profiles match your search." : "No hay perfiles que coincidan con tu búsqueda."}</p>
     </section>
   </main>
 </Layout>
 
 <style>
-  .community-page {
-    min-height: 70vh;
-    padding-block: clamp(6rem, 11vw, 10rem) var(--section-space);
-  }
-
-  .community-intro {
-    width: min(calc(100% - (var(--gutter) * 2)), var(--container-max));
-    margin: clamp(3rem, 7vw, 6rem) auto 0;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--color-border);
-  }
-
-  .community-intro p {
-    margin: 0;
-    color: var(--color-paper-50);
-    font-family: var(--font-heading);
-    font-size: clamp(1.5rem, 3vw, 2.25rem);
-  }
-
-  .community-intro span {
-    display: block;
-    margin-top: .65rem;
-    color: var(--color-muted-400);
-    font-size: .9rem;
-  }
+  .community-page{min-height:70vh;padding-block:clamp(6rem,11vw,10rem) var(--section-space)}
+  .community-header,.community-directory{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin-inline:auto}
+  .community-directory{margin-top:clamp(3rem,6vw,5rem)}
+  .community-tools{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.25rem}
+  .community-search{display:flex;align-items:center;gap:.65rem;width:min(100%,440px);height:44px;padding:0 .9rem;border:1px solid rgba(245,242,236,.16);border-radius:999px;background:#0b0b0b;color:#999}
+  .community-search svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.6;flex:0 0 auto}
+  .community-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:#f5f2ec;font:inherit;font-size:.82rem}
+  .community-search input::placeholder{color:#777}
+  .community-count{color:#777;font-size:.7rem;white-space:nowrap}
+  .community-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 2rem}
+  .community-member{position:relative;display:flex;align-items:center;gap:.9rem;min-width:0;padding:1rem 1.9rem 1rem 0;border-top:1px solid rgba(245,242,236,.1);color:#f5f2ec;text-decoration:none}
+  .community-member:hover .community-member-copy strong{color:#ec4899}
+  .community-avatar-wrap{position:relative;flex:0 0 54px;width:54px;height:54px}
+  .community-avatar-wrap img{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover;background:#171717}
+  .community-online{position:absolute;right:0;bottom:1px;width:11px;height:11px;border:2px solid #050505;border-radius:50%;background:#35d06f}
+  .community-member-copy{display:grid;gap:.28rem;min-width:0}
+  .community-member-copy strong{font-size:.86rem;font-weight:650;overflow-wrap:anywhere;transition:color .18s}
+  .community-headline{color:#aaa;font-size:.76rem;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .community-interests{color:#777;font-size:.67rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .community-arrow{position:absolute;right:.25rem;top:50%;color:#666;transform:translateY(-50%)}
+  .community-empty,.community-no-results{padding:1.5rem 0;color:#888;font-size:.85rem}
+  .community-no-results[hidden]{display:none}
+  @media(max-width:680px){.community-grid{grid-template-columns:1fr}.community-tools{align-items:flex-start;flex-direction:column}.community-search{width:100%}.community-member{padding-block:.85rem}}
 </style>
+
+<script>
+  const search = document.querySelector<HTMLInputElement>("#community-search");
+  const cards = [...document.querySelectorAll<HTMLElement>(".community-member")];
+  const empty = document.querySelector<HTMLElement>("#community-no-results");
+  search?.addEventListener("input", () => {
+    const query = search.value.trim().toLocaleLowerCase();
+    let visible = 0;
+    cards.forEach(card => {
+      const matches = !query || (card.dataset.search || "").includes(query);
+      card.hidden = !matches;
+      if (matches) visible++;
+    });
+    if (empty) empty.hidden = visible > 0;
+  });
+</script>
