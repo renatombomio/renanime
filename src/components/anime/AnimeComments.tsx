@@ -7,17 +7,23 @@ type CommentProfile = {
   avatar_url?: string | null;
 };
 
+type CommentReaction = { id: string; comment_id: string; user_id: string; emoji: string; profiles?: { name?: string | null; aka?: string | null } | null };
+
 type AnimeComment = {
   id: string;
   user_id: string;
   content: string;
   created_at: string;
   updated_at: string;
+  parent_comment_id?: string | null;
   profiles?: CommentProfile | CommentProfile[] | null;
 };
 
 export default function AnimeComments({ animeId, lang = "es" }: { animeId: number; lang?: Lang }) {
   const [comments, setComments] = useState<AnimeComment[]>([]);
+  const [reactions, setReactions] = useState<CommentReaction[]>([]);
+  const [replyToId, setReplyToId] = useState<string | null>(null);
+  const [replyContent, setReplyContent] = useState("");
   const [showAllComments, setShowAllComments] = useState(false);
   const [viewerId, setViewerId] = useState<string | null>(null);
   const [content, setContent] = useState("");
@@ -39,6 +45,7 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
       const payload = await response.json();
       if (!response.ok || !payload.ok) throw new Error("comments_unavailable");
       setComments(Array.isArray(payload.comments) ? payload.comments : []);
+      setReactions(Array.isArray(payload.reactions) ? payload.reactions : []);
       setViewerId(payload.viewerId ?? null);
     } catch {
       setNotice(copy("No se pudieron cargar los comentarios.", "Could not load comments."));
@@ -72,6 +79,52 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
       await loadComments();
     } catch {
       setNotice(copy("No se pudo publicar el comentario.", "Could not publish the comment."));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const submitReply = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const value = replyContent.trim();
+    if (!replyToId || !value || busy) return;
+    setBusy(true);
+    setNotice("");
+    try {
+      const response = await fetch("/api/anime/comments", {
+        method: "POST", credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ animeId, parentCommentId: replyToId, content: value }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.ok) throw new Error("comment_reply_failed");
+      setReplyContent("");
+      setReplyToId(null);
+      await loadComments();
+    } catch {
+      setNotice(copy("No se pudo publicar la respuesta.", "Could not post the reply."));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const toggleReaction = async (commentId: string, emoji: string) => {
+    if (!viewerId || busy) {
+      setNotice(copy("Inicia sesión para reaccionar.", "Sign in to react."));
+      return;
+    }
+    setBusy(true);
+    try {
+      const response = await fetch("/api/anime/comment-reactions", {
+        method: "POST", credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ commentId, emoji }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload.ok) throw new Error("reaction_failed");
+      await loadComments();
+    } catch {
+      setNotice(copy("No se pudo guardar la reacción.", "Could not save the reaction."));
     } finally {
       setBusy(false);
     }
@@ -144,6 +197,15 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
         .anime-comment-author span,.anime-comment-date{color:#858585;font-size:.65rem}
         .anime-comment-body>p{margin:0;color:#d4d4d4;font-size:.82rem;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
         .anime-comment-actions{display:flex;gap:.45rem;margin-top:.5rem}
+        .anime-comment-social{display:flex;align-items:center;flex-wrap:wrap;gap:.35rem;margin-top:.55rem}
+        .anime-comment-social button{border:1px solid rgba(245,242,236,.15);border-radius:999px;background:transparent;color:#aaa;padding:.22rem .48rem;font:inherit;font-size:.65rem;cursor:pointer}
+        .anime-comment-social button.active{border-color:rgba(236,72,153,.65);color:#f9a8d4;background:rgba(236,72,153,.08)}
+        .anime-comment-reply-form{display:grid;gap:.4rem;margin-top:.6rem}
+        .anime-comment-reply-form textarea{width:100%;min-height:58px;border:1px solid rgba(245,242,236,.15);border-radius:8px;background:#080808;color:#f5f2ec;padding:.55rem;font:inherit;font-size:.75rem}
+        .anime-comment-replies{display:grid;gap:.75rem;margin:.85rem 0 0 1rem;padding-left:.75rem;border-left:1px solid rgba(245,242,236,.12)}
+        .anime-comment-reply{display:grid;grid-template-columns:26px minmax(0,1fr);gap:.5rem}
+        .anime-comment-reply .anime-comment-avatar{width:26px;height:26px}
+        .anime-comment-reply p{margin:0;color:#bbb;font-size:.75rem;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
         .anime-comment-actions button{padding:.25rem .55rem;color:#999;font-size:.64rem}
         .anime-comment-edit{display:grid;gap:.5rem}
         .anime-comment-edit textarea{min-height:70px}
@@ -175,12 +237,16 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
         <p className="anime-comments-empty">{copy("Todavía no hay comentarios. Abre la conversación.", "No comments yet. Start the conversation.")}</p>
       ) : (
         <div className="anime-comments-list">
-          {comments.slice(0, showAllComments ? comments.length : 5).map((comment) => {
+          {comments.filter(comment => !comment.parent_comment_id).slice(0, showAllComments ? comments.filter(comment => !comment.parent_comment_id).length : 5).map((comment) => {
             const profile = Array.isArray(comment.profiles) ? comment.profiles[0] : comment.profiles;
             const author = profile?.name || (profile?.aka ? "@" + profile.aka : copy("Usuario", "User"));
             const own = Boolean(viewerId && viewerId === comment.user_id);
+            const commentReactions = reactions.filter(reaction => reaction.comment_id === comment.id);
+            const reactionCounts = new Map<string, number>();
+            commentReactions.forEach(reaction => reactionCounts.set(reaction.emoji, (reactionCounts.get(reaction.emoji) || 0) + 1));
+            const replies = comments.filter(reply => reply.parent_comment_id === comment.id);
             return (
-              <article className="anime-comment" key={comment.id}>
+              <article className="anime-comment" key={comment.id} id={"comment-" + comment.id}>
                 {profile?.avatar_url ? <img className="anime-comment-avatar" src={profile.avatar_url} alt="" loading="lazy" /> : (
                   <span className="anime-comment-avatar anime-comment-avatar-fallback" aria-hidden="true">{author.slice(0, 1).toUpperCase()}</span>
                 )}
@@ -199,16 +265,38 @@ export default function AnimeComments({ animeId, lang = "es" }: { animeId: numbe
                       </div>
                     </div>
                   ) : <p>{comment.content}</p>}
+                  <div className="anime-comment-social">
+                    {["❤️","😂","🔥","😭","👏","😮","👍"].map(emoji => {
+                      const count = reactionCounts.get(emoji) || 0;
+                      const active = commentReactions.some(reaction => reaction.user_id === viewerId && reaction.emoji === emoji);
+                      return <button key={emoji} type="button" className={active ? "active" : ""} disabled={busy} aria-label={copy("Reaccionar con " + emoji, "React with " + emoji)} onClick={() => void toggleReaction(comment.id, emoji)}>{emoji}{count > 0 ? " " + count : ""}</button>;
+                    })}
+                    {viewerId && <button type="button" disabled={busy} onClick={() => { setReplyToId(replyToId === comment.id ? null : comment.id); setReplyContent(""); }}>{copy("Responder", "Reply")}</button>}
+                  </div>
+                  {replyToId === comment.id && <form className="anime-comment-reply-form" onSubmit={submitReply}>
+                    <textarea value={replyContent} onChange={event => setReplyContent(event.target.value)} maxLength={1000} placeholder={copy("Escribe tu respuesta…", "Write your reply…")} />
+                    <div className="anime-comment-actions"><button type="submit" disabled={busy || !replyContent.trim()}>{copy("Enviar respuesta", "Post reply")}</button><button type="button" onClick={() => setReplyToId(null)}>{copy("Cancelar", "Cancel")}</button></div>
+                  </form>}
                   {own && editingId !== comment.id && (
                     <div className="anime-comment-actions">
                       <button type="button" disabled={busy} onClick={() => { setEditingId(comment.id); setEditContent(comment.content); }}>{copy("Editar", "Edit")}</button>
                       <button type="button" disabled={busy} onClick={() => void deleteComment(comment.id)}>{copy("Eliminar", "Delete")}</button>
                     </div>
                   )}
+                  {replies.length > 0 && <div className="anime-comment-replies">
+                    {replies.map(reply => {
+                      const replyProfile = Array.isArray(reply.profiles) ? reply.profiles[0] : reply.profiles;
+                      const replyAuthor = replyProfile?.name || (replyProfile?.aka ? "@" + replyProfile.aka : copy("Usuario", "User"));
+                      return <div className="anime-comment-reply" key={reply.id} id={"comment-" + reply.id}>
+                        {replyProfile?.avatar_url ? <img className="anime-comment-avatar" src={replyProfile.avatar_url} alt="" loading="lazy" /> : <span className="anime-comment-avatar anime-comment-avatar-fallback">{replyAuthor.slice(0,1).toUpperCase()}</span>}
+                        <div><div className="anime-comment-author"><strong>{replyAuthor}</strong><time className="anime-comment-date" dateTime={reply.created_at}>{new Date(reply.created_at).toLocaleDateString(en ? "en-GB" : "es-ES",{day:"numeric",month:"short",year:"numeric"})}</time></div><p>{reply.content}</p></div>
+                      </div>;
+                    })}
+                  </div>}
                 </div>
               </article>
             );
-          })}
+          })}}
         </div>
       )}
       {!loading && comments.length > 5 && (
