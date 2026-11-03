@@ -413,7 +413,7 @@ body.theme-ghibli .soundtrack-player__modes button.is-active {
 
 /* QA/polish: compact global player by default. Expand on demand. */
 .soundtrack-player {
-  width: min(300px, calc(100vw - 1.3rem));
+  width: min(250px, calc(100vw - 1.3rem));
   right: auto;
   left: 50%;
   bottom: .65rem;
@@ -421,18 +421,18 @@ body.theme-ghibli .soundtrack-player__modes button.is-active {
 }
 
 .soundtrack-player__inner {
-  border-radius: 16px;
+  border-radius: 14px;
 }
 
 .soundtrack-player__top {
   gap: .35rem;
-  padding: .42rem .5rem;
+  padding: .32rem .4rem;
 }
 
 .soundtrack-player__main-button {
   min-width: 30px;
-  width: 30px;
-  height: 30px;
+  width: 27px;
+  height: 27px;
   justify-content: center;
   padding: 0;
 }
@@ -456,8 +456,8 @@ body.theme-ghibli .soundtrack-player__modes button.is-active {
 }
 
 .soundtrack-player__quick button {
-  width: 24px;
-  height: 24px;
+  width: 21px;
+  height: 21px;
   font-size: .7rem;
 }
 
@@ -504,7 +504,7 @@ body.theme-ghibli .soundtrack-player__modes button.is-active {
 
 @media (max-width: 640px) {
   .soundtrack-player.is-open {
-    width: calc(100vw - 1.3rem);
+    width: min(360px, calc(100vw - 1.3rem));
   }
 
   .soundtrack-player.is-open .soundtrack-player__top {
