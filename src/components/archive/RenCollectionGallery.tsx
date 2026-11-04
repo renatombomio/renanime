@@ -1,8 +1,8 @@
-import { fetchRenMediaByIdentity } from "../../lib/api/ren-anime-identities";
+import { fetchRenMediaByIdentity, hasRenAnimeIdentity } from "../../lib/api/ren-anime-identities";
 import { getDisplayTitle } from "../../lib/anime/display-title";
 import AnimePosterDisplay from "../anime/AnimePosterDisplay";
 import { useEffect, useMemo, useState } from "react";
-import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
+
 import { useT, type Lang } from "../../i18n";
 
 interface Entry {
@@ -30,100 +30,8 @@ type Sort = "ADDED" | "TITLE" | "YEAR";
 const PAGE_SIZE = 15;
 const CACHE_PREFIX = "renanime:collection:v7:";
 
-async function fetchMedia(entries: Entry[], resolveFallbackPosters = true): Promise<Record<string, Media | null>> {
-  const result: Record<string, Media | null> = {};
-  const unresolved: Entry[] = [];
-
-  for (const entry of entries) {
-    const key = CACHE_PREFIX + entry.title.toLowerCase();
-    let cachedMedia: Media | null = null;
-
-    try {
-      const cached = sessionStorage.getItem(key);
-      if (cached) cachedMedia = JSON.parse(cached) as Media | null;
-    } catch {}
-
-    if (cachedMedia?.coverImage?.extraLarge || cachedMedia?.coverImage?.large) {
-      result[entry.animeId] = cachedMedia;
-    } else {
-      try {
-        sessionStorage.removeItem(key);
-      } catch {}
-      unresolved.push(entry);
-    }
-  }
-
-  const identityMedia = await fetchRenMediaByIdentity(unresolved);
-  for (const entry of unresolved) {
-    const identified = identityMedia[entry.animeId];
-    if (identified?.coverImage?.extraLarge || identified?.coverImage?.large) {
-      result[entry.animeId] = identified;
-      try {
-        sessionStorage.setItem(CACHE_PREFIX + entry.title.toLowerCase(), JSON.stringify(identified));
-      } catch {}
-    }
-  }
-  const unresolvedByTitle = unresolved.filter((entry) => !result[entry.animeId]?.coverImage?.extraLarge && !result[entry.animeId]?.coverImage?.large);
-  unresolved.splice(0, unresolved.length, ...unresolvedByTitle);
-
-  const chunks: Entry[][] = [];
-  for (let offset = 0; offset < unresolved.length; offset += 25) {
-    chunks.push(unresolved.slice(offset, offset + 25));
-  }
-
-  await Promise.all(chunks.map(async (chunk) => {
-    const variables: Record<string, string> = {};
-    const fields = chunk.map((entry, index) => {
-      const key = "s" + index;
-      const alias = "a" + index;
-      variables[key] = entry.title;
-      const formatFilter = entry.format === "MOVIE" ? ", format: MOVIE" : "";
-      return `${alias}: Page(page: 1, perPage: 10) { media(search: $${key}, type: ANIME${formatFilter}, sort: SEARCH_MATCH) { title { romaji english native } synonyms startDate { year month day } format coverImage { extraLarge large } } }`;
-    }).join("\n");
-    const definitions = chunk.map((_, index) => `$s${index}: String!`).join(", ");
-
-    try {
-      const response = await fetch("https://graphql.anilist.co", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ query: `query HomeGallery(${definitions}) { ${fields} }`, variables }),
-      });
-      if (!response.ok) throw new Error("AniList gallery request failed");
-      const payload = await response.json();
-
-      chunk.forEach((entry, index) => {
-        const candidates = payload.data?.["a" + index]?.media ?? [];
-        result[entry.animeId] = selectBestAnimeCandidate(candidates, entry.title, entry.format);
-      });
-    } catch {
-      // AniList can be unavailable; unresolved entries still get a fallback attempt.
-    }
-
-    if (resolveFallbackPosters) {
-      await Promise.all(chunk.map(async (entry) => {
-        const current = result[entry.animeId];
-        if (!current?.coverImage?.extraLarge && !current?.coverImage?.large) {
-          const poster = await fetchFallbackPoster(entry.title, entry.format, { skipAniList: true });
-          if (poster) result[entry.animeId] = {
-            ...(current ?? {}),
-            title: current?.title ?? { romaji: entry.title },
-            format: current?.format ?? entry.format,
-            coverImage: { extraLarge: poster, large: poster },
-          };
-        }
-      }));
-    }
-
-    for (const entry of chunk) {
-      const resolved = result[entry.animeId];
-      if (!resolved?.coverImage?.extraLarge && !resolved?.coverImage?.large) continue;
-      try {
-        sessionStorage.setItem(CACHE_PREFIX + entry.title.toLowerCase(), JSON.stringify(resolved));
-      } catch {}
-    }
-  }));
-  
-  return result;
+async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null>> {
+  return fetchRenMediaByIdentity(entries);
 }
 
 function titleOf(entry: Entry, media?: Media | null) {
@@ -136,6 +44,7 @@ function isMovie(entry: Entry, media?: Media | null) {
 
 export default function HomeGallery({ entries, lang = "es" }: Props) {
   const t = useT(lang);
+  const verifiedEntries = useMemo(() => entries.filter((entry) => hasRenAnimeIdentity(entry.animeId)), [entries]);
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(false);
@@ -146,7 +55,7 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
 
   useEffect(() => {
     const needsCompleteMetadata = sort === "YEAR" || sort === "TITLE" || filter !== "ALL" || Boolean(query.trim());
-    const targetEntries = needsCompleteMetadata ? entries : entries.slice(0, visible);
+    const targetEntries = needsCompleteMetadata ? verifiedEntries : verifiedEntries.slice(0, visible);
     const missing = targetEntries.filter((entry) => !(entry.animeId in media));
 
     if (!missing.length) return;
@@ -162,12 +71,12 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
     });
 
     return () => { cancelled = true; };
-  }, [entries, visible, sort, filter, query]);
+  }, [verifiedEntries, visible, sort, filter, query]);
 
   const filteredEntries = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase(lang);
 
-    return entries
+    return verifiedEntries
       .filter((entry) => {
         const item = media[entry.animeId];
         if (filter === "MOVIES" && !isMovie(entry, item)) return false;
@@ -180,7 +89,7 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
         const bMedia = media[b.animeId];
         if (sort === "TITLE") return titleOf(a, aMedia).localeCompare(titleOf(b, bMedia), lang);
         if (sort === "YEAR") return (bMedia?.startDate?.year ?? 0) - (aMedia?.startDate?.year ?? 0);
-        return entries.indexOf(a) - entries.indexOf(b);
+        return verifiedEntries.indexOf(a) - verifiedEntries.indexOf(b);
       });
   }, [entries, media, filter, sort, query]);
 
