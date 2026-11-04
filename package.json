@@ -12,7 +12,8 @@
     "astro": "astro",
     "test": "vitest run",
     "test:watch": "vitest",
-    "covers:manifest": "node scripts/generate-ren-cover-manifest.mjs"
+    "covers:manifest": "node scripts/generate-ren-cover-manifest.mjs",
+    "covers:identify": "node scripts/audit-ren-anime-identities.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.6",
