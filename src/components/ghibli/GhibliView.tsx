@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { fetchFallbackPoster } from "../../lib/api/poster-fallback";
+import { fetchFallbackPoster, isAnimeCandidateMatch } from "../../lib/api/poster-fallback";
 import { fetchGhibliAniList } from "../../lib/api/ghibli-anilist";
 import { useT, type Lang } from "../../i18n";
 
@@ -28,7 +28,16 @@ export default function GhibliView({ films, lang = "es" }: { films: Film[]; lang
       .then((payload) => {
         if (cancelled) return;
         const result: Record<string, Media | null> = {};
-        searchableFilms.forEach((film, index) => { result[film.id] = payload["a" + index]?.media?.[0] ?? null; });
+        searchableFilms.forEach((film, index) => {
+          const candidate = payload["a" + index]?.media?.[0] ?? null;
+          const title = film.searchTitle || film.title;
+          result[film.id] = candidate && isAnimeCandidateMatch(
+            title,
+            "MOVIE",
+            candidate.title,
+            candidate.format,
+          ) ? candidate : null;
+        });
         setMedia(result);
         setLoading(false);
         void Promise.all(searchableFilms.filter((film) => {
