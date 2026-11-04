@@ -147,13 +147,13 @@ export function getWatchedLibrary(): LibraryEntry[] {
 }
 
 export function getPendingLibrary(): LibraryEntry[] {
-  return [...animeLibrary, ...franchiseMovies].filter((entry) => entry.state.status === "PENDING");
+  return animeLibrary.filter((entry) => entry.state.status === "PENDING");
 }
 
 export function getRecommendedLibrary(): LibraryEntry[] {
-  return [...animeLibrary, ...franchiseMovies].filter((entry) => entry.state.recommended);
+  return animeLibrary.filter((entry) => entry.state.recommended);
 }
 
 export function getFavoritesLibrary(): LibraryEntry[] {
-  return [...animeLibrary, ...franchiseMovies].filter((entry) => entry.state.favorite);
+  return animeLibrary.filter((entry) => entry.state.favorite);
 }
