@@ -38,7 +38,7 @@ const onlineCutoff = Date.now() - 5 * 60 * 1000;
         <div class="community-grid" id="community-grid">
           {profiles.map((member) => {
             const online = member.last_seen_at && new Date(member.last_seen_at).getTime() >= onlineCutoff;
-            const searchable = (member.aka || "").toLocaleLowerCase();
+            const searchable = [member.aka, member.headline, member.bio, ...(Array.isArray(member.interests) ? member.interests : [])].filter(Boolean).join(" ").toLocaleLowerCase();
             return (
               <a class="community-member" href={`${isEnglish ? "/en" : ""}/u/${encodeURIComponent(member.aka)}/`} data-search={searchable}>
                 <div class="community-avatar-wrap">
