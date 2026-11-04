@@ -72,29 +72,39 @@ async function fetchMedia(entries: Entry[], resolveFallbackPosters = true): Prom
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({ query: `query HomeGallery(${definitions}) { ${fields} }`, variables }),
       });
-      if (!response.ok) return;
+      if (!response.ok) throw new Error("AniList gallery request failed");
       const payload = await response.json();
 
       chunk.forEach((entry, index) => {
         const candidates = payload.data?.["a" + index]?.media ?? [];
         result[entry.animeId] = selectBestAnimeCandidate(candidates, entry.title, entry.format);
       });
-      if (resolveFallbackPosters) {
-        await Promise.all(chunk.map(async (entry) => {
-          const current = result[entry.animeId];
-          if (!current?.coverImage?.extraLarge && !current?.coverImage?.large) {
-            const poster = await fetchFallbackPoster(entry.title, entry.format);
-            if (poster) result[entry.animeId] = { ...(current ?? {}), coverImage: { extraLarge: poster, large: poster } };
-          }
-        }));
-      }
+    } catch {
+      // AniList can be unavailable; unresolved entries still get a fallback attempt.
+    }
 
-      for (const entry of chunk) {
-        try {
-          sessionStorage.setItem(CACHE_PREFIX + entry.title.toLowerCase(), JSON.stringify(result[entry.animeId] ?? null));
-        } catch {}
-      }
-    } catch {}
+    if (resolveFallbackPosters) {
+      await Promise.all(chunk.map(async (entry) => {
+        const current = result[entry.animeId];
+        if (!current?.coverImage?.extraLarge && !current?.coverImage?.large) {
+          const poster = await fetchFallbackPoster(entry.title, entry.format);
+          if (poster) result[entry.animeId] = {
+            ...(current ?? {}),
+            title: current?.title ?? { romaji: entry.title },
+            format: current?.format ?? entry.format,
+            coverImage: { extraLarge: poster, large: poster },
+          };
+        }
+      }));
+    }
+
+    for (const entry of chunk) {
+      const resolved = result[entry.animeId];
+      if (!resolved?.coverImage?.extraLarge && !resolved?.coverImage?.large) continue;
+      try {
+        sessionStorage.setItem(CACHE_PREFIX + entry.title.toLowerCase(), JSON.stringify(resolved));
+      } catch {}
+    }
   }));
   
   return result;
