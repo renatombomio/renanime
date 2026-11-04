@@ -1,97 +1,122 @@
 import type { APIRoute } from "astro";
 
+type AniListSchedule = {
+  episode: number;
+  airingAt: number;
+  media: {
+    id: number;
+    idMal: number | null;
+    title: { romaji: string | null };
+    bannerImage: string | null;
+    coverImage: { color: string | null };
+    format: string | null;
+    tags: Array<{ name: string; category: string }>;
+  };
+};
 type TopEpisode = {
   mal_id?: number;
   title?: string;
   url?: string;
   score?: number;
   scored_by?: number;
-  anime?: {
-    mal_id?: number;
-    title?: string;
-    url?: string;
-    images?: { webp?: { image_url?: string }; jpg?: { image_url?: string } };
-  };
+  anime?: { mal_id?: number; title?: string; url?: string };
 };
-type EpisodeRecord = { mal_id?: number; aired?: string | null; title?: string };
+const ANILIST = "https://graphql.anilist.co";
 const JIKAN = "https://api.jikan.moe/v4";
 
 function getCurrentWeekRange() {
   const now = new Date();
-  const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
-  const day = monday.getUTCDay();
-  monday.setUTCDate(monday.getUTCDate() - (day === 0 ? 6 : day - 1));
-  const nextMonday = new Date(monday);
-  nextMonday.setUTCDate(monday.getUTCDate() + 7);
-  return { start: monday.toISOString().slice(0, 10), end: nextMonday.toISOString().slice(0, 10) };
+  const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  const day = start.getUTCDay();
+  start.setUTCDate(start.getUTCDate() - (day === 0 ? 6 : day - 1));
+  const end = new Date(start);
+  end.setUTCDate(end.getUTCDate() + 7);
+  return { start, end };
 }
-async function getJson<T>(url: string): Promise<T | null> {
+async function getJson<T>(url: string, init?: RequestInit): Promise<T | null> {
   try {
-    const response = await fetch(url, { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(9000) });
+    const response = await fetch(url, {
+      ...init,
+      headers: { Accept: "application/json", ...init?.headers },
+      signal: AbortSignal.timeout(10000),
+    });
     if (!response.ok) return null;
     return await response.json() as T;
   } catch { return null; }
 }
-function wait(ms: number) { return new Promise((resolve) => setTimeout(resolve, ms)); }
+async function getAiringSchedule(from: number, to: number): Promise<AniListSchedule[]> {
+  const query = `query WeeklyEpisodes($from: Int!, $to: Int!) {
+    Page(page: 1, perPage: 50) {
+      airingSchedules(airingAt_greater: $from, airingAt_lesser: $to, sort: TIME) {
+        episode airingAt
+        media { id idMal title { romaji } bannerImage coverImage { color } format tags { name category } }
+      }
+    }
+  }`;
+  const result = await getJson<{ data?: { Page?: { airingSchedules?: AniListSchedule[] } } }>(ANILIST, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query, variables: { from, to } }),
+  });
+  return result?.data?.Page?.airingSchedules ?? [];
+}
 
 export const GET: APIRoute = async () => {
-  const { start: WEEK_START, end: WEEK_END } = getCurrentWeekRange();
+  const { start, end } = getCurrentWeekRange();
+  const from = Math.floor(start.getTime() / 1000);
+  const to = Math.floor(end.getTime() / 1000);
+  const schedule = await getAiringSchedule(from, to);
 
-  // Jikan's top episode endpoint exposes episode ratings; episode-list endpoints
-  // expose the original air date. Episode scores are displayed on a 1–10 scale.
-  const topPages = await Promise.all([1, 2].map((page) =>
-    getJson<{ data?: TopEpisode[] }>(`${JIKAN}/top/episodes?limit=25&page=${page}`)
-  ));
-  const candidates = topPages.flatMap((payload) => payload?.data ?? []).filter((episode) =>
-    typeof episode.mal_id === "number" &&
-    typeof episode.score === "number" &&
-    episode.score > 0 &&
-    typeof episode.anime?.mal_id === "number"
-  );
-
-  const animeIds = [...new Set(candidates.map((episode) => episode.anime!.mal_id!))];
-  const airedByAnime = new Map<number, Map<number, string>>();
-
-  // Jikan rate limit: keep requests sequential and paced.
-  for (const animeId of animeIds) {
-    const payload = await getJson<{ data?: EpisodeRecord[] }>(`${JIKAN}/anime/${animeId}/episodes?page=1`);
-    const records = payload?.data ?? [];
-    const map = new Map<number, string>();
-    for (const record of records) {
-      if (typeof record.mal_id !== "number" || !record.aired) continue;
-      const date = record.aired.slice(0, 10);
-      if (date >= WEEK_START && date < WEEK_END) map.set(record.mal_id, date);
-    }
-    airedByAnime.set(animeId, map);
-    await wait(350);
+  // Build a precise key from MAL anime ID + episode number, using AniList only
+  // for the current week's airing dates and Renanime's internal anime detail IDs.
+  const scheduled = new Map<string, AniListSchedule>();
+  for (const item of schedule) {
+    if (!item.media?.idMal || !item.media.id || !item.episode) continue;
+    scheduled.set(item.media.idMal + ":" + item.episode, item);
   }
 
-  const episodes = candidates.flatMap((episode) => {
-    const anime = episode.anime!;
-    const animeId = anime.mal_id!;
-    const aired = airedByAnime.get(animeId)?.get(episode.mal_id!);
-    if (!aired) return [];
-    const episodeNumber = episode.mal_id!;
+  // Jikan supplies episode rating data. Its public top list is global/all-time,
+  // so only episodes that also match this week's AniList schedule are eligible.
+  const topPages = await Promise.all([1, 2, 3, 4].map((page) =>
+    getJson<{ data?: TopEpisode[] }>(`${JIKAN}/top/episodes?limit=25&page=${page}`)
+  ));
+  const candidates = topPages.flatMap((payload) => payload?.data ?? []);
+  const results = candidates.flatMap((episode) => {
+    const malId = episode.anime?.mal_id;
+    const episodeNumber = episode.mal_id;
+    if (!malId || !episodeNumber || typeof episode.score !== "number" || episode.score <= 0) return [];
+    const airing = scheduled.get(malId + ":" + episodeNumber);
+    if (!airing) return [];
+    const media = airing.media;
+    const demographic = media.tags?.find((tag) => tag.category.toLowerCase().includes("demographic"))?.name ?? null;
     return [{
-      id: `${animeId}-${episodeNumber}`,
-      animeId,
-      animeTitle: anime.title || "",
-      animeUrl: anime.url || "",
-      poster: anime.images?.webp?.image_url || anime.images?.jpg?.image_url || "",
-      episodeNumber: `Episodio ${episodeNumber}`,
+      id: media.id + "-" + episodeNumber,
+      animeId: media.id,
+      animeTitle: media.title.romaji || "",
+      animeUrl: "/anime/" + media.id + "/",
+      poster: media.bannerImage || "",
+      banner: media.bannerImage,
+      tint: media.coverImage?.color ?? null,
+      format: media.format,
+      demographic,
+      episodeNumber: "Episodio " + episodeNumber,
+      episode: episodeNumber,
       episodeTitle: episode.title || "",
-      score: Math.round(episode.score! * 100) / 100,
+      // AnimeGraphs documents the MAL episode scale as 1–5 and displays it as 1–10.
+      score: Math.round(episode.score * 200) / 100,
       votes: episode.scored_by || 0,
-      aired,
-      url: anime.url || episode.url || "",
+      aired: new Date(airing.airingAt * 1000).toISOString(),
+      url: "/anime/" + media.id + "/",
     }];
-  }).sort((a, b) => b.score - a.score || b.votes - a.votes).slice(0, 5);
+  });
 
+  const unique = [...new Map(results.map((episode) => [episode.id, episode])).values()];
+  unique.sort((a, b) => b.score - a.score || b.votes - a.votes);
   return new Response(JSON.stringify({
-    weekStart: WEEK_START,
-    weekEnd: WEEK_END,
-    episodes,
-    source: "Jikan API v4 / MyAnimeList",
+    weekStart: start.toISOString().slice(0, 10),
+    weekEnd: end.toISOString().slice(0, 10),
+    episodes: unique.slice(0, 5),
+    source: "Jikan API v4 episode ratings + AniList weekly airing schedule",
   }), {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
