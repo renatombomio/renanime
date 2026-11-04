@@ -1,7 +1,7 @@
-import { fetchRenMediaByIdentity } from "../../lib/api/ren-anime-identities";
+import { fetchRenMediaByIdentity, hasRenAnimeIdentity } from "../../lib/api/ren-anime-identities";
 import { getDisplayTitle } from "../../lib/anime/display-title";
 import AnimePosterDisplay from "../anime/AnimePosterDisplay";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface Entry {
   animeId: string;
@@ -19,81 +19,19 @@ interface Props {
 }
 
 const PAGE_SIZE = 9;
-const CACHE_PREFIX = "renanime:collection:v3:";
 
 async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null>> {
-  const result: Record<string, Media | null> = {};
-  const unresolved: Entry[] = [];
-
-  for (const entry of entries) {
-    const key = CACHE_PREFIX + entry.title.toLowerCase();
-    try {
-      const cached = sessionStorage.getItem(key);
-      if (cached) {
-        const media = JSON.parse(cached) as Media | null;
-        if (media?.coverImage?.extraLarge || media?.coverImage?.large) {
-          result[entry.animeId] = media;
-          continue;
-        }
-        sessionStorage.removeItem(key);
-      }
-    } catch {}
-    unresolved.push(entry);
-  }
-
-  const identityMedia = await fetchRenMediaByIdentity(unresolved);
-  for (const entry of unresolved) {
-    const identified = identityMedia[entry.animeId];
-    if (identified?.coverImage?.extraLarge || identified?.coverImage?.large) {
-      result[entry.animeId] = identified;
-      try {
-        sessionStorage.setItem(CACHE_PREFIX + entry.title.toLowerCase(), JSON.stringify(identified));
-      } catch {}
-    }
-  }
-  const unresolvedByTitle = unresolved.filter((entry) => !result[entry.animeId]?.coverImage?.extraLarge && !result[entry.animeId]?.coverImage?.large);
-  unresolved.splice(0, unresolved.length, ...unresolvedByTitle);
-
-  for (let offset = 0; offset < unresolved.length; offset += 15) {
-    const chunk = unresolved.slice(offset, offset + 15);
-    const variables: Record<string, string> = {};
-    const fields = chunk.map((entry, index) => {
-      const key = "s" + index;
-      const alias = "a" + index;
-      variables[key] = entry.title;
-      return `${alias}: Page(page: 1, perPage: 1) { media(search: $${key}, type: ANIME, sort: SEARCH_MATCH) { title { romaji english } coverImage { extraLarge large } } }`;
-    }).join("\n");
-    const definitions = chunk.map((_, index) => `$s${index}: String!`).join(", ");
-
-    try {
-      const response = await fetch("https://graphql.anilist.co", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ query: `query HomeGallery(${definitions}) { ${fields} }`, variables }),
-      });
-      if (!response.ok) continue;
-      const payload = await response.json();
-
-      chunk.forEach((entry, index) => {
-        const media = payload.data?.["a" + index]?.media?.[0] ?? null;
-        result[entry.animeId] = media;
-        try {
-          sessionStorage.setItem(CACHE_PREFIX + entry.title.toLowerCase(), JSON.stringify(media));
-        } catch {}
-      });
-    } catch {}
-  }
-
-  return result;
+  return fetchRenMediaByIdentity(entries);
 }
 
 export default function HomeGallery({ entries, lang = "es" }: Props) {
+  const verifiedEntries = useMemo(() => entries.filter((entry) => hasRenAnimeIdentity(entry.animeId)), [entries]);
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(false);
 
-  const page = entries.slice(0, visible);
-  const hasMore = visible < entries.length;
+  const page = verifiedEntries.slice(0, visible);
+  const hasMore = visible < verifiedEntries.length;
 
   useEffect(() => {
     const missing = page.filter((entry) => !(entry.animeId in media));
@@ -108,11 +46,11 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
     });
 
     return () => { cancelled = true; };
-  }, [visible]);
+  }, [visible, verifiedEntries, media]);
 
   const loadMore = () => {
     if (loading || !hasMore) return;
-    setVisible((current) => Math.min(current + PAGE_SIZE, entries.length));
+    setVisible((current) => Math.min(current + PAGE_SIZE, verifiedEntries.length));
   };
 
   return (
