@@ -28,7 +28,6 @@ type Filter = "ALL" | "SERIES" | "MOVIES";
 type Sort = "ADDED" | "TITLE" | "YEAR";
 
 const PAGE_SIZE = 15;
-const CACHE_PREFIX = "renanime:collection:v7:";
 
 async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null>> {
   return fetchRenMediaByIdentity(entries);
