@@ -1,3 +1,4 @@
+import AnimePosterDisplay from "../anime/AnimePosterDisplay";
 import { useEffect, useRef, useState } from "react";
 import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
 import { useT, type Lang } from "../../i18n";
@@ -145,18 +146,7 @@ export default function FavoritesView({ entries, recommendations, lang = "es" }:
       <article className={"favorite-card" + (compact ? " favorite-card--recommendation" : "")} key={entry.animeId}>
         <a href={`${lang === "en" ? "/en" : ""}/anime/${entry.animeId}`} aria-label={t("favorites.view").replace("{title}", title)}>
           <div className="favorite-media">
-            {item?.coverImage?.extraLarge || item?.coverImage?.large ? (
-              <img
-                src={item.coverImage.extraLarge || item.coverImage.large || ""}
-                alt={title}
-                loading={index < 2 ? "eager" : "lazy"}
-              />
-            ) : (
-              <div className="favorite-placeholder">
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <strong>{entry.title}</strong>
-              </div>
-            )}
+            <AnimePosterDisplay src={item?.coverImage?.extraLarge || item?.coverImage?.large} title={entry.title} loading={index < 2 ? "eager" : "lazy"} />}
           </div>
 
           <div className="favorite-caption">
