@@ -3,7 +3,6 @@ import Layout from "../../layouts/Layout.astro";
 import { useT } from "../../i18n";
 import Navbar from "../../components/layout/Navbar.astro";
 import Container from "../../components/ui/Container.astro";
-import SectionHeader from "../../components/ui/SectionHeader.astro";
 import FavoritesView from "../../components/favorites/FavoritesView";
 import { getFavoritesLibrary, getRecommendedLibrary } from "../../data/library";
 
@@ -16,11 +15,7 @@ const t = useT(Astro.locals.lang);
   <Navbar />
   <main id="main-content" class="favorites-page">
     <Container>
-      <SectionHeader
-        variant="ren"
-        title={t("favorites.pageHeading")}
-        description={t("favorites.pageDescription")}
-      />
+      <h1 class="sr-only">{t("favorites.pageHeading")}</h1>
       <div class="favorites-page-content">
         <FavoritesView entries={entries} recommendations={recommendations} lang={Astro.locals.lang} client:load />
       </div>
@@ -35,7 +30,7 @@ const t = useT(Astro.locals.lang);
   }
 
   .favorites-page-content {
-    margin-top: clamp(5rem, 10vw, 9rem);
+    margin-top: 0;
   }
 
   :global(.favorites-track:not(.favorites-track--recommendations)) {
@@ -200,7 +195,6 @@ const t = useT(Astro.locals.lang);
   }
 
   @media (max-width: 700px) {
-    .favorites-page-content { margin-top: 4.5rem; }
     :global(.favorites-track:not(.favorites-track--recommendations)) { gap: .7rem; }
     :global(.favorites-track--recommendations) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.5rem .75rem; }
     :global(.favorites-track:not(.favorites-track--recommendations) .favorite-card) { flex: 0 0 138px; }
