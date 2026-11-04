@@ -1,7 +1,7 @@
 import AnimePosterDisplay from "../anime/AnimePosterDisplay";
 import { fetchRenMediaByIdentity, hasRenAnimeIdentity } from "../../lib/api/ren-anime-identities";
 import { getDisplayTitle } from "../../lib/anime/display-title";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useT, type Lang } from "../../i18n";
 
@@ -25,12 +25,11 @@ interface Props {
   lang?: Lang;
 }
 
-const ANILIST_BATCH_SIZE = 20;
 
 export default function FavoritesView({ entries, recommendations, lang = "es" }: Props) {
   const t = useT(lang);
-  const verifiedEntries = entries.filter((entry) => hasRenAnimeIdentity(entry.animeId));
-  const verifiedRecommendations = recommendations.filter((entry) => hasRenAnimeIdentity(entry.animeId));
+  const verifiedEntries = useMemo(() => entries.filter((entry) => hasRenAnimeIdentity(entry.animeId)), [entries]);
+  const verifiedRecommendations = useMemo(() => recommendations.filter((entry) => hasRenAnimeIdentity(entry.animeId)), [recommendations]);
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(true);
   const [visibleFavorites, setVisibleFavorites] = useState(10);
