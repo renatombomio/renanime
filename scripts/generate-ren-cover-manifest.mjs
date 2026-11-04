@@ -74,6 +74,21 @@ async function rateLimit(provider) {
   else lastJikanAt = Date.now();
 }
 
+async function isReachableImage(url) {
+  if (!url) return false;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8_000);
+  try {
+    const response = await fetch(url, { method: "HEAD", signal: controller.signal });
+    const contentType = response.headers.get("content-type") || "";
+    return response.ok && contentType.toLowerCase().startsWith("image/");
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 async function fromAniList(entry) {
   await rateLimit("anilist");
   const query = \`query($search:String!,$perPage:Int!){Page(page:1,perPage:$perPage){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id idMal format title{romaji english native} synonyms coverImage{extraLarge large}}}}\`;
@@ -87,7 +102,7 @@ async function fromAniList(entry) {
     (item) => [item.title?.romaji, item.title?.english, item.title?.native, ...(item.synonyms ?? [])],
     (item) => item.format,
     (item) => item.coverImage?.extraLarge || item.coverImage?.large);
-  return match ? { provider: "anilist", externalId: String(match.item.id), posterUrl: match.poster } : null;
+  return match && await isReachableImage(match.poster) ? { provider: "anilist", externalId: String(match.item.id), posterUrl: match.poster } : null;
 }
 
 async function fromJikan(entry) {
@@ -103,7 +118,7 @@ async function fromJikan(entry) {
     (item) => [item.title, item.title_english, item.title_japanese, ...(item.title_synonyms ?? [])],
     (item) => item.type,
     (item) => item.images?.webp?.large_image_url || item.images?.jpg?.large_image_url || item.images?.webp?.image_url || item.images?.jpg?.image_url);
-  return match ? { provider: "jikan", externalId: String(match.item.mal_id), posterUrl: match.poster } : null;
+  return match && await isReachableImage(match.poster) ? { provider: "jikan", externalId: String(match.item.mal_id), posterUrl: match.poster } : null;
 }
 
 async function fromKitsu(entry) {
@@ -116,7 +131,7 @@ async function fromKitsu(entry) {
     (item) => [item.attributes?.canonicalTitle, ...Object.values(item.attributes?.titles ?? {}), ...(item.attributes?.abbreviatedTitles ?? [])],
     (item) => String(item.attributes?.subtype || "").toUpperCase(),
     (item) => item.attributes?.posterImage?.original || item.attributes?.posterImage?.large || item.attributes?.posterImage?.medium);
-  return match ? { provider: "kitsu", externalId: String(match.item.id), posterUrl: match.poster } : null;
+  return match && await isReachableImage(match.poster) ? { provider: "kitsu", externalId: String(match.item.id), posterUrl: match.poster } : null;
 }
 
 function parseEntries(source) {
