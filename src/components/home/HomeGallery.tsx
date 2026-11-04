@@ -1,3 +1,4 @@
+import { fetchRenMediaByIdentity } from "../../lib/api/ren-anime-identities";
 import AnimePosterDisplay from "../anime/AnimePosterDisplay";
 import { useEffect, useRef, useState } from "react";
 
@@ -38,6 +39,19 @@ async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null
     } catch {}
     unresolved.push(entry);
   }
+
+  const identityMedia = await fetchRenMediaByIdentity(unresolved);
+  for (const entry of unresolved) {
+    const identified = identityMedia[entry.animeId];
+    if (identified?.coverImage?.extraLarge || identified?.coverImage?.large) {
+      result[entry.animeId] = identified;
+      try {
+        sessionStorage.setItem(CACHE_PREFIX + entry.title.toLowerCase(), JSON.stringify(identified));
+      } catch {}
+    }
+  }
+  const unresolvedByTitle = unresolved.filter((entry) => !result[entry.animeId]?.coverImage?.extraLarge && !result[entry.animeId]?.coverImage?.large);
+  unresolved.splice(0, unresolved.length, ...unresolvedByTitle);
 
   for (let offset = 0; offset < unresolved.length; offset += 15) {
     const chunk = unresolved.slice(offset, offset + 15);
