@@ -257,6 +257,14 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
         try { sessionStorage.setItem(FRANCHISE_CACHE_PREFIX + entry.animeId, JSON.stringify(media)); } catch {}
       }
     } catch {}
+
+    if (!result[entry.animeId]) {
+      const fallback = await fetchFallbackAnime(entry.title, entry.format);
+      if (fallback) {
+        result[entry.animeId] = fallback;
+        try { sessionStorage.setItem(FRANCHISE_CACHE_PREFIX + entry.animeId, JSON.stringify(fallback)); } catch {}
+      }
+    }
   }
 
   const searchEntries = unresolved.filter((entry) => !FRANCHISE_MEDIA_ALIASES[entry.animeId]);
