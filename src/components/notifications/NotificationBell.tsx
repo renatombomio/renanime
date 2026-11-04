@@ -80,6 +80,21 @@ export default function NotificationBell({ lang = "es" }: { lang?: Lang }) {
         .notification-copy p{margin:0;font-size:11px;line-height:1.45;color:var(--color-text-secondary)}
         .notification-copy small{font-size:10px;color:var(--color-muted-500)}
         .notification-empty{padding:24px 16px;color:var(--color-text-muted);font-size:12px;text-align:center}
+        .site-header--ghibli .notification-bell-trigger{border-color:rgba(25,54,47,.25);color:var(--ghibli-ink,#19362f)}
+        .site-header--ghibli .notification-bell-trigger:hover,.site-header--ghibli .notification-bell-trigger:focus-visible{border-color:var(--ghibli-coral,#f45164);color:var(--ghibli-blue,#18528a)}
+        .site-header--ghibli .notification-bell-trigger:focus-visible{outline-color:var(--ghibli-coral,#f45164)}
+        .site-header--ghibli .notification-bell-count{background:var(--ghibli-coral,#f45164);color:#fff}
+        .site-header--ghibli .notification-panel{border-color:rgba(25,54,47,.16);background:var(--ghibli-cream,#fff7e8);color:var(--ghibli-ink,#19362f);box-shadow:0 16px 50px rgba(25,54,47,.18)}
+        .site-header--ghibli .notification-panel-head{border-bottom-color:rgba(25,54,47,.14)}
+        .site-header--ghibli .notification-panel-head button{color:var(--ghibli-coral,#f45164)}
+        .site-header--ghibli .notification-panel-head button:hover,.site-header--ghibli .notification-panel-head button:focus-visible{color:var(--ghibli-blue,#18528a)}
+        .site-header--ghibli .notification-item{border-bottom-color:rgba(25,54,47,.10)}
+        .site-header--ghibli .notification-item:hover{background:rgba(24,82,138,.06)}
+        .site-header--ghibli .notification-item.unread{background:rgba(244,81,100,.08)}
+        .site-header--ghibli .notification-avatar{background:var(--ghibli-paper,#f4e9d5)}
+        .site-header--ghibli .notification-copy p{color:var(--ghibli-ink,#19362f)}
+        .site-header--ghibli .notification-copy small{color:#71847b}
+        .site-header--ghibli .notification-empty{color:#59756b}
         @media(max-width:1120px){.notification-bell-wrap{margin:0 .5rem 0 auto}.notification-panel{right:-54px}}
       `}</style>
       <button type="button" className="notification-bell-trigger" aria-label={copy("Notificaciones","Notifications")} aria-expanded={open} onClick={() => { setOpen(value => !value); if (!open) void load(); }}>
