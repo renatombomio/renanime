@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-11-04T13:11:22.458Z",
+  "generatedAt": "2026-11-04T13:46:42.198Z",
   "entries": [
     {
       "animeId": "personal-001",
@@ -33,7 +33,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21459-nYh85uj2Fuwr.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21459-nYh85uj2Fuwr.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -61,7 +61,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx813-ZhnFNOeCU5dQ.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx813-ZhnFNOeCU5dQ.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -97,7 +97,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-buvcRTBx4NSm.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx16498-buvcRTBx4NSm.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -122,7 +122,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20613-HXHpec4bemk5.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20613-HXHpec4bemk5.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -148,7 +148,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx4224-PXVMBLNwy2aF.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx4224-PXVMBLNwy2aF.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -179,7 +179,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21087-B5DHjqZ3kW4b.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21087-B5DHjqZ3kW4b.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -203,7 +203,31 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx3588-fSMggQoFSbUI.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx3588-fSMggQoFSbUI.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
+      "reviewed": false
+    },
+    {
+      "animeId": "personal-012",
+      "displayTitle": "Black Clover",
+      "format": "SERIES",
+      "anilistId": 97940,
+      "matchedTitle": "Black Clover",
+      "providerTitles": {
+        "romaji": "Black Clover",
+        "english": "Black Clover",
+        "native": "ブラッククローバー"
+      },
+      "synonyms": [
+        "תלתן שחור",
+        "แบล็กโคลเวอร์",
+        "Чёрный клевер"
+      ],
+      "anilistFormat": "TV",
+      "coverImage": {
+        "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx97940-fyh8o7gNbha0.png",
+        "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx97940-fyh8o7gNbha0.png"
+      },
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -234,7 +258,45 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20920-MTREwZOG4BAD.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20920-MTREwZOG4BAD.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-exact-synonym-and-format",
+      "reviewed": false
+    },
+    {
+      "animeId": "personal-015",
+      "displayTitle": "Kimetsu no Yaiba",
+      "format": "SERIES",
+      "anilistId": 101922,
+      "matchedTitle": "Kimetsu no Yaiba",
+      "providerTitles": {
+        "romaji": "Kimetsu no Yaiba",
+        "english": "Demon Slayer: Kimetsu no Yaiba",
+        "native": "鬼滅の刃"
+      },
+      "synonyms": [
+        "KnY",
+        "Kimetsu no Yaiba: Kyoudai no Kizuna",
+        "Demon Slayer: Kimetsu no Yaiba: Bonds of Siblings",
+        "鬼滅の刃-兄妹の絆-",
+        "鬼灭之刃",
+        "הלהב קוטל השדים",
+        "قاتل الشياطين",
+        "ดาบพิฆาตอสูร",
+        "Miecz zabójcy demonów – Kimetsu no Yaiba",
+        " Guardians de la nit: Kimetsu no Yaiba",
+        "İblis Keser",
+        "ΚΥΝΗΓΟΣ ΔΑΙΜΟΝΩΝ: KIMETSU NO YAIBA",
+        "Zabiják démonů",
+        "شیطان کش",
+        "귀멸의 칼날",
+        "Истребитель демонов",
+        "Клинок, рассекающий демонов"
+      ],
+      "anilistFormat": "TV",
+      "coverImage": {
+        "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-WBsBl0ClmgYL.jpg",
+        "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx101922-WBsBl0ClmgYL.jpg"
+      },
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -254,7 +316,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx98005-kwoBQIEeXa8J.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx98005-kwoBQIEeXa8J.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -280,7 +342,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20770-brCDvhTXlums.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20770-brCDvhTXlums.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -303,7 +365,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20631-LdCiy3goitcT.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20631-LdCiy3goitcT.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -323,7 +385,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1292-FcyYgq7Ly34H.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx1292-FcyYgq7Ly34H.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -347,7 +409,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1604-W2q38L4OCGLI.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx1604-W2q38L4OCGLI.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-exact-synonym-and-format",
       "reviewed": false
     },
     {
@@ -370,7 +432,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1482-6jc8ZVSmHuLo.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx1482-6jc8ZVSmHuLo.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -390,7 +452,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/nx9513-is6YiSgKbyQX.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx9513-is6YiSgKbyQX.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -414,7 +476,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx9919-nXS7JOZrWHfS.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx9919-nXS7JOZrWHfS.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -434,7 +496,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx6880-qZ1jIqIYpST2.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx6880-qZ1jIqIYpST2.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -457,7 +519,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx10620-dUZeNej0W4QN.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx10620-dUZeNej0W4QN.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -484,7 +546,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx11757-SxYDUzdr9rh2.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx11757-SxYDUzdr9rh2.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -508,7 +570,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx14075-EIJcGXq5hd9O.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx14075-EIJcGXq5hd9O.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -528,7 +590,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx11633-vIjtabJq64Xt.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx11633-vIjtabJq64Xt.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -553,7 +615,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20447-EoQXeygHaVCK.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20447-EoQXeygHaVCK.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -573,7 +635,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx14513-HuUdrFFYftA7.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx14513-HuUdrFFYftA7.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -595,7 +657,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21394-yauvzIHGAoZv.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21394-yauvzIHGAoZv.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -621,7 +683,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b20605-k665mVkSug8D.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b20605-k665mVkSug8D.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -645,7 +707,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20829-pgsXVjrfyI5V.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20829-pgsXVjrfyI5V.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -670,7 +732,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20755-dWrhs569YGUO.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20755-dWrhs569YGUO.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -690,7 +752,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21445-zXBAdDpNylRR.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21445-zXBAdDpNylRR.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -715,7 +777,32 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21311-hAXyT8Yoh6G9.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21311-hAXyT8Yoh6G9.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
+      "reviewed": false
+    },
+    {
+      "animeId": "personal-041",
+      "displayTitle": "Nanatsu no Taizai",
+      "format": "SERIES",
+      "anilistId": 20789,
+      "matchedTitle": "Nanatsu no Taizai",
+      "providerTitles": {
+        "romaji": "Nanatsu no Taizai",
+        "english": "The Seven Deadly Sins",
+        "native": "七つの大罪"
+      },
+      "synonyms": [
+        "七大罪",
+        "ศึกตำนาน 7 อัศวิน",
+        "7DS",
+        "Семь смертных грехов"
+      ],
+      "anilistFormat": "TV",
+      "coverImage": {
+        "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20789-Ma5ouSYPkru9.jpg",
+        "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20789-Ma5ouSYPkru9.jpg"
+      },
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -739,7 +826,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21507-6YUSbh2m0N1p.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21507-6YUSbh2m0N1p.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -761,7 +848,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21269-NU0MR6HcefqO.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21269-NU0MR6HcefqO.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -783,7 +870,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx18277-Vwm314Nr6vsg.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx18277-Vwm314Nr6vsg.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -805,7 +892,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/nx98389-xDRFlDQwu2I9.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx98389-xDRFlDQwu2I9.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -825,7 +912,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20727-jgVnxLCHAKqZ.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20727-jgVnxLCHAKqZ.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -847,7 +934,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101165-v5NwPXWPFDuD.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx101165-v5NwPXWPFDuD.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -869,7 +956,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/nx101361-q4sHpCRgkhYQ.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx101361-q4sHpCRgkhYQ.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -892,7 +979,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx202-w2OLL3j8WmDm.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx202-w2OLL3j8WmDm.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -916,7 +1003,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx99263-LcazQwdlWzMy.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx99263-LcazQwdlWzMy.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -941,7 +1028,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx105310-2PKUvoaA6fTn.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx105310-2PKUvoaA6fTn.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -967,7 +1054,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx11771-uvr44RAwRxPw.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx11771-uvr44RAwRxPw.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -996,7 +1083,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b19815-sEOQ9yQaPKlk.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b19815-sEOQ9yQaPKlk.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1022,7 +1109,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20464-ooZUyBe4ptp9.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20464-ooZUyBe4ptp9.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1055,7 +1142,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101280-tDxCVJm714nt.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx101280-tDxCVJm714nt.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1078,7 +1165,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20807-8nFoO0AUdGsy.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20807-8nFoO0AUdGsy.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-exact-synonym-and-format",
       "reviewed": false
     },
     {
@@ -1100,7 +1187,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b98251-6miVBNYEXzaF.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b98251-6miVBNYEXzaF.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1130,7 +1217,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21202-mPOr80AEjUcZ.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21202-mPOr80AEjUcZ.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1153,7 +1240,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101903-ncgPJbbA5Nou.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx101903-ncgPJbbA5Nou.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1173,7 +1260,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b100298-A5VQUcw7ZC64.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b100298-A5VQUcw7ZC64.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1200,7 +1287,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101759-8UR7r9MNVpz2.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx101759-8UR7r9MNVpz2.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1222,7 +1309,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/nx100990-NJ5mqZkYlW6y.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx100990-NJ5mqZkYlW6y.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1247,7 +1334,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20923-pNT38pjW3RFH.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20923-pNT38pjW3RFH.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1272,7 +1359,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx98436-n7sK6POCd0XV.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx98436-n7sK6POCd0XV.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1295,7 +1382,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx98291-LY6txxZTX8We.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx98291-LY6txxZTX8We.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1333,7 +1420,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20954-sYRfE5jQRtSB.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20954-sYRfE5jQRtSB.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1361,7 +1448,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx9989-hImMg6kCMm6I.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx9989-hImMg6kCMm6I.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-exact-synonym-and-format",
       "reviewed": false
     },
     {
@@ -1384,7 +1471,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/nx103139-2TfvRyGTE1qp.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx103139-2TfvRyGTE1qp.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1407,7 +1494,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx98320-VwCcTBeEs08J.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx98320-VwCcTBeEs08J.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1427,7 +1514,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21887-CAq64M7WMgY5.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21887-CAq64M7WMgY5.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1447,7 +1534,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21421-5y8ryXsMB7aJ.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21421-5y8ryXsMB7aJ.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1476,7 +1563,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21355-wRVUrGxpvIQQ.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21355-wRVUrGxpvIQQ.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1504,7 +1591,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21058-GRqasG1xk3bD.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21058-GRqasG1xk3bD.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1538,7 +1625,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21519-SUo3ZQuCbYhJ.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21519-SUo3ZQuCbYhJ.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1562,7 +1649,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx105228-I4xr84QS9Pvk.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx105228-I4xr84QS9Pvk.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1586,7 +1673,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx116006-Wt8JSA1ZQxlM.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx116006-Wt8JSA1ZQxlM.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1610,7 +1697,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx97888-tdZ1r7qN1DRs.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx97888-tdZ1r7qN1DRs.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1633,7 +1720,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx100891-vPfnfkzizYFe.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx100891-vPfnfkzizYFe.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1658,7 +1745,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101348-2fhDFPCuMNiz.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx101348-2fhDFPCuMNiz.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1683,7 +1770,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx113813-SnljeXpU3Pw7.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx113813-SnljeXpU3Pw7.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1705,7 +1792,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21196-2PfPfIDrxKki.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21196-2PfPfIDrxKki.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1730,7 +1817,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx108465-1ANspF1EWyFx.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx108465-1ANspF1EWyFx.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1750,7 +1837,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101168-LY3XA61byAVo.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx101168-LY3XA61byAVo.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1772,7 +1859,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx112444-S7bhKskrAqSI.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx112444-S7bhKskrAqSI.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1797,7 +1884,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx124153-uEBI764OSavB.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx124153-uEBI764OSavB.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1827,7 +1914,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx114535-y3NnjexcqKG1.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx114535-y3NnjexcqKG1.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1849,7 +1936,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx132473-L64hP24nJyEV.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx132473-L64hP24nJyEV.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1869,7 +1956,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx107672-HBpAeSGSTFlt.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx107672-HBpAeSGSTFlt.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1892,7 +1979,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx128546-UIwyhuhjxmL0.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx128546-UIwyhuhjxmL0.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1915,7 +2002,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx100668-DvOn5bMOt4cy.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx100668-DvOn5bMOt4cy.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1946,7 +2033,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx132405-qP7FQYGmNI3d.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx132405-qP7FQYGmNI3d.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1968,7 +2055,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx108241-Mc28QvkdUkfp.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx108241-Mc28QvkdUkfp.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -1998,7 +2085,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx98659-WNyPLIZDpGGY.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx98659-WNyPLIZDpGGY.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2021,7 +2108,34 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/nx20875-aPXVfFJ7eYxz.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx20875-aPXVfFJ7eYxz.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
+      "reviewed": false
+    },
+    {
+      "animeId": "personal-107",
+      "displayTitle": "Tower of God",
+      "format": "SERIES",
+      "anilistId": 115230,
+      "matchedTitle": "Tower of God",
+      "providerTitles": {
+        "romaji": "Kami no Tou: Tower of God",
+        "english": "Tower of God",
+        "native": "神之塔 -Tower of God-"
+      },
+      "synonyms": [
+        "タワーオブ・ゴッド",
+        "신의 탑",
+        "Sinui Tap",
+        "Kami no Tou",
+        "TOG",
+        "Башня Бога"
+      ],
+      "anilistFormat": "TV",
+      "coverImage": {
+        "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx115230-QHOdSN7yt8ab.jpg",
+        "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx115230-QHOdSN7yt8ab.jpg"
+      },
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2041,7 +2155,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/nx98443-1d7qImgzb6Dj.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx98443-1d7qImgzb6Dj.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2066,7 +2180,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20623-dUARfggnNDOe.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20623-dUARfggnNDOe.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2098,7 +2212,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx133965-9TZBS4m4yvED.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx133965-9TZBS4m4yvED.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2122,7 +2236,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx128893-Gc2t8b8M0mVu.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx128893-Gc2t8b8M0mVu.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2146,7 +2260,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx155783-YosKbsmZzuDE.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx155783-YosKbsmZzuDE.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2172,7 +2286,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx97986-TQ7dCgbS3y5s.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx97986-TQ7dCgbS3y5s.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2200,7 +2314,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx98449-CxVQsAWFPpMa.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx98449-CxVQsAWFPpMa.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2222,7 +2336,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20773-yfJQMyHqZyJr.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20773-yfJQMyHqZyJr.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2248,7 +2362,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx153288-25FBfFJzEQ5O.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx153288-25FBfFJzEQ5O.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2273,7 +2387,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx163270-wboZJp0ybwVK.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx163270-wboZJp0ybwVK.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2296,7 +2410,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b155890-PN3wsgVDofhB.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b155890-PN3wsgVDofhB.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2320,7 +2434,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx174653-OsnK4BuENjUT.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx174653-OsnK4BuENjUT.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2345,7 +2459,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx162896-hSMTVceb50GY.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx162896-hSMTVceb50GY.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2381,7 +2495,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx154587-qQTzQnEJJ3oB.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx154587-qQTzQnEJJ3oB.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2405,7 +2519,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx151807-it355ZgzquUd.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx151807-it355ZgzquUd.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2436,7 +2550,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx195600-moI0UFArtOme.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx195600-moI0UFArtOme.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2460,7 +2574,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx177679-BgsgE0fQk3qN.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx177679-BgsgE0fQk3qN.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2483,7 +2597,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx187901-T91HmZAaNwOF.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx187901-T91HmZAaNwOF.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2516,7 +2630,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx177689-d0mB5nYgdnhi.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx177689-d0mB5nYgdnhi.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2541,7 +2655,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx177687-T4SrtVjrmW01.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx177687-T4SrtVjrmW01.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2563,7 +2677,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx178025-cWJKEsZynkil.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx178025-cWJKEsZynkil.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2583,7 +2697,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx151639-7KqJ7BgaM9Mx.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx151639-7KqJ7BgaM9Mx.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2611,7 +2725,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx107912-pLrOL1AzEIEt.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx107912-pLrOL1AzEIEt.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2637,7 +2751,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx130298-YMdcKHytpWNH.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx130298-YMdcKHytpWNH.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2664,7 +2778,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1-GCsPm7waJ4kS.png",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx1-GCsPm7waJ4kS.png"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2694,7 +2808,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx113415-LHBAeoZDIsnF.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx113415-LHBAeoZDIsnF.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     },
     {
@@ -2719,7 +2833,7 @@
         "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx136-gj0bbCpDNrKG.jpg",
         "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx136-gj0bbCpDNrKG.jpg"
       },
-      "decision": "unique-exact-title-and-format",
+      "decision": "unique-primary-title-and-format",
       "reviewed": false
     }
   ]
