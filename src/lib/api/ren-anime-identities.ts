@@ -25,6 +25,10 @@ const identities = new Map<string, IdentityEntry>(
     .map((entry) => [entry.animeId, entry]),
 );
 
+export function hasRenAnimeIdentity(animeId: string): boolean {
+  return identities.has(animeId);
+}
+
 export function getRenAniListId(animeId: string): number | undefined {
   return identities.get(animeId)?.anilistId;
 }
