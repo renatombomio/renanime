@@ -4,11 +4,12 @@ import { getLibrary } from "../../data/library";
 import { getPersonalFranchiseEntries } from "../../data/franchise";
 import PersonalLibraryActions from "../personal-library/PersonalLibraryActions";
 import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
+import { fetchFallbackAnime } from "../../lib/api/anime-fallback";
 import { useT, type Lang } from "../../i18n";
 import AnimeComments from "./AnimeComments";
 
 interface Media {
-  id: number;
+  id: number | string;
   title?: { romaji?: string|null; english?: string|null };
   description?: string|null;
   genres?: string[];
@@ -201,14 +202,17 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
           : {query,variables:{search:entry.title}}
       ),
     });
-    if(!response.ok) return null;
+    if(!response.ok) throw new Error("AniList detail lookup failed");
     const payload=await response.json();
-    return mediaId
+    const candidate = mediaId
       ? (payload.data?.Media ?? null)
-      : (payload.data?.Page?.media?.[0] ?? null);
+      : selectBestAnimeCandidate(payload.data?.Page?.media ?? [], entry.title, entry.format);
+    if (candidate) return candidate;
   }catch{
-    return null;
+    // AniList unavailable or unable to identify the requested title: try Jikan.
   }
+
+  return fetchFallbackAnime(entry.title, entry.format);
 }
 
 async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, Media|null>> {
@@ -358,7 +362,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
   return()=>{cancelled=true};
  },[media?.id]);
  const toggleLike=async()=>{
-  if(!media?.id||likeBusy) return;
+  if(typeof media?.id !== "number"||likeBusy) return;
   setLikeBusy(true); setLikeNotice("");
   try{
    const response=await fetch("/api/anime/likes",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({animeId:media.id})});
@@ -404,7 +408,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
     <div className="anime-detail-layout">
       <div className="anime-detail-poster-column">
       <div className="anime-detail-poster">{poster?<img src={poster} alt={title}/>:<div className="anime-detail-placeholder">RENANIME</div>}
-        {media?.id&&<button type="button" className={"anime-detail-like"+(liked?" is-liked":"")} onClick={toggleLike} disabled={likeBusy} aria-pressed={liked} aria-label={liked?(lang==="en"?"Unlike anime":"Quitar like"):(lang==="en"?"Like anime":"Dar like")}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 10-8.8 10s-8.8-4.8-8.8-10a4.6 4.6 0 0 1 8.8-1.9 4.6 4.6 0 0 1 8.8 1.9Z"/></svg><span>{likeCount.toLocaleString(lang==="en"?"en":"es")}</span></button>}
+        {typeof media?.id === "number"&&<button type="button" className={"anime-detail-like"+(liked?" is-liked":"")} onClick={toggleLike} disabled={likeBusy} aria-pressed={liked} aria-label={liked?(lang==="en"?"Unlike anime":"Quitar like"):(lang==="en"?"Like anime":"Dar like")}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 10-8.8 10s-8.8-4.8-8.8-10a4.6 4.6 0 0 1 8.8-1.9 4.6 4.6 0 0 1 8.8 1.9Z"/></svg><span>{likeCount.toLocaleString(lang==="en"?"en":"es")}</span></button>}
        </div>
        {likeNotice&&<p className="anime-detail-like-notice" role="status">{likeNotice}</p>}
        {media?.id && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} lang={lang} /></div>}
@@ -456,7 +460,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
           </div>
         </section> : null;
        })()}
-       {media?.id && <AnimeComments animeId={media.id} lang={lang} />}
+       {typeof media?.id === "number" && <AnimeComments animeId={media.id} lang={lang} />}
     </div>
    </div>
   </section>
