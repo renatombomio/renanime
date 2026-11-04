@@ -18,12 +18,27 @@ interface Props {
   lang?: "es" | "en";
 }
 
-const PAGE_SIZE = 18;
+const HOME_ANIME_COUNT = 50;
+const HOME_SELECTION_SEED = "renanime-home-gallery-v1";
+
+function stableRandomKey(value: string): number {
+  let hash = 2166136261;
+  for (const character of `${HOME_SELECTION_SEED}:${value}`) {
+    hash ^= character.charCodeAt(0);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+}
 
 
 export default function HomeGallery({ entries, lang = "es" }: Props) {
   const verifiedEntries = useMemo(() => entries.filter((entry) => hasRenAnimeIdentity(entry.animeId)), [entries]);
-  const page = verifiedEntries.slice(0, PAGE_SIZE);
+  const page = useMemo(
+    () => [...verifiedEntries]
+      .sort((a, b) => stableRandomKey(a.animeId) - stableRandomKey(b.animeId))
+      .slice(0, HOME_ANIME_COUNT),
+    [verifiedEntries],
+  );
   const media = useMemo(() => fetchRenMediaByIdentity(page), [page]);
 
   const columns = [page.filter((_, index) => index % 3 === 0), page.filter((_, index) => index % 3 === 1), page.filter((_, index) => index % 3 === 2)];
