@@ -98,7 +98,7 @@ async function isReachableImage(url) {
 
 async function fromAniList(entry) {
   await rateLimit("anilist");
-  const query = \`query($search:String!,$perPage:Int!){Page(page:1,perPage:$perPage){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id idMal format title{romaji english native} synonyms coverImage{extraLarge large}}}}\`;
+  const query = `query($search:String!,$perPage:Int!){Page(page:1,perPage:$perPage){media(search:$search,type:ANIME,sort:SEARCH_MATCH){id idMal format title{romaji english native} synonyms coverImage{extraLarge large}}}}`;
   const payload = await fetchJson("https://graphql.anilist.co", {
     method: "POST",
     headers: { "content-type": "application/json", accept: "application/json" },
@@ -180,7 +180,7 @@ manifest.source = INPUTS.join(" + ");
 await saveManifest(manifest);
 
 let resolved = manifest.entries.filter((entry) => Boolean(entry.posterUrl)).length;
-console.log(\`Resolving \${manifest.total} collection covers. \${resolved} already resolved; requests are rate-limited.\`);
+console.log(`Resolving ${manifest.total} collection covers. ${resolved} already resolved; requests are rate-limited.`);
 
 for (const entry of manifest.entries) {
   if (entry.posterUrl) continue;
@@ -196,7 +196,7 @@ for (const entry of manifest.entries) {
   }
   manifest.generatedAt = new Date().toISOString();
   await saveManifest(manifest);
-  console.log(\`[\${resolved}/\${manifest.total}] \${entry.animeId} — \${entry.title}: \${entry.status}\`);
+  console.log(`[${resolved}/${manifest.total}] ${entry.animeId} — ${entry.title}: ${entry.status}`);
 }
 
 const unresolved = manifest.entries.filter((entry) => !entry.posterUrl);
@@ -204,4 +204,4 @@ await writeFile(path.join(ROOT, "reports/ren-cover-manifest-unresolved.json"), J
   await mkdir(path.join(ROOT, "reports"), { recursive: true });
   await writeFile(path.join(ROOT, "reports/ren-cover-manifest-unresolved.json"), JSON.stringify(unresolved, null, 2) + "\n", "utf8");
 });
-console.log(\`Finished: \${resolved}/\${manifest.total} resolved; \${unresolved.length} need manual review.\`);
+console.log(`Finished: ${resolved}/${manifest.total} resolved; ${unresolved.length} need manual review.`);
