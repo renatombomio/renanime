@@ -26,13 +26,6 @@ interface Props {
   lang?: "es" | "en";
 }
 
-const SEASON_LABELS: Record<string, { es: string; en: string }> = {
-  WINTER: { es: "Invierno", en: "Winter" },
-  SPRING: { es: "Primavera", en: "Spring" },
-  SUMMER: { es: "Verano", en: "Summer" },
-  FALL: { es: "Otoño", en: "Autumn" },
-};
-
 export default function SeasonEpisodes({ lang = "es" }: Props) {
   const [data, setData] = useState<RankingResponse | null>(null);
   const [loading, setLoading] = useState(true);
