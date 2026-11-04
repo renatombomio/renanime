@@ -52,7 +52,7 @@ function titleVariants(candidate: Candidate): string[] {
 function formatMatches(format: PosterFormat, candidateFormat?: string | null): boolean {
   if (!format) return true;
   if (format === "MOVIE") return candidateFormat === "MOVIE" || candidateFormat === "Movie" || candidateFormat === "movie";
-  return ["TV", "ONA", "ONAs", "SERIES", "TV_SHORT"].includes(String(candidateFormat).toUpperCase());
+  return ["TV", "ONA", "OVA", "SERIES", "TV_SHORT"].includes(String(candidateFormat).toUpperCase());
 }
 
 export function selectBestAnimeCandidate<T extends Candidate>(
