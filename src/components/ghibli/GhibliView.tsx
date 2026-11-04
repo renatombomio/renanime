@@ -45,7 +45,7 @@ export default function GhibliView({ films, lang = "es" }: { films: Film[]; lang
           return !item?.coverImage?.extraLarge && !item?.coverImage?.large;
         }).map(async (film) => {
           try {
-            const poster = await fetchFallbackPoster(film.searchTitle || film.title);
+            const poster = await fetchFallbackPoster(film.searchTitle || film.title, "MOVIE");
             if (!poster || cancelled) return;
             setMedia((current) => ({ ...current, [film.id]: { ...(current[film.id] ?? { id: 0 }), coverImage: { extraLarge: poster, large: poster } } }));
           } catch { /* A missing fallback poster must not block the grid. */ }
