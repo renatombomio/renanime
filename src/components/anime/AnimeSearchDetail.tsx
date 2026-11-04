@@ -83,7 +83,7 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
 
   const directId = idParam === "movie-063" ? 178788 : Number.isFinite(id) ? id : null;
   const ghibliFilm = variant === "ghibli" ? getGhibliFilms().find((entry) => entry.id === film) : undefined;
-  const searchTitle = localEntry?.title ?? ghibliFilm?.searchTitle ?? ghibliFilm?.title ?? null;
+  const searchTitle = params.get("title") ?? localEntry?.title ?? ghibliFilm?.searchTitle ?? ghibliFilm?.title ?? null;
 
   const request = directId
     ? {
