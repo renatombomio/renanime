@@ -5,13 +5,12 @@ import path from "node:path";
 const ROOT = process.cwd();
 const INPUTS = [
   { path: "src/data/library.ts", exportName: "animeLibrary", defaultFormat: "SERIES" },
-  { path: "src/data/franchise-movies.ts", exportName: "franchiseMovies", defaultFormat: "MOVIE" },
 ];
 const ACCEPTED_PATH = path.join(ROOT, "src/data/ren-anime-identities.json");
 const REVIEW_PATH = path.join(ROOT, "src/data/ren-anime-review.json");
 const AUDIT_PATH = path.join(ROOT, "reports/ren-anime-audit.json");
 const INTERVAL = 2200;
-const HISTORICAL_COUNT = 221;
+const HISTORICAL_COUNT = 135;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const normalize = (value = "") => String(value).toLocaleLowerCase("en").normalize("NFD")
   .replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
