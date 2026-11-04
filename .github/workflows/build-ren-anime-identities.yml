@@ -43,6 +43,15 @@ jobs:
             echo "No catalogue changes."
           else
             git commit -m "chore: generate reviewed AniList identity catalogue"
-            git pull --rebase origin feature/global-cover-resolution
-            git push
+            for attempt in 1 2 3 4 5; do
+              git fetch origin feature/global-cover-resolution
+              git rebase origin/feature/global-cover-resolution
+              if git push origin HEAD:feature/global-cover-resolution; then
+                exit 0
+              fi
+              echo "Push raced with another commit; retrying ($attempt/5)."
+              sleep 2
+            done
+            echo "Could not publish generated catalogue after 5 attempts."
+            exit 1
           fi
