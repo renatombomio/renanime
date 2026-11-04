@@ -2,7 +2,12 @@ import identityCatalogue from "../../data/ren-anime-identities.json";
 
 interface IdentityEntry {
   animeId: string;
+  displayTitle: string;
+  format: "SERIES" | "MOVIE";
   anilistId: number;
+  providerTitles?: { romaji?: string | null; english?: string | null; native?: string | null };
+  anilistFormat?: string;
+  coverImage?: { extraLarge?: string | null; large?: string | null } | null;
   reviewed?: boolean;
 }
 interface EntryRef { animeId: string; title: string; format?: "SERIES" | "MOVIE"; }
@@ -12,44 +17,33 @@ interface AniListMedia {
   format?: string | null;
   coverImage?: { extraLarge?: string | null; large?: string | null };
 }
-const identities = new Map<string, number>(
-  ((identityCatalogue as { entries?: IdentityEntry[] }).entries ?? [])
+
+const catalogueEntries = (identityCatalogue as { entries?: IdentityEntry[] }).entries ?? [];
+const identities = new Map<string, IdentityEntry>(
+  catalogueEntries
     .filter((entry) => Number.isInteger(entry.anilistId) && entry.anilistId > 0)
-    .map((entry) => [entry.animeId, entry.anilistId]),
+    .map((entry) => [entry.animeId, entry]),
 );
 
 export function getRenAniListId(animeId: string): number | undefined {
-  return identities.get(animeId);
+  return identities.get(animeId)?.anilistId;
 }
 
-/** Fetches canonical catalogue entries by AniList identity in batches of at most 50. */
+/**
+ * Returns the build-time verified poster metadata. Gallery cards do not call
+ * AniList per visitor; only detail pages request live metadata by stable ID.
+ */
 export async function fetchRenMediaByIdentity<T extends EntryRef>(entries: T[]): Promise<Record<string, AniListMedia | null>> {
   const result: Record<string, AniListMedia | null> = {};
-  const resolvable = entries
-    .map((entry) => ({ entry, id: getRenAniListId(entry.animeId) }))
-    .filter((item): item is { entry: T; id: number } => Boolean(item.id));
-  for (let offset = 0; offset < resolvable.length; offset += 50) {
-    const chunk = resolvable.slice(offset, offset + 50);
-    const ids = [...new Set(chunk.map((item) => item.id))];
-    const query = "query RenMediaByIds($ids:[Int]){Page(page:1,perPage:50){media(id_in:$ids,type:ANIME){id title{romaji english native} format coverImage{extraLarge large}}}}";
-    try {
-      const response = await fetch("https://graphql.anilist.co", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ query, variables: { ids } }),
-      });
-      if (!response.ok) continue;
-      const payload = await response.json();
-      const byId = new Map<number, AniListMedia>(
-        (payload.data?.Page?.media ?? []).map((media: AniListMedia) => [media.id, media]),
-      );
-      for (const { entry, id } of chunk) {
-        const media = byId.get(id);
-        if (media) result[entry.animeId] = media;
-      }
-    } catch {
-      // Keep entries unresolved so the caller can use its existing fallback path.
-    }
+  for (const entry of entries) {
+    const identity = identities.get(entry.animeId);
+    if (!identity) continue;
+    result[entry.animeId] = {
+      id: identity.anilistId,
+      title: identity.providerTitles ?? {},
+      format: identity.anilistFormat ?? (identity.format === "MOVIE" ? "MOVIE" : "TV"),
+      coverImage: identity.coverImage ?? undefined,
+    };
   }
   return result;
 }
