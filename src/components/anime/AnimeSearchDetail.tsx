@@ -2,10 +2,12 @@ import {useEffect,useState} from "react";
 import PersonalLibraryActions from "../personal-library/PersonalLibraryActions";
 import { getLibrary } from "../../data/library";
 import { getGhibliFilms } from "../../data/ghibli";
+import { fetchFallbackAnime } from "../../lib/api/anime-fallback";
+import { isAnimeCandidateMatch } from "../../lib/api/poster-fallback";
 import { useT, type Lang } from "../../i18n";
 
 interface Media{
- id:number;
+ id:number|string;
  title?:{romaji?:string|null;english?:string|null};
  description?:string|null;
  genres?:string[];
@@ -119,43 +121,47 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
 
   if(!request){setLoading(false);return}
 
+  const useLocalGhibliFallback = () => {
+    if (!ghibliFilm) return;
+    setMedia({
+      id: `ghibli-${ghibliFilm.id}`,
+      title: { english: ghibliFilm.title, romaji: ghibliFilm.title },
+      startDate: { year: ghibliFilm.year },
+      format: "MOVIE",
+      status: "FINISHED",
+      episodes: 1,
+      studios: { nodes: [{ name: "Studio Ghibli" }] },
+      coverImage: ghibliFilm.id === "the-red-turtle"
+        ? { extraLarge: "https://www.ghibli.jp/images/red-turtle.jpg", large: "https://www.ghibli.jp/images/red-turtle.jpg" }
+        : undefined,
+    });
+  };
+
+  const resolveWithJikan = async () => {
+    if (!searchTitle) return false;
+    const recovered = await fetchFallbackAnime(searchTitle, ghibliFilm ? "MOVIE" : undefined);
+    if (!recovered) return false;
+    setMedia(recovered);
+    return true;
+  };
+
   fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(request)})
     .then(r=>r.ok?r.json():Promise.reject())
     .then(async p=>{
-      const found=directId ? (p.data?.Media??null) : (p.data?.Page?.media?.[0]??null);
+      const candidate=directId ? (p.data?.Media??null) : (p.data?.Page?.media?.[0]??null);
+      const found = directId || (candidate && isAnimeCandidateMatch(
+        searchTitle || "",
+        ghibliFilm ? "MOVIE" : undefined,
+        candidate.title,
+        candidate.format,
+      )) ? candidate : null;
       if(found) {
         setMedia(found);
         return;
       }
-      if(ghibliFilm) {
-        setMedia({
-          id: 0,
-          title: { english: ghibliFilm.title, romaji: ghibliFilm.title },
-          startDate: { year: ghibliFilm.year },
-          format: "MOVIE",
-          status: "FINISHED",
-          episodes: 1,
-          studios: { nodes: [{ name: "Studio Ghibli" }] },
-          coverImage: ghibliFilm.id === "the-red-turtle"
-            ? { extraLarge: "https://www.ghibli.jp/images/red-turtle.jpg", large: "https://www.ghibli.jp/images/red-turtle.jpg" }
-            : undefined,
-        });
-      }
-    }).catch(()=>{
-      if(ghibliFilm) {
-        setMedia({
-          id: 0,
-          title: { english: ghibliFilm.title, romaji: ghibliFilm.title },
-          startDate: { year: ghibliFilm.year },
-          format: "MOVIE",
-          status: "FINISHED",
-          episodes: 1,
-          studios: { nodes: [{ name: "Studio Ghibli" }] },
-          coverImage: ghibliFilm.id === "the-red-turtle"
-            ? { extraLarge: "https://www.ghibli.jp/images/red-turtle.jpg", large: "https://www.ghibli.jp/images/red-turtle.jpg" }
-            : undefined,
-        });
-      }
+      if (!(await resolveWithJikan())) useLocalGhibliFallback();
+    }).catch(async ()=>{
+      if (!(await resolveWithJikan())) useLocalGhibliFallback();
     }).finally(()=>setLoading(false));
  },[]);
  if(loading)return <div className="anime-search-detail-state">{t("detail.loading")}</div>;
