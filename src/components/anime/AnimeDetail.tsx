@@ -291,18 +291,14 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
       for (const [index, entry] of batch.entries()) {
         const candidates = payload.data?.["a" + index]?.media ?? [];
         const media = selectBestAnimeCandidate(candidates, entry.title, entry.format);
-        if (media?.coverImage?.extraLarge || media?.coverImage?.large) {
+        if (!media) {
+          result[entry.animeId] = await fetchFallbackAnime(entry.title, entry.format);
+        } else if (media.coverImage?.extraLarge || media.coverImage?.large) {
           result[entry.animeId] = media;
         } else {
           const poster = await fetchFallbackPoster(entry.title, entry.format);
           result[entry.animeId] = poster
-            ? {
-                ...(media ?? {}),
-                id: media?.id ?? 0,
-                title: media?.title ?? { romaji: entry.title, english: entry.title },
-                format: media?.format ?? entry.format,
-                coverImage: { extraLarge: poster, large: poster },
-              }
+            ? { ...media, coverImage: { extraLarge: poster, large: poster } }
             : media;
         }
 
