@@ -407,7 +407,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
         {typeof media?.id === "number"&&<button type="button" className={"anime-detail-like"+(liked?" is-liked":"")} onClick={toggleLike} disabled={likeBusy} aria-pressed={liked} aria-label={liked?(lang==="en"?"Unlike anime":"Quitar like"):(lang==="en"?"Like anime":"Dar like")}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 10-8.8 10s-8.8-4.8-8.8-10a4.6 4.6 0 0 1 8.8-1.9 4.6 4.6 0 0 1 8.8 1.9Z"/></svg><span>{likeCount.toLocaleString(lang==="en"?"en":"es")}</span></button>}
        </div>
        {likeNotice&&<p className="anime-detail-like-notice" role="status">{likeNotice}</p>}
-       {media?.id && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={media.id} lang={lang} /></div>}
+       {media?.id && <div className="anime-detail-library-actions"><PersonalLibraryActions animeId={entry.animeId} lang={lang} /></div>}
       </div>
       <div className="anime-detail-copy">
        <div className="anime-detail-copy-main">
