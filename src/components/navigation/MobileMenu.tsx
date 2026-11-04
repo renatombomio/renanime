@@ -101,7 +101,7 @@ export default function MobileMenu({ variant = "default", lang, showLogout = fal
 
         .mobile-backdrop {
           position: fixed; top: 68px; right: 0; bottom: 0; left: 0; z-index: 0; width: 100%; height: auto;
-          border: 0; padding: 0; background: var(--color-overlay);
+          border: 0; padding: 0; background: var(--color-backdrop);
           opacity: 0; visibility: hidden; pointer-events: none;
           backdrop-filter: blur(3px);
           transition: opacity var(--duration-base) var(--ease-out), visibility 0s linear var(--duration-base);
@@ -143,7 +143,7 @@ export default function MobileMenu({ variant = "default", lang, showLogout = fal
           transition-delay: calc(70ms + (var(--menu-index) * 48ms));
         }
         .mobile-link:active { color: var(--color-text-primary); }
-        .mobile-logout { min-height:54px; padding:13px 0; border:0; border-bottom:1px solid rgba(245,242,236,.1); background:transparent; color:var(--color-accent); text-align:left; font:inherit; font-family:var(--font-meta); font-size:12px; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; }
+        .mobile-logout { min-height:54px; padding:13px 0; border:0; border-bottom:1px solid var(--color-border); background:transparent; color:var(--color-accent); text-align:left; font:inherit; font-family:var(--font-meta); font-size:12px; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; }
         .mobile-link[aria-current="page"] { color: var(--color-text-primary); }
         .mobile-link[aria-current="page"]::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--color-accent); }
         .mobile-link--secret i {
