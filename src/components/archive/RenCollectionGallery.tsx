@@ -1,3 +1,4 @@
+import AnimePosterDisplay from "../anime/AnimePosterDisplay";
 import { useEffect, useMemo, useState } from "react";
 import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
 import { useT, type Lang } from "../../i18n";
@@ -239,7 +240,7 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
               aria-label={t("archive.view").replace("{title}", titleOf(entry, item))}
               key={entry.animeId}
             >
-              {image ? <img src={image} alt="" loading={index < 3 ? "eager" : "lazy"} /> : <div className="home-gallery-placeholder" aria-hidden="true" />}
+              <AnimePosterDisplay src={image} title={entry.title} loading={index < 3 ? "eager" : "lazy"} />
               <div className="archive-card-badges" aria-hidden="true">
                 {entry.state?.favorite && <span>{t("archive.favorite")}</span>}
                 {entry.state?.recommended && <span>{t("archive.recommended")}</span>}
