@@ -2,7 +2,6 @@
 import Layout from "../../layouts/Layout.astro";
 import { useT } from "../../i18n";
 import Navbar from "../../components/layout/Navbar.astro";
-import SectionHeader from "../../components/ui/SectionHeader.astro";
 import RenCollectionGallery from "../../components/archive/RenCollectionGallery";
 import { getWatchedLibrary } from "../../data/library";
 
@@ -18,14 +17,7 @@ const description = lang === "en"
   <Navbar />
 
   <main id="main-content" class="ren-collection-page">
-    <div class="ren-collection-header">
-      <SectionHeader
-        variant="ren"
-        title={t("renCollection.heading")}
-        description={description}
-      />
-    </div>
-
+    <h1 class="sr-only">{t("renCollection.heading")}</h1>
     <section class="ren-collection-content" aria-label={lang === "en" ? "Ren's anime collection" : "Colección de Ren"}>
       <RenCollectionGallery entries={collectionEntries} lang={lang} client:load />
     </section>
@@ -38,19 +30,12 @@ const description = lang === "en"
     padding-block: clamp(6rem, 11vw, 10rem) var(--section-space);
   }
 
-  .ren-collection-header,
   .ren-collection-content {
     width: min(calc(100% - (var(--gutter) * 2)), var(--container-max));
     margin-inline: auto;
   }
 
-  .ren-collection-header {
-    position: relative;
-    margin-bottom: clamp(4.5rem, 9vw, 8rem);
-  }
-
   @media (max-width: 700px) {
     .ren-collection-page { padding-top: 5rem; }
-    .ren-collection-header { margin-bottom: 4rem; }
   }
 </style>
