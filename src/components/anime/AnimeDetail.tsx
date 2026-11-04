@@ -346,7 +346,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
   return()=>{cancelled=true};
  },[entry.animeId]);
  useEffect(()=>{
-  if(!media?.id) return;
+  if(typeof media?.id !== "number") return;
   let cancelled=false;
   fetch("/api/anime/likes?ids="+media.id,{credentials:"same-origin",cache:"no-store"})
    .then(response=>response.ok?response.json():null)
