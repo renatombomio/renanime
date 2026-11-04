@@ -8,17 +8,12 @@ interface Entry {
   title: string;
 }
 
-interface Media {
-  title?: { romaji?: string | null; english?: string | null; native?: string | null };
-  coverImage?: { extraLarge?: string | null; large?: string | null };
-}
-
 interface Props {
   entries: Entry[];
   lang?: "es" | "en";
 }
 
-const HOME_ANIME_COUNT = 50;
+const HOME_ANIME_COUNT = 25;
 const HOME_SELECTION_SEED = "renanime-home-gallery-v1";
 
 function stableRandomKey(value: string): number {
@@ -30,18 +25,20 @@ function stableRandomKey(value: string): number {
   return hash >>> 0;
 }
 
-
 export default function HomeGallery({ entries, lang = "es" }: Props) {
-  const verifiedEntries = useMemo(() => entries.filter((entry) => hasRenAnimeIdentity(entry.animeId)), [entries]);
   const page = useMemo(
-    () => [...verifiedEntries]
+    () => entries
+      .filter((entry) => hasRenAnimeIdentity(entry.animeId))
       .sort((a, b) => stableRandomKey(a.animeId) - stableRandomKey(b.animeId))
       .slice(0, HOME_ANIME_COUNT),
-    [verifiedEntries],
+    [entries],
   );
   const media = useMemo(() => fetchRenMediaByIdentity(page), [page]);
-
-  const columns = [page.filter((_, index) => index % 3 === 0), page.filter((_, index) => index % 3 === 1), page.filter((_, index) => index % 3 === 2)];
+  const columns = [
+    page.filter((_, index) => index % 3 === 0),
+    page.filter((_, index) => index % 3 === 1),
+    page.filter((_, index) => index % 3 === 2),
+  ];
 
   return (
     <div className="home-anime-marquee" aria-label={lang === "en" ? "Ren’s anime collection" : "Colección de anime de Ren"}>
@@ -50,10 +47,16 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
           <div className={`home-anime-marquee-track track-${columnIndex + 1}`} key={columnIndex}>
             {[...column, ...column].map((entry, index) => {
               const item = media[entry.animeId];
-              const image = item?.coverImage?.extraLarge ?? item?.coverImage?.large;
+              const image = item?.coverImage?.large ?? item?.coverImage?.extraLarge;
+              const isDuplicate = index >= column.length;
               return (
-                <div className="home-anime-marquee-card" key={`${entry.animeId}-${index}`} aria-hidden={index >= column.length}>
-                  <AnimePosterDisplay src={image} title={getDisplayTitle(item?.title, entry.title)} loading="lazy" />
+                <div className="home-anime-marquee-card" key={`${entry.animeId}-${index}`} aria-hidden={isDuplicate}>
+                  <AnimePosterDisplay
+                    src={`/api/home-poster/${encodeURIComponent(entry.animeId)}`}
+                    title={getDisplayTitle(item?.title, entry.title)}
+                    loading="eager"
+                    fetchPriority={isDuplicate ? "low" : "auto"}
+                  />
                 </div>
               );
             })}
