@@ -99,7 +99,6 @@ const availableProviders = providerConfig.flatMap((provider) => {
 <section class="anime-week" aria-labelledby="anime-week-title">
   <div class="anime-week-inner">
     <div class="anime-week-heading">
-      <p class="anime-week-eyebrow">{isEnglish ? "RENANIME SELECTION" : "SELECCIÓN RENANIME"}</p>
       <h2 id="anime-week-title">{isEnglish ? "Anime of the week" : "Anime de la semana"}</h2>
     </div>
 
@@ -109,22 +108,19 @@ const availableProviders = providerConfig.flatMap((provider) => {
           {cover ? <img src={cover} alt={title} loading="lazy" /> : <div class="anime-week-poster-fallback">RENANIME</div>}
         </div>
         <div class="anime-week-content">
-          <p class="anime-week-kicker">{isEnglish ? "THIS WEEK'S PICK" : "LA ELECCIÓN DE ESTA SEMANA"}</p>
           <h3>{title}</h3>
           {score !== null && <span class="anime-week-score" aria-label={isEnglish ? `AniList score ${(score / 10).toFixed(1)} out of 10` : `Puntuación AniList ${(score / 10).toFixed(1)} sobre 10`}>★ {(score / 10).toFixed(1)} / 10</span>}
           <div class="anime-week-streaming" aria-label={isEnglish ? "Streaming platforms" : "Plataformas disponibles"}>
-            {#if availableProviders.length > 0}
-              {availableProviders.map((provider) => (
-                <span class={`anime-week-provider provider-${provider.key}`} title={provider.label} aria-label={provider.label}>
-                  {provider.key === "netflix" ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2h4l6 15V2h4v20h-4L9 7v15H5z" fill="currentColor"/></svg> : null}
-                  {provider.key === "hbo" ? <span class="provider-wordmark">HBO</span> : null}
-                  {provider.key === "prime" ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 16.5c5.2 3.4 12.1 3.3 17.5-.6M17.3 13.7l3.6 2.2-2.4 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> : null}
-                  {provider.key === "crunchyroll" ? <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M15.8 7.4a5.4 5.4 0 1 0 1.1 7.7 4.4 4.4 0 1 1-1.1-7.7Z" fill="currentColor"/></svg> : null}
-                </span>
-              ))}
-            {:else}
-              <span class="anime-week-no-platforms">{isEnglish ? "Streaming availability not confirmed" : "Disponibilidad en streaming sin confirmar"}</span>
-            {/if}
+            {availableProviders.length > 0
+              ? availableProviders.map((provider) => (
+                  <span class={`anime-week-provider provider-${provider.key}`} title={provider.label} aria-label={provider.label}>
+                    {provider.key === "netflix" ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2h4l6 15V2h4v20h-4L9 7v15H5z" fill="currentColor"/></svg> : null}
+                    {provider.key === "hbo" ? <span class="provider-wordmark">HBO</span> : null}
+                    {provider.key === "prime" ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 16.5c5.2 3.4 12.1 3.3 17.5-.6M17.3 13.7l3.6 2.2-2.4 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> : null}
+                    {provider.key === "crunchyroll" ? <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M15.8 7.4a5.4 5.4 0 1 0 1.1 7.7 4.4 4.4 0 1 1-1.1-7.7Z" fill="currentColor"/></svg> : null}
+                  </span>
+                ))
+              : <span class="anime-week-no-platforms">{isEnglish ? "Streaming availability not confirmed" : "Disponibilidad en streaming sin confirmar"}</span>}
           </div>
         </div>
       </a>
@@ -140,7 +136,7 @@ const availableProviders = providerConfig.flatMap((provider) => {
   .anime-week{padding:clamp(3rem,6vw,5.5rem) 0;background:transparent;color:#f5f2ec}
   .anime-week-inner{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin:0 auto}
   .anime-week-heading{display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem}
-  .anime-week-eyebrow{width:100%;margin:0;color:#ec4899;font:600 .64rem/1.2 var(--font-mono);letter-spacing:.16em}
+  
   .anime-week-heading h2{margin:0;font-size:clamp(1.65rem,3.2vw,2.7rem);font-weight:650;letter-spacing:-.045em}
   .anime-week-card{display:grid;grid-template-columns:minmax(190px,30%) 1fr;align-items:center;gap:clamp(1.5rem,4vw,4rem);padding:0;color:inherit;text-decoration:none}
   .anime-week-poster{width:100%;max-width:340px;aspect-ratio:3/4;justify-self:center;overflow:hidden;border-radius:8px;background:transparent}
@@ -148,7 +144,7 @@ const availableProviders = providerConfig.flatMap((provider) => {
   .anime-week-card:hover .anime-week-poster img{transform:scale(1.025)}
   .anime-week-poster-fallback{display:grid;place-items:center;height:100%;color:#ec4899;font-weight:800}
   .anime-week-content{min-width:0;max-width:760px;padding:1rem 0}
-  .anime-week-kicker{margin:0 0 .8rem;color:#ec4899;font:600 .65rem/1.2 var(--font-mono);letter-spacing:.15em}
+  
   .anime-week-content h3{margin:0 0 1.1rem;font-size:clamp(1.8rem,4.2vw,3.6rem);line-height:1.03;letter-spacing:-.05em}
   .anime-week-score{display:inline-flex;align-items:center;gap:.25rem;padding:.38rem .68rem;border:1px solid rgba(236,72,153,.55);border-radius:999px;color:#f9a8d4;font-size:.78rem;font-weight:600}
   .anime-week-streaming{display:flex;align-items:center;flex-wrap:wrap;gap:.75rem;margin-top:1.35rem;min-height:34px}
