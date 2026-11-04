@@ -1,3 +1,4 @@
+import { fetchRenMediaByIdentity } from "../../lib/api/ren-anime-identities";
 import AnimePosterDisplay from "../anime/AnimePosterDisplay";
 import { useEffect, useMemo, useState } from "react";
 import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
@@ -50,6 +51,19 @@ async function fetchMedia(entries: Entry[], resolveFallbackPosters = true): Prom
       unresolved.push(entry);
     }
   }
+
+  const identityMedia = await fetchRenMediaByIdentity(unresolved);
+  for (const entry of unresolved) {
+    const identified = identityMedia[entry.animeId];
+    if (identified?.coverImage?.extraLarge || identified?.coverImage?.large) {
+      result[entry.animeId] = identified;
+      try {
+        sessionStorage.setItem(CACHE_PREFIX + entry.title.toLowerCase(), JSON.stringify(identified));
+      } catch {}
+    }
+  }
+  const unresolvedByTitle = unresolved.filter((entry) => !result[entry.animeId]?.coverImage?.extraLarge && !result[entry.animeId]?.coverImage?.large);
+  unresolved.splice(0, unresolved.length, ...unresolvedByTitle);
 
   const chunks: Entry[][] = [];
   for (let offset = 0; offset < unresolved.length; offset += 25) {
