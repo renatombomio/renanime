@@ -37,7 +37,7 @@ export function getRenAniListId(animeId: string): number | undefined {
  * Returns the build-time verified poster metadata. Gallery cards do not call
  * AniList per visitor; only detail pages request live metadata by stable ID.
  */
-export async function fetchRenMediaByIdentity<T extends EntryRef>(entries: T[]): Promise<Record<string, AniListMedia | null>> {
+export function fetchRenMediaByIdentity<T extends EntryRef>(entries: T[]): Record<string, AniListMedia | null> {
   const result: Record<string, AniListMedia | null> = {};
   for (const entry of entries) {
     const identity = identities.get(entry.animeId);
