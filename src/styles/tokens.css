@@ -38,6 +38,7 @@
   --color-border-card: rgba(244, 244, 248, 0.13);
   --color-border-card-hover: rgba(244, 244, 248, 0.28);
   --color-border-card-strong: rgba(244, 244, 248, 0.42);
+  --color-border-detail: rgba(244, 244, 248, 0.38);
 
   /* Dark media overlays */
   --color-overlay-poster-top: rgba(9, 9, 11, 0.08);
