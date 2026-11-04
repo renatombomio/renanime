@@ -51,7 +51,7 @@ function extractObjects(source, exportName) {
   return objects;
 }
 function property(source, key) {
-  const match = new RegExp("\\b" + key + "\\s*:\\s*([\\"'])(.*?)\\1", "s").exec(source);
+  const match = new RegExp("\\b" + key + "\\s*:\\s*([\x27" + String.fromCharCode(34) + "])(.*?)\\1", "s").exec(source);
   return match ? match[2].replace(/\\(["'\\])/g, "$1").replace(/\\n/g, "\n") : null;
 }
 function parseEntries(source, input) {
