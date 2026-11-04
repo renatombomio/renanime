@@ -129,11 +129,11 @@ export default function MobileMenu({ variant = "default", lang, showLogout = fal
 
         .mobile-link {
           display: flex; align-items: center; justify-content: space-between;
-          min-height: 44px; padding: 9px 0;
-          border-bottom: 1px solid var(--color-border);
-          color: var(--color-text-secondary); font-family: var(--font-meta); font-size: 11px;
-          font-weight: 500; letter-spacing: .075em; line-height: 1.2;
-          text-transform: uppercase; text-decoration: none; opacity: 0;
+          min-height: 52px; padding: 12px 0;
+          border: 0;
+          color: var(--color-text-secondary); font-family: var(--font-body); font-size: 15px;
+          font-weight: 600; letter-spacing: .01em; line-height: 1.35;
+          text-transform: none; text-decoration: none; opacity: 0;
           transform: translateY(14px);
           transition: color var(--duration-fast) var(--ease-out), opacity var(--duration-slow) var(--ease-out), transform var(--duration-slow) var(--ease-out);
           transition-delay: 0ms; -webkit-tap-highlight-color: transparent;
@@ -143,7 +143,7 @@ export default function MobileMenu({ variant = "default", lang, showLogout = fal
           transition-delay: calc(70ms + (var(--menu-index) * 48ms));
         }
         .mobile-link:active { color: var(--color-text-primary); }
-        .mobile-logout { min-height:54px; padding:13px 0; border:0; border-bottom:1px solid var(--color-border); background:transparent; color:var(--color-accent); text-align:left; font:inherit; font-family:var(--font-meta); font-size:12px; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; }
+        .mobile-logout { min-height:58px; padding:14px 0; border:0; background:transparent; color:var(--color-accent); text-align:left; font:inherit; font-family:var(--font-body); font-size:14px; font-weight:600; letter-spacing:.01em; text-transform:none; cursor:pointer; }
         .mobile-link[aria-current="page"] { color: var(--color-text-primary); }
         .mobile-link[aria-current="page"]::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--color-accent); }
         .mobile-link--secret i {
@@ -157,8 +157,8 @@ export default function MobileMenu({ variant = "default", lang, showLogout = fal
         .mobile-nav--ghibli .mobile-toggle { color: #19362f; }
         .mobile-nav--ghibli .mobile-backdrop { background: rgba(25,54,47,.16); }
         .mobile-nav--ghibli .mobile-panel { background: #fffdf8; color: #19362f; }
-        .mobile-nav--ghibli .mobile-link { color: #527066; border-bottom-color: rgba(25,54,47,.12); }
-        .mobile-nav--ghibli .mobile-logout { color:#c43c55; border-bottom-color:rgba(25,54,47,.12); }
+        .mobile-nav--ghibli .mobile-link { color: #527066; }
+        .mobile-nav--ghibli .mobile-logout { color:#c43c55; }
         .mobile-nav--ghibli .mobile-link:active { color: #18528a; }
         .mobile-nav--ghibli .mobile-link[aria-current="page"] { color: #18528a; }
         .mobile-nav--ghibli .mobile-link[aria-current="page"]::after { background: #f45164; }
