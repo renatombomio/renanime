@@ -6,7 +6,8 @@ import { jikanProvider } from "../../lib/api/jikan";
 import { useT, type Lang, type TranslationKey } from "../../i18n";
 
 interface Media {
-  id: number | string;
+  id: number;
+  providerId?: string;
   title?: { romaji?: string | null; english?: string | null };
   startDate?: { year?: number | null; month?: number | null; day?: number | null } | null;
   coverImage?: { extraLarge?: string | null; large?: string | null };
@@ -66,7 +67,8 @@ const MEDIA_FIELDS = "id title { romaji english } startDate { year month day } c
 async function fetchJikanSearch(query: string, page: number): Promise<Media[]> {
   const entries = await jikanProvider.search({ query, page, perPage: PAGE_SIZE });
   return entries.map((entry) => ({
-    id: entry.id,
+    id: entry.external.mal ?? Number(entry.id.replace("mal-", "")),
+    providerId: entry.id,
     title: { romaji: entry.metadata.title, english: entry.metadata.title },
     startDate: entry.metadata.year ? { year: entry.metadata.year } : null,
     coverImage: entry.metadata.images.cover
@@ -378,7 +380,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
     const image = item.coverImage?.extraLarge || item.coverImage?.large;
     return (
       <article className="search-result" key={item.id}>
-        <a className="search-card" href={typeof item.id === "string" && item.id.startsWith("mal-") ? `${lang === "en" ? "/en" : ""}/anime/search?title=${encodeURIComponent(item.title?.romaji || item.title?.english || "")}` : `${lang === "en" ? "/en" : ""}/anime/${item.id}`} aria-label={title}>
+        <a className="search-card" href={item.providerId?.startsWith("mal-") ? `${lang === "en" ? "/en" : ""}/anime/search?title=${encodeURIComponent(item.title?.romaji || item.title?.english || "")}` : `${lang === "en" ? "/en" : ""}/anime/${item.id}`} aria-label={title}>
           <div className="search-poster">
             {image ? <img src={image} alt="" loading={index < 4 ? "eager" : "lazy"} /> : <div className="search-poster-placeholder">{title}</div>}
           </div>
