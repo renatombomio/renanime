@@ -3,7 +3,6 @@ import Layout from "../../layouts/Layout.astro";
 import { useT } from "../../i18n";
 import Navbar from "../../components/layout/Navbar.astro";
 import Container from "../../components/ui/Container.astro";
-import SectionHeader from "../../components/ui/SectionHeader.astro";
 import GenresView from "../../components/genres/GenresView";
 const t = useT(Astro.locals.lang);
 ---
@@ -12,11 +11,7 @@ const t = useT(Astro.locals.lang);
   <Navbar />
   <main id="main-content" class="genres-page">
     <Container>
-      <SectionHeader
-        variant="ren"
-        title={t("genres.heading")}
-        description={t("genres.description")}
-      />
+      <h1 class="sr-only">{t("genres.heading")}</h1>
       <div class="genres-page-content">
         <GenresView lang={Astro.locals.lang} client:load />
       </div>
@@ -31,14 +26,6 @@ const t = useT(Astro.locals.lang);
   }
 
   .genres-page-content {
-    margin-top: clamp(5rem, 10vw, 9rem);
-  }
-
-  .genres-page.is-genre-selected :global(.section-header) {
-    display: none;
-  }
-
-  .genres-page.is-genre-selected .genres-page-content {
     margin-top: 0;
   }
 </style>
