@@ -14,21 +14,24 @@ export default function GhibliView({ films, lang = "es" }: { films: Film[]; lang
 
   useEffect(() => {
     let cancelled = false;
+    // The Red Turtle has no reliable AniList/MAL catalogue entry. Keep it on
+    // its local film route instead of accepting an unrelated search result.
+    const searchableFilms = films.filter((film) => film.id !== "the-red-turtle");
     const variables: Record<string, string> = {};
-    const fields = films.map((film, index) => {
+    const fields = searchableFilms.map((film, index) => {
       variables["s" + index] = film.searchTitle || film.title;
       return "a" + index + ": Page(page:1,perPage:1){media(search:$s" + index + ",type:ANIME,sort:SEARCH_MATCH){id title{romaji english} coverImage{extraLarge large}}}";
     }).join("\n");
-    const definitions = films.map((_, index) => "$s" + index + ":String!").join(",");
+    const definitions = searchableFilms.map((_, index) => "$s" + index + ":String!").join(",");
 
-    fetchGhibliAniList("films", "query Ghibli(" + definitions + "){" + fields + "}", variables)
+    fetchGhibliAniList("films-v2-local-red-turtle", "query Ghibli(" + definitions + "){" + fields + "}", variables)
       .then((payload) => {
         if (cancelled) return;
         const result: Record<string, Media | null> = {};
-        films.forEach((film, index) => { result[film.id] = payload["a" + index]?.media?.[0] ?? null; });
+        searchableFilms.forEach((film, index) => { result[film.id] = payload["a" + index]?.media?.[0] ?? null; });
         setMedia(result);
         setLoading(false);
-        void Promise.all(films.filter((film) => {
+        void Promise.all(searchableFilms.filter((film) => {
           const item = result[film.id];
           return !item?.coverImage?.extraLarge && !item?.coverImage?.large;
         }).map(async (film) => {
