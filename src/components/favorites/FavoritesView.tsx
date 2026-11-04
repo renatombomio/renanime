@@ -1,5 +1,6 @@
 import AnimePosterDisplay from "../anime/AnimePosterDisplay";
 import { fetchRenMediaByIdentity } from "../../lib/api/ren-anime-identities";
+import { getDisplayTitle } from "../../lib/anime/display-title";
 import { useEffect, useRef, useState } from "react";
 import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
 import { useT, type Lang } from "../../i18n";
@@ -148,7 +149,7 @@ export default function FavoritesView({ entries, recommendations, lang = "es" }:
 
   const renderCard = (entry: FavoriteEntry, index: number, compact = false) => {
     const item = media[entry.animeId];
-    const title = item?.title.native || item?.title.english || item?.title.romaji || entry.title;
+    const title = getDisplayTitle(item?.title, entry.title);
     const year = item?.startDate?.year;
 
     return (
