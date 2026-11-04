@@ -11,7 +11,7 @@ interface FavoriteEntry {
 }
 
 interface Media {
-  title: { romaji?: string | null; english?: string | null };
+  title: { romaji?: string | null; english?: string | null; native?: string | null };
   startDate?: { year?: number | null; month?: number | null; day?: number | null } | null;
   coverImage?: { extraLarge?: string | null; large?: string | null };
   format?: string | null;
@@ -139,7 +139,7 @@ export default function FavoritesView({ entries, recommendations, lang = "es" }:
 
   const renderCard = (entry: FavoriteEntry, index: number, compact = false) => {
     const item = media[entry.animeId];
-    const title = lang === "en" ? (item?.title.english || item?.title.romaji || entry.title) : (item?.title.romaji || item?.title.english || entry.title);
+    const title = item?.title.english || item?.title.native || item?.title.romaji || entry.title;
     const year = item?.startDate?.year;
 
     return (
