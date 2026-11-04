@@ -11,7 +11,7 @@ import path from "node:path";
 
 const ROOT = process.cwd();
 const MANIFEST_PATH = path.join(ROOT, "src/data/ren-cover-manifest.json");
-const INPUTS = ["src/data/library.ts", "src/data/franchise-movies.ts"];
+const INPUTS = ["src/data/library.ts"];
 const ANILIST_INTERVAL = 2_200; // <= 27 requests/minute
 const JIKAN_INTERVAL = 1_100;   // conservative public API pacing
 const REQUEST_TIMEOUT = 12_000;
