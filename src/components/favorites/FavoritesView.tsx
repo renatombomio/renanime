@@ -146,7 +146,7 @@ export default function FavoritesView({ entries, recommendations, lang = "es" }:
       <article className={"favorite-card" + (compact ? " favorite-card--recommendation" : "")} key={entry.animeId}>
         <a href={`${lang === "en" ? "/en" : ""}/anime/${entry.animeId}`} aria-label={t("favorites.view").replace("{title}", title)}>
           <div className="favorite-media">
-            <AnimePosterDisplay src={item?.coverImage?.extraLarge || item?.coverImage?.large} title={entry.title} loading={index < 2 ? "eager" : "lazy"} />}
+            <AnimePosterDisplay src={item?.coverImage?.extraLarge || item?.coverImage?.large} title={entry.title} loading={index < 2 ? "eager" : "lazy"} />
           </div>
 
           <div className="favorite-caption">
