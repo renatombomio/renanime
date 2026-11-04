@@ -15,7 +15,7 @@ describe("selectBestAnimeCandidate", () => {
   it("does not confuse a movie with its parent series", () => {
     const candidates = [
       { title: { english: "Boku no Hero Academia" }, format: "TV" },
-      { title: { english: "My Hero Academia: Two Heroes" }, format: "MOVIE" },
+      { title: { english: "My Hero Academia: Heroes Rising" }, format: "MOVIE" },
     ];
 
     expect(selectBestAnimeCandidate(candidates, "Boku no Hero Academia: Two Heroes", "MOVIE"))
