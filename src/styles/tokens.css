@@ -34,6 +34,7 @@
   --color-border-accent: rgba(236, 72, 153, 0.48);
   --color-focus: #f472b6;
   --color-overlay: rgba(9, 9, 11, 0.78);
+  --color-backdrop: rgba(0, 0, 0, 0.42);
 
   /* Semantic aliases for new components */
   --color-background: var(--color-ink-950);
