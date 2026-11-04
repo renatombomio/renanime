@@ -1,5 +1,3910 @@
 {
   "version": 1,
-  "generatedAt": null,
-  "entries": []
+  "generatedAt": "2026-11-04T12:59:40.022Z",
+  "entries": [
+    {
+      "animeId": "personal-003",
+      "title": "Naruto",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "MULTIPLE_EXACT_FORMAT_MATCHES",
+      "exactCandidates": [
+        {
+          "anilistId": 20,
+          "format": "TV",
+          "title": {
+            "romaji": "NARUTO",
+            "english": "Naruto",
+            "native": "NARUTO -ナルト-"
+          },
+          "synonyms": [
+            "נארוטו",
+            "ناروتو",
+            "火影忍者",
+            "นารูโตะ นินจาจอมคาถา",
+            "Наруто"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20-dE6UHbFFg1A5.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20-dE6UHbFFg1A5.jpg"
+          }
+        },
+        {
+          "anilistId": 1735,
+          "format": "TV",
+          "title": {
+            "romaji": "NARUTO: Shippuuden",
+            "english": "Naruto: Shippuden",
+            "native": "NARUTO -ナルト- 疾風伝"
+          },
+          "synonyms": [
+            "Naruto Shippuuden",
+            "Naruto Shippuden",
+            "נארוטו שיפודן",
+            "火影忍者 疾风传",
+            "นารูโตะ ตำนานวายุสลาตัน",
+            "ناروتو شيبودن",
+            "Наруто: Ураганные хроники"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1735-kGfVm0YqCPcu.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx1735-kGfVm0YqCPcu.png"
+          }
+        },
+        {
+          "anilistId": 936,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "NARUTO: Dai Gekitotsu! Maboroshi no Chitei Iseki Dattebayo",
+            "english": "Naruto the Movie: Legend of the Stone of Gelel",
+            "native": "劇場版 NARUTO -ナルト- 大激突!幻の地底遺跡だってばよ"
+          },
+          "synonyms": [
+            "Naruto THE Movie vol.2",
+            "Naruto Movie 2",
+            "Gekijouban Naruto",
+            "Naruto the Movie: The Great Clash! The Phantom Ruins in the Depths of the Earth",
+            "Naruto La Légende de la Pierre de Guelel",
+            "Naruto la película: La leyenda de la piedra de Gelel",
+            "Naruto Movie 02: La leggenda della pietra di Gelel"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx936-P1ogcIs07UR8.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx936-P1ogcIs07UR8.jpg"
+          }
+        },
+        {
+          "anilistId": 8246,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "NARUTO: Shippuuden - The Lost Tower",
+            "english": "Naruto Shippuden the Movie: The Lost Tower",
+            "native": "劇場版 NARUTO -ナルト- 疾風伝 ザ・ロストタワー"
+          },
+          "synonyms": [
+            "Naruto Movie 7",
+            "Gekijouban Naruto Shippuuden: The Lost Tower",
+            "Naruto Shippūden la película: La torre perdida",
+            "Naruto Shippuden Movie 04: La torre perduta"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx8246-KAi3bLLdJ4OI.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx8246-KAi3bLLdJ4OI.jpg"
+          }
+        },
+        {
+          "anilistId": 6325,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "NARUTO: Shippuuden - Hi no Ishi wo Tsugu Mono",
+            "english": "Naruto Shippuden the Movie: The Will of Fire",
+            "native": "劇場版 NARUTO -ナルト- 疾風伝 火の意志を継ぐ者"
+          },
+          "synonyms": [
+            "Naruto Shippuuden Movie 3",
+            "Naruto Movie 6",
+            "Naruto Shippuuden 3: Inheritors of Will of Fire",
+            "Naruto Shippūden la película: La voluntad de fuego",
+            "Naruto Shippuden - Eredi della volontà del Fuoco",
+            "Naruto Shippuden Movie 03: Gli eredi della volontà del Fuoco",
+            "Naruto Shippuden O Filme: Herdeiros da Vontade do Fogo"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx6325-WaJPWmdnzgiI.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx6325-WaJPWmdnzgiI.jpg"
+          }
+        },
+        {
+          "anilistId": 10589,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "NARUTO: Blood Prison",
+            "english": "Naruto Shippuden the Movie: Blood Prison",
+            "native": "劇場版 NARUTO -ナルト- ブラッド・プリズン"
+          },
+          "synonyms": [
+            "Naruto Movie 8",
+            "Naruto Shippuuden Movie 5",
+            "Naruto Shippūden la película: Prisión de sangre",
+            "Naruto Shippuden Movie 05: La prigione insanguinata"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx10589-VhXWWMm24Dso.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx10589-VhXWWMm24Dso.jpg"
+          }
+        },
+        {
+          "anilistId": 2472,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "NARUTO: Shippuuden Movie",
+            "english": "Naruto Shippuden the Movie",
+            "native": "劇場版 NARUTO -ナルト- 疾風伝"
+          },
+          "synonyms": [
+            "Naruto Shippuuden Movie",
+            "Naruto Movie 4",
+            "Gekijouban Naruto Shippuuden",
+            "Naruto Shippuden Un Funeste Présage",
+            "Naruto Shippuden Movie 01: L'esercito fantasma"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx2472-mYApVxceStn5.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx2472-mYApVxceStn5.png"
+          }
+        },
+        {
+          "anilistId": 594,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "NARUTO: Takigakure no Shitou - Ore ga Eiyuu Dattebayo!",
+            "english": "Naruto: The Lost Story - Mission: Protect the Waterfall Village",
+            "native": "NARUTO -ナルト- 滝隠れの死闘 オレが英雄だってばよ！"
+          },
+          "synonyms": [
+            "Battle at Hidden Falls. I am the Hero!",
+            "Naruto OVA 2",
+            "Naruto: Jump Festa 2004",
+            "Misión: ¡Proteger la aldea de la cascada!"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/594.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/594.jpg"
+          }
+        },
+        {
+          "anilistId": 4437,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "NARUTO: Shippuuden - Kizuna",
+            "english": "Naruto Shippuden the Movie: Bonds",
+            "native": "劇場版 NARUTO -ナルト- 疾風伝 絆"
+          },
+          "synonyms": [
+            "Naruto Movie 5",
+            "Naruto Shippuuden Movie 2",
+            "Naruto Shippuuden: Bonds",
+            "Naruto Shippuden Les Liens",
+            "Naruto Shippuden Movie 02: Il maestro e il discepolo"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx4437-8LQbBZo4N6yi.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx4437-8LQbBZo4N6yi.jpg"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 20,
+          "format": "TV",
+          "title": {
+            "romaji": "NARUTO",
+            "english": "Naruto",
+            "native": "NARUTO -ナルト-"
+          },
+          "synonyms": [
+            "נארוטו",
+            "ناروتو",
+            "火影忍者",
+            "นารูโตะ นินจาจอมคาถา",
+            "Наруто"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20-dE6UHbFFg1A5.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20-dE6UHbFFg1A5.jpg"
+          }
+        },
+        {
+          "anilistId": 10075,
+          "format": "OVA",
+          "title": {
+            "romaji": "NARUTO×UT",
+            "english": null,
+            "native": "NARUTO×UT"
+          },
+          "synonyms": [
+            "NARUTO x UT"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/10075.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/10075.jpg"
+          }
+        },
+        {
+          "anilistId": 162561,
+          "format": "TV",
+          "title": {
+            "romaji": "NARUTO×NINKU",
+            "english": null,
+            "native": "NARUTO-ナルト-×NINKU-忍空-"
+          },
+          "synonyms": [
+            "NARUTO -ナルト- (2026)",
+            "NARUTO (2026)",
+            "NARUTO×NINKŪ"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx162561-Uk4eZAwcmcWk.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx162561-Uk4eZAwcmcWk.jpg"
+          }
+        },
+        {
+          "anilistId": 155348,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "ROAD OF NARUTO",
+            "english": null,
+            "native": "ROAD OF NARUTO"
+          },
+          "synonyms": [
+            "NARUTO - ナルト -  20 周年記念",
+            "NARUTO 20 Shuunenkinen",
+            "Naruto 20th Anniversary PV"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx155348-4ipji8SvTjyh.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx155348-4ipji8SvTjyh.jpg"
+          }
+        },
+        {
+          "anilistId": 1735,
+          "format": "TV",
+          "title": {
+            "romaji": "NARUTO: Shippuuden",
+            "english": "Naruto: Shippuden",
+            "native": "NARUTO -ナルト- 疾風伝"
+          },
+          "synonyms": [
+            "Naruto Shippuuden",
+            "Naruto Shippuden",
+            "נארוטו שיפודן",
+            "火影忍者 疾风传",
+            "นารูโตะ ตำนานวายุสลาตัน",
+            "ناروتو شيبودن",
+            "Наруто: Ураганные хроники"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1735-kGfVm0YqCPcu.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx1735-kGfVm0YqCPcu.png"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-004",
+      "title": "Bleach",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "MULTIPLE_EXACT_FORMAT_MATCHES",
+      "exactCandidates": [
+        {
+          "anilistId": 269,
+          "format": "TV",
+          "title": {
+            "romaji": "BLEACH",
+            "english": "Bleach",
+            "native": "BLEACH"
+          },
+          "synonyms": [
+            "ブリーチ",
+            "'בליץ",
+            "เทพมรณะ",
+            "بليتش",
+            "Блич"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx269-d2GmRkJbMopq.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx269-d2GmRkJbMopq.png"
+          }
+        },
+        {
+          "anilistId": 116674,
+          "format": "TV",
+          "title": {
+            "romaji": "BLEACH: Sennen Kessen-hen",
+            "english": "BLEACH: Thousand-Year Blood War",
+            "native": "BLEACH 千年血戦篇"
+          },
+          "synonyms": [
+            "بليتش: حرب الألف سنة الدموية",
+            "Bleach: La guerre sanglante de mille ans",
+            "BLEACH TYBW"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx116674-p3zK4PUX2Aag.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx116674-p3zK4PUX2Aag.jpg"
+          }
+        },
+        {
+          "anilistId": 169755,
+          "format": "TV",
+          "title": {
+            "romaji": "BLEACH: Sennen Kessen-hen - Soukoku-tan",
+            "english": "BLEACH: Thousand-Year Blood War - The Conflict",
+            "native": "BLEACH 千年血戦篇-相剋譚-"
+          },
+          "synonyms": [
+            "BLEACH: Thousand Year Blood War Part 3",
+            "BLEACH 千年血戦篇 第3クール",
+            "BLEACH TYBW"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx169755-Rqb7MjnzdTc6.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx169755-Rqb7MjnzdTc6.jpg"
+          }
+        },
+        {
+          "anilistId": 159322,
+          "format": "TV",
+          "title": {
+            "romaji": "BLEACH: Sennen Kessen-hen - Ketsubetsu-tan",
+            "english": "BLEACH: Thousand-Year Blood War - The Separation",
+            "native": "BLEACH 千年血戦篇-訣別譚-"
+          },
+          "synonyms": [
+            "BLEACH: Thousand Year Blood War Part 2",
+            "BLEACH 千年血戦篇 第2クール",
+            "BLEACH TYBW"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx159322-Sp1GflRhE6Po.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx159322-Sp1GflRhE6Po.jpg"
+          }
+        },
+        {
+          "anilistId": 185874,
+          "format": "TV",
+          "title": {
+            "romaji": "BLEACH: Sennen Kessen-hen - Kashin-tan",
+            "english": "BLEACH: Thousand-Year Blood War - The Calamity",
+            "native": "BLEACH 千年血戦篇-禍進譚-"
+          },
+          "synonyms": [
+            "BLEACH: Thousand-Year Blood War Part 4",
+            "BLEACH 千年血戦篇 第4クール",
+            "BLEACH: Thousand-Year Blood War The Final Season",
+            "BLEACH TYBW"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx185874-aU3e6tBT6wwA.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx185874-aU3e6tBT6wwA.jpg"
+          }
+        },
+        {
+          "anilistId": 182561,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "BLEACH 20th PV",
+            "english": "BLEACH 20th Anime Anniversary Official Trailer",
+            "native": "BLEACH 20th PV"
+          },
+          "synonyms": [
+            "BLEACH 𝟐𝟎𝐭𝐡 𝐀𝐧𝐧𝐢𝐯𝐞𝐫𝐬𝐚𝐫𝐲",
+            "BLEACH 20周年 PV",
+            "ブリーチ 20th PV",
+            "BLEACH animation 20th"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx182561-lJDC9FT3jBhL.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx182561-lJDC9FT3jBhL.jpg"
+          }
+        },
+        {
+          "anilistId": 8247,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "BLEACH: Jigoku-hen",
+            "english": "Bleach the Movie: Hell Verse",
+            "native": "BLEACH 地獄篇"
+          },
+          "synonyms": [
+            "Bleach Movie 4",
+            "Bleach: The Hell Chapter",
+            "بليتش: قصيدة الجحيم"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx8247-VppsQKlgXoXr.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx8247-VppsQKlgXoXr.png"
+          }
+        },
+        {
+          "anilistId": 100719,
+          "format": "OVA",
+          "title": {
+            "romaji": "BLEACH Colorful!: Gotei Juusan Yatai Daisakusen!",
+            "english": null,
+            "native": "BLEACH カラブリ！護廷十三屋台大作戦！"
+          },
+          "synonyms": [
+            "Bleach: Jump Festa 2008",
+            "Bleach KaraBuri!: Gotei Juusan Yatai Daisakusen!"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx100719-zujHjeEBqmo7.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx100719-zujHjeEBqmo7.jpg"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 269,
+          "format": "TV",
+          "title": {
+            "romaji": "BLEACH",
+            "english": "Bleach",
+            "native": "BLEACH"
+          },
+          "synonyms": [
+            "ブリーチ",
+            "'בליץ",
+            "เทพมรณะ",
+            "بليتش",
+            "Блич"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx269-d2GmRkJbMopq.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx269-d2GmRkJbMopq.png"
+          }
+        },
+        {
+          "anilistId": 116674,
+          "format": "TV",
+          "title": {
+            "romaji": "BLEACH: Sennen Kessen-hen",
+            "english": "BLEACH: Thousand-Year Blood War",
+            "native": "BLEACH 千年血戦篇"
+          },
+          "synonyms": [
+            "بليتش: حرب الألف سنة الدموية",
+            "Bleach: La guerre sanglante de mille ans",
+            "BLEACH TYBW"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx116674-p3zK4PUX2Aag.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx116674-p3zK4PUX2Aag.jpg"
+          }
+        },
+        {
+          "anilistId": 169755,
+          "format": "TV",
+          "title": {
+            "romaji": "BLEACH: Sennen Kessen-hen - Soukoku-tan",
+            "english": "BLEACH: Thousand-Year Blood War - The Conflict",
+            "native": "BLEACH 千年血戦篇-相剋譚-"
+          },
+          "synonyms": [
+            "BLEACH: Thousand Year Blood War Part 3",
+            "BLEACH 千年血戦篇 第3クール",
+            "BLEACH TYBW"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx169755-Rqb7MjnzdTc6.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx169755-Rqb7MjnzdTc6.jpg"
+          }
+        },
+        {
+          "anilistId": 159322,
+          "format": "TV",
+          "title": {
+            "romaji": "BLEACH: Sennen Kessen-hen - Ketsubetsu-tan",
+            "english": "BLEACH: Thousand-Year Blood War - The Separation",
+            "native": "BLEACH 千年血戦篇-訣別譚-"
+          },
+          "synonyms": [
+            "BLEACH: Thousand Year Blood War Part 2",
+            "BLEACH 千年血戦篇 第2クール",
+            "BLEACH TYBW"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx159322-Sp1GflRhE6Po.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx159322-Sp1GflRhE6Po.jpg"
+          }
+        },
+        {
+          "anilistId": 185874,
+          "format": "TV",
+          "title": {
+            "romaji": "BLEACH: Sennen Kessen-hen - Kashin-tan",
+            "english": "BLEACH: Thousand-Year Blood War - The Calamity",
+            "native": "BLEACH 千年血戦篇-禍進譚-"
+          },
+          "synonyms": [
+            "BLEACH: Thousand-Year Blood War Part 4",
+            "BLEACH 千年血戦篇 第4クール",
+            "BLEACH: Thousand-Year Blood War The Final Season",
+            "BLEACH TYBW"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx185874-aU3e6tBT6wwA.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx185874-aU3e6tBT6wwA.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-006",
+      "title": "One Piece",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "MULTIPLE_EXACT_FORMAT_MATCHES",
+      "exactCandidates": [
+        {
+          "anilistId": 21,
+          "format": "TV",
+          "title": {
+            "romaji": "ONE PIECE",
+            "english": "ONE PIECE",
+            "native": "ONE PIECE"
+          },
+          "synonyms": [
+            "ワンピース",
+            "海贼王",
+            "וואן פיס",
+            "ون بيس",
+            "วันพีซ",
+            "Vua Hải Tặc",
+            "All'arrembaggio!",
+            "Tutti all'arrembaggio!",
+            "Ντρέηκ, το Κυνήγι του Θησαυρού",
+            "OP",
+            "Ван-Пис"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-ELSYx3yMPcKM.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21-ELSYx3yMPcKM.jpg"
+          }
+        },
+        {
+          "anilistId": 19123,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "ONE PIECE: Episode of Merry - Mou Hitori no Nakama no Monogatari",
+            "english": "One Piece: Episode of Merry - The Tale of One More Friend",
+            "native": "ONE PIECE エピソードオブメリー 〜もうひとりの仲間の物語〜"
+          },
+          "synonyms": [
+            "One Piece Special"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/nx19123-leET1CrSJknT.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx19123-leET1CrSJknT.jpg"
+          }
+        },
+        {
+          "anilistId": 15323,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "ONE PIECE: Episode of Nami - Koukaishi no Namida to Nakama no Kizuna",
+            "english": null,
+            "native": "ONE PIECE エピソードオブナミ 〜航海士の涙と仲間の絆〜"
+          },
+          "synonyms": [
+            "One Piece Special"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/15323.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/15323.jpg"
+          }
+        },
+        {
+          "anilistId": 5252,
+          "format": "OVA",
+          "title": {
+            "romaji": "ONE PIECE: ROMANCE DAWN STORY",
+            "english": "One Piece: Romance Dawn Story",
+            "native": "ONE PIECE ロマンス ドーン ストーリー"
+          },
+          "synonyms": [
+            "One Piece Prototype"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/5252.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/5252.jpg"
+          }
+        },
+        {
+          "anilistId": 21831,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "ONE PIECE: Heart of Gold",
+            "english": "One Piece: Heart of Gold",
+            "native": "ONE PIECE 〜ハートオブゴールド〜"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21831-qj5IKYiPOupF.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21831-qj5IKYiPOupF.jpg"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 21,
+          "format": "TV",
+          "title": {
+            "romaji": "ONE PIECE",
+            "english": "ONE PIECE",
+            "native": "ONE PIECE"
+          },
+          "synonyms": [
+            "ワンピース",
+            "海贼王",
+            "וואן פיס",
+            "ون بيس",
+            "วันพีซ",
+            "Vua Hải Tặc",
+            "All'arrembaggio!",
+            "Tutti all'arrembaggio!",
+            "Ντρέηκ, το Κυνήγι του Θησαυρού",
+            "OP",
+            "Ван-Пис"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-ELSYx3yMPcKM.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21-ELSYx3yMPcKM.jpg"
+          }
+        },
+        {
+          "anilistId": 171630,
+          "format": null,
+          "title": {
+            "romaji": "THE ONE PIECE",
+            "english": "THE ONE PIECE",
+            "native": "THE ONE PIECE"
+          },
+          "synonyms": [
+            "ザワンピース"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx171630-2U7Y5OIWwXJJ.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx171630-2U7Y5OIWwXJJ.jpg"
+          }
+        },
+        {
+          "anilistId": 459,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "ONE PIECE (Movie)",
+            "english": "ONE PIECE: The Movie",
+            "native": "ONE PIECE (Movie)"
+          },
+          "synonyms": [
+            "One Piece: The Movie",
+            "One Piece (2000)",
+            "One Piece: La Película",
+            "วันพีซ เดอะมูฟวี่ 1 เกาะสมบัติแห่งวูนัน",
+            "Vua Hải Tặc: Đảo Châu Báu",
+            "One Piece: Golden Island Adventure",
+            "One Piece - Per tutto l'oro del mondo"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx459-Ivw65mUXackh.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx459-Ivw65mUXackh.png"
+          }
+        },
+        {
+          "anilistId": 19123,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "ONE PIECE: Episode of Merry - Mou Hitori no Nakama no Monogatari",
+            "english": "One Piece: Episode of Merry - The Tale of One More Friend",
+            "native": "ONE PIECE エピソードオブメリー 〜もうひとりの仲間の物語〜"
+          },
+          "synonyms": [
+            "One Piece Special"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/nx19123-leET1CrSJknT.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx19123-leET1CrSJknT.jpg"
+          }
+        },
+        {
+          "anilistId": 188668,
+          "format": "ONA",
+          "title": {
+            "romaji": "Koisuru ONE PIECE",
+            "english": null,
+            "native": "恋するワンピース"
+          },
+          "synonyms": [
+            "One Piece in Love"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx188668-rOB7rkgOz89w.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx188668-rOB7rkgOz89w.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-009",
+      "title": "Fullmetal Alchemist",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "MULTIPLE_EXACT_FORMAT_MATCHES",
+      "exactCandidates": [
+        {
+          "anilistId": 121,
+          "format": "TV",
+          "title": {
+            "romaji": "Hagane no Renkinjutsushi",
+            "english": "Fullmetal Alchemist",
+            "native": "鋼の錬金術師"
+          },
+          "synonyms": [
+            "Full Metal Alchemist",
+            "FMA",
+            "אלכימאי המתכת",
+            "Stalowy alchemik",
+            "강철의 연금술사",
+            "แขนกล คนแปรธาตุ",
+            "鋼之鍊金術師",
+            "钢之炼金术师",
+            "Железният Алхимик",
+            "Сталевий алхімік",
+            "Стальной Алхимик"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx121-zjmixZ428Mwv.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx121-zjmixZ428Mwv.png"
+          }
+        },
+        {
+          "anilistId": 5114,
+          "format": "TV",
+          "title": {
+            "romaji": "Hagane no Renkinjutsushi: FULLMETAL ALCHEMIST",
+            "english": "Fullmetal Alchemist: Brotherhood",
+            "native": "鋼の錬金術師 FULLMETAL ALCHEMIST"
+          },
+          "synonyms": [
+            "FMA",
+            "FMAB",
+            "Hagaren",
+            "الخيميائي الفولاذي",
+            "אלכימאי המתכת: אחוות אחים",
+            "Full Metal Alchemist: Brotherhood",
+            "钢之炼金术师 FULLMETAL ALCHEMIST",
+            "แขนกล คนแปรธาตุ: บราเธอร์ฮูด",
+            "Stalowy alchemik: Misja braci",
+            "Сталевий алхімік. Братерство",
+            "Стальной алхимик: Братство"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx5114-nSWCgQlmOMtj.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx5114-nSWCgQlmOMtj.jpg"
+          }
+        },
+        {
+          "anilistId": 6421,
+          "format": "OVA",
+          "title": {
+            "romaji": "Hagane no Renkinjutsushi: FULLMETAL ALCHEMIST Mihousou Episode",
+            "english": "Fullmetal Alchemist: Brotherhood OVA Collection",
+            "native": "鋼の錬金術師 FULLMETAL ALCHEMIST 未放送エピソード"
+          },
+          "synonyms": [
+            "Moumoku no Renkinjutsushi",
+            "The Blind Alchemist",
+            "Shinpuru na Hitobito",
+            "Simple People"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/6421.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/6421.jpg"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 121,
+          "format": "TV",
+          "title": {
+            "romaji": "Hagane no Renkinjutsushi",
+            "english": "Fullmetal Alchemist",
+            "native": "鋼の錬金術師"
+          },
+          "synonyms": [
+            "Full Metal Alchemist",
+            "FMA",
+            "אלכימאי המתכת",
+            "Stalowy alchemik",
+            "강철의 연금술사",
+            "แขนกล คนแปรธาตุ",
+            "鋼之鍊金術師",
+            "钢之炼金术师",
+            "Железният Алхимик",
+            "Сталевий алхімік",
+            "Стальной Алхимик"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx121-zjmixZ428Mwv.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx121-zjmixZ428Mwv.png"
+          }
+        },
+        {
+          "anilistId": 5114,
+          "format": "TV",
+          "title": {
+            "romaji": "Hagane no Renkinjutsushi: FULLMETAL ALCHEMIST",
+            "english": "Fullmetal Alchemist: Brotherhood",
+            "native": "鋼の錬金術師 FULLMETAL ALCHEMIST"
+          },
+          "synonyms": [
+            "FMA",
+            "FMAB",
+            "Hagaren",
+            "الخيميائي الفولاذي",
+            "אלכימאי המתכת: אחוות אחים",
+            "Full Metal Alchemist: Brotherhood",
+            "钢之炼金术师 FULLMETAL ALCHEMIST",
+            "แขนกล คนแปรธาตุ: บราเธอร์ฮูด",
+            "Stalowy alchemik: Misja braci",
+            "Сталевий алхімік. Братерство",
+            "Стальной алхимик: Братство"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx5114-nSWCgQlmOMtj.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx5114-nSWCgQlmOMtj.jpg"
+          }
+        },
+        {
+          "anilistId": 9135,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "Hagane no Renkinjutsushi: Milos no Seinaru Hoshi",
+            "english": "Fullmetal Alchemist: The Sacred Star of Milos",
+            "native": "鋼の錬金術師 嘆きの丘の聖なる星"
+          },
+          "synonyms": [
+            "Fullmetal Alchemist Movie 2",
+            "Hagane no Renkinjutsushi Movie 2",
+            "FMA Movie 2",
+            "Fullmetal Alchemist: La Estrella Sagrada de Milos",
+            "钢之炼金术师 叹息之丘的圣星",
+            "Fullmetal Alchemist – Święta Gwiazda Milos"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx9135-nPvbvO7QCx7L.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx9135-nPvbvO7QCx7L.jpg"
+          }
+        },
+        {
+          "anilistId": 664,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "Hagane no Renkinjutsushi: Reflections",
+            "english": "Fullmetal Alchemist: Reflections",
+            "native": "鋼の錬金術師 Reflections"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/664.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/664.jpg"
+          }
+        },
+        {
+          "anilistId": 6421,
+          "format": "OVA",
+          "title": {
+            "romaji": "Hagane no Renkinjutsushi: FULLMETAL ALCHEMIST Mihousou Episode",
+            "english": "Fullmetal Alchemist: Brotherhood OVA Collection",
+            "native": "鋼の錬金術師 FULLMETAL ALCHEMIST 未放送エピソード"
+          },
+          "synonyms": [
+            "Moumoku no Renkinjutsushi",
+            "The Blind Alchemist",
+            "Shinpuru na Hitobito",
+            "Simple People"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/6421.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/6421.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-012",
+      "title": "Black Clover",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "MULTIPLE_EXACT_FORMAT_MATCHES",
+      "exactCandidates": [
+        {
+          "anilistId": 97940,
+          "format": "TV",
+          "title": {
+            "romaji": "Black Clover",
+            "english": "Black Clover",
+            "native": "ブラッククローバー"
+          },
+          "synonyms": [
+            "תלתן שחור",
+            "แบล็กโคลเวอร์",
+            "Чёрный клевер"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx97940-fyh8o7gNbha0.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx97940-fyh8o7gNbha0.png"
+          }
+        },
+        {
+          "anilistId": 155017,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "Petit Clover Advance",
+            "english": null,
+            "native": "プチット・クローバー アドバンス"
+          },
+          "synonyms": [
+            "Black Clover"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b155017-9n0bV7dKsm3R.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b155017-9n0bV7dKsm3R.jpg"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 97940,
+          "format": "TV",
+          "title": {
+            "romaji": "Black Clover",
+            "english": "Black Clover",
+            "native": "ブラッククローバー"
+          },
+          "synonyms": [
+            "תלתן שחור",
+            "แบล็กโคลเวอร์",
+            "Чёрный клевер"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx97940-fyh8o7gNbha0.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx97940-fyh8o7gNbha0.png"
+          }
+        },
+        {
+          "anilistId": 155017,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "Petit Clover Advance",
+            "english": null,
+            "native": "プチット・クローバー アドバンス"
+          },
+          "synonyms": [
+            "Black Clover"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b155017-9n0bV7dKsm3R.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b155017-9n0bV7dKsm3R.jpg"
+          }
+        },
+        {
+          "anilistId": 131680,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "Black Clover: Mahou Tei no Ken",
+            "english": "Black Clover: Sword of the Wizard King",
+            "native": "ブラッククローバー 魔法帝の剣"
+          },
+          "synonyms": [
+            "Black Clover Movie",
+            "Чорна конюшина: Меч короля магів",
+            "Black Clover: A Espada do Rei Mago",
+            "Black Clover: La espada del rey mago",
+            "Черный клевер: Меч короля магов"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx131680-gjs8mMQPmkOQ.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx131680-gjs8mMQPmkOQ.png"
+          }
+        },
+        {
+          "anilistId": 195604,
+          "format": "TV",
+          "title": {
+            "romaji": "Black Clover 2nd Season",
+            "english": "Black Clover Season 2",
+            "native": "ブラッククローバー 第2期"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx195604-tSZcfKbVqSEG.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx195604-tSZcfKbVqSEG.jpg"
+          }
+        },
+        {
+          "anilistId": 110318,
+          "format": "ONA",
+          "title": {
+            "romaji": "Mugyutto! Black Clover",
+            "english": "Squishy! Black Clover",
+            "native": "むぎゅっと！ブラッククローバー"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx110318-woH5gOEK638l.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx110318-woH5gOEK638l.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-014",
+      "title": "Kakegurui",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "MULTIPLE_EXACT_FORMAT_MATCHES",
+      "exactCandidates": [
+        {
+          "anilistId": 98314,
+          "format": "TV",
+          "title": {
+            "romaji": "Kakegurui",
+            "english": "Kakegurui",
+            "native": "賭ケグルイ"
+          },
+          "synonyms": [
+            "Kakegurui - Compulsive Gambler",
+            "Kakegurui: Das Leben ist ein Spiel",
+            "Gambling School",
+            "โคตรเซียนโรงเรียนพนัน ",
+            "Безумный Азарт"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b98314-TSJykxVwCCQN.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b98314-TSJykxVwCCQN.jpg"
+          }
+        },
+        {
+          "anilistId": 100876,
+          "format": "TV",
+          "title": {
+            "romaji": "Kakegurui ××",
+            "english": "Kakegurui xx",
+            "native": "賭ケグルイ××"
+          },
+          "synonyms": [
+            "Kakegurui - Compulsive Gambler 2",
+            "โคตรเซียนโรงเรียนพนัน  ภาค 2"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx100876-RfvmpW1B8bDQ.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx100876-RfvmpW1B8bDQ.png"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 98314,
+          "format": "TV",
+          "title": {
+            "romaji": "Kakegurui",
+            "english": "Kakegurui",
+            "native": "賭ケグルイ"
+          },
+          "synonyms": [
+            "Kakegurui - Compulsive Gambler",
+            "Kakegurui: Das Leben ist ein Spiel",
+            "Gambling School",
+            "โคตรเซียนโรงเรียนพนัน ",
+            "Безумный Азарт"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b98314-TSJykxVwCCQN.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b98314-TSJykxVwCCQN.jpg"
+          }
+        },
+        {
+          "anilistId": 100876,
+          "format": "TV",
+          "title": {
+            "romaji": "Kakegurui ××",
+            "english": "Kakegurui xx",
+            "native": "賭ケグルイ××"
+          },
+          "synonyms": [
+            "Kakegurui - Compulsive Gambler 2",
+            "โคตรเซียนโรงเรียนพนัน  ภาค 2"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx100876-RfvmpW1B8bDQ.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx100876-RfvmpW1B8bDQ.png"
+          }
+        },
+        {
+          "anilistId": 141351,
+          "format": "ONA",
+          "title": {
+            "romaji": "Kakegurui Twin",
+            "english": "Kakegurui Twin",
+            "native": "賭ケグルイ双"
+          },
+          "synonyms": [
+            "โคตรเซียนโรงเรียนพนัน ภาค Twin",
+            "Compulsive Gambler Twin",
+            "Шалений азарт. Затятий двійник",
+            "Двойной азарт"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx141351-47JtghppCwMu.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx141351-47JtghppCwMu.png"
+          }
+        },
+        {
+          "anilistId": 107622,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "Kakegurui Picture Drama",
+            "english": null,
+            "native": "賭ケグルイ"
+          },
+          "synonyms": [
+            "Maid Kissa Hyakkaou",
+            "メイド喫茶百花王",
+            "Nekomimi Gakuen Hyakkaou",
+            "ネコミミ学園百花王",
+            "Seito-kai☆Kissaten Keikaku",
+            "生徒会☆喫茶店計画"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b107622-61twEQ0X0YH5.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b107622-61twEQ0X0YH5.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-015",
+      "title": "Kimetsu no Yaiba",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "MULTIPLE_EXACT_FORMAT_MATCHES",
+      "exactCandidates": [
+        {
+          "anilistId": 101922,
+          "format": "TV",
+          "title": {
+            "romaji": "Kimetsu no Yaiba",
+            "english": "Demon Slayer: Kimetsu no Yaiba",
+            "native": "鬼滅の刃"
+          },
+          "synonyms": [
+            "KnY",
+            "Kimetsu no Yaiba: Kyoudai no Kizuna",
+            "Demon Slayer: Kimetsu no Yaiba: Bonds of Siblings",
+            "鬼滅の刃-兄妹の絆-",
+            "鬼灭之刃",
+            "הלהב קוטל השדים",
+            "قاتل الشياطين",
+            "ดาบพิฆาตอสูร",
+            "Miecz zabójcy demonów – Kimetsu no Yaiba",
+            " Guardians de la nit: Kimetsu no Yaiba",
+            "İblis Keser",
+            "ΚΥΝΗΓΟΣ ΔΑΙΜΟΝΩΝ: KIMETSU NO YAIBA",
+            "Zabiják démonů",
+            "شیطان کش",
+            "귀멸의 칼날",
+            "Истребитель демонов",
+            "Клинок, рассекающий демонов"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-WBsBl0ClmgYL.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx101922-WBsBl0ClmgYL.jpg"
+          }
+        },
+        {
+          "anilistId": 112151,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "Kimetsu no Yaiba: Mugen Ressha-hen",
+            "english": "Demon Slayer -Kimetsu no Yaiba- The Movie: Mugen Train",
+            "native": "鬼滅の刃 無限列車編"
+          },
+          "synonyms": [
+            "KnY Movie",
+            "Els Guardians de la Nit: El Tren Infinit",
+            "Guardianes de la Noche: Tren Infinito",
+            "Demon Slayer: Mugen Treni",
+            "Demon Slayer: Il Treno Mugen",
+            "鬼灭之刃：无限列车篇",
+            "قاتل الشياطين الفيلم: قطار اللانهاية",
+            "ดาบพิฆาตอสูร เดอะมูฟวี่ : ศึกรถไฟสู่นิรันดร์",
+            "Demon Slayer: Kimetsu no Yaiba - Le film : Le train de l'Infini",
+            "ΚΥΝΗΓΟΣ ΔΑΙΜΟΝΩΝ: KIMETSU NO YAIBA – Η ΤΑΙΝΙΑ: ΤΟ ΤΡΕΝΟ ΜΟΥΓΚΕΝ",
+            "극장판 귀멸의 칼날: 무한열차편",
+            "Клинок, Рассекающий Демонов: Бесконечный Поезд"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx112151-1qlQwPB1RrJe.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx112151-1qlQwPB1RrJe.png"
+          }
+        },
+        {
+          "anilistId": 145139,
+          "format": "TV",
+          "title": {
+            "romaji": "Kimetsu no Yaiba: Katanakaji no Sato-hen",
+            "english": "Demon Slayer: Kimetsu no Yaiba Swordsmith Village Arc",
+            "native": "鬼滅の刃 刀鍛冶の里編"
+          },
+          "synonyms": [
+            "KnY 3",
+            "ดาบพิฆาตอสูร ภาค 3 บทหมู่บ้านช่างตีดาบ",
+            "Demon Slayer: Kimetsu no Yaiba - Le village des forgerons",
+            "Истребитель демонов: Kimetsu no Yaiba. Деревня кузнецов",
+            "Miecz zabójcy demonów – Kimetsu no Yaiba: Wioska płatnerzy"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx145139-rRimpHGWLhym.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx145139-rRimpHGWLhym.png"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 101922,
+          "format": "TV",
+          "title": {
+            "romaji": "Kimetsu no Yaiba",
+            "english": "Demon Slayer: Kimetsu no Yaiba",
+            "native": "鬼滅の刃"
+          },
+          "synonyms": [
+            "KnY",
+            "Kimetsu no Yaiba: Kyoudai no Kizuna",
+            "Demon Slayer: Kimetsu no Yaiba: Bonds of Siblings",
+            "鬼滅の刃-兄妹の絆-",
+            "鬼灭之刃",
+            "הלהב קוטל השדים",
+            "قاتل الشياطين",
+            "ดาบพิฆาตอสูร",
+            "Miecz zabójcy demonów – Kimetsu no Yaiba",
+            " Guardians de la nit: Kimetsu no Yaiba",
+            "İblis Keser",
+            "ΚΥΝΗΓΟΣ ΔΑΙΜΟΝΩΝ: KIMETSU NO YAIBA",
+            "Zabiják démonů",
+            "شیطان کش",
+            "귀멸의 칼날",
+            "Истребитель демонов",
+            "Клинок, рассекающий демонов"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-WBsBl0ClmgYL.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx101922-WBsBl0ClmgYL.jpg"
+          }
+        },
+        {
+          "anilistId": 142329,
+          "format": "TV",
+          "title": {
+            "romaji": "Kimetsu no Yaiba: Yuukaku-hen",
+            "english": "Demon Slayer: Kimetsu no Yaiba Entertainment District Arc",
+            "native": "鬼滅の刃 遊郭編"
+          },
+          "synonyms": [
+            "KnY 2",
+            "Demon Slayer: Kimetsu no Yaiba - Le quartier des plaisirs",
+            "ดาบพิฆาตอสูร ภาค 2 บทย่านเริงรมย์",
+            "Miecz zabójcy demonów – Kimetsu no Yaiba: Dzielnica uciech",
+            "귀멸의 칼날: 환락의 거리편",
+            "Клинок, Рассекающий Демонов: Квартал Красных Фонарей"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx142329-kET1PIXJv2eW.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx142329-kET1PIXJv2eW.jpg"
+          }
+        },
+        {
+          "anilistId": 112151,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "Kimetsu no Yaiba: Mugen Ressha-hen",
+            "english": "Demon Slayer -Kimetsu no Yaiba- The Movie: Mugen Train",
+            "native": "鬼滅の刃 無限列車編"
+          },
+          "synonyms": [
+            "KnY Movie",
+            "Els Guardians de la Nit: El Tren Infinit",
+            "Guardianes de la Noche: Tren Infinito",
+            "Demon Slayer: Mugen Treni",
+            "Demon Slayer: Il Treno Mugen",
+            "鬼灭之刃：无限列车篇",
+            "قاتل الشياطين الفيلم: قطار اللانهاية",
+            "ดาบพิฆาตอสูร เดอะมูฟวี่ : ศึกรถไฟสู่นิรันดร์",
+            "Demon Slayer: Kimetsu no Yaiba - Le film : Le train de l'Infini",
+            "ΚΥΝΗΓΟΣ ΔΑΙΜΟΝΩΝ: KIMETSU NO YAIBA – Η ΤΑΙΝΙΑ: ΤΟ ΤΡΕΝΟ ΜΟΥΓΚΕΝ",
+            "극장판 귀멸의 칼날: 무한열차편",
+            "Клинок, Рассекающий Демонов: Бесконечный Поезд"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx112151-1qlQwPB1RrJe.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx112151-1qlQwPB1RrJe.png"
+          }
+        },
+        {
+          "anilistId": 166240,
+          "format": "TV",
+          "title": {
+            "romaji": "Kimetsu no Yaiba: Hashira Geiko-hen",
+            "english": "Demon Slayer: Kimetsu no Yaiba Hashira Training Arc",
+            "native": "鬼滅の刃 柱稽古編"
+          },
+          "synonyms": [
+            "KnY 4",
+            "Demon Slayer: Kimetsu no Yaiba - L'entraînement des Piliers",
+            "Miecz zabójcy demonów – Kimetsu no Yaiba: Trening Filarów",
+            "Клинок, рассекающий демонов: Тренировка столпов"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx166240-PBV7zukIHW7V.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx166240-PBV7zukIHW7V.png"
+          }
+        },
+        {
+          "anilistId": 145139,
+          "format": "TV",
+          "title": {
+            "romaji": "Kimetsu no Yaiba: Katanakaji no Sato-hen",
+            "english": "Demon Slayer: Kimetsu no Yaiba Swordsmith Village Arc",
+            "native": "鬼滅の刃 刀鍛冶の里編"
+          },
+          "synonyms": [
+            "KnY 3",
+            "ดาบพิฆาตอสูร ภาค 3 บทหมู่บ้านช่างตีดาบ",
+            "Demon Slayer: Kimetsu no Yaiba - Le village des forgerons",
+            "Истребитель демонов: Kimetsu no Yaiba. Деревня кузнецов",
+            "Miecz zabójcy demonów – Kimetsu no Yaiba: Wioska płatnerzy"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx145139-rRimpHGWLhym.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx145139-rRimpHGWLhym.png"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-018",
+      "title": "Dororo",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "MULTIPLE_EXACT_FORMAT_MATCHES",
+      "exactCandidates": [
+        {
+          "anilistId": 101347,
+          "format": "TV",
+          "title": {
+            "romaji": "Dororo",
+            "english": "Dororo",
+            "native": "どろろ"
+          },
+          "synonyms": [
+            "Дороро"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101347-TGaDwEYqLfm1.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx101347-TGaDwEYqLfm1.jpg"
+          }
+        },
+        {
+          "anilistId": 5760,
+          "format": "TV",
+          "title": {
+            "romaji": "Dororo to Hyakkimaru",
+            "english": "Dororo",
+            "native": "どろろと百鬼丸"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b5760-0nnYt4GrL1NO.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b5760-0nnYt4GrL1NO.png"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 101347,
+          "format": "TV",
+          "title": {
+            "romaji": "Dororo",
+            "english": "Dororo",
+            "native": "どろろ"
+          },
+          "synonyms": [
+            "Дороро"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101347-TGaDwEYqLfm1.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx101347-TGaDwEYqLfm1.jpg"
+          }
+        },
+        {
+          "anilistId": 5760,
+          "format": "TV",
+          "title": {
+            "romaji": "Dororo to Hyakkimaru",
+            "english": "Dororo",
+            "native": "どろろと百鬼丸"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b5760-0nnYt4GrL1NO.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b5760-0nnYt4GrL1NO.png"
+          }
+        },
+        {
+          "anilistId": 11471,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "Dororo (Pilot)",
+            "english": null,
+            "native": "どろろ（パイロット）"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/11471-lJANGo0iznfq.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/11471-lJANGo0iznfq.png"
+          }
+        },
+        {
+          "anilistId": 107010,
+          "format": "TV_SHORT",
+          "title": {
+            "romaji": "Dororonpa!",
+            "english": null,
+            "native": "どろろんぱっ！"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/n107010-daO2s57ZuVmN.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/n107010-daO2s57ZuVmN.png"
+          }
+        },
+        {
+          "anilistId": 1337,
+          "format": "TV",
+          "title": {
+            "romaji": "Dororon Enma-kun",
+            "english": null,
+            "native": "ドロロンえん魔くん"
+          },
+          "synonyms": [
+            "The Little Judge from Hell"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/1337.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/1337.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-027",
+      "title": "Fairy Tail",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "MULTIPLE_EXACT_FORMAT_MATCHES",
+      "exactCandidates": [
+        {
+          "anilistId": 6702,
+          "format": "TV",
+          "title": {
+            "romaji": "FAIRY TAIL",
+            "english": "Fairy Tail",
+            "native": "FAIRY TAIL"
+          },
+          "synonyms": [
+            "פיירי טייל",
+            "妖精的尾巴",
+            "フェアリーテイル",
+            "แฟรี่เทล ศึกจอมเวทอภินิหาร"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b6702-KI4qgSMyI8Pm.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b6702-KI4qgSMyI8Pm.png"
+          }
+        },
+        {
+          "anilistId": 12049,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "FAIRY TAIL: Houou no Miko",
+            "english": "Fairy Tail: Phoenix Priestess",
+            "native": "劇場版 FAIRY TAIL 鳳凰の巫女"
+          },
+          "synonyms": [
+            "Fairy Tail - 1er Film - La prêtresse du Phoenix"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx12049-FIx0K2s81SPa.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx12049-FIx0K2s81SPa.png"
+          }
+        },
+        {
+          "anilistId": 17535,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "FAIRY TAIL: Houou no Miko - Hajimari no Asa",
+            "english": "Fairy Tail the Movie: Prologue - The First Morning",
+            "native": "劇場版 FAIRY TAIL 鳳凰の巫女「はじまりの朝」"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx17535-9WPwCKsR2S5W.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx17535-9WPwCKsR2S5W.png"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 6702,
+          "format": "TV",
+          "title": {
+            "romaji": "FAIRY TAIL",
+            "english": "Fairy Tail",
+            "native": "FAIRY TAIL"
+          },
+          "synonyms": [
+            "פיירי טייל",
+            "妖精的尾巴",
+            "フェアリーテイル",
+            "แฟรี่เทล ศึกจอมเวทอภินิหาร"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b6702-KI4qgSMyI8Pm.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b6702-KI4qgSMyI8Pm.png"
+          }
+        },
+        {
+          "anilistId": 99749,
+          "format": "TV",
+          "title": {
+            "romaji": "FAIRY TAIL (2018)",
+            "english": "Fairy Tail Final Season",
+            "native": "FAIRY TAIL (2018)"
+          },
+          "synonyms": [
+            "Fairy Tail 3",
+            "Fairy Tail Series 3",
+            "フェアリーテイル (2018)"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/nx99749-tvz2LCPdMyrp.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx99749-tvz2LCPdMyrp.jpg"
+          }
+        },
+        {
+          "anilistId": 20626,
+          "format": "TV",
+          "title": {
+            "romaji": "FAIRY TAIL (2014)",
+            "english": "Fairy Tail Series 2",
+            "native": "FAIRY TAIL (2014)"
+          },
+          "synonyms": [
+            "Fairy Tail 2",
+            "Fairy Tail Season 2",
+            "フェアリーテイル (2014)"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20626-9LTreIofBgnu.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20626-9LTreIofBgnu.jpg"
+          }
+        },
+        {
+          "anilistId": 9982,
+          "format": "OVA",
+          "title": {
+            "romaji": "FAIRY TAIL OVA",
+            "english": null,
+            "native": "FAIRY TAIL OVA"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/9982.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/9982.jpg"
+          }
+        },
+        {
+          "anilistId": 18393,
+          "format": "OVA",
+          "title": {
+            "romaji": "FAIRY TAIL × RAVE",
+            "english": null,
+            "native": "FAIRY TAIL × RAVE"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b18393-aYbUsy5YeL1M.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b18393-aYbUsy5YeL1M.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-029",
+      "title": "K Project",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 14467,
+          "format": "TV",
+          "title": {
+            "romaji": "K",
+            "english": "K",
+            "native": "K"
+          },
+          "synonyms": [
+            "K-Project (K-プロジェクト)",
+            "K -eine weitere Geschichte-"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx14467-TQjwOvq4jkYS.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx14467-TQjwOvq4jkYS.png"
+          }
+        },
+        {
+          "anilistId": 16904,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "K: MISSING KINGS",
+            "english": null,
+            "native": "K MISSING KINGS"
+          },
+          "synonyms": [
+            "K-Project Movie"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16904-MqA6kzSdRDsK.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx16904-MqA6kzSdRDsK.jpg"
+          }
+        },
+        {
+          "anilistId": 20913,
+          "format": "TV",
+          "title": {
+            "romaji": "K: RETURN OF KINGS",
+            "english": null,
+            "native": "K RETURN OF KINGS"
+          },
+          "synonyms": [
+            "K-Project 2"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20913-gtriPcPNUwAQ.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20913-gtriPcPNUwAQ.jpg"
+          }
+        },
+        {
+          "anilistId": 102998,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "#KSWISS_ALLWHITE PROJECT: WHITE FANTASY",
+            "english": "WHITE FANTASY",
+            "native": "#KSWISS_ALLWHITE PROJECT 「WHITE FANTASY」"
+          },
+          "synonyms": [
+            "K-Swiss All White Project"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/nx102998-a2fqXP99mXvp.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx102998-a2fqXP99mXvp.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-036",
+      "title": "Shingeki no Bahamut",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 20590,
+          "format": "TV",
+          "title": {
+            "romaji": "Shingeki no Bahamut: GENESIS",
+            "english": "Rage of Bahamut: Genesis",
+            "native": "神撃のバハムート GENESIS"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20590-LuMDAd75Kg3C.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20590-LuMDAd75Kg3C.jpg"
+          }
+        },
+        {
+          "anilistId": 21322,
+          "format": "TV_SHORT",
+          "title": {
+            "romaji": "Manaria Friends",
+            "english": "Mysteria Friends",
+            "native": "マナリアフレンズ"
+          },
+          "synonyms": [
+            "Shingeki no Bahamut: Manaria Friends"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21322-c3VbtNvaRi6p.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21322-c3VbtNvaRi6p.png"
+          }
+        },
+        {
+          "anilistId": 21184,
+          "format": "TV",
+          "title": {
+            "romaji": "Shingeki no Bahamut: VIRGIN SOUL",
+            "english": "Rage of Bahamut: Virgin Soul",
+            "native": "神撃のバハムート VIRGIN SOUL"
+          },
+          "synonyms": [
+            "BahaSoul"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21184-wpNqr2bHzLcC.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21184-wpNqr2bHzLcC.jpg"
+          }
+        },
+        {
+          "anilistId": 98629,
+          "format": "ONA",
+          "title": {
+            "romaji": "Shingeki no Bahamut: GENESIS - Short story",
+            "english": "Rage of Bahamut: Genesis - Short Story",
+            "native": "神撃のバハムート GENESIS Short story"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/nx98629-YNcvPEHSTvBt.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx98629-YNcvPEHSTvBt.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-041",
+      "title": "Nanatsu no Taizai",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "MULTIPLE_EXACT_FORMAT_MATCHES",
+      "exactCandidates": [
+        {
+          "anilistId": 154197,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "Hawk no Onayami Soudanshitsu Special",
+            "english": null,
+            "native": "ホークのお悩み相談室 Special"
+          },
+          "synonyms": [
+            "Nanatsu no Taizai"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx154197-yJZMgNynqQtW.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx154197-yJZMgNynqQtW.jpg"
+          }
+        },
+        {
+          "anilistId": 154174,
+          "format": "ONA",
+          "title": {
+            "romaji": "Hawk no Onayami Soudanshitsu",
+            "english": null,
+            "native": "ホークのお悩み相談室"
+          },
+          "synonyms": [
+            "Hawk's Trouble Consultation Room",
+            "Nanatsu no Taizai",
+            "The Seven Deadly Sins"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b154174-kM3B9WIX9KFV.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b154174-kM3B9WIX9KFV.jpg"
+          }
+        },
+        {
+          "anilistId": 20789,
+          "format": "TV",
+          "title": {
+            "romaji": "Nanatsu no Taizai",
+            "english": "The Seven Deadly Sins",
+            "native": "七つの大罪"
+          },
+          "synonyms": [
+            "七大罪",
+            "ศึกตำนาน 7 อัศวิน",
+            "7DS",
+            "Семь смертных грехов"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20789-Ma5ouSYPkru9.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20789-Ma5ouSYPkru9.jpg"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 154197,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "Hawk no Onayami Soudanshitsu Special",
+            "english": null,
+            "native": "ホークのお悩み相談室 Special"
+          },
+          "synonyms": [
+            "Nanatsu no Taizai"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx154197-yJZMgNynqQtW.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx154197-yJZMgNynqQtW.jpg"
+          }
+        },
+        {
+          "anilistId": 154174,
+          "format": "ONA",
+          "title": {
+            "romaji": "Hawk no Onayami Soudanshitsu",
+            "english": null,
+            "native": "ホークのお悩み相談室"
+          },
+          "synonyms": [
+            "Hawk's Trouble Consultation Room",
+            "Nanatsu no Taizai",
+            "The Seven Deadly Sins"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b154174-kM3B9WIX9KFV.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b154174-kM3B9WIX9KFV.jpg"
+          }
+        },
+        {
+          "anilistId": 20789,
+          "format": "TV",
+          "title": {
+            "romaji": "Nanatsu no Taizai",
+            "english": "The Seven Deadly Sins",
+            "native": "七つの大罪"
+          },
+          "synonyms": [
+            "七大罪",
+            "ศึกตำนาน 7 อัศวิน",
+            "7DS",
+            "Семь смертных грехов"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20789-Ma5ouSYPkru9.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20789-Ma5ouSYPkru9.jpg"
+          }
+        },
+        {
+          "anilistId": 21104,
+          "format": "OVA",
+          "title": {
+            "romaji": "Nanatsu no Taizai OVA",
+            "english": "The Seven Deadly Sins OVA",
+            "native": "七つの大罪 OAD"
+          },
+          "synonyms": [
+            "Семь смертных грехов OVA"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21104-uG9LZiOYJST2.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21104-uG9LZiOYJST2.jpg"
+          }
+        },
+        {
+          "anilistId": 20705,
+          "format": "TV",
+          "title": {
+            "romaji": "sin: Nanatsu no Taizai",
+            "english": "Seven Mortal Sins",
+            "native": "sin 七つの大罪"
+          },
+          "synonyms": [
+            "Sin: The 7 Deadly Sins"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20705-X2uRDZWD6xGn.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20705-X2uRDZWD6xGn.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-042",
+      "title": "Danganronpa",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 16592,
+          "format": "TV",
+          "title": {
+            "romaji": "Danganronpa: Kibou no Gakuen to Zetsubou no Koukousei - The Animation",
+            "english": "Danganronpa: The Animation",
+            "native": "ダンガンロンパ 希望の学園と絶望の高校生 The Animation"
+          },
+          "synonyms": [
+            "ダンガンロンパ The Animation",
+            "Danganronpa: Academy of Hope and High School Students of Despair THE ANIMATION",
+            "Danganronpa: Sekolah Harapan dan Murid yang Putus Asa"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16592-mFn1gfMXlKtw.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx16592-mFn1gfMXlKtw.jpg"
+          }
+        },
+        {
+          "anilistId": 113050,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "Danganronpa 3: Monokuma Gekijou",
+            "english": null,
+            "native": "ダンガンロンパ3 モノクマ劇場"
+          },
+          "synonyms": [
+            "Danganronpa 3 Picture Drama",
+            "Danganronpa 3 Future Zap/Mirai Bashi~tsu"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx113050-4K6uI6vPpdWH.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx113050-4K6uI6vPpdWH.jpg"
+          }
+        },
+        {
+          "anilistId": 21509,
+          "format": "TV",
+          "title": {
+            "romaji": "Danganronpa 3: The End of Kibougamine Gakuen - Mirai-hen",
+            "english": "Danganronpa 3: The End of Hope’s Peak High School - Future Arc",
+            "native": "ダンガンロンパ３ –The End of 希望ヶ峰学園– 未来編"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21509-3Ih7TTU0Romm.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21509-3Ih7TTU0Romm.jpg"
+          }
+        },
+        {
+          "anilistId": 97672,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "Danganronpa 3: The End of Kibougamine Gakuen - Kibou-hen",
+            "english": "Danganronpa 3: The End of Hope's Peak High School - Hope Arc",
+            "native": "ダンガンロンパ３-The End of 希望ヶ峰学園-希望編"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx97672-BRm6bIWQfI2v.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx97672-BRm6bIWQfI2v.jpg"
+          }
+        },
+        {
+          "anilistId": 98153,
+          "format": "OVA",
+          "title": {
+            "romaji": "Super Danganronpa 2.5 Komaeda Nagito to Sekai no Hakaisha",
+            "english": null,
+            "native": "スーパーダンガンロンパ2.5 狛枝凪斗と世界の破壊者"
+          },
+          "synonyms": [
+            "Super Danganronpa 2.5: Nagito Komaeda and the Destroyer of the World",
+            "Super Danganronpa 2.5: Nagito Komaeda and the World Destroyer"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b98153-KX7tTXRV23oh.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b98153-KX7tTXRV23oh.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-071",
+      "title": "Berserk",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "MULTIPLE_EXACT_FORMAT_MATCHES",
+      "exactCandidates": [
+        {
+          "anilistId": 33,
+          "format": "TV",
+          "title": {
+            "romaji": "Kenpuu Denki Berserk",
+            "english": "Berserk",
+            "native": "剣風伝奇ベルセルク"
+          },
+          "synonyms": [
+            "Kenfu Denki Berserk",
+            "Sword-Wind Chronicle Berserk",
+            "Berserk (1997)",
+            "Берсерк"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx33-PSwfE5B0gejI.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx33-PSwfE5B0gejI.jpg"
+          }
+        },
+        {
+          "anilistId": 21560,
+          "format": "TV",
+          "title": {
+            "romaji": "Berserk",
+            "english": "Berserk (2016)",
+            "native": "ベルセルク"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21560-6iifjdssfebJ.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21560-6iifjdssfebJ.jpg"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 33,
+          "format": "TV",
+          "title": {
+            "romaji": "Kenpuu Denki Berserk",
+            "english": "Berserk",
+            "native": "剣風伝奇ベルセルク"
+          },
+          "synonyms": [
+            "Kenfu Denki Berserk",
+            "Sword-Wind Chronicle Berserk",
+            "Berserk (1997)",
+            "Берсерк"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx33-PSwfE5B0gejI.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx33-PSwfE5B0gejI.jpg"
+          }
+        },
+        {
+          "anilistId": 21560,
+          "format": "TV",
+          "title": {
+            "romaji": "Berserk",
+            "english": "Berserk (2016)",
+            "native": "ベルセルク"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21560-6iifjdssfebJ.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21560-6iifjdssfebJ.jpg"
+          }
+        },
+        {
+          "anilistId": 97643,
+          "format": "TV",
+          "title": {
+            "romaji": "Berserk 2",
+            "english": "Berserk 2",
+            "native": "ベルセルク 2"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx97643-5s3MVIfTYIuQ.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx97643-5s3MVIfTYIuQ.jpg"
+          }
+        },
+        {
+          "anilistId": 12113,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "Berserk: Ougon Jidai-hen II - Doldrey Kouryaku",
+            "english": "Berserk: The Golden Age Arc II - The Battle for Doldrey",
+            "native": "ベルセルク 黄金時代篇Ⅱ ドルドレイ攻略"
+          },
+          "synonyms": [
+            "Berserk Movie",
+            "Berserk Saga",
+            "Berserk: La Edad de Oro II - La Batalla por Doldrey"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx12113-cIF2NXNRX1iB.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx12113-cIF2NXNRX1iB.jpg"
+          }
+        },
+        {
+          "anilistId": 10218,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "Berserk: Ougon Jidai-hen I - Haou no Tamago",
+            "english": "Berserk: The Golden Age Arc I - The Egg of the King",
+            "native": "ベルセルク 黄金時代篇Ⅰ 覇王の卵"
+          },
+          "synonyms": [
+            "Berserk Movie",
+            "Berserk Saga",
+            "Berserk: Golden Age Arc I - Egg of the Supreme Ruler",
+            "The Golden Age Arc I: The High King's Egg",
+            "Berserk: La Edad de Oro I - El Huevo del Rey Conquistador"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx10218-QJgUwiua9tB0.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx10218-QJgUwiua9tB0.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-083",
+      "title": "Another",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "MULTIPLE_EXACT_FORMAT_MATCHES",
+      "exactCandidates": [
+        {
+          "anilistId": 11111,
+          "format": "TV",
+          "title": {
+            "romaji": "Another",
+            "english": "Another",
+            "native": "アナザー"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx11111-gvvE5bBYsyFo.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx11111-gvvE5bBYsyFo.png"
+          }
+        },
+        {
+          "anilistId": 3370,
+          "format": "OVA",
+          "title": {
+            "romaji": "Natural: Another",
+            "english": "Teacher's Pet (2)",
+            "native": "ナチュラル Another"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/3370.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/3370.jpg"
+          }
+        },
+        {
+          "anilistId": 20365,
+          "format": "MUSIC",
+          "title": {
+            "romaji": "Another: Misaki Mei - Shizuka ni",
+            "english": "Another Special",
+            "native": "しずかに Another 見崎　鳴"
+          },
+          "synonyms": [
+            "Another: Flash Animation"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/20365-QmjZ71Mt9Gmj.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/20365-QmjZ71Mt9Gmj.jpg"
+          }
+        },
+        {
+          "anilistId": 99054,
+          "format": "OVA",
+          "title": {
+            "romaji": "One Room: another",
+            "english": null,
+            "native": "ワンルーム -another-"
+          },
+          "synonyms": [
+            "One Room Special",
+            "One Room Episode 13"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx99054-FHBbtrk85vb8.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx99054-FHBbtrk85vb8.png"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 11111,
+          "format": "TV",
+          "title": {
+            "romaji": "Another",
+            "english": "Another",
+            "native": "アナザー"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx11111-gvvE5bBYsyFo.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx11111-gvvE5bBYsyFo.png"
+          }
+        },
+        {
+          "anilistId": 11701,
+          "format": "OVA",
+          "title": {
+            "romaji": "Another: The Other - Inga",
+            "english": "Another: The Other",
+            "native": "アナザー The Other -因果-"
+          },
+          "synonyms": [
+            "Another 00",
+            "Another: The Other -Inga-",
+            "Another OAD",
+            "Another OVA"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx11701-rnEKCVGq99dL.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx11701-rnEKCVGq99dL.jpg"
+          }
+        },
+        {
+          "anilistId": 114615,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "Jiji to Baba",
+            "english": "Another Time",
+            "native": "ジージとバーバ"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b114615-itNI0OsZG2de.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b114615-itNI0OsZG2de.jpg"
+          }
+        },
+        {
+          "anilistId": 111733,
+          "format": "ONA",
+          "title": {
+            "romaji": "Another World",
+            "english": "Another World",
+            "native": "アナザー・ワールド"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx111733-0nvIm7cJ7BGq.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx111733-0nvIm7cJ7BGq.jpg"
+          }
+        },
+        {
+          "anilistId": 3370,
+          "format": "OVA",
+          "title": {
+            "romaji": "Natural: Another",
+            "english": "Teacher's Pet (2)",
+            "native": "ナチュラル Another"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/3370.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/3370.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-084",
+      "title": "Ousama Game",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 99698,
+          "format": "TV",
+          "title": {
+            "romaji": "Ousama Game The Animation",
+            "english": "King's Game",
+            "native": "王様ゲーム The Animation"
+          },
+          "synonyms": [
+            "国王游戏"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/nx99698-5k8bDkhcJx9B.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx99698-5k8bDkhcJx9B.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-095",
+      "title": "AntiMagic Academy 35th Test Platoon",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "NO_RESULTS",
+      "exactCandidates": [],
+      "suggestions": []
+    },
+    {
+      "animeId": "personal-107",
+      "title": "Tower of God",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "MULTIPLE_EXACT_FORMAT_MATCHES",
+      "exactCandidates": [
+        {
+          "anilistId": 115230,
+          "format": "TV",
+          "title": {
+            "romaji": "Kami no Tou: Tower of God",
+            "english": "Tower of God",
+            "native": "神之塔 -Tower of God-"
+          },
+          "synonyms": [
+            "タワーオブ・ゴッド",
+            "신의 탑",
+            "Sinui Tap",
+            "Kami no Tou",
+            "TOG",
+            "Башня Бога"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx115230-QHOdSN7yt8ab.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx115230-QHOdSN7yt8ab.jpg"
+          }
+        },
+        {
+          "anilistId": 153406,
+          "format": "TV",
+          "title": {
+            "romaji": "Kami no Tou: Tower of God 2nd Season",
+            "english": "Tower of God Season 2",
+            "native": "神之塔 -Tower of God- 第2期"
+          },
+          "synonyms": [
+            "タワーオブ・ゴッド 2",
+            "Sinui Tap 2",
+            "TOG 2",
+            "신의 탑 2",
+            "Tower of God Season 2: Return of the Prince",
+            "神之塔 -Tower of God- 王子の帰還",
+            "Kami no Tou: Tower of God - Ouji no Kikan",
+            "神之塔 -Tower of God- 工房戦",
+            "Kami no Tou: Tower of God - Koubou-sen",
+            "Tower of God Season 2: Workshop Battle"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx153406-dU2RLKgMUF2U.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx153406-dU2RLKgMUF2U.jpg"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 115230,
+          "format": "TV",
+          "title": {
+            "romaji": "Kami no Tou: Tower of God",
+            "english": "Tower of God",
+            "native": "神之塔 -Tower of God-"
+          },
+          "synonyms": [
+            "タワーオブ・ゴッド",
+            "신의 탑",
+            "Sinui Tap",
+            "Kami no Tou",
+            "TOG",
+            "Башня Бога"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx115230-QHOdSN7yt8ab.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx115230-QHOdSN7yt8ab.jpg"
+          }
+        },
+        {
+          "anilistId": 153406,
+          "format": "TV",
+          "title": {
+            "romaji": "Kami no Tou: Tower of God 2nd Season",
+            "english": "Tower of God Season 2",
+            "native": "神之塔 -Tower of God- 第2期"
+          },
+          "synonyms": [
+            "タワーオブ・ゴッド 2",
+            "Sinui Tap 2",
+            "TOG 2",
+            "신의 탑 2",
+            "Tower of God Season 2: Return of the Prince",
+            "神之塔 -Tower of God- 王子の帰還",
+            "Kami no Tou: Tower of God - Ouji no Kikan",
+            "神之塔 -Tower of God- 工房戦",
+            "Kami no Tou: Tower of God - Koubou-sen",
+            "Tower of God Season 2: Workshop Battle"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx153406-dU2RLKgMUF2U.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx153406-dU2RLKgMUF2U.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-111",
+      "title": "Steins;Gate",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "MULTIPLE_EXACT_FORMAT_MATCHES",
+      "exactCandidates": [
+        {
+          "anilistId": 9253,
+          "format": "TV",
+          "title": {
+            "romaji": "Steins;Gate",
+            "english": "Steins;Gate",
+            "native": "シュタインズ・ゲート"
+          },
+          "synonyms": [
+            "S;G",
+            "סטיינס;גייט",
+            "命运石之门",
+            "Врата;Штейна"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx9253-tIUXF2gfU8Sg.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx9253-tIUXF2gfU8Sg.jpg"
+          }
+        },
+        {
+          "anilistId": 20907,
+          "format": "ONA",
+          "title": {
+            "romaji": "Steins;Gate: Soumei Eichi no Cognitive Computing",
+            "english": null,
+            "native": "Steins;Gate 聡明叡智のコグニティブ・コンピューティング"
+          },
+          "synonyms": [
+            "Steins;Gate: The Sagacious Wisdom of Cognitive Computing"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20907-Pl4YwH8RopKT.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20907-Pl4YwH8RopKT.jpg"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 9253,
+          "format": "TV",
+          "title": {
+            "romaji": "Steins;Gate",
+            "english": "Steins;Gate",
+            "native": "シュタインズ・ゲート"
+          },
+          "synonyms": [
+            "S;G",
+            "סטיינס;גייט",
+            "命运石之门",
+            "Врата;Штейна"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx9253-tIUXF2gfU8Sg.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx9253-tIUXF2gfU8Sg.jpg"
+          }
+        },
+        {
+          "anilistId": 21127,
+          "format": "TV",
+          "title": {
+            "romaji": "Steins;Gate 0",
+            "english": "Steins;Gate 0",
+            "native": "シュタインズ・ゲート ゼロ"
+          },
+          "synonyms": [
+            "s;g0",
+            "命运石之门0"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21127-7ARWZkDXKiiD.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21127-7ARWZkDXKiiD.jpg"
+          }
+        },
+        {
+          "anilistId": 104174,
+          "format": "OVA",
+          "title": {
+            "romaji": "Steins;Gate 0: Kesshou Takei no Valentine - Bittersweet Day",
+            "english": "Steins;Gate 0: Valentine's of Crystal Polymorphism -Bittersweet Intermedio-",
+            "native": "シュタインズ・ゲート ゼロ 結晶多形のバレンタイン"
+          },
+          "synonyms": [
+            "Steins;Gate 0 Special",
+            "San Valentín de polimorfismo de cristal: Intermedio agridulce"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx104174-aoNLSSN6bT4L.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx104174-aoNLSSN6bT4L.png"
+          }
+        },
+        {
+          "anilistId": 10863,
+          "format": "OVA",
+          "title": {
+            "romaji": "Steins;Gate: Oukoubakko no Poriomania",
+            "english": "Steins;Gate: Egoistic Poriomania",
+            "native": "シュタインズ・ゲート 横行跋扈のポリオマニア"
+          },
+          "synonyms": [
+            "Steins",
+            "Gate Special",
+            "Poriomanía del egoismo"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx10863-V6oW2kN8bBYf.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx10863-V6oW2kN8bBYf.png"
+          }
+        },
+        {
+          "anilistId": 21624,
+          "format": "OVA",
+          "title": {
+            "romaji": "Steins;Gate: Kyoukaimenjou no Missing Link - Divide By Zero",
+            "english": "Steins;Gate 0: 23β -Divide by Zero-",
+            "native": "シュタインズ・ゲート 境界面上のミッシングリンク -Divide By Zero-"
+          },
+          "synonyms": [
+            "Steins;Gate: Episode 23 (β)"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21624-szbmwyC3sJos.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21624-szbmwyC3sJos.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-112",
+      "title": "Hajime no Ippo",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 19647,
+          "format": "TV",
+          "title": {
+            "romaji": "Hajime no Ippo: Rising",
+            "english": "Hajime No Ippo: The Fighting! - Rising -",
+            "native": "はじめの一歩 Rising"
+          },
+          "synonyms": [
+            "Hajime no Ippo 3",
+            "Fighting Spirit: Rising"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx19647-cIy7ShTL6e9h.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx19647-cIy7ShTL6e9h.jpg"
+          }
+        },
+        {
+          "anilistId": 5258,
+          "format": "TV",
+          "title": {
+            "romaji": "Hajime no Ippo: New Challenger",
+            "english": "Hajime no Ippo: The Fighting! New Challenger",
+            "native": "はじめの一歩 New Challenger"
+          },
+          "synonyms": [
+            "Hajime no Ippo Season II",
+            "Hajime no Ippo 2",
+            "Fighting Spirit: New Challenger",
+            "Hajime no Ippo: A Luta! - Um Novo Desafiante"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx5258-Qn6GBiSY57iT.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx5258-Qn6GBiSY57iT.jpg"
+          }
+        },
+        {
+          "anilistId": 263,
+          "format": "TV",
+          "title": {
+            "romaji": "Hajime no Ippo: THE FIGHTING!",
+            "english": "Hajime no Ippo: The Fighting!",
+            "native": "はじめの一歩 THE FIGHTING!"
+          },
+          "synonyms": [
+            "The First Step",
+            "Fighting Spirit",
+            "Espíritu de lucha",
+            "Hajime no Ippo: A Luta!",
+            "Первый шаг"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx263-ivVyn9xAgwSZ.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx263-ivVyn9xAgwSZ.png"
+          }
+        },
+        {
+          "anilistId": 147928,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "Komaneko: Hajime no Ippo",
+            "english": "Komaneko: The First Step",
+            "native": "こまねこ はじめのいっぽ"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b147928-DfubkrL8mdfw.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b147928-DfubkrL8mdfw.png"
+          }
+        },
+        {
+          "anilistId": 12069,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "Hajime no Ippo: THE FIGHTING! Boxer no Kobushi",
+            "english": "Hajime no Ippo: The Fighting! - Boxer's Fist",
+            "native": "はじめの一歩 THE FIGHTING! ボクサーの拳"
+          },
+          "synonyms": [
+            "Hajime no Ippo Episode 76",
+            "The First Step Special",
+            "Hajime no Ippo: The Fighting Special",
+            "Hajime no Ippo: Boxer no Kobushi"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/12069-8iXSMYNyflIV.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/12069-8iXSMYNyflIV.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-117",
+      "title": "Saiki K.",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 112625,
+          "format": "ONA",
+          "title": {
+            "romaji": "Saiki Kusuo no Ψ-nan: Ψ-shidou-hen",
+            "english": "The Disastrous Life of Saiki K.: Reawakened",
+            "native": "斉木楠雄のΨ難 Ψ始動編"
+          },
+          "synonyms": [
+            "The Disastrous Life of Saiki K.",
+            " Starting Arc"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b112625-5Qi2PEQqITCa.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b112625-5Qi2PEQqITCa.jpg"
+          }
+        },
+        {
+          "anilistId": 21804,
+          "format": "TV_SHORT",
+          "title": {
+            "romaji": "Saiki Kusuo no Ψ-nan",
+            "english": "The Disastrous Life of Saiki K.",
+            "native": "斉木楠雄のΨ難"
+          },
+          "synonyms": [
+            "חייו הרי-האסון של סאיקי ק",
+            "Η Καταστροφική Ζωή του Σάικι Κ",
+            "Ох уж этот экстрасенс Сайки Кусуо!"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21804-As6tDLAvEvNY.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx21804-As6tDLAvEvNY.jpg"
+          }
+        },
+        {
+          "anilistId": 104580,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "Saiki Kusuo no Ψ-nan: Kanketsu-hen",
+            "english": "The Disastrous Life of Saiki K. Season 3",
+            "native": "斉木楠雄のΨ難 完結編"
+          },
+          "synonyms": [
+            "Saiki Kusuo no Psi Nan 3"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx104580-AfhlKn5rmOZS.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx104580-AfhlKn5rmOZS.png"
+          }
+        },
+        {
+          "anilistId": 98034,
+          "format": "TV",
+          "title": {
+            "romaji": "Saiki Kusuo no Ψ-nan 2",
+            "english": "The Disastrous Life of Saiki K. Season 2",
+            "native": "斉木楠雄のΨ難 2"
+          },
+          "synonyms": [
+            "Saiki Kusuo no Psi Nan 2"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/nx98034-1eQ4F7SKxVas.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx98034-1eQ4F7SKxVas.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-123",
+      "title": "Shinmai Ossan Boukensha",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "NO_RESULTS",
+      "exactCandidates": [],
+      "suggestions": []
+    },
+    {
+      "animeId": "personal-124",
+      "title": "Sentai Daishikkai",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "NO_RESULTS",
+      "exactCandidates": [],
+      "suggestions": []
+    },
+    {
+      "animeId": "personal-127",
+      "title": "Sakamoto Days",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "MULTIPLE_EXACT_FORMAT_MATCHES",
+      "exactCandidates": [
+        {
+          "anilistId": 177709,
+          "format": "ONA",
+          "title": {
+            "romaji": "SAKAMOTO DAYS",
+            "english": "SAKAMOTO DAYS",
+            "native": "SAKAMOTO DAYS"
+          },
+          "synonyms": [
+            "サカモト デイズ",
+            "أيام ساكاموتو",
+            "사카모토 데이즈",
+            "坂本日常",
+            "Дни Сакамото"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx177709-e5Qx6RlsBgD5.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx177709-e5Qx6RlsBgD5.png"
+          }
+        },
+        {
+          "anilistId": 184237,
+          "format": "ONA",
+          "title": {
+            "romaji": "SAKAMOTO DAYS Part 2",
+            "english": "SAKAMOTO DAYS Part 2",
+            "native": "SAKAMOTO DAYS 第２クール"
+          },
+          "synonyms": [
+            "サカモト デイズ 2クール"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx184237-OJAksU2fsIPx.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx184237-OJAksU2fsIPx.jpg"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 177709,
+          "format": "ONA",
+          "title": {
+            "romaji": "SAKAMOTO DAYS",
+            "english": "SAKAMOTO DAYS",
+            "native": "SAKAMOTO DAYS"
+          },
+          "synonyms": [
+            "サカモト デイズ",
+            "أيام ساكاموتو",
+            "사카모토 데이즈",
+            "坂本日常",
+            "Дни Сакамото"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx177709-e5Qx6RlsBgD5.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx177709-e5Qx6RlsBgD5.png"
+          }
+        },
+        {
+          "anilistId": 204363,
+          "format": "TV",
+          "title": {
+            "romaji": "SAKAMOTO DAYS 2nd Season",
+            "english": "SAKAMOTO DAYS Season 2",
+            "native": "SAKAMOTO DAYS 第2期"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx204363-rDHWhXs48Ygl.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx204363-rDHWhXs48Ygl.jpg"
+          }
+        },
+        {
+          "anilistId": 184237,
+          "format": "ONA",
+          "title": {
+            "romaji": "SAKAMOTO DAYS Part 2",
+            "english": "SAKAMOTO DAYS Part 2",
+            "native": "SAKAMOTO DAYS 第２クール"
+          },
+          "synonyms": [
+            "サカモト デイズ 2クール"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx184237-OJAksU2fsIPx.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx184237-OJAksU2fsIPx.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-132",
+      "title": "Yuusha-kei ni Shosu",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 167152,
+          "format": "TV",
+          "title": {
+            "romaji": "Yuusha Kei ni Shosu: Choubatsu Yuusha 9004-tai Keimu Kiroku",
+            "english": "Sentenced to Be a Hero",
+            "native": "勇者刑に処す 懲罰勇者9004隊刑務記録"
+          },
+          "synonyms": [
+            "ผู้กล้าโทษประหาร : บันทึกการรับโทษของหน่วยผู้กล้าต้องโทษ 9004",
+            "용사형에 처함"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx167152-O1pm6DWwifBD.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx167152-O1pm6DWwifBD.jpg"
+          }
+        },
+        {
+          "anilistId": 209963,
+          "format": "TV",
+          "title": {
+            "romaji": "Yuusha Kei ni Shosu: Choubatsu Yuusha 9004-tai Keimu Kiroku 2nd Season",
+            "english": "Sentenced to Be a Hero Season 2",
+            "native": "勇者刑に処す 懲罰勇者9004隊刑務記録 第2期"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx209963-LjQB2OV2jJMd.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx209963-LjQB2OV2jJMd.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "personal-142",
+      "title": "Death Note",
+      "format": "SERIES",
+      "source": "src/data/library.ts",
+      "reason": "MULTIPLE_EXACT_FORMAT_MATCHES",
+      "exactCandidates": [
+        {
+          "anilistId": 1535,
+          "format": "TV",
+          "title": {
+            "romaji": "DEATH NOTE",
+            "english": "Death Note",
+            "native": "DEATH NOTE"
+          },
+          "synonyms": [
+            "デスノート",
+            "死亡笔记",
+            "מחברת המוות",
+            "Notatnik śmierci",
+            "Carnet de la Mort",
+            "สมุดโน้ตกระชากวิญญาณ",
+            "مذكرة الموت",
+            "Тетрадь смерти"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1535-kUgkcrfOrkUM.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx1535-kUgkcrfOrkUM.jpg"
+          }
+        },
+        {
+          "anilistId": 2994,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "DEATH NOTE Rewrite",
+            "english": "Death Note: Relight",
+            "native": "DEATH NOTE リライト"
+          },
+          "synonyms": [
+            "Death Note Director's Cut: The Complete Ending Edition Special",
+            "Death Note Special",
+            "Genshisuru Kami",
+            "Visions of a God",
+            "Death Note Relight: La Visión de un Dios",
+            "DEATH NOTE:R",
+            "Death Note Τετράδιο Θανάτου Relight: Οράματα Ενός Θεού",
+            "Death Note Τετράδιο Θανάτου Relight: Οι διάδοχοι του L"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b2994-mlofkz5GpkIu.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b2994-mlofkz5GpkIu.jpg"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 1535,
+          "format": "TV",
+          "title": {
+            "romaji": "DEATH NOTE",
+            "english": "Death Note",
+            "native": "DEATH NOTE"
+          },
+          "synonyms": [
+            "デスノート",
+            "死亡笔记",
+            "מחברת המוות",
+            "Notatnik śmierci",
+            "Carnet de la Mort",
+            "สมุดโน้ตกระชากวิญญาณ",
+            "مذكرة الموت",
+            "Тетрадь смерти"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx1535-kUgkcrfOrkUM.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx1535-kUgkcrfOrkUM.jpg"
+          }
+        },
+        {
+          "anilistId": 2994,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "DEATH NOTE Rewrite",
+            "english": "Death Note: Relight",
+            "native": "DEATH NOTE リライト"
+          },
+          "synonyms": [
+            "Death Note Director's Cut: The Complete Ending Edition Special",
+            "Death Note Special",
+            "Genshisuru Kami",
+            "Visions of a God",
+            "Death Note Relight: La Visión de un Dios",
+            "DEATH NOTE:R",
+            "Death Note Τετράδιο Θανάτου Relight: Οράματα Ενός Θεού",
+            "Death Note Τετράδιο Θανάτου Relight: Οι διάδοχοι του L"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b2994-mlofkz5GpkIu.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b2994-mlofkz5GpkIu.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "movie-001",
+      "title": "Boku no Hero Academia: Two Heroes",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_RESULTS",
+      "exactCandidates": [],
+      "suggestions": []
+    },
+    {
+      "animeId": "movie-002",
+      "title": "Boku no Hero Academia: Heroes Rising",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 126661,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "Boku no Hero Academia THE MOVIE: Heroes:Rising - Epilogue Plus: Yume wo Genjitsu ni",
+            "english": null,
+            "native": "僕のヒーローアカデミア THE MOVIE ヒーローズ・ライジング エピローグ・プラス《夢を現実に》"
+          },
+          "synonyms": [
+            "Boku no Hero Academia: Heroes Rising - Epilogue Plus",
+            "Boku no Hero Academia: Heroes Rising Picture Drama",
+            "My Hero Academia: Heroes Rising Picture Drama"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx126661-61SI7n5njMNM.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx126661-61SI7n5njMNM.jpg"
+          }
+        },
+        {
+          "anilistId": 108553,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "Boku no Hero Academia THE MOVIE: Heroes:Rising",
+            "english": "My Hero Academia: Heroes Rising",
+            "native": "僕のヒーローアカデミア THE MOVIE ヒーローズ:ライジング"
+          },
+          "synonyms": [
+            "Boku no Hero Academia the Movie 2",
+            "My Hero Academia: El Despertar de los Héroes",
+            "มายฮีโร่ อคาเดเมีย เดอะมูฟวี่: วีรบุรุษกู้โลก",
+            "มายฮีโร่ อคาเดเมีย เดอะมูฟวี่: วีรบุรุษกู้โลก"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx108553-yOLfFogpWnTF.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx108553-yOLfFogpWnTF.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "movie-003",
+      "title": "Boku no Hero Academia: World Heroes' Mission",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 126659,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "Boku no Hero Academia THE MOVIE: World Heroes' Mission",
+            "english": "My Hero Academia: World Heroes' Mission",
+            "native": "僕のヒーローアカデミア THE MOVIE ワールド ヒーローズ ミッション"
+          },
+          "synonyms": [
+            "My Hero Academia the Movie 3",
+            "My Hero Academia: Misión Mundial de Héroes",
+            "My Hero Academia: Missão Mundial de Heróis",
+            "มาย ฮีโร่ อาคาเดเมีย : รวมพลฮีโร่กู้วิกฤตโลก"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx126659-i6c1PsXHGyke.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx126659-i6c1PsXHGyke.jpg"
+          }
+        },
+        {
+          "anilistId": 142411,
+          "format": "OVA",
+          "title": {
+            "romaji": "Boku no Hero Academia THE MOVIE: World Heroes' Mission - Tabidachi",
+            "english": null,
+            "native": "僕のヒーローアカデミア THE MOVIE ワールド ヒーローズ ミッション ≪旅立ち≫"
+          },
+          "synonyms": [
+            "My Hero Academia: World Heroes' Mission <<Departure>>",
+            "No.XXX ホークス：SOOTHE",
+            "Hawks: SOOTHE"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx142411-Hb2c6mMLs6Jb.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx142411-Hb2c6mMLs6Jb.png"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "movie-004",
+      "title": "Boku no Hero Academia: You're Next",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 168013,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "Boku no Hero Academia THE MOVIE: YOU'RE NEXT",
+            "english": "My Hero Academia: You’re Next",
+            "native": "僕のヒーローアカデミア THE MOVIE: ユア ネクスト"
+          },
+          "synonyms": [
+            "My Hero Academia the Movie 4",
+            "My Hero Academia: Agora é a Sua Vez"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx168013-eeyN5L8tmYKI.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx168013-eeyN5L8tmYKI.png"
+          }
+        },
+        {
+          "anilistId": 194403,
+          "format": "OVA",
+          "title": {
+            "romaji": "Boku no Hero Academia THE MOVIE: YOU'RE NEXT - A PIECE OF CAKE",
+            "english": null,
+            "native": "僕のヒーローアカデミア THE MOVIE ユアネクスト《A PIECE OF CAKE》"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx194403-kOJa1pMt3tjk.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx194403-kOJa1pMt3tjk.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "movie-027",
+      "title": "Naruto the Movie 2: Legend of the Stone of Gelel",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_RESULTS",
+      "exactCandidates": [],
+      "suggestions": []
+    },
+    {
+      "animeId": "movie-028",
+      "title": "Naruto the Movie 3: Guardians of the Crescent Moon Kingdom",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_RESULTS",
+      "exactCandidates": [],
+      "suggestions": []
+    },
+    {
+      "animeId": "movie-037",
+      "title": "One Piece: The Movie",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "MULTIPLE_EXACT_FORMAT_MATCHES",
+      "exactCandidates": [
+        {
+          "anilistId": 459,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "ONE PIECE (Movie)",
+            "english": "ONE PIECE: The Movie",
+            "native": "ONE PIECE (Movie)"
+          },
+          "synonyms": [
+            "One Piece: The Movie",
+            "One Piece (2000)",
+            "One Piece: La Película",
+            "วันพีซ เดอะมูฟวี่ 1 เกาะสมบัติแห่งวูนัน",
+            "Vua Hải Tặc: Đảo Châu Báu",
+            "One Piece: Golden Island Adventure",
+            "One Piece - Per tutto l'oro del mondo"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx459-Ivw65mUXackh.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx459-Ivw65mUXackh.png"
+          }
+        },
+        {
+          "anilistId": 3848,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "ONE PIECE THE MOVIE: Episode of Chopper Plus - Fuyu ni Saku, Kiseki no Sakura",
+            "english": "One Piece: Episode Of Chopper +: The Miracle Winter Cherry Blossom",
+            "native": "ONE PIECE THE MOVIE エピソードオブチョッパー+ 冬に咲く、奇跡の桜"
+          },
+          "synonyms": [
+            "Miracle Sakura",
+            "One Piece: Episodio de Chopper + El milagro del cerezo en invierno",
+            "One Piece: Episode of Chopper Plus - Bloom in the Winter, Miracle Sakura",
+            "One Piece Movie 09",
+            "One Piece - Il miracolo dei ciliegi in fiore"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx3848-SCnYGTn34Llt.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx3848-SCnYGTn34Llt.jpg"
+          }
+        },
+        {
+          "anilistId": 464,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "ONE PIECE THE MOVIE: Omatsuri Danshaku to Himitsu no Shima",
+            "english": "One Piece: Baron Omatsuri and the Secret Island",
+            "native": "ONE PIECE THE MOVIE オマツリ男爵と秘密の島"
+          },
+          "synonyms": [
+            "One Piece Movie 6",
+            "One Piece: El barón Omatsuri y la isla de los secretos",
+            "One Piece - L'isola segreta del barone Omatsuri"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx464-g4wcZPjbhY5j.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx464-g4wcZPjbhY5j.png"
+          }
+        },
+        {
+          "anilistId": 465,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "ONE PIECE THE MOVIE: Karakuri-jou no Mecha Kyohei",
+            "english": "One Piece: Mega Mecha Soldier of Karakuri Castle",
+            "native": "ONE PIECE THE MOVIE カラクリ城のメカ巨兵"
+          },
+          "synonyms": [
+            "One Piece: Karakuri Shiro no Mecha Kyohei",
+            "One Piece Movie 07",
+            "One Piece: El gran soldado mecánico del castillo Karakuri",
+            "The Giant Mechanical Soldier of Karakuri Castle",
+            "One Piece: Schloss Karakuris Metall-Soldaten",
+            "One Piece - I misteri dell'isola meccanica"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx465-qSRr0MKYhS0I.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx465-qSRr0MKYhS0I.jpg"
+          }
+        },
+        {
+          "anilistId": 462,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "ONE PIECE THE MOVIE: Dead End no Bouken",
+            "english": "One Piece The Movie: The Dead End Adventure",
+            "native": "ONE PIECE THE MOVIE デッドエンドの冒険"
+          },
+          "synonyms": [
+            "One Piece Movie 04",
+            "One Piece: La Aventura sin Salida",
+            "The Adventure of Deadend",
+            "One Piece: Dead End",
+            "วันพีซ เดอะมูฟวี่ 4 การผจญภัยที่เดดเอนด์",
+            "Vua Hải Tặc: Cuộc đua tử thần",
+            "One Piece - Trappola mortale"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx462-Ig8zfdsFWcql.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx462-Ig8zfdsFWcql.png"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 459,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "ONE PIECE (Movie)",
+            "english": "ONE PIECE: The Movie",
+            "native": "ONE PIECE (Movie)"
+          },
+          "synonyms": [
+            "One Piece: The Movie",
+            "One Piece (2000)",
+            "One Piece: La Película",
+            "วันพีซ เดอะมูฟวี่ 1 เกาะสมบัติแห่งวูนัน",
+            "Vua Hải Tặc: Đảo Châu Báu",
+            "One Piece: Golden Island Adventure",
+            "One Piece - Per tutto l'oro del mondo"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx459-Ivw65mUXackh.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx459-Ivw65mUXackh.png"
+          }
+        },
+        {
+          "anilistId": 3848,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "ONE PIECE THE MOVIE: Episode of Chopper Plus - Fuyu ni Saku, Kiseki no Sakura",
+            "english": "One Piece: Episode Of Chopper +: The Miracle Winter Cherry Blossom",
+            "native": "ONE PIECE THE MOVIE エピソードオブチョッパー+ 冬に咲く、奇跡の桜"
+          },
+          "synonyms": [
+            "Miracle Sakura",
+            "One Piece: Episodio de Chopper + El milagro del cerezo en invierno",
+            "One Piece: Episode of Chopper Plus - Bloom in the Winter, Miracle Sakura",
+            "One Piece Movie 09",
+            "One Piece - Il miracolo dei ciliegi in fiore"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx3848-SCnYGTn34Llt.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx3848-SCnYGTn34Llt.jpg"
+          }
+        },
+        {
+          "anilistId": 464,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "ONE PIECE THE MOVIE: Omatsuri Danshaku to Himitsu no Shima",
+            "english": "One Piece: Baron Omatsuri and the Secret Island",
+            "native": "ONE PIECE THE MOVIE オマツリ男爵と秘密の島"
+          },
+          "synonyms": [
+            "One Piece Movie 6",
+            "One Piece: El barón Omatsuri y la isla de los secretos",
+            "One Piece - L'isola segreta del barone Omatsuri"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx464-g4wcZPjbhY5j.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx464-g4wcZPjbhY5j.png"
+          }
+        },
+        {
+          "anilistId": 465,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "ONE PIECE THE MOVIE: Karakuri-jou no Mecha Kyohei",
+            "english": "One Piece: Mega Mecha Soldier of Karakuri Castle",
+            "native": "ONE PIECE THE MOVIE カラクリ城のメカ巨兵"
+          },
+          "synonyms": [
+            "One Piece: Karakuri Shiro no Mecha Kyohei",
+            "One Piece Movie 07",
+            "One Piece: El gran soldado mecánico del castillo Karakuri",
+            "The Giant Mechanical Soldier of Karakuri Castle",
+            "One Piece: Schloss Karakuris Metall-Soldaten",
+            "One Piece - I misteri dell'isola meccanica"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx465-qSRr0MKYhS0I.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx465-qSRr0MKYhS0I.jpg"
+          }
+        },
+        {
+          "anilistId": 2107,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "ONE PIECE: Episode of Alabasta - Sabaku no Oujo to Kaizoku-tachi",
+            "english": "One Piece: The Desert Princess and the Pirates, Adventures in Alabasta",
+            "native": "ONE PIECE エピソードオブアラバスタ 砂漠の王女と海賊たち"
+          },
+          "synonyms": [
+            "One Piece Movie 8: Episode of Alabasta - The Desert Princess and the Pirates",
+            "One Piece Película 8: La saga del Arabasta - Los piratas y la princesa del desierto",
+            "One Piece Movie 08",
+            "One Piece - Un'amicizia oltre i confini del mare"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx2107-H8bRuRRbhCIJ.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx2107-H8bRuRRbhCIJ.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "movie-040",
+      "title": "One Piece: Dead End Adventure",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 462,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "ONE PIECE THE MOVIE: Dead End no Bouken",
+            "english": "One Piece The Movie: The Dead End Adventure",
+            "native": "ONE PIECE THE MOVIE デッドエンドの冒険"
+          },
+          "synonyms": [
+            "One Piece Movie 04",
+            "One Piece: La Aventura sin Salida",
+            "The Adventure of Deadend",
+            "One Piece: Dead End",
+            "วันพีซ เดอะมูฟวี่ 4 การผจญภัยที่เดดเอนด์",
+            "Vua Hải Tặc: Cuộc đua tử thần",
+            "One Piece - Trappola mortale"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx462-Ig8zfdsFWcql.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx462-Ig8zfdsFWcql.png"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "movie-043",
+      "title": "One Piece: The Giant Mechanical Soldier of Karakuri Castle",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_RESULTS",
+      "exactCandidates": [],
+      "suggestions": []
+    },
+    {
+      "animeId": "movie-044",
+      "title": "One Piece: Episode of Alabasta",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 2107,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "ONE PIECE: Episode of Alabasta - Sabaku no Oujo to Kaizoku-tachi",
+            "english": "One Piece: The Desert Princess and the Pirates, Adventures in Alabasta",
+            "native": "ONE PIECE エピソードオブアラバスタ 砂漠の王女と海賊たち"
+          },
+          "synonyms": [
+            "One Piece Movie 8: Episode of Alabasta - The Desert Princess and the Pirates",
+            "One Piece Película 8: La saga del Arabasta - Los piratas y la princesa del desierto",
+            "One Piece Movie 08",
+            "One Piece - Un'amicizia oltre i confini del mare"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx2107-H8bRuRRbhCIJ.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx2107-H8bRuRRbhCIJ.jpg"
+          }
+        },
+        {
+          "anilistId": 106572,
+          "format": "SPECIAL",
+          "title": {
+            "romaji": "ONE PIECE: Episode of Alabasta - Sabaku no Oujo to Kaizoku-tachi",
+            "english": null,
+            "native": "ONE PIECE エピソードオブアラバスタ 砂漠の王女と海賊たち"
+          },
+          "synonyms": [],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/n106572-k1gqIsDcqGaV.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/n106572-k1gqIsDcqGaV.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "movie-045",
+      "title": "One Piece: Episode of Chopper Plus",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 3848,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "ONE PIECE THE MOVIE: Episode of Chopper Plus - Fuyu ni Saku, Kiseki no Sakura",
+            "english": "One Piece: Episode Of Chopper +: The Miracle Winter Cherry Blossom",
+            "native": "ONE PIECE THE MOVIE エピソードオブチョッパー+ 冬に咲く、奇跡の桜"
+          },
+          "synonyms": [
+            "Miracle Sakura",
+            "One Piece: Episodio de Chopper + El milagro del cerezo en invierno",
+            "One Piece: Episode of Chopper Plus - Bloom in the Winter, Miracle Sakura",
+            "One Piece Movie 09",
+            "One Piece - Il miracolo dei ciliegi in fiore"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx3848-SCnYGTn34Llt.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx3848-SCnYGTn34Llt.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "movie-055",
+      "title": "Bleach: Hell Verse",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 8247,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "BLEACH: Jigoku-hen",
+            "english": "Bleach the Movie: Hell Verse",
+            "native": "BLEACH 地獄篇"
+          },
+          "synonyms": [
+            "Bleach Movie 4",
+            "Bleach: The Hell Chapter",
+            "بليتش: قصيدة الجحيم"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx8247-VppsQKlgXoXr.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx8247-VppsQKlgXoXr.png"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "movie-056",
+      "title": "Attack on Titan: Crimson Bow and Arrow",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 20691,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "Shingeki no Kyojin Zenpen: Guren no Yumiya",
+            "english": "Attack on Titan Part I: Crimson Bow and Arrow",
+            "native": "劇場版「進撃の巨人」前編～紅蓮の弓矢～"
+          },
+          "synonyms": [
+            "Attack on Titan Teil I: Feuerroter Pfeil und Bogen",
+            "Attack on Titan: O Arco e Flecha Escarlate"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20691-dnv0rkpbgBDJ.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20691-dnv0rkpbgBDJ.png"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "movie-057",
+      "title": "Attack on Titan: Wings of Freedom",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 20692,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "Shingeki no Kyojin Kouhen: Jiyuu no Tsubasa",
+            "english": "Attack on Titan Part II: Wings of Freedom",
+            "native": "劇場版「進撃の巨人」後編～自由の翼～"
+          },
+          "synonyms": [
+            "Attack on Titan: Asas da Liberdade"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx20692-fSDEpfDtDg9u.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20692-fSDEpfDtDg9u.png"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "movie-058",
+      "title": "Attack on Titan: Roar of Awakening",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 100465,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "Shingeki no Kyojin Season 2: Kakusei no Houkou",
+            "english": "Attack on Titan: The Roar of Awakening",
+            "native": "劇場版「進撃の巨人」Season 2～覚醒の咆哮～"
+          },
+          "synonyms": [
+            "AoT",
+            "SnK",
+            "Attack on Titan: O Rugido do Despertar"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/nx100465-ivKS0RqXg5dI.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx100465-ivKS0RqXg5dI.png"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "movie-062",
+      "title": "Demon Slayer: Mugen Train",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 112151,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "Kimetsu no Yaiba: Mugen Ressha-hen",
+            "english": "Demon Slayer -Kimetsu no Yaiba- The Movie: Mugen Train",
+            "native": "鬼滅の刃 無限列車編"
+          },
+          "synonyms": [
+            "KnY Movie",
+            "Els Guardians de la Nit: El Tren Infinit",
+            "Guardianes de la Noche: Tren Infinito",
+            "Demon Slayer: Mugen Treni",
+            "Demon Slayer: Il Treno Mugen",
+            "鬼灭之刃：无限列车篇",
+            "قاتل الشياطين الفيلم: قطار اللانهاية",
+            "ดาบพิฆาตอสูร เดอะมูฟวี่ : ศึกรถไฟสู่นิรันดร์",
+            "Demon Slayer: Kimetsu no Yaiba - Le film : Le train de l'Infini",
+            "ΚΥΝΗΓΟΣ ΔΑΙΜΟΝΩΝ: KIMETSU NO YAIBA – Η ΤΑΙΝΙΑ: ΤΟ ΤΡΕΝΟ ΜΟΥΓΚΕΝ",
+            "극장판 귀멸의 칼날: 무한열차편",
+            "Клинок, Рассекающий Демонов: Бесконечный Поезд"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx112151-1qlQwPB1RrJe.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx112151-1qlQwPB1RrJe.png"
+          }
+        },
+        {
+          "anilistId": 129874,
+          "format": "TV",
+          "title": {
+            "romaji": "Kimetsu no Yaiba: Mugen Ressha-hen (TV)",
+            "english": "Demon Slayer: Kimetsu no Yaiba Mugen Train Arc",
+            "native": "鬼滅の刃 無限列車編 (TV)"
+          },
+          "synonyms": [
+            "KnY 2",
+            "ดาบพิฆาตอสูร : ศึกรถไฟสู่นิรันดร์ (TV)",
+            "鬼灭之刃 无限列车篇",
+            "Demon Slayer: Kimetsu no Yaiba: Le train de l'Infini",
+            "Demon Slayer: Kimetsu no Yaiba season 2",
+            "Miecz zabójcy demonów – Kimetsu no Yaiba: Nieskończony Pociąg",
+            "귀멸의 칼날: 무한열차편",
+            "Клинок, Рассекающий Демонов: Бесконечный Поезд"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx129874-g6ZKXB94Hui1.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx129874-g6ZKXB94Hui1.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "movie-063",
+      "title": "Kimetsu no Yaiba: Mugen-jō-hen",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_RESULTS",
+      "exactCandidates": [],
+      "suggestions": []
+    },
+    {
+      "animeId": "movie-066",
+      "title": "Trinity Seven the Movie: The Eternal Library and the Alchemist Girl",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_RESULTS",
+      "exactCandidates": [],
+      "suggestions": []
+    },
+    {
+      "animeId": "movie-070",
+      "title": "Fairy Tail the Movie: Phoenix Priestess",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_RESULTS",
+      "exactCandidates": [],
+      "suggestions": []
+    },
+    {
+      "animeId": "movie-074",
+      "title": "The Seven Deadly Sins: Prisoners of the Sky",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 99540,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "Nanatsu no Taizai Movie: Tenkuu no Torawarebito",
+            "english": "The Seven Deadly Sins the Movie: Prisoners of the Sky",
+            "native": "劇場版 七つの大罪 天空の囚われ人"
+          },
+          "synonyms": [
+            "ศึกตำนาน 7 อัศวิน: นักโทษแห่งท้องนภา ",
+            "Семь смертных грехов: Узники небес"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/nx99540-QnY48c1oifvY.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/nx99540-QnY48c1oifvY.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "movie-076",
+      "title": "The Seven Deadly Sins: Grudge of Edinburgh Part 1",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "EXACT_TITLE_BUT_FORMAT_MISMATCH",
+      "exactCandidates": [
+        {
+          "anilistId": 141352,
+          "format": "ONA",
+          "title": {
+            "romaji": "Nanatsu no Taizai: Ensa no Edinburgh - Zenpen",
+            "english": "The Seven Deadly Sins: Grudge of Edinburgh Part 1",
+            "native": "七つの大罪 怨嗟のエジンバラ 前編"
+          },
+          "synonyms": [
+            "ศึกตำนาน 7 อัศวิน: แค้นเอดินเบอระ",
+            "Nanatsu no Taizai: Ensa no Edinburgh Part 1",
+            "Сім смертних гріхів: Гнів Единбургу. Частина 1",
+            "Семь смертных грехов. Гнев Эдинбурга. Часть 1"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx141352-5GzCzHxoH29X.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx141352-5GzCzHxoH29X.jpg"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 141352,
+          "format": "ONA",
+          "title": {
+            "romaji": "Nanatsu no Taizai: Ensa no Edinburgh - Zenpen",
+            "english": "The Seven Deadly Sins: Grudge of Edinburgh Part 1",
+            "native": "七つの大罪 怨嗟のエジンバラ 前編"
+          },
+          "synonyms": [
+            "ศึกตำนาน 7 อัศวิน: แค้นเอดินเบอระ",
+            "Nanatsu no Taizai: Ensa no Edinburgh Part 1",
+            "Сім смертних гріхів: Гнів Единбургу. Частина 1",
+            "Семь смертных грехов. Гнев Эдинбурга. Часть 1"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx141352-5GzCzHxoH29X.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx141352-5GzCzHxoH29X.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "movie-077",
+      "title": "The Seven Deadly Sins: Grudge of Edinburgh Part 2",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "EXACT_TITLE_BUT_FORMAT_MISMATCH",
+      "exactCandidates": [
+        {
+          "anilistId": 162291,
+          "format": "ONA",
+          "title": {
+            "romaji": "Nanatsu no Taizai: Ensa no Edinburgh - Kouhen",
+            "english": "The Seven Deadly Sins: Grudge of Edinburgh Part 2",
+            "native": "七つの大罪 怨嗟のエジンバラ 後編"
+          },
+          "synonyms": [
+            "Nanatsu no Taizai: Ensa no Edinburgh Part 2",
+            "Сім смертних гріхів: Гнів Единбургу. Частина 2",
+            "Семь смертных грехов. Гнев Эдинбурга. Часть 2"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx162291-gw8Vc73wJORZ.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx162291-gw8Vc73wJORZ.jpg"
+          }
+        }
+      ],
+      "suggestions": [
+        {
+          "anilistId": 162291,
+          "format": "ONA",
+          "title": {
+            "romaji": "Nanatsu no Taizai: Ensa no Edinburgh - Kouhen",
+            "english": "The Seven Deadly Sins: Grudge of Edinburgh Part 2",
+            "native": "七つの大罪 怨嗟のエジンバラ 後編"
+          },
+          "synonyms": [
+            "Nanatsu no Taizai: Ensa no Edinburgh Part 2",
+            "Сім смертних гріхів: Гнів Единбургу. Частина 2",
+            "Семь смертных грехов. Гнев Эдинбурга. Часть 2"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx162291-gw8Vc73wJORZ.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx162291-gw8Vc73wJORZ.jpg"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "movie-078",
+      "title": "Kuroko's Basketball: Winter Cup Compilation — Shadow and Light",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_RESULTS",
+      "exactCandidates": [],
+      "suggestions": []
+    },
+    {
+      "animeId": "movie-079",
+      "title": "Kuroko's Basketball: Winter Cup Compilation — Beyond the Tears",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_RESULTS",
+      "exactCandidates": [],
+      "suggestions": []
+    },
+    {
+      "animeId": "movie-080",
+      "title": "Kuroko's Basketball: Winter Cup Compilation — Crossing the Door",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_RESULTS",
+      "exactCandidates": [],
+      "suggestions": []
+    },
+    {
+      "animeId": "movie-086",
+      "title": "Sword Art Online Progressive: Aria of a Starless Night",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 124140,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "Sword Art Online: Progressive - Hoshinaki Yoru no Aria",
+            "english": "Sword Art Online the Movie -Progressive- Aria of a Starless Night",
+            "native": "劇場版 ソードアート・オンライン プログレッシブ 星なき夜のアリア"
+          },
+          "synonyms": [
+            "SAO Progressive",
+            "Sword Art Online: Progressive - อาเรียแห่งคืนที่ไร้ดาว",
+            "Sword Art Online Progressive: Ária de Uma Noite Sem Estrelas",
+            "SAOP",
+            "Sword Art Online: Progressive - Aria de una noche sin estrellas"
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx124140-HNL0CpH6ig6y.png",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx124140-HNL0CpH6ig6y.png"
+          }
+        }
+      ]
+    },
+    {
+      "animeId": "movie-087",
+      "title": "Sword Art Online Progressive: Scherzo of Deep Night",
+      "format": "MOVIE",
+      "source": "src/data/franchise-movies.ts",
+      "reason": "NO_EXACT_TITLE_MATCH",
+      "exactCandidates": [],
+      "suggestions": [
+        {
+          "anilistId": 140999,
+          "format": "MOVIE",
+          "title": {
+            "romaji": "Sword Art Online: Progressive - Kuraki Yuuyami no Scherzo",
+            "english": "Sword Art Online the Movie -Progressive- Scherzo of Deep Night",
+            "native": "劇場版 ソードアート・オンライン プログレッシブ 冥き夕闇のスケルツォ"
+          },
+          "synonyms": [
+            "Sword Art Online: Progressive - Scherzo of Dark Night",
+            "SAO Progressive",
+            "SAOP",
+            "Sword Art Online : Progressive - สแกรโซแห่งสนธยาโศก",
+            "Sword Art Online: Progressive - Scherzo de una profunda oscuridad",
+            "Sword Art Online Progressive: Scherzo do Crepúsculo Sombrio "
+          ],
+          "coverImage": {
+            "extraLarge": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx140999-8nRYAPkywhbl.jpg",
+            "large": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx140999-8nRYAPkywhbl.jpg"
+          }
+        }
+      ]
+    }
+  ]
 }
