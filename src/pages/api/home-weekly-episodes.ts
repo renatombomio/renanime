@@ -25,8 +25,18 @@ type EpisodeRecord = {
 };
 
 const TENRAI = "https://api.tenrai.org/v1";
-const WEEK_START = "2026-11-02";
-const WEEK_END = "2026-11-09";
+function getCurrentWeekRange() {
+  const now = new Date();
+  const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  const day = monday.getUTCDay();
+  monday.setUTCDate(monday.getUTCDate() - (day === 0 ? 6 : day - 1));
+  const nextMonday = new Date(monday);
+  nextMonday.setUTCDate(monday.getUTCDate() + 7);
+  return {
+    start: monday.toISOString().slice(0, 10),
+    end: nextMonday.toISOString().slice(0, 10),
+  };
+}
 
 async function getJson<T>(url: string): Promise<T | null> {
   try {
@@ -42,6 +52,7 @@ async function getJson<T>(url: string): Promise<T | null> {
 }
 
 export const GET: APIRoute = async () => {
+  const { start: WEEK_START, end: WEEK_END } = getCurrentWeekRange();
   const top = await getJson<{ data?: TopGroup[] }>(`${TENRAI}/top/episodes?limit=25`);
   const groups = Array.isArray(top?.data) ? top.data : [];
   const candidates = groups.flatMap((group) => {
