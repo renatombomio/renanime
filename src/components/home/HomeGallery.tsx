@@ -26,12 +26,11 @@ async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null
 
 export default function HomeGallery({ entries, lang = "es" }: Props) {
   const verifiedEntries = useMemo(() => entries.filter((entry) => hasRenAnimeIdentity(entry.animeId)), [entries]);
-  const [visible, setVisible] = useState(PAGE_SIZE);
+  const [visible] = useState(PAGE_SIZE);
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(false);
 
   const page = verifiedEntries.slice(0, visible);
-  const hasMore = visible < verifiedEntries.length;
 
   useEffect(() => {
     const missing = page.filter((entry) => !(entry.animeId in media));
@@ -47,11 +46,6 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
 
     return () => { cancelled = true; };
   }, [visible, verifiedEntries, media]);
-
-  const loadMore = () => {
-    if (loading || !hasMore) return;
-    setVisible((current) => Math.min(current + PAGE_SIZE, verifiedEntries.length));
-  };
 
   const columns = [page.filter((_, index) => index % 3 === 0), page.filter((_, index) => index % 3 === 1), page.filter((_, index) => index % 3 === 2)];
 
