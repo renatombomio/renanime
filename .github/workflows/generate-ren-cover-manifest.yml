@@ -1,0 +1,49 @@
+name: Generate Ren cover manifest
+
+on:
+  push:
+    branches:
+      - feature/global-cover-resolution
+    paths:
+      - "scripts/generate-ren-cover-manifest.mjs"
+      - "src/data/library.ts"
+      - "src/data/franchise-movies.ts"
+      - ".github/workflows/generate-ren-cover-manifest.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ren-cover-manifest-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Resolve and verify cover URLs
+        run: node scripts/generate-ren-cover-manifest.mjs
+
+      - name: Commit generated manifest and unresolved report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/ren-cover-manifest.json reports/ren-cover-manifest-unresolved.json
+          if git diff --cached --quiet; then
+            echo "No manifest changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: generate verified Ren cover manifest"
+          git push
