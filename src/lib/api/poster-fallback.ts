@@ -126,10 +126,10 @@ function requestAniList(query: string, format?: PosterFormat): Promise<Candidate
       clearTimeout(timeout);
     }
   }).then((candidate) => {
-    aniListCache.set(key, candidate);
+    // Cache only successful matches. A temporary provider outage must be retryable.
+    if (candidate) aniListCache.set(key, candidate);
     return candidate;
   }).catch(() => {
-    aniListCache.set(key, null);
     return null;
   }).finally(() => {
     aniListPending.delete(key);
@@ -239,10 +239,9 @@ export function isAnimeCandidateMatch(
   ));
 }
 
-async function resolvePoster(query: string, format?: PosterFormat): Promise<string | null> {
-  // AniList is the primary catalogue. When it identifies the exact entry,
-  // use its MAL id for Jikan instead of performing another title search.
-  const aniList = await requestAniList(query, format);
+async function resolvePoster(query: string, format?: PosterFormat, skipAniList = false): Promise<string | null> {
+  // AniList is primary unless the caller has already tried it for this entry.
+  const aniList = skipAniList ? null : await requestAniList(query, format);
   if (aniList?.coverImage?.extraLarge || aniList?.coverImage?.large) {
     return aniList.coverImage.extraLarge || aniList.coverImage.large || null;
   }
@@ -252,33 +251,32 @@ async function resolvePoster(query: string, format?: PosterFormat): Promise<stri
     if (jikanById) return jikanById;
   }
 
-  // Only fall back to Jikan title search when AniList could not identify the entry.
+  // Always attempt Jikan by title when no usable poster was found in AniList.
   const jikan = await requestJikan(query, format);
   if (jikan) return jikan;
 
   return requestKitsu(query, format);
 }
 
-export function fetchFallbackPoster(title: string, format?: PosterFormat): Promise<string | null> {
+export function fetchFallbackPoster(title: string, format?: PosterFormat, options?: { skipAniList?: boolean }): Promise<string | null> {
   const query = title.trim();
   if (!query) return Promise.resolve(null);
 
-  const key = query.toLocaleLowerCase("en") + "::" + (format || "");
+  const skipAniList = options?.skipAniList === true;
+  const key = query.toLocaleLowerCase("en") + "::" + (format || "") + (skipAniList ? "::jikan-first" : "");
   if (cache.has(key)) return Promise.resolve(cache.get(key) ?? null);
 
   const existing = pending.get(key);
   if (existing) return existing;
 
   const task = queue
-    .then(() => resolvePoster(query, format))
+    .then(() => resolvePoster(query, format, skipAniList))
     .then((poster) => {
-      cache.set(key, poster);
+      // Do not persist misses: provider timeouts and rate limits are transient.
+      if (poster) cache.set(key, poster);
       return poster;
     })
-    .catch(() => {
-      cache.set(key, null);
-      return null;
-    })
+    .catch(() => null)
     .finally(() => pending.delete(key));
 
   pending.set(key, task);
