@@ -341,14 +341,14 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         const media = primary.length ? primary : await fetchJikanSearch(submitted, page);
         if (cancelled) return;
         setResults((current) => page === 1 ? media : [...current, ...media]);
-        setHasNext(primary.length ? Boolean(payload.data?.Page?.pageInfo?.hasNextPage) : media.length === PAGE_SIZE);
+        setHasNext(Boolean(primary.length && payload.data?.Page?.pageInfo?.hasNextPage));
         setSearchError(false);
       } catch {
         try {
           const fallback = await fetchJikanSearch(submitted, page);
           if (cancelled) return;
           setResults((current) => page === 1 ? fallback : [...current, ...fallback]);
-          setHasNext(fallback.length === PAGE_SIZE);
+          setHasNext(false);
           setSearchError(false);
         } catch {
           if (!cancelled) setSearchError(true);
