@@ -51,7 +51,21 @@ export default function GhibliView({ films, lang = "es" }: { films: Film[]; lang
           } catch { /* A missing fallback poster must not block the grid. */ }
         }));
       })
-      .catch(() => {})
+      .catch(async () => {
+        // If the AniList batch fails, still resolve every film through Jikan/Kitsu.
+        const fallbackResults = await Promise.all(films.map(async (film) => ({
+          id: film.id,
+          poster: await fetchFallbackPoster(film.searchTitle || film.title, undefined, { skipAniList: true }),
+        })));
+        if (cancelled) return;
+        setMedia((current) => {
+          const next = { ...current };
+          fallbackResults.forEach(({ id, poster }) => {
+            if (poster) next[id] = { ...(next[id] ?? { id: 0 }), coverImage: { extraLarge: poster, large: poster } };
+          });
+          return next;
+        });
+      })
       .finally(() => { if (!cancelled) setLoading(false); });
 
     return () => { cancelled = true; };
