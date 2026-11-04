@@ -1,4 +1,5 @@
 import { fetchRenMediaByIdentity } from "../../lib/api/ren-anime-identities";
+import { getDisplayTitle } from "../../lib/anime/display-title";
 import AnimePosterDisplay from "../anime/AnimePosterDisplay";
 import { useEffect, useMemo, useState } from "react";
 import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
@@ -126,7 +127,7 @@ async function fetchMedia(entries: Entry[], resolveFallbackPosters = true): Prom
 }
 
 function titleOf(entry: Entry, media?: Media | null) {
-  return media?.title?.native || media?.title?.english || media?.title?.romaji || entry.title;
+  return getDisplayTitle(media?.title, entry.title);
 }
 
 function isMovie(entry: Entry, media?: Media | null) {
