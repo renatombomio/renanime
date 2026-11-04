@@ -3,7 +3,6 @@ export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 import { useT } from "../../i18n";
 import Navbar from "../../components/layout/Navbar.astro";
-import SectionHeader from "../../components/ui/SectionHeader.astro";
 import PersonalLibraryView from "../../components/personal-library/PersonalLibraryView";
 const t = useT(Astro.locals.lang);
 ---
@@ -12,14 +11,7 @@ const t = useT(Astro.locals.lang);
   <Navbar />
 
   <main id="main-content" class="collection-page">
-    <div class="collection-header">
-      <SectionHeader
-        variant="ren"
-        title={t("library.pageHeading")}
-        description={t("library.pageDescription")}
-      />
-    </div>
-
+    <h1 class="sr-only">{t("library.pageHeading")}</h1>
     <section class="collection-content" aria-label={Astro.locals.lang === "en" ? "My anime collection" : "Mi colección de anime"}>
       <PersonalLibraryView mode="WATCHED" lang={Astro.locals.lang} client:load />
     </section>
@@ -32,27 +24,15 @@ const t = useT(Astro.locals.lang);
     padding-block: clamp(6rem, 11vw, 10rem) var(--section-space);
   }
 
-  .collection-header,
   .collection-content {
     width: min(calc(100% - (var(--gutter) * 2)), var(--container-max));
     margin-inline: auto;
-  }
-
-  .collection-header {
-    margin-bottom: clamp(3.5rem, 7vw, 6rem);
-  }
-
-  .collection-content {
     container-type: inline-size;
   }
 
   @media (max-width: 560px) {
     .collection-page {
       padding-top: 4.5rem;
-    }
-
-    .collection-header {
-      margin-bottom: 2.5rem;
     }
   }
 </style>
