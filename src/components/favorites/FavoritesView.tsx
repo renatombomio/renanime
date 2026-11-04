@@ -83,7 +83,7 @@ export default function FavoritesView({ entries, recommendations, lang = "es" }:
       // Resolve fallback posters in the background so the next AniList batch
       // can render without waiting for the slow, rate-limited poster queue.
       void Promise.all(missingPosters.map(async ({ entry, selected }) => {
-        const poster = await fetchFallbackPoster(entry.title, entry.format);
+        const poster = await fetchFallbackPoster(entry.title, entry.format, { skipAniList: true });
         if (poster && !cancelled) {
           setMedia((current) => ({
             ...current,
