@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useT } from "../../i18n";
 
 interface RankedEpisode {
   rank: number;
@@ -37,6 +38,7 @@ export default function SeasonEpisodes({ lang = "es" }: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const isEnglish = lang === "en";
+  const t = useT(lang);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -59,20 +61,16 @@ export default function SeasonEpisodes({ lang = "es" }: Props) {
     return () => controller.abort();
   }, []);
 
-  const seasonLabel = data?.season
-    ? SEASON_LABELS[data.season]?.[isEnglish ? "en" : "es"]
-    : null;
+  const seasonLabel = data?.season ? t((`seasonEpisodes.season.${data.season}`) as Parameters<typeof t>[0]) : null;
 
   return (
     <section className="season-episodes" aria-labelledby="season-episodes-title">
       <div className="season-episodes-heading">
         <div>
-          <p className="season-episodes-eyebrow">{isEnglish ? "THE CURRENT SEASON" : "TEMPORADA ACTUAL"}</p>
-          <h2 id="season-episodes-title">{isEnglish ? "Top episodes" : "Episodios destacados"}</h2>
+          <p className="season-episodes-eyebrow">{t("seasonEpisodes.eyebrow")}</p>
+          <h2 id="season-episodes-title">{t("seasonEpisodes.heading")}</h2>
           <p className="season-episodes-description">
-            {isEnglish
-              ? "The five highest-rated episodes from the current anime season."
-              : "Los cinco episodios mejor valorados de la temporada de anime actual."}
+            {t("seasonEpisodes.description")}
           </p>
         </div>
         {seasonLabel && data?.seasonYear && (
@@ -81,9 +79,9 @@ export default function SeasonEpisodes({ lang = "es" }: Props) {
       </div>
 
       {loading ? (
-        <p className="season-episodes-state">{isEnglish ? "Loading verified episode ratings…" : "Cargando puntuaciones verificadas…"}</p>
+        <p className="season-episodes-state">{t("seasonEpisodes.loading")}</p>
       ) : error ? (
-        <p className="season-episodes-state">{isEnglish ? "The ranking is temporarily unavailable." : "El ranking no está disponible temporalmente."}</p>
+        <p className="season-episodes-state">{t("seasonEpisodes.error")}</p>
       ) : data?.episodes?.length ? (
         <ol className="season-episodes-list">
           {data.episodes.map((episode) => (
@@ -95,7 +93,7 @@ export default function SeasonEpisodes({ lang = "es" }: Props) {
               <div className="season-episodes-info">
                 <a className="season-episodes-anime" href={`/${isEnglish ? "en/" : ""}anime/${episode.animeId}`}>{episode.animeTitle}</a>
                 <p className="season-episodes-title">
-                  {isEnglish ? "Episode" : "Episodio"} {episode.episodeNumber}
+                  {t("seasonEpisodes.episode")} {episode.episodeNumber}
                   {episode.episodeTitle ? ` · ${episode.episodeTitle}` : ""}
                 </p>
                 <time dateTime={episode.airedAt}>{new Date(episode.airedAt).toLocaleDateString(isEnglish ? "en-GB" : "es-ES", { day: "numeric", month: "short" })}</time>
@@ -108,11 +106,11 @@ export default function SeasonEpisodes({ lang = "es" }: Props) {
         </ol>
       ) : (
         <p className="season-episodes-state">
-          {isEnglish ? "There are not enough verified episode ratings yet." : "Todavía no hay suficientes puntuaciones verificadas de episodios."}
+          {t("seasonEpisodes.empty")}
         </p>
       )}
       <p className="season-episodes-source">
-        {isEnglish ? "Episode ratings: MyAnimeList via Jikan · Refreshed every 14 days." : "Puntuaciones: MyAnimeList mediante Jikan · Actualización cada 14 días."}
+        {t("seasonEpisodes.source")}
       </p>
 
       <style>{`
