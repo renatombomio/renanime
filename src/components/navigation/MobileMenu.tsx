@@ -92,7 +92,7 @@ export default function MobileMenu({ variant = "default", lang, showLogout = fal
         .mobile-toggle span {
           position: absolute; width: 20px; height: 1.5px; border-radius: 999px;
           background: currentColor; transform-origin: center;
-          transition: transform 420ms cubic-bezier(.22,1,.36,1);
+          transition: transform var(--duration-slow) var(--ease-out);
         }
         .mobile-toggle span:first-child { transform: translateY(-4px); }
         .mobile-toggle span:last-child { transform: translateY(4px); }
@@ -101,51 +101,51 @@ export default function MobileMenu({ variant = "default", lang, showLogout = fal
 
         .mobile-backdrop {
           position: fixed; top: 68px; right: 0; bottom: 0; left: 0; z-index: 0; width: 100%; height: auto;
-          border: 0; padding: 0; background: rgba(0,0,0,.42);
+          border: 0; padding: 0; background: var(--color-overlay);
           opacity: 0; visibility: hidden; pointer-events: none;
           backdrop-filter: blur(3px);
-          transition: opacity 360ms ease, visibility 0s linear 360ms;
+          transition: opacity var(--duration-base) var(--ease-out), visibility 0s linear var(--duration-base);
         }
         .mobile-nav.is-open .mobile-backdrop {
           opacity: 1; visibility: visible; pointer-events: auto;
-          transition: opacity 360ms ease, visibility 0s;
+          transition: opacity var(--duration-base) var(--ease-out), visibility 0s;
         }
 
         .mobile-panel {
           position: fixed; top: 68px; right: 0; left: 0; z-index: 2;
           min-height: calc(100dvh - 68px); max-height: calc(100dvh - 68px);
           padding: 8px 24px 28px; overflow-y: auto; overscroll-behavior: contain;
-          background: #090909; color: #f5f2ec; opacity: 0; visibility: hidden;
+          background: var(--color-background); color: var(--color-text-primary); opacity: 0; visibility: hidden;
           pointer-events: none; transform: translateY(-18px);
-          transition: opacity 360ms ease, transform 480ms cubic-bezier(.22,1,.36,1), visibility 0s linear 480ms;
+          transition: opacity var(--duration-base) var(--ease-out), transform var(--duration-slow) var(--ease-out), visibility 0s linear var(--duration-slow);
           box-shadow: 0 24px 60px rgba(0,0,0,.3);
           -webkit-overflow-scrolling: touch;
         }
         .mobile-nav.is-open .mobile-panel {
           opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0);
-          transition: opacity 360ms ease, transform 480ms cubic-bezier(.22,1,.36,1), visibility 0s;
+          transition: opacity var(--duration-base) var(--ease-out), transform var(--duration-slow) var(--ease-out), visibility 0s;
         }
         .mobile-panel nav { display: flex; flex-direction: column; }
 
         .mobile-link {
           display: flex; align-items: center; justify-content: space-between;
           min-height: 44px; padding: 9px 0;
-          border-bottom: 1px solid rgba(245,242,236,.1);
-          color: #b9b2a7; font-family: var(--font-meta); font-size: 11px;
+          border-bottom: 1px solid var(--color-border);
+          color: var(--color-text-secondary); font-family: var(--font-meta); font-size: 11px;
           font-weight: 500; letter-spacing: .075em; line-height: 1.2;
           text-transform: uppercase; text-decoration: none; opacity: 0;
           transform: translateY(14px);
-          transition: color 180ms ease, opacity 420ms cubic-bezier(.22,1,.36,1), transform 420ms cubic-bezier(.22,1,.36,1);
+          transition: color var(--duration-fast) var(--ease-out), opacity var(--duration-slow) var(--ease-out), transform var(--duration-slow) var(--ease-out);
           transition-delay: 0ms; -webkit-tap-highlight-color: transparent;
         }
         .mobile-nav.is-open .mobile-link {
           opacity: 1; transform: translateY(0);
           transition-delay: calc(70ms + (var(--menu-index) * 48ms));
         }
-        .mobile-link:active { color: #f5f2ec; }
-        .mobile-logout { min-height:54px; padding:13px 0; border:0; border-bottom:1px solid rgba(245,242,236,.1); background:transparent; color:#ec4899; text-align:left; font:inherit; font-family:var(--font-meta); font-size:12px; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; }
-        .mobile-link[aria-current="page"] { color: #f5f2ec; }
-        .mobile-link[aria-current="page"]::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: #a48a68; }
+        .mobile-link:active { color: var(--color-text-primary); }
+        .mobile-logout { min-height:54px; padding:13px 0; border:0; border-bottom:1px solid rgba(245,242,236,.1); background:transparent; color:var(--color-accent); text-align:left; font:inherit; font-family:var(--font-meta); font-size:12px; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; }
+        .mobile-link[aria-current="page"] { color: var(--color-text-primary); }
+        .mobile-link[aria-current="page"]::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--color-accent); }
         .mobile-link--secret i {
           color: #c2ae91;
           font-family: Georgia,serif;
