@@ -5,6 +5,7 @@ import Navbar from "../components/layout/Navbar.astro";
 import Footer from "../components/layout/Footer.astro";
 import Hero from "../components/hero/Hero.astro";
 import HomeGallery from "../components/home/HomeGallery";
+import AnimeOfTheWeek from "../components/home/AnimeOfTheWeek.astro";
 import { getWatchedLibrary } from "../data/library";
 const collectionEntries = getWatchedLibrary();
 const lang = Astro.locals.lang;
@@ -28,6 +29,8 @@ const isEnglish = lang === "en";
     <section class="home-gallery-section" aria-label={isEnglish ? "Ren's collection" : "Colección de Ren"}>
       <HomeGallery entries={collectionEntries} lang={Astro.locals.lang} client:load />
     </section>
+
+    <AnimeOfTheWeek />
   </main>
 
   <Footer />
