@@ -17,7 +17,7 @@ const normalize = (value = "") => String(value).toLocaleLowerCase("en").normaliz
   .replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
 
 function extractObjects(source, exportName) {
-  const declaration = new RegExp("export\\\\s+const\\\\s+" + exportName + "\\\\s*:\\\\s*[^=]+=\\\\s*\\\\[");
+  const declaration = new RegExp("export\\s+const\\s+" + exportName + "\\s*:\\s*[^=]+=\\s*\\[");
   const match = declaration.exec(source);
   if (!match) throw new Error("Export array not found: " + exportName);
   const start = match.index + match[0].length - 1;
@@ -51,8 +51,8 @@ function extractObjects(source, exportName) {
   return objects;
 }
 function property(source, key) {
-  const match = new RegExp("\\\\b" + key + "\\\\s*:\\\\s*([\\"'])(.*?)\\\\1", "s").exec(source);
-  return match ? match[2].replace(/\\\\(["'\\\\])/g, "$1").replace(/\\\\n/g, "\n") : null;
+  const match = new RegExp("\\b" + key + "\\s*:\\s*([\\"'])(.*?)\\1", "s").exec(source);
+  return match ? match[2].replace(/\\(["'\\])/g, "$1").replace(/\\n/g, "\n") : null;
 }
 function parseEntries(source, input) {
   return extractObjects(source, input.exportName).map((object) => ({
