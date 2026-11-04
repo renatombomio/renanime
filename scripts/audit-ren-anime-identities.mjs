@@ -70,15 +70,30 @@ function titlesOf(item) {
   return [item.title?.romaji, item.title?.english, item.title?.native, ...(item.synonyms || [])].filter(Boolean);
 }
 function classify(entry, items) {
-  const exact = items.filter((item) => titlesOf(item).some((title) => normalize(title) === normalize(entry.title)));
-  const compatible = exact.filter((item) => matchesFormat(entry.format, item.format));
+  const wanted = normalize(entry.title);
+  const primaryExact = items.filter((item) =>
+    [item.title?.romaji, item.title?.english, item.title?.native]
+      .filter(Boolean)
+      .some((title) => normalize(title) === wanted)
+  );
+  const primaryCompatible = primaryExact.filter((item) => matchesFormat(entry.format, item.format));
+  // Prefer an exact match in AniList's canonical title fields. Synonyms are
+  // secondary because broad franchise aliases often match sequels and films.
+  const exact = primaryExact.length ? primaryExact
+    : items.filter((item) => (item.synonyms || []).some((title) => normalize(title) === wanted));
+  const compatible = primaryExact.length ? primaryCompatible
+    : exact.filter((item) => matchesFormat(entry.format, item.format));
   if (compatible.length === 1) {
     const item = compatible[0];
+    const matchedTitle = [item.title?.romaji, item.title?.english, item.title?.native, ...(item.synonyms || [])]
+      .filter(Boolean).find((title) => normalize(title) === wanted);
     return { accepted: {
       animeId: entry.animeId, displayTitle: entry.title, format: entry.format,
-      anilistId: item.id, matchedTitle: titlesOf(item).find((title) => normalize(title) === normalize(entry.title)),
+      anilistId: item.id, matchedTitle,
       providerTitles: item.title, synonyms: item.synonyms || [], anilistFormat: item.format,
-      coverImage: item.coverImage || null, decision: "unique-exact-title-and-format", reviewed: false,
+      coverImage: item.coverImage || null,
+      decision: primaryExact.length ? "unique-primary-title-and-format" : "unique-exact-synonym-and-format",
+      reviewed: false,
     }};
   }
   return { review: {
