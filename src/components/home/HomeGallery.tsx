@@ -1,3 +1,4 @@
+import AnimePosterDisplay from "../anime/AnimePosterDisplay";
 import { useEffect, useRef, useState } from "react";
 
 interface Entry {
@@ -112,11 +113,7 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
               aria-label={`${lang === "en" ? "View" : "Ver"} ${lang === "en" ? (item?.title?.english || item?.title?.romaji || entry.title) : (item?.title?.romaji || item?.title?.english || entry.title)}`}
               key={entry.animeId}
             >
-              {image ? (
-                <img src={image} alt="" loading={index < 6 ? "eager" : "lazy"} />
-              ) : (
-                <div className="home-gallery-placeholder" aria-hidden="true" />
-              )}
+              <AnimePosterDisplay src={image} title={entry.title} loading={index < 6 ? "eager" : "lazy"} />
             </a>
           );
         })}
