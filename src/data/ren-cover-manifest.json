@@ -7,7 +7,7 @@
     {
       "animeId": "personal-001",
       "title": "Boku no Hero Academia",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -16,7 +16,7 @@
     {
       "animeId": "personal-002",
       "title": "Dragon Ball Z",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -25,7 +25,7 @@
     {
       "animeId": "personal-003",
       "title": "Naruto",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -34,7 +34,7 @@
     {
       "animeId": "personal-004",
       "title": "Bleach",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -43,7 +43,7 @@
     {
       "animeId": "personal-005",
       "title": "Shingeki no Kyojin",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -52,7 +52,7 @@
     {
       "animeId": "personal-006",
       "title": "One Piece",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -61,7 +61,7 @@
     {
       "animeId": "personal-007",
       "title": "Akame ga Kill!",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -70,7 +70,7 @@
     {
       "animeId": "personal-008",
       "title": "Toradora!",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -79,7 +79,7 @@
     {
       "animeId": "personal-009",
       "title": "Fullmetal Alchemist",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -88,7 +88,7 @@
     {
       "animeId": "personal-010",
       "title": "One Punch Man",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -97,7 +97,7 @@
     {
       "animeId": "personal-011",
       "title": "Soul Eater",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -106,7 +106,7 @@
     {
       "animeId": "personal-012",
       "title": "Black Clover",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -115,7 +115,7 @@
     {
       "animeId": "personal-013",
       "title": "DanMachi",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -124,7 +124,7 @@
     {
       "animeId": "personal-014",
       "title": "Kakegurui",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -133,7 +133,7 @@
     {
       "animeId": "personal-015",
       "title": "Kimetsu no Yaiba",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -142,7 +142,7 @@
     {
       "animeId": "personal-016",
       "title": "Ballroom e Youkoso",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -151,7 +151,7 @@
     {
       "animeId": "personal-017",
       "title": "Akatsuki no Yona",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -160,7 +160,7 @@
     {
       "animeId": "personal-018",
       "title": "Dororo",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -169,7 +169,7 @@
     {
       "animeId": "personal-019",
       "title": "Trinity Seven",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -178,7 +178,7 @@
     {
       "animeId": "personal-020",
       "title": "Afro Samurai",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -187,7 +187,7 @@
     {
       "animeId": "personal-021",
       "title": "Katekyo Hitman Reborn!",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -196,7 +196,7 @@
     {
       "animeId": "personal-022",
       "title": "D.Gray-man",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -205,7 +205,7 @@
     {
       "animeId": "personal-023",
       "title": "Beelzebub",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -214,7 +214,7 @@
     {
       "animeId": "personal-024",
       "title": "Ao no Exorcist",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -223,7 +223,7 @@
     {
       "animeId": "personal-025",
       "title": "Deadman Wonderland",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -232,7 +232,7 @@
     {
       "animeId": "personal-026",
       "title": "Mirai Nikki",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -241,7 +241,7 @@
     {
       "animeId": "personal-027",
       "title": "Fairy Tail",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -250,7 +250,7 @@
     {
       "animeId": "personal-028",
       "title": "Sword Art Online",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -259,7 +259,7 @@
     {
       "animeId": "personal-029",
       "title": "K Project",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -268,7 +268,7 @@
     {
       "animeId": "personal-030",
       "title": "Zetsuen no Tempest",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -277,7 +277,7 @@
     {
       "animeId": "personal-031",
       "title": "Blood Lad",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -286,7 +286,7 @@
     {
       "animeId": "personal-032",
       "title": "Noragami",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -295,7 +295,7 @@
     {
       "animeId": "personal-033",
       "title": "Magi: The Labyrinth of Magic",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -304,7 +304,7 @@
     {
       "animeId": "personal-034",
       "title": "Magi: Sinbad no Bouken",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -313,7 +313,7 @@
     {
       "animeId": "personal-035",
       "title": "Tokyo Ghoul",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -322,7 +322,7 @@
     {
       "animeId": "personal-036",
       "title": "Shingeki no Bahamut",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -331,7 +331,7 @@
     {
       "animeId": "personal-037",
       "title": "Owari no Seraph",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -340,7 +340,7 @@
     {
       "animeId": "personal-038",
       "title": "Ansatsu Kyoushitsu",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -349,7 +349,7 @@
     {
       "animeId": "personal-039",
       "title": "Big Order",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -358,7 +358,7 @@
     {
       "animeId": "personal-040",
       "title": "Bungou Stray Dogs",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -367,7 +367,7 @@
     {
       "animeId": "personal-041",
       "title": "Nanatsu no Taizai",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -376,7 +376,7 @@
     {
       "animeId": "personal-042",
       "title": "Danganronpa",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -385,7 +385,7 @@
     {
       "animeId": "personal-043",
       "title": "Mob Psycho 100",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -394,7 +394,7 @@
     {
       "animeId": "personal-044",
       "title": "Servamp",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -403,7 +403,7 @@
     {
       "animeId": "personal-045",
       "title": "Strike the Blood",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -412,7 +412,7 @@
     {
       "animeId": "personal-046",
       "title": "Killing Bites",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -421,7 +421,7 @@
     {
       "animeId": "personal-047",
       "title": "Kekkai Sensen",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -430,7 +430,7 @@
     {
       "animeId": "personal-048",
       "title": "Goblin Slayer",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -439,7 +439,7 @@
     {
       "animeId": "personal-049",
       "title": "Tenrou: Sirius the Jaeger",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -448,7 +448,7 @@
     {
       "animeId": "personal-050",
       "title": "Wolf's Rain",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -457,7 +457,7 @@
     {
       "animeId": "personal-051",
       "title": "Tate no Yuusha no Nariagari",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -466,7 +466,7 @@
     {
       "animeId": "personal-052",
       "title": "Enen no Shouboutai",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -475,7 +475,7 @@
     {
       "animeId": "personal-053",
       "title": "Kuroko no Basket",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -484,7 +484,7 @@
     {
       "animeId": "personal-054",
       "title": "No Game No Life",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -493,7 +493,7 @@
     {
       "animeId": "personal-055",
       "title": "Haikyuu!",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -502,7 +502,7 @@
     {
       "animeId": "personal-056",
       "title": "Tensei shitara Slime Datta Ken",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -511,7 +511,7 @@
     {
       "animeId": "personal-057",
       "title": "Kangoku Gakuen",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -520,7 +520,7 @@
     {
       "animeId": "personal-058",
       "title": "Aho Girl",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -529,7 +529,7 @@
     {
       "animeId": "personal-059",
       "title": "Kono Subarashii Sekai ni Shukufuku wo!",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -538,7 +538,7 @@
     {
       "animeId": "personal-060",
       "title": "Kaze ga Tsuyoku Fuiteiru",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -547,7 +547,7 @@
     {
       "animeId": "personal-061",
       "title": "Megalo Box",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -556,7 +556,7 @@
     {
       "animeId": "personal-062",
       "title": "Yakusoku no Neverland",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -565,7 +565,7 @@
     {
       "animeId": "personal-063",
       "title": "Hinomaru Zumou",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -574,7 +574,7 @@
     {
       "animeId": "personal-064",
       "title": "Shokugeki no Souma",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -583,7 +583,7 @@
     {
       "animeId": "personal-065",
       "title": "Mahoutsukai no Yome",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -592,7 +592,7 @@
     {
       "animeId": "personal-066",
       "title": "Tsurezure Children",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -610,7 +610,7 @@
     {
       "animeId": "personal-068",
       "title": "Anohana",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -619,7 +619,7 @@
     {
       "animeId": "personal-069",
       "title": "Domestic na Kanojo",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -628,7 +628,7 @@
     {
       "animeId": "personal-070",
       "title": "Koi to Uso",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -637,7 +637,7 @@
     {
       "animeId": "personal-071",
       "title": "Berserk",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -646,7 +646,7 @@
     {
       "animeId": "personal-072",
       "title": "Fuuka",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -655,7 +655,7 @@
     {
       "animeId": "personal-073",
       "title": "Kiznaiver",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -664,7 +664,7 @@
     {
       "animeId": "personal-074",
       "title": "Re:Zero kara Hajimeru Isekai Seikatsu",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -673,7 +673,7 @@
     {
       "animeId": "personal-075",
       "title": "Akagami no Shirayuki-hime",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -691,7 +691,7 @@
     {
       "animeId": "personal-083",
       "title": "Another",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -700,7 +700,7 @@
     {
       "animeId": "personal-084",
       "title": "Ousama Game",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -709,7 +709,7 @@
     {
       "animeId": "personal-085",
       "title": "Dorohedoro",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -718,7 +718,7 @@
     {
       "animeId": "personal-086",
       "title": "The God of High School",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -727,7 +727,7 @@
     {
       "animeId": "personal-087",
       "title": "Baki",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -736,7 +736,7 @@
     {
       "animeId": "personal-088",
       "title": "Kengan Ashura",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -745,7 +745,7 @@
     {
       "animeId": "personal-089",
       "title": "Vinland Saga",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -754,7 +754,7 @@
     {
       "animeId": "personal-090",
       "title": "Kanojo, Okarishimasu",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -763,7 +763,7 @@
     {
       "animeId": "personal-091",
       "title": "Kabaneri of the Iron Fortress",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -772,7 +772,7 @@
     {
       "animeId": "personal-092",
       "title": "Mushoku Tensei: Jobless Reincarnation",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -781,7 +781,7 @@
     {
       "animeId": "personal-093",
       "title": "Plunderer",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -790,7 +790,7 @@
     {
       "animeId": "personal-094",
       "title": "Appare-Ranman!",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -799,7 +799,7 @@
     {
       "animeId": "personal-095",
       "title": "AntiMagic Academy 35th Test Platoon",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -808,7 +808,7 @@
     {
       "animeId": "personal-096",
       "title": "SK8 the Infinity",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -817,7 +817,7 @@
     {
       "animeId": "personal-097",
       "title": "Fumetsu no Anata e",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -826,7 +826,7 @@
     {
       "animeId": "personal-098",
       "title": "Saihate no Paladin",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -835,7 +835,7 @@
     {
       "animeId": "personal-099",
       "title": "Katsute Kami Datta Kemono-tachi e",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -844,7 +844,7 @@
     {
       "animeId": "personal-100",
       "title": "Vivy: Fluorite Eye's Song",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -853,7 +853,7 @@
     {
       "animeId": "personal-101",
       "title": "Arifureta: From Commonplace to World's Strongest",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -862,7 +862,7 @@
     {
       "animeId": "personal-102",
       "title": "Sono Bisque Doll wa Koi wo Suru",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -871,7 +871,7 @@
     {
       "animeId": "personal-104",
       "title": "Gleipnir",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -880,7 +880,7 @@
     {
       "animeId": "personal-105",
       "title": "Youkoso Jitsuryoku Shijou Shugi no Kyoushitsu e",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -889,7 +889,7 @@
     {
       "animeId": "personal-106",
       "title": "SWORD GAI The Animation",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -898,7 +898,7 @@
     {
       "animeId": "personal-107",
       "title": "Tower of God",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -907,7 +907,7 @@
     {
       "animeId": "personal-108",
       "title": "Juuni Taisen",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -916,7 +916,7 @@
     {
       "animeId": "personal-109",
       "title": "Parasyte -the maxim-",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -925,7 +925,7 @@
     {
       "animeId": "personal-110",
       "title": "Komi Can't Communicate",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -934,7 +934,7 @@
     {
       "animeId": "personal-111",
       "title": "Steins;Gate",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -943,7 +943,7 @@
     {
       "animeId": "personal-112",
       "title": "Hajime no Ippo",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -952,7 +952,7 @@
     {
       "animeId": "personal-113",
       "title": "Jigokuraku",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -961,7 +961,7 @@
     {
       "animeId": "personal-114",
       "title": "Tengoku Daimakyo",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -970,7 +970,7 @@
     {
       "animeId": "personal-115",
       "title": "Made in Abyss",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -979,7 +979,7 @@
     {
       "animeId": "personal-116",
       "title": "Children of the Whales",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -988,7 +988,7 @@
     {
       "animeId": "personal-117",
       "title": "Saiki K.",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -997,7 +997,7 @@
     {
       "animeId": "personal-118",
       "title": "Gangsta.",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1006,7 +1006,7 @@
     {
       "animeId": "personal-119",
       "title": "Kaiju No. 8",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1015,7 +1015,7 @@
     {
       "animeId": "personal-120",
       "title": "Wind Breaker",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1024,7 +1024,7 @@
     {
       "animeId": "personal-121",
       "title": "Bartender: Glass of God",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1033,7 +1033,7 @@
     {
       "animeId": "personal-122",
       "title": "Kenka Dokugaku",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1042,7 +1042,7 @@
     {
       "animeId": "personal-123",
       "title": "Shinmai Ossan Boukensha",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1051,7 +1051,7 @@
     {
       "animeId": "personal-124",
       "title": "Sentai Daishikkai",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1060,7 +1060,7 @@
     {
       "animeId": "personal-125",
       "title": "Nige Jouzu no Wakagimi",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1069,7 +1069,7 @@
     {
       "animeId": "personal-126",
       "title": "Sousou no Frieren",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1078,7 +1078,7 @@
     {
       "animeId": "personal-127",
       "title": "Sakamoto Days",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1087,7 +1087,7 @@
     {
       "animeId": "personal-128",
       "title": "Solo Leveling",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1096,7 +1096,7 @@
     {
       "animeId": "personal-129",
       "title": "Yomi no Tsugai",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1105,7 +1105,7 @@
     {
       "animeId": "personal-130",
       "title": "Darwin Jihen",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1114,7 +1114,7 @@
     {
       "animeId": "personal-131",
       "title": "Dead Account",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1123,7 +1123,7 @@
     {
       "animeId": "personal-132",
       "title": "Yuusha-kei ni Shosu",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1132,7 +1132,7 @@
     {
       "animeId": "personal-133",
       "title": "Hikaru ga Shinda Natsu",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1150,7 +1150,7 @@
     {
       "animeId": "personal-135",
       "title": "Gachiakuta",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1159,7 +1159,7 @@
     {
       "animeId": "personal-136",
       "title": "Ninja Kamui",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1168,7 +1168,7 @@
     {
       "animeId": "personal-137",
       "title": "Scissor Seven",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1177,7 +1177,7 @@
     {
       "animeId": "personal-138",
       "title": "The Eminence in Shadow",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1186,7 +1186,7 @@
     {
       "animeId": "personal-139",
       "title": "Cowboy Bebop",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1195,7 +1195,7 @@
     {
       "animeId": "personal-140",
       "title": "Jujutsu Kaisen",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1204,7 +1204,7 @@
     {
       "animeId": "personal-141",
       "title": "Hunter x Hunter",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
@@ -1213,7 +1213,7 @@
     {
       "animeId": "personal-142",
       "title": "Death Note",
-      "format": "SERIES",
+      "format": null,
       "provider": null,
       "externalId": null,
       "posterUrl": null,
