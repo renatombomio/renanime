@@ -1,13 +1,10 @@
 import { createClient } from '@supabase/supabase-js'
 
-let serverClient: ReturnType<typeof createClient> | undefined
+type SupabaseServerClient = ReturnType<typeof createClient>
 
-/**
- * Privileged client is initialized only by server operations that need it.
- * Importing this module does not require an admin secret, so public pages
- * and Preview builds can render without SUPABASE_SECRET_KEY.
- */
-export function getSupabaseServer() {
+let serverClient: SupabaseServerClient | undefined
+
+function getServerClient(): SupabaseServerClient {
   if (serverClient) return serverClient
 
   const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL
@@ -27,3 +24,15 @@ export function getSupabaseServer() {
 
   return serverClient
 }
+
+/**
+ * Backwards-compatible lazy client: importing this module is safe in Preview.
+ * The privileged client is created only when a server operation uses it.
+ */
+export const supabaseServer = new Proxy({} as SupabaseServerClient, {
+  get(_target, property) {
+    const client = getServerClient()
+    const value = Reflect.get(client, property, client)
+    return typeof value === 'function' ? value.bind(client) : value
+  },
+})
