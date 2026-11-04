@@ -2,7 +2,12 @@ import { supabaseServer } from './supabase-server'
 
 export async function getRenanimeUser(token: string | undefined) {
   if (!token) {
-    console.error('Renanime session: missing session cookie')
+    return null
+  }
+
+  // Public Preview environments may intentionally omit the privileged key.
+  // Treat the request as unauthenticated instead of crashing every page load.
+  if (!import.meta.env.PUBLIC_SUPABASE_URL || !import.meta.env.SUPABASE_SECRET_KEY) {
     return null
   }
 
@@ -16,7 +21,6 @@ export async function getRenanimeUser(token: string | undefined) {
   }
 
   if (!data) {
-    console.error('Renanime session: RPC returned no user')
     return null
   }
 
