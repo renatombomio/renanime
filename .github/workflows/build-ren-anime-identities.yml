@@ -1,0 +1,43 @@
+name: Build Ren anime identity catalogue
+
+on:
+  push:
+    branches:
+      - feature/global-cover-resolution
+    paths:
+      - "scripts/audit-ren-anime-identities.mjs"
+      - "src/data/library.ts"
+      - "src/data/franchise-movies.ts"
+      - ".github/workflows/build-ren-anime-identities.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  identify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/global-cover-resolution
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Generate identity catalogue
+        run: node scripts/audit-ren-anime-identities.mjs
+      - name: Commit generated catalogue
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/ren-anime-identities.json src/data/ren-anime-review.json reports/ren-anime-audit.json
+          if git diff --cached --quiet; then
+            echo "No catalogue changes."
+          else
+            git commit -m "chore: generate reviewed AniList identity catalogue"
+            git push
+          fi
