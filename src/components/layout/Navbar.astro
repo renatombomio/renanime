@@ -57,7 +57,7 @@ const otherLang = lang === "es" ? "en" : "es";
     z-index: 50;
     width: 100%;
     height: 88px;
-    background: rgba(9, 9, 11, 0.94);
+    background: color-mix(in srgb, var(--color-background) 94%, transparent);
     border-bottom: 1px solid var(--color-border);
     backdrop-filter: blur(16px);
   }
@@ -79,7 +79,7 @@ const otherLang = lang === "es" ? "en" : "es";
     letter-spacing: 0.045em;
     line-height: 1;
     white-space: nowrap;
-    transition: opacity 180ms ease, color 180ms ease;
+    transition: opacity var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
   }
 
   .brand-accent {
@@ -88,12 +88,12 @@ const otherLang = lang === "es" ? "en" : "es";
 
   .brand:hover,
   .brand:focus-visible {
-    color: #ffffff;
+    color: var(--color-paper-50);
   }
 
   .brand:hover .brand-accent,
   .brand:focus-visible .brand-accent {
-    color: #ec4899;
+    color: var(--color-accent);
   }
 
   .desktop-nav {
@@ -120,7 +120,7 @@ const otherLang = lang === "es" ? "en" : "es";
     letter-spacing: 0.01em;
     line-height: 1;
     white-space: nowrap;
-    transition: color 180ms ease, transform 180ms ease;
+    transition: color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
   }
 
   .desktop-nav a::after {
@@ -133,13 +133,13 @@ const otherLang = lang === "es" ? "en" : "es";
     content: "";
     transform: scaleX(0);
     transform-origin: center;
-    transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform var(--duration-base) var(--ease-out);
   }
 
   .desktop-nav a:hover,
   .desktop-nav a:focus-visible,
   .desktop-nav a[aria-current="page"] {
-    color: #f5f2ec;
+    color: var(--color-paper-50);
     transform: translateY(-1px);
   }
 
@@ -183,7 +183,7 @@ const otherLang = lang === "es" ? "en" : "es";
     text-decoration: none;
   }
 
-  .language-toggle span[aria-current="true"] { font-weight: 800; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; color: #ec4899; }
+  .language-toggle span[aria-current="true"] { font-weight: 800; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; color: var(--color-accent); }
 
   .site-header--ghibli .language-toggle span[aria-current="true"] { color: var(--ghibli-coral, #f45164); }
 
