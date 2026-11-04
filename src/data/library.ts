@@ -1,5 +1,4 @@
 import type { LibraryEntry } from "../types/personal";
-import { franchiseMovies } from "./franchise-movies";
 
 export const animeLibrary: LibraryEntry[] = [
   { animeId: "personal-001", title: "Boku no Hero Academia", state: { status: "WATCHED", favorite: false, recommended: true } },
@@ -140,11 +139,11 @@ export const animeLibrary: LibraryEntry[] = [
 ];
 
 export function getLibrary(): LibraryEntry[] {
-  return [...animeLibrary, ...franchiseMovies];
+  return [...animeLibrary];
 }
 
 export function getWatchedLibrary(): LibraryEntry[] {
-  return [...animeLibrary, ...franchiseMovies].filter((entry) => entry.state.status === "WATCHED");
+  return animeLibrary.filter((entry) => entry.state.status === "WATCHED");
 }
 
 export function getPendingLibrary(): LibraryEntry[] {
