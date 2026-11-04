@@ -2,10 +2,11 @@ import { useEffect, useState, type FormEvent } from "react";
 import { getLibrary } from "../../data/library";
 import { getPersonalLibrary, hydratePersonalLibrary, subscribeToPersonalLibrary } from "../../data/personal-library";
 import type { PersonalAnimeEntry } from "../../types/personal";
+import { jikanProvider } from "../../lib/api/jikan";
 import { useT, type Lang, type TranslationKey } from "../../i18n";
 
 interface Media {
-  id: number;
+  id: number | string;
   title?: { romaji?: string | null; english?: string | null };
   startDate?: { year?: number | null; month?: number | null; day?: number | null } | null;
   coverImage?: { extraLarge?: string | null; large?: string | null };
@@ -61,6 +62,19 @@ function formatDate(date: Media["startDate"], lang: Lang) {
 }
 
 const MEDIA_FIELDS = "id title { romaji english } startDate { year month day } coverImage { extraLarge large } format popularity averageScore genres tags { name rank }";
+
+async function fetchJikanSearch(query: string, page: number): Promise<Media[]> {
+  const entries = await jikanProvider.search({ query, page, perPage: PAGE_SIZE });
+  return entries.map((entry) => ({
+    id: entry.id,
+    title: { romaji: entry.metadata.title, english: entry.metadata.title },
+    startDate: entry.metadata.year ? { year: entry.metadata.year } : null,
+    coverImage: entry.metadata.images.cover
+      ? { extraLarge: entry.metadata.images.cover, large: entry.metadata.images.cover }
+      : undefined,
+    format: entry.metadata.format,
+  }));
+}
 
 async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): Promise<Record<DiscoveryRowId, Media[]>> {
   const { season, year } = currentSeason();
@@ -308,25 +322,40 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
     let cancelled = false;
     setLoading(true);
     setSearchError(false);
-    fetch("https://graphql.anilist.co", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({
-        query: "query Search($search:String!,$page:Int!,$perPage:Int!){Page(page:$page,perPage:$perPage){pageInfo{hasNextPage} media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} startDate{year month day} coverImage{extraLarge large} format}}}",
-        variables: { search: submitted, page, perPage: PAGE_SIZE },
-      }),
-    })
-      .then((response) => response.ok ? response.json() : Promise.reject())
-      .then((payload) => {
+    const search = async () => {
+      try {
+        const response = await fetch("https://graphql.anilist.co", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({
+            query: "query Search($search:String!,$page:Int!,$perPage:Int!){Page(page:$page,perPage:$perPage){pageInfo{hasNextPage} media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} startDate{year month day} coverImage{extraLarge large} format}}}",
+            variables: { search: submitted, page, perPage: PAGE_SIZE },
+          }),
+        });
+        if (!response.ok) throw new Error("AniList request failed");
+        const payload = await response.json();
         if (payload.errors?.length) throw new Error("AniList GraphQL error");
+        const primary = payload.data?.Page?.media ?? [];
+        const media = primary.length ? primary : await fetchJikanSearch(submitted, page);
         if (cancelled) return;
-        const media = payload.data?.Page?.media ?? [];
         setResults((current) => page === 1 ? media : [...current, ...media]);
-        setHasNext(Boolean(payload.data?.Page?.pageInfo?.hasNextPage));
+        setHasNext(primary.length ? Boolean(payload.data?.Page?.pageInfo?.hasNextPage) : media.length === PAGE_SIZE);
         setSearchError(false);
-      })
-      .catch(() => { if (!cancelled) setSearchError(true); })
-      .finally(() => { if (!cancelled) setLoading(false); });
+      } catch {
+        try {
+          const fallback = await fetchJikanSearch(submitted, page);
+          if (cancelled) return;
+          setResults((current) => page === 1 ? fallback : [...current, ...fallback]);
+          setHasNext(fallback.length === PAGE_SIZE);
+          setSearchError(false);
+        } catch {
+          if (!cancelled) setSearchError(true);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    void search();
     return () => { cancelled = true; };
   }, [submitted, page, retry]);
 
@@ -349,7 +378,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
     const image = item.coverImage?.extraLarge || item.coverImage?.large;
     return (
       <article className="search-result" key={item.id}>
-        <a className="search-card" href={`${lang === "en" ? "/en" : ""}/anime/${item.id}`} aria-label={title}>
+        <a className="search-card" href={typeof item.id === "string" && item.id.startsWith("mal-") ? `${lang === "en" ? "/en" : ""}/anime/search?title=${encodeURIComponent(item.title?.romaji || item.title?.english || "")}` : `${lang === "en" ? "/en" : ""}/anime/${item.id}`} aria-label={title}>
           <div className="search-poster">
             {image ? <img src={image} alt="" loading={index < 4 ? "eager" : "lazy"} /> : <div className="search-poster-placeholder">{title}</div>}
           </div>
