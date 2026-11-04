@@ -1,4 +1,5 @@
 import { getRenAniListId } from "../../lib/api/ren-anime-identities";
+import { getDisplayTitle, getNativeTitle } from "../../lib/anime/display-title";
 import { useEffect, useState } from "react";
 import type { LibraryEntry } from "../../types/personal";
 import { getLibrary } from "../../data/library";
@@ -11,7 +12,7 @@ import AnimeComments from "./AnimeComments";
 
 interface Media {
   id: number | string;
-  title?: { romaji?: string|null; english?: string|null };
+  title?: { romaji?: string|null; english?: string|null; native?: string|null };
   description?: string|null;
   genres?: string[];
   startDate?: { year?: number|null; month?: number|null; day?: number|null }|null;
@@ -23,7 +24,7 @@ interface Media {
   coverImage?: { extraLarge?: string|null; large?: string|null };
   bannerImage?: string|null;
   trailer?: { id?: string|null; site?: string|null; thumbnail?: string|null }|null;
-  recommendations?: { nodes?: { mediaRecommendation?: { id:number; title?: { romaji?:string|null; english?:string|null }; coverImage?: { extraLarge?:string|null; large?:string|null }; format?:string|null; startDate?: { year?:number|null }|null }|null }[] }|null;
+  recommendations?: { nodes?: { mediaRecommendation?: { id:number; title?: { romaji?:string|null; english?:string|null; native?:string|null }; coverImage?: { extraLarge?:string|null; large?:string|null }; format?:string|null; startDate?: { year?:number|null }|null }|null }[] }|null;
   relations?: { edges?: { relationType?: string|null; node?: { id:number; type?:string|null; format?:string|null; title?: { romaji?:string|null; english?:string|null }; coverImage?: { extraLarge?:string|null; large?:string|null } } }[] }|null;
 }
 
@@ -380,7 +381,8 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
   }finally{setLikeBusy(false)}
  };
  const translateSynopsis=async()=>{if(lang==="en"||!media?.description||translating)return;setTranslating(true);const value=await translateToSpanish(media.description);setTranslatedSynopsis(value);setTranslating(false)};
- const title=media?.title?.native||media?.title?.english||media?.title?.romaji||entry.title;
+ const title=getDisplayTitle(media?.title,entry.title);
+ const nativeTitle=getNativeTitle(media?.title);
  const poster=media?.coverImage?.extraLarge||media?.coverImage?.large;
  const banner=media?.bannerImage||poster;
  const personal=entry.state;
@@ -390,7 +392,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
     .anime-detail:not(.anime-detail--ghibli) .anime-detail-synopsis-wrap{max-width:42rem;margin-top:1.35rem;padding:1rem 0 1.1rem;border:0;border-radius:0;background:transparent;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
     .anime-detail:not(.anime-detail--ghibli) .anime-detail-synopsis{margin:0;color:var(--color-paper-50)}
     .anime-detail:not(.anime-detail--ghibli) .anime-detail-translate{border-color:rgba(245,242,236,.28);background:rgba(245,242,236,.06);color:var(--color-paper-200)}
-    .anime-detail-poster{position:relative}
+    .anime-detail-poster{position:relative}\n    .anime-detail-native-title{margin:.35rem 0 0;color:var(--color-muted-400);font-family:"Hiragino Sans","Noto Sans JP",sans-serif;font-size:.82rem;line-height:1.4;letter-spacing:.04em}
     .anime-detail-like{position:absolute;right:.55rem;bottom:.55rem;z-index:3;display:inline-flex;align-items:center;gap:.35rem;padding:.45rem .6rem;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(0,0,0,.72);color:#fff;font:inherit;font-size:.72rem;backdrop-filter:blur(8px);cursor:pointer}
     .anime-detail-like svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
     .anime-detail-like.is-liked{color:#ff4f91;border-color:rgba(255,79,145,.5)}
@@ -422,6 +424,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
        <div className="anime-detail-copy-main">
        {personal.favorite&&<span className="anime-detail-eyebrow">{t("detail.favorite")}</span>}
        <h1>{title}</h1>
+        {nativeTitle&&<p className="anime-detail-native-title" lang="ja">{nativeTitle}</p>}
        <div className="anime-detail-meta">
   <span className="anime-detail-meta-type"><strong>{format(entry.format||media?.format,lang)}</strong></span>
   <span><small>{t("detail.release")}</small><strong>{date(media?.startDate,lang)}</strong></span>
@@ -454,7 +457,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
           </div>
           <div className="anime-detail-recommendations-track">
             {items.map((item) => {
-              const recTitle=item.title?.native||item.title?.english||item.title?.romaji||t("detail.noTitle");
+              const recTitle=getDisplayTitle(item.title,t("detail.noTitle"));
               const recImage=item.coverImage?.extraLarge||item.coverImage?.large;
               return <a className="anime-detail-recommendation" href={(lang==="en"?"/en":"") + "/anime/" + item.id} key={item.id}>
                 <div className="anime-detail-recommendation-poster">{recImage&&<img src={recImage} alt={recTitle} loading="lazy" />}</div>
@@ -479,7 +482,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
     {franchiseEntries.filter((candidate)=>candidate.animeId!==entry.animeId).map((candidate,index)=>{
       const item=franchiseMedia[candidate.animeId];
       const image=item?.coverImage?.extraLarge||item?.coverImage?.large;
-      const candidateTitle=FRANCHISE_MEDIA_ALIASES[candidate.animeId]?candidate.title:(item?.title?.native||item?.title?.english||item?.title?.romaji||candidate.title);
+      const candidateTitle=FRANCHISE_MEDIA_ALIASES[candidate.animeId]?candidate.title:(getDisplayTitle(item?.title,candidate.title));
       return <a className="anime-detail-franchise-card" href={(lang==="en"?"/en":"") + "/anime/"+candidate.animeId} key={candidate.animeId}>
        <div className="anime-detail-franchise-poster">{image?<img src={image} alt=""/>:<div/>}</div>
        <div className="anime-detail-franchise-copy"><strong>{candidateTitle}</strong><span>{candidate.format==="MOVIE"||item?.format==="MOVIE"?(lang==="en"?"Film":"Película"):(lang==="en"?"Series":"Serie")} · {candidate.state.status==="WATCHED"?(lang==="en"?"Watched":"Vista"):(lang==="en"?"Pending":"Pendiente")}</span></div>
@@ -496,7 +499,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
       const label=relation.relationType==="SEQUEL"?t("detail.sequel"):relation.relationType==="PREQUEL"?t("detail.prequel"):relation.relationType==="SIDE_STORY"?t("detail.sideStory"):relation.relationType==="SPIN_OFF"?t("detail.spinOff"):relation.relationType==="ALTERNATIVE"?t("detail.alternative"):relation.relationType==="PARENT"?t("detail.main"):relation.relationType==="ADAPTATION"?t("detail.adaptation"):t("detail.relatedLabel");
       return <a className="anime-detail-related-card" href={(lang==="en"?"/en":"") + "/anime/" + node.id} key={node.id+"-"+index}>
         <div className="anime-detail-related-poster">{node.coverImage?.extraLarge||node.coverImage?.large?<img src={node.coverImage.extraLarge||node.coverImage.large||""} alt=""/>:<div/>}</div>
-        <div className="anime-detail-related-copy"><strong>{(node.title?.native||node.title?.english||node.title?.romaji)||t("detail.noTitle")}</strong><span>{label} · {node.format==="MOVIE"?t("detail.film"):node.format==="OVA"?"OVA":node.format==="SPECIAL"?t("detail.special"):t("detail.series")}</span></div>
+        <div className="anime-detail-related-copy"><strong>{getDisplayTitle(node.title)||t("detail.noTitle")}</strong><span>{label} · {node.format==="MOVIE"?t("detail.film"):node.format==="OVA"?"OVA":node.format==="SPECIAL"?t("detail.special"):t("detail.series")}</span></div>
       </a>;
     })}
    </div>
