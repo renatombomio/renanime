@@ -3,27 +3,22 @@ import type { APIRoute } from "astro";
 type TopEpisode = {
   mal_id?: number;
   title?: string;
-  episode?: string;
+  url?: string;
   score?: number;
   scored_by?: number;
-  url?: string;
-};
-type TopGroup = {
-  entry?: {
+  anime?: {
     mal_id?: number;
     title?: string;
-    images?: { webp?: { image_url?: string }; jpg?: { image_url?: string } };
     url?: string;
+    images?: { webp?: { image_url?: string }; jpg?: { image_url?: string } };
   };
-  episodes?: TopEpisode[];
 };
 type EpisodeRecord = {
   mal_id?: number;
   aired?: string | null;
   title?: string;
-  images?: { jpg?: { image_url?: string }; webp?: { image_url?: string } };
+  episode?: string;
 };
-
 const TENRAI = "https://api.tenrai.org/v1";
 function getCurrentWeekRange() {
   const now = new Date();
@@ -53,18 +48,19 @@ async function getJson<T>(url: string): Promise<T | null> {
 
 export const GET: APIRoute = async () => {
   const { start: WEEK_START, end: WEEK_END } = getCurrentWeekRange();
-  const top = await getJson<{ data?: TopGroup[] }>(`${TENRAI}/top/episodes?limit=25`);
-  const groups = Array.isArray(top?.data) ? top.data : [];
-  const candidates = groups.flatMap((group) => {
-    const anime = group.entry;
-    if (!anime?.mal_id || !Array.isArray(group.episodes)) return [];
-    return group.episodes.map((episode) => ({ anime, episode })).filter(({ episode }) =>
-      typeof episode.mal_id === "number" && typeof episode.score === "number" && episode.score >= 9
-    );
-  });
+  // Tenrai follows the Jikan v4 shape: each top episode contains its anime in `anime`.
+  const top = await getJson<{ data?: TopEpisode[] }>(`${TENRAI}/top/episodes?limit=25&page=1`);
+  const topEpisodes = Array.isArray(top?.data) ? top.data : [];
+  const candidates = topEpisodes.filter((episode) =>
+    typeof episode.mal_id === "number" &&
+    typeof episode.score === "number" &&
+    episode.score > 9 &&
+    typeof episode.anime?.mal_id === "number"
+  );
 
-  const animeIds = [...new Set(candidates.map(({ anime }) => anime.mal_id!))];
+  const animeIds = [...new Set(candidates.map((episode) => episode.anime!.mal_id!))];
   const airedByAnime = new Map<number, Map<number, string>>();
+  // Respect Tenrai's public 4 requests/second limit.
   for (let index = 0; index < animeIds.length; index += 4) {
     const batch = animeIds.slice(index, index + 4);
     const results = await Promise.all(batch.map(async (animeId) => {
@@ -81,16 +77,19 @@ export const GET: APIRoute = async () => {
     for (const [animeId, map] of results) airedByAnime.set(animeId, map);
   }
 
-  const episodes = candidates.flatMap(({ anime, episode }) => {
-    const aired = airedByAnime.get(anime.mal_id!)?.get(episode.mal_id!);
+  const episodes = candidates.flatMap((episode) => {
+    const anime = episode.anime!;
+    const animeId = anime.mal_id!;
+    const aired = airedByAnime.get(animeId)?.get(episode.mal_id!);
     if (!aired) return [];
+    const episodeNumber = episode.url?.match(/\/episode\/(\d+)/)?.[1] || "";
     return [{
-      id: `${anime.mal_id}-${episode.mal_id}`,
-      animeId: anime.mal_id!,
+      id: `${animeId}-${episode.mal_id}`,
+      animeId,
       animeTitle: anime.title || "",
       animeUrl: anime.url || "",
       poster: anime.images?.webp?.image_url || anime.images?.jpg?.image_url || "",
-      episodeNumber: episode.episode || "",
+      episodeNumber: episodeNumber ? `Episodio ${episodeNumber}` : "",
       episodeTitle: episode.title || "",
       score: episode.score!,
       votes: episode.scored_by || 0,
