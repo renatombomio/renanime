@@ -298,3 +298,62 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
  .anime-detail-related{padding-top:2.5rem}
  .anime-detail-franchise{padding-top:2.5rem}
 }
+
+
+/* Branded fallback used when a catalogue poster is unavailable or fails to load. */
+.anime-poster-placeholder {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  color: var(--color-paper-50);
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 50% 28%, rgba(255, 90, 170, .2), transparent 58%),
+    linear-gradient(145deg, #30202d 0%, #17131c 55%, #09090d 100%);
+}
+.anime-poster-placeholder::before,
+.anime-poster-placeholder::after {
+  position: absolute;
+  inset: .65rem;
+  border: 1px solid rgba(255,255,255,.12);
+  content: "";
+  pointer-events: none;
+}
+.anime-poster-placeholder::after {
+  inset: .9rem;
+  border-color: rgba(255,90,170,.16);
+}
+.anime-poster-placeholder__mark {
+  color: rgba(255, 115, 185, .9);
+  font-family: var(--font-display, inherit);
+  font-size: clamp(2.5rem, 9vw, 5rem);
+  font-weight: 800;
+  line-height: .9;
+  letter-spacing: -.08em;
+}
+.anime-poster-placeholder__title {
+  z-index: 1;
+  max-width: 100%;
+  color: var(--color-paper-50);
+  font-size: clamp(.65rem, 2.2vw, .9rem);
+  font-weight: 700;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.anime-poster-placeholder__brand {
+  position: absolute;
+  z-index: 1;
+  bottom: 1.5rem;
+  color: rgba(255,255,255,.38);
+  font-family: var(--font-meta, inherit);
+  font-size: .48rem;
+  letter-spacing: .28em;
+}
