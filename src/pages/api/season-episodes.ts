@@ -13,8 +13,8 @@ const ANILIST_ENDPOINT = "https://graphql.anilist.co";
 const JIKAN_ENDPOINT = "https://api.jikan.moe/v4";
 const ANILIST_PAGE_SIZE = 50;
 const MAX_ANILIST_PAGES = 3;
-const MAX_ANIME_CANDIDATES = 40;
-const JIKAN_DELAY_MS = 450;
+const MAX_ANIME_CANDIDATES = 25;
+const JIKAN_DELAY_MS = 500;
 
 interface SeasonAnime {
   id: number;
@@ -97,7 +97,15 @@ async function fetchSeasonAnime(season: AnimeSeason, year: number): Promise<Seas
     .slice(0, MAX_ANIME_CANDIDATES);
 }
 
+let lastJikanRequestAt = 0;
+
 async function fetchJikanPage(malId: number, page: number): Promise<JikanEpisodesResponse> {
+  const elapsed = Date.now() - lastJikanRequestAt;
+  if (lastJikanRequestAt > 0 && elapsed < JIKAN_DELAY_MS) {
+    await wait(JIKAN_DELAY_MS - elapsed);
+  }
+  lastJikanRequestAt = Date.now();
+
   const response = await fetch(`${JIKAN_ENDPOINT}/anime/${malId}/episodes?page=${page}`, {
     headers: { Accept: "application/json" },
     signal: AbortSignal.timeout(10_000),
@@ -126,9 +134,7 @@ export const GET: APIRoute = async () => {
     let requests = 0;
     let jikanErrors = 0;
 
-    for (const [index, title] of anime.entries()) {
-      if (index > 0) await wait(JIKAN_DELAY_MS);
-
+    for (const title of anime) {
       try {
         const firstPage = await fetchJikanPage(title.idMal as number, 1);
         requests += 1;
