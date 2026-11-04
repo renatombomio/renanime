@@ -191,5 +191,17 @@
   "ghibli.loading": "Abriendo el archivo…",
   "ghibli.openFilm": "Abrir {title}",
   "ghibli.watched": "VISTA",
-  "ghibli.storyLoading": "Recordando el viaje…"
+  "ghibli.storyLoading": "Recordando el viaje…",
+  "seasonEpisodes.eyebrow": "TEMPORADA ACTUAL",
+  "seasonEpisodes.heading": "Episodios destacados",
+  "seasonEpisodes.description": "Los cinco episodios mejor valorados de la temporada de anime actual.",
+  "seasonEpisodes.loading": "Cargando puntuaciones verificadas…",
+  "seasonEpisodes.error": "El ranking no está disponible temporalmente.",
+  "seasonEpisodes.episode": "Episodio",
+  "seasonEpisodes.empty": "Todavía no hay suficientes puntuaciones verificadas de episodios.",
+  "seasonEpisodes.source": "Puntuaciones de episodios: MyAnimeList mediante Jikan · Actualización cada 14 días.",
+  "seasonEpisodes.season.WINTER": "Invierno",
+  "seasonEpisodes.season.SPRING": "Primavera",
+  "seasonEpisodes.season.SUMMER": "Verano",
+  "seasonEpisodes.season.FALL": "Otoño"
 }
