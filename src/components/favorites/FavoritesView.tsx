@@ -1,4 +1,5 @@
 import AnimePosterDisplay from "../anime/AnimePosterDisplay";
+import { fetchRenMediaByIdentity } from "../../lib/api/ren-anime-identities";
 import { useEffect, useRef, useState } from "react";
 import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/poster-fallback";
 import { useT, type Lang } from "../../i18n";
@@ -110,10 +111,18 @@ export default function FavoritesView({ entries, recommendations, lang = "es" }:
       }
 
       try {
-        for (let offset = 0; offset < allEntries.length; offset += ANILIST_BATCH_SIZE) {
+        const identityMedia = await fetchRenMediaByIdentity(allEntries);
+        if (cancelled) return;
+        setMedia((current) => ({ ...current, ...identityMedia }));
+        const unresolvedEntries = allEntries.filter((entry) => {
+          const item = identityMedia[entry.animeId];
+          return !item?.coverImage?.extraLarge && !item?.coverImage?.large;
+        });
+
+        for (let offset = 0; offset < unresolvedEntries.length; offset += ANILIST_BATCH_SIZE) {
           if (cancelled) break;
 
-          const batch = allEntries.slice(offset, offset + ANILIST_BATCH_SIZE);
+          const batch = unresolvedEntries.slice(offset, offset + ANILIST_BATCH_SIZE);
           await loadBatch(batch, offset);
         }
       } catch {
