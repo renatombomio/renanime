@@ -126,7 +126,7 @@ async function fetchMedia(entries: Entry[], resolveFallbackPosters = true): Prom
 }
 
 function titleOf(entry: Entry, media?: Media | null) {
-  return media?.title?.english || media?.title?.native || media?.title?.romaji || entry.title;
+  return media?.title?.native || media?.title?.english || media?.title?.romaji || entry.title;
 }
 
 function isMovie(entry: Entry, media?: Media | null) {
