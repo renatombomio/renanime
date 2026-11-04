@@ -1,3 +1,4 @@
+import { getRenAniListId } from "../../lib/api/ren-anime-identities";
 import { useEffect, useState } from "react";
 import type { LibraryEntry } from "../../types/personal";
 import { getLibrary } from "../../data/library";
@@ -104,7 +105,7 @@ function getSeasonCount(media: Media|null){
 
 async function findAnime(entry: LibraryEntry): Promise<Media|null> {
   const numericId=Number(entry.animeId);
-  const mediaId=FRANCHISE_MEDIA_ALIASES[entry.animeId] ?? (
+  const mediaId=getRenAniListId(entry.animeId) ?? FRANCHISE_MEDIA_ALIASES[entry.animeId] ?? (
     Number.isInteger(numericId) && numericId > 0 ? numericId : undefined
   );
 
@@ -239,7 +240,7 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
   // Resolve explicit AniList IDs separately. Mixing direct Media fields with
   // aliased Page fields made AniList reject the whole batch with HTTP 400.
   for (const entry of unresolved) {
-    const directId = FRANCHISE_MEDIA_ALIASES[entry.animeId];
+    const directId = getRenAniListId(entry.animeId) ?? FRANCHISE_MEDIA_ALIASES[entry.animeId];
     if (!directId) continue;
 
     const query = `query FranchiseMediaById($id:Int!){Media(id:$id,type:ANIME){id title{romaji english native} synonyms description(asHtml:false) genres startDate{year month day} format status episodes duration studios(isMain:true){nodes{name}} coverImage{extraLarge large} bannerImage trailer{id site thumbnail}}}`;
