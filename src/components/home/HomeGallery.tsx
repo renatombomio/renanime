@@ -68,7 +68,6 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
         .home-anime-marquee-track.track-3{animation-duration:49s;animation-delay:-31s}
         .home-anime-marquee-card{display:block;flex:0 0 auto;overflow:hidden;border-radius:8px;background:#111;aspect-ratio:3/4;pointer-events:none;user-select:none}
         .home-anime-marquee-card :global(img){display:block;width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
-        .home-anime-marquee:hover .home-anime-marquee-track{animation-play-state:paused}
         @keyframes home-anime-rise{from{transform:translateY(0)}to{transform:translateY(calc(-50% - var(--marquee-gap) / 2))}}
         @media(max-width:520px){.home-anime-marquee-window{height:440px;gap:.45rem}.home-anime-marquee-track{--marquee-gap:.45rem}}
         @media(prefers-reduced-motion:reduce){.home-anime-marquee-window{height:auto;mask-image:none;overflow:visible}.home-anime-marquee-track{display:contents;animation:none}.home-anime-marquee-card{width:100%}}
