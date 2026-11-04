@@ -3,7 +3,6 @@ export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 import { useT } from "../../i18n";
 import Navbar from "../../components/layout/Navbar.astro";
-import SectionHeader from "../../components/ui/SectionHeader.astro";
 import PersonalLibraryView from "../../components/personal-library/PersonalLibraryView";
 const t = useT(Astro.locals.lang);
 ---
@@ -11,9 +10,7 @@ const t = useT(Astro.locals.lang);
 <Layout title={`${t("pending.pageTitle")} — Renanime's Gallery`}>
   <Navbar />
   <main id="main-content" class="pending-page">
-    <div class="pending-header">
-      <SectionHeader variant="ren" title={t("pending.pageHeading")} description={t("pending.pageDescription")} />
-    </div>
+    <h1 class="sr-only">{t("pending.pageHeading")}</h1>
     <section class="pending-content" aria-label={Astro.locals.lang === "en" ? "Anime on my list" : "Anime pendiente"}>
       <PersonalLibraryView mode="PENDING" lang={Astro.locals.lang} client:load />
     </section>
@@ -22,6 +19,5 @@ const t = useT(Astro.locals.lang);
 
 <style>
   .pending-page { min-height: 60vh; padding-block: clamp(6rem, 11vw, 10rem) var(--section-space); }
-  .pending-header, .pending-content { width: min(calc(100% - (var(--gutter) * 2)), var(--container-max)); margin-inline: auto; }
-  .pending-header { margin-bottom: clamp(3rem, 6vw, 5rem); }
+  .pending-content { width: min(calc(100% - (var(--gutter) * 2)), var(--container-max)); margin-inline: auto; }
 </style>
