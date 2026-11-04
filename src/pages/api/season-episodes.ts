@@ -158,8 +158,10 @@ export const GET: APIRoute = async () => {
     for (const schedule of schedules) {
       const media = schedule.media;
       if (!media?.idMal || media.idMal <= 0 || !media.id || !media.title) continue;
-      if (latestByAnime.has(media.id)) continue;
-      latestByAnime.set(media.id, schedule);
+      const previous = latestByAnime.get(media.id);
+      if (!previous || schedule.airingAt > previous.airingAt) {
+        latestByAnime.set(media.id, schedule);
+      }
     }
 
     const candidates = [...latestByAnime.values()]
