@@ -1,5 +1,4 @@
 import { defineMiddleware } from "astro:middleware";
-import { getRenanimeUser } from "./lib/auth";
 import { localizedPath } from "./i18n";
 
 // Temporary switch for the Renanime 2.0 maintenance window.
@@ -17,7 +16,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   if (MAINTENANCE_MODE) {
     // Keep the maintenance page and static assets available, but pause the app and API.
-    if (routePath === "/maintenance") {
+    if (routePath === "/maintenance" || routePath === "/api/season-episodes") {
       return next();
     }
 
@@ -75,6 +74,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return isEnglish ? next(basePath + search) : next();
   }
 
+  const { getRenanimeUser } = await import("./lib/auth");
   const token = context.cookies.get("renanime_session")?.value;
   const user = await getRenanimeUser(token);
 
