@@ -35,6 +35,20 @@
   --color-focus: #f472b6;
   --color-overlay: rgba(9, 9, 11, 0.78);
   --color-backdrop: rgba(0, 0, 0, 0.42);
+  --color-border-card: rgba(244, 244, 248, 0.13);
+  --color-border-card-hover: rgba(244, 244, 248, 0.28);
+  --color-border-card-strong: rgba(244, 244, 248, 0.42);
+
+  /* Dark media overlays */
+  --color-overlay-poster-top: rgba(9, 9, 11, 0.08);
+  --color-overlay-poster-bottom: rgba(9, 9, 11, 0.82);
+  --color-overlay-badge: rgba(9, 9, 11, 0.58);
+  --color-overlay-franchise: rgba(9, 9, 11, 0.72);
+  --color-overlay-detail: rgba(9, 9, 11, 0.42);
+  --color-overlay-control: rgba(9, 9, 11, 0.45);
+  --color-overlay-library: rgba(9, 9, 11, 0.28);
+  --color-placeholder-glow: rgba(244, 244, 248, 0.08);
+
 
   /* Semantic aliases for new components */
   --color-background: var(--color-ink-950);
