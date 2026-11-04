@@ -71,8 +71,6 @@ interface Props {
  lang?: Lang;
 }
 
-const RED_TURTLE_LIBRARY_ID = "ghibli-red-turtle";
-
 export default function AnimeSearchDetail({ variant = "default", lang = "es" }: Props){
  const t=useT(lang);
  const params=new URLSearchParams(typeof window!=="undefined" ? window.location.search : "");
@@ -82,26 +80,6 @@ export default function AnimeSearchDetail({ variant = "default", lang = "es" }: 
  const[media,setMedia]=useState<Media|null>(null),[loading,setLoading]=useState(true),[translated,setTranslated]=useState(""),[translating,setTranslating]=useState(false);
  useEffect(()=>{
   const film=params.get("film");
-
-  if(film==="the-red-turtle" && !Number.isFinite(id)){
-   const localMedia:Media={
-    id:0,
-    title:{english:"The Red Turtle",romaji:"The Red Turtle"},
-    description:"A man is shipwrecked on a deserted island and discovers a mysterious red turtle.",
-    genres:["Drama","Fantasy","Adventure"],
-    startDate:{year:2016,month:9,day:17},
-    format:"MOVIE",
-    status:"FINISHED",
-    episodes:1,
-    duration:81,
-    studios:{nodes:[{name:"Studio Ghibli"}]},
-    coverImage:{extraLarge:"https://www.ghibli.jp/images/red-turtle.jpg",large:"https://www.ghibli.jp/images/red-turtle.jpg"},
-    bannerImage:"https://www.ghibli.jp/images/red-turtle.jpg",
-   };
-   setMedia(localMedia);
-   setLoading(false);
-   return;
-  }
 
   const directId = idParam === "movie-063" ? 178788 : Number.isFinite(id) ? id : null;
   const ghibliFilm = variant === "ghibli" ? getGhibliFilms().find((entry) => entry.id === film) : undefined;
