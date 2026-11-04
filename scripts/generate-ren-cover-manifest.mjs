@@ -46,21 +46,25 @@ function chooseCandidate(items, requestedTitle, requestedFormat, getTitles, getF
 }
 
 async function fetchJson(url, init = {}) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
-  try {
-    const response = await fetch(url, { ...init, signal: controller.signal });
-    if (!response.ok) {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
+    try {
+      const response = await fetch(url, { ...init, signal: controller.signal });
+      if (response.ok) return await response.json();
+
       const retryAfter = Number(response.headers.get("retry-after") || 0);
-      if (response.status === 429 && retryAfter > 0) await sleep(retryAfter * 1000);
-      return null;
+      const retryable = response.status === 429 || response.status >= 500;
+      if (!retryable || attempt === 2) return null;
+      await sleep(retryAfter > 0 ? retryAfter * 1000 : 1_000 * (attempt + 1));
+    } catch {
+      if (attempt === 2) return null;
+      await sleep(750 * (attempt + 1));
+    } finally {
+      clearTimeout(timeout);
     }
-    return await response.json();
-  } catch {
-    return null;
-  } finally {
-    clearTimeout(timeout);
   }
+  return null;
 }
 
 let lastAniListAt = 0;
@@ -79,7 +83,10 @@ async function isReachableImage(url) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 8_000);
   try {
-    const response = await fetch(url, { method: "HEAD", signal: controller.signal });
+    let response = await fetch(url, { method: "HEAD", signal: controller.signal });
+    if (!response.ok) {
+      response = await fetch(url, { headers: { Range: "bytes=0-0" }, signal: controller.signal });
+    }
     const contentType = response.headers.get("content-type") || "";
     return response.ok && contentType.toLowerCase().startsWith("image/");
   } catch {
