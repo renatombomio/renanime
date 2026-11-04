@@ -124,7 +124,7 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
             <a
               className="home-gallery-card"
               href={`${lang === "en" ? "/en" : ""}/anime/${entry.animeId}`}
-              aria-label={`${lang === "en" ? "View" : "Ver"} ${lang === "en" ? (item?.title?.english || item?.title?.romaji || entry.title) : (item?.title?.romaji || item?.title?.english || entry.title)}`}
+              aria-label={`${lang === "en" ? "View" : "Ver"} ${lang === "en" ? (item?.title?.native || item?.title?.english || item?.title?.romaji || entry.title) : (item?.title?.native || item?.title?.english || item?.title?.romaji || entry.title)}`}
               key={entry.animeId}
             >
               <AnimePosterDisplay src={image} title={entry.title} loading={index < 6 ? "eager" : "lazy"} />
