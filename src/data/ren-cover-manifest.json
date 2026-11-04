@@ -1,0 +1,2042 @@
+{
+  "version": 1,
+  "generatedAt": null,
+  "source": "src/data/library.ts + src/data/franchise-movies.ts",
+  "total": 226,
+  "entries": [
+    {
+      "animeId": "personal-001",
+      "title": "Boku no Hero Academia",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-002",
+      "title": "Dragon Ball Z",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-003",
+      "title": "Naruto",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-004",
+      "title": "Bleach",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-005",
+      "title": "Shingeki no Kyojin",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-006",
+      "title": "One Piece",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-007",
+      "title": "Akame ga Kill!",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-008",
+      "title": "Toradora!",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-009",
+      "title": "Fullmetal Alchemist",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-010",
+      "title": "One Punch Man",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-011",
+      "title": "Soul Eater",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-012",
+      "title": "Black Clover",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-013",
+      "title": "DanMachi",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-014",
+      "title": "Kakegurui",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-015",
+      "title": "Kimetsu no Yaiba",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-016",
+      "title": "Ballroom e Youkoso",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-017",
+      "title": "Akatsuki no Yona",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-018",
+      "title": "Dororo",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-019",
+      "title": "Trinity Seven",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-020",
+      "title": "Afro Samurai",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-021",
+      "title": "Katekyo Hitman Reborn!",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-022",
+      "title": "D.Gray-man",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-023",
+      "title": "Beelzebub",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-024",
+      "title": "Ao no Exorcist",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-025",
+      "title": "Deadman Wonderland",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-026",
+      "title": "Mirai Nikki",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-027",
+      "title": "Fairy Tail",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-028",
+      "title": "Sword Art Online",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-029",
+      "title": "K Project",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-030",
+      "title": "Zetsuen no Tempest",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-031",
+      "title": "Blood Lad",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-032",
+      "title": "Noragami",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-033",
+      "title": "Magi: The Labyrinth of Magic",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-034",
+      "title": "Magi: Sinbad no Bouken",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-035",
+      "title": "Tokyo Ghoul",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-036",
+      "title": "Shingeki no Bahamut",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-037",
+      "title": "Owari no Seraph",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-038",
+      "title": "Ansatsu Kyoushitsu",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-039",
+      "title": "Big Order",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-040",
+      "title": "Bungou Stray Dogs",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-041",
+      "title": "Nanatsu no Taizai",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-042",
+      "title": "Danganronpa",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-043",
+      "title": "Mob Psycho 100",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-044",
+      "title": "Servamp",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-045",
+      "title": "Strike the Blood",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-046",
+      "title": "Killing Bites",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-047",
+      "title": "Kekkai Sensen",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-048",
+      "title": "Goblin Slayer",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-049",
+      "title": "Tenrou: Sirius the Jaeger",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-050",
+      "title": "Wolf's Rain",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-051",
+      "title": "Tate no Yuusha no Nariagari",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-052",
+      "title": "Enen no Shouboutai",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-053",
+      "title": "Kuroko no Basket",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-054",
+      "title": "No Game No Life",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-055",
+      "title": "Haikyuu!",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-056",
+      "title": "Tensei shitara Slime Datta Ken",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-057",
+      "title": "Kangoku Gakuen",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-058",
+      "title": "Aho Girl",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-059",
+      "title": "Kono Subarashii Sekai ni Shukufuku wo!",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-060",
+      "title": "Kaze ga Tsuyoku Fuiteiru",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-061",
+      "title": "Megalo Box",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-062",
+      "title": "Yakusoku no Neverland",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-063",
+      "title": "Hinomaru Zumou",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-064",
+      "title": "Shokugeki no Souma",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-065",
+      "title": "Mahoutsukai no Yome",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-066",
+      "title": "Tsurezure Children",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-067",
+      "title": "Koe no Katachi",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-068",
+      "title": "Anohana",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-069",
+      "title": "Domestic na Kanojo",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-070",
+      "title": "Koi to Uso",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-071",
+      "title": "Berserk",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-072",
+      "title": "Fuuka",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-073",
+      "title": "Kiznaiver",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-074",
+      "title": "Re:Zero kara Hajimeru Isekai Seikatsu",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-075",
+      "title": "Akagami no Shirayuki-hime",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-076",
+      "title": "Kimi no Na wa",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-083",
+      "title": "Another",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-084",
+      "title": "Ousama Game",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-085",
+      "title": "Dorohedoro",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-086",
+      "title": "The God of High School",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-087",
+      "title": "Baki",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-088",
+      "title": "Kengan Ashura",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-089",
+      "title": "Vinland Saga",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-090",
+      "title": "Kanojo, Okarishimasu",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-091",
+      "title": "Kabaneri of the Iron Fortress",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-092",
+      "title": "Mushoku Tensei: Jobless Reincarnation",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-093",
+      "title": "Plunderer",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-094",
+      "title": "Appare-Ranman!",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-095",
+      "title": "AntiMagic Academy 35th Test Platoon",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-096",
+      "title": "SK8 the Infinity",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-097",
+      "title": "Fumetsu no Anata e",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-098",
+      "title": "Saihate no Paladin",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-099",
+      "title": "Katsute Kami Datta Kemono-tachi e",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-100",
+      "title": "Vivy: Fluorite Eye's Song",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-101",
+      "title": "Arifureta: From Commonplace to World's Strongest",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-102",
+      "title": "Sono Bisque Doll wa Koi wo Suru",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-104",
+      "title": "Gleipnir",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-105",
+      "title": "Youkoso Jitsuryoku Shijou Shugi no Kyoushitsu e",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-106",
+      "title": "SWORD GAI The Animation",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-107",
+      "title": "Tower of God",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-108",
+      "title": "Juuni Taisen",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-109",
+      "title": "Parasyte -the maxim-",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-110",
+      "title": "Komi Can't Communicate",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-111",
+      "title": "Steins;Gate",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-112",
+      "title": "Hajime no Ippo",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-113",
+      "title": "Jigokuraku",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-114",
+      "title": "Tengoku Daimakyo",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-115",
+      "title": "Made in Abyss",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-116",
+      "title": "Children of the Whales",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-117",
+      "title": "Saiki K.",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-118",
+      "title": "Gangsta.",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-119",
+      "title": "Kaiju No. 8",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-120",
+      "title": "Wind Breaker",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-121",
+      "title": "Bartender: Glass of God",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-122",
+      "title": "Kenka Dokugaku",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-123",
+      "title": "Shinmai Ossan Boukensha",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-124",
+      "title": "Sentai Daishikkai",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-125",
+      "title": "Nige Jouzu no Wakagimi",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-126",
+      "title": "Sousou no Frieren",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-127",
+      "title": "Sakamoto Days",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-128",
+      "title": "Solo Leveling",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-129",
+      "title": "Yomi no Tsugai",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-130",
+      "title": "Darwin Jihen",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-131",
+      "title": "Dead Account",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-132",
+      "title": "Yuusha-kei ni Shosu",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-133",
+      "title": "Hikaru ga Shinda Natsu",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-134",
+      "title": "100 Meters",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-135",
+      "title": "Gachiakuta",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-136",
+      "title": "Ninja Kamui",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-137",
+      "title": "Scissor Seven",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-138",
+      "title": "The Eminence in Shadow",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-139",
+      "title": "Cowboy Bebop",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-140",
+      "title": "Jujutsu Kaisen",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-141",
+      "title": "Hunter x Hunter",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "personal-142",
+      "title": "Death Note",
+      "format": "SERIES",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-001",
+      "title": "Boku no Hero Academia: Two Heroes",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-002",
+      "title": "Boku no Hero Academia: Heroes Rising",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-003",
+      "title": "Boku no Hero Academia: World Heroes' Mission",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-004",
+      "title": "Boku no Hero Academia: You're Next",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-005",
+      "title": "Dragon Ball: Curse of the Blood Rubies",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-006",
+      "title": "Dragon Ball: Sleeping Princess in Devil's Castle",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-007",
+      "title": "Dragon Ball: Mystical Adventure",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-008",
+      "title": "Dragon Ball Z: Dead Zone",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-009",
+      "title": "Dragon Ball Z: The World's Strongest",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-010",
+      "title": "Dragon Ball Z: The Tree of Might",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-011",
+      "title": "Dragon Ball Z: Lord Slug",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-012",
+      "title": "Dragon Ball Z: Cooler's Revenge",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-013",
+      "title": "Dragon Ball Z: The Return of Cooler",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-014",
+      "title": "Dragon Ball Z: Super Android 13!",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-015",
+      "title": "Dragon Ball Z: Broly — The Legendary Super Saiyan",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-016",
+      "title": "Dragon Ball Z: Bojack Unbound",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-017",
+      "title": "Dragon Ball Z: Broly — Second Coming",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-018",
+      "title": "Dragon Ball Z: Bio-Broly",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-019",
+      "title": "Dragon Ball Z: Fusion Reborn",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-020",
+      "title": "Dragon Ball Z: Wrath of the Dragon",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-021",
+      "title": "Dragon Ball: The Path to Power",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-022",
+      "title": "Dragon Ball Z: Battle of Gods",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-023",
+      "title": "Dragon Ball Z: Resurrection 'F'",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-024",
+      "title": "Dragon Ball Super: Broly",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-025",
+      "title": "Dragon Ball Super: Super Hero",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-026",
+      "title": "Naruto the Movie: Ninja Clash in the Land of Snow",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-027",
+      "title": "Naruto the Movie 2: Legend of the Stone of Gelel",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-028",
+      "title": "Naruto the Movie 3: Guardians of the Crescent Moon Kingdom",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-029",
+      "title": "Naruto Shippuden the Movie",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-030",
+      "title": "Naruto Shippuden the Movie: Bonds",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-031",
+      "title": "Naruto Shippuden the Movie: The Will of Fire",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-032",
+      "title": "Naruto Shippuden the Movie: The Lost Tower",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-033",
+      "title": "Naruto Shippuden the Movie: Blood Prison",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-034",
+      "title": "Road to Ninja: Naruto the Movie",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-035",
+      "title": "The Last: Naruto the Movie",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-036",
+      "title": "Boruto: Naruto the Movie",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-037",
+      "title": "One Piece: The Movie",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-038",
+      "title": "One Piece: Clockwork Island Adventure",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-039",
+      "title": "One Piece: Chopper's Kingdom on the Island of Strange Animals",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-040",
+      "title": "One Piece: Dead End Adventure",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-041",
+      "title": "One Piece: The Cursed Holy Sword",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-042",
+      "title": "One Piece: Baron Omatsuri and the Secret Island",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-043",
+      "title": "One Piece: The Giant Mechanical Soldier of Karakuri Castle",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-044",
+      "title": "One Piece: Episode of Alabasta",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-045",
+      "title": "One Piece: Episode of Chopper Plus",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-046",
+      "title": "One Piece Film: Strong World",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-047",
+      "title": "One Piece 3D: Mugiwara Chase",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-048",
+      "title": "One Piece Film: Z",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-049",
+      "title": "One Piece Film: Gold",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-050",
+      "title": "One Piece: Stampede",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-051",
+      "title": "One Piece Film: Red",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-052",
+      "title": "Bleach: Memories of Nobody",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-053",
+      "title": "Bleach: The DiamondDust Rebellion",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-054",
+      "title": "Bleach: Fade to Black",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-055",
+      "title": "Bleach: Hell Verse",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-056",
+      "title": "Attack on Titan: Crimson Bow and Arrow",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-057",
+      "title": "Attack on Titan: Wings of Freedom",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-058",
+      "title": "Attack on Titan: Roar of Awakening",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-059",
+      "title": "Attack on Titan: Chronicle",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-060",
+      "title": "Fullmetal Alchemist the Movie: Conqueror of Shamballa",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-061",
+      "title": "Fullmetal Alchemist: The Sacred Star of Milos",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-062",
+      "title": "Demon Slayer: Mugen Train",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-063",
+      "title": "Kimetsu no Yaiba: Mugen-jō-hen",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-064",
+      "title": "Black Clover: Sword of the Wizard King",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-065",
+      "title": "DanMachi: Arrow of the Orion",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-066",
+      "title": "Trinity Seven the Movie: The Eternal Library and the Alchemist Girl",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-067",
+      "title": "Trinity Seven: Heavens Library & Crimson Lord",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-068",
+      "title": "Afro Samurai: Resurrection",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-069",
+      "title": "Blue Exorcist: The Movie",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-070",
+      "title": "Fairy Tail the Movie: Phoenix Priestess",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-071",
+      "title": "Fairy Tail: Dragon Cry",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-072",
+      "title": "K: Missing Kings",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-073",
+      "title": "Bungou Stray Dogs: Dead Apple",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-074",
+      "title": "The Seven Deadly Sins: Prisoners of the Sky",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-075",
+      "title": "The Seven Deadly Sins: Cursed by Light",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-076",
+      "title": "The Seven Deadly Sins: Grudge of Edinburgh Part 1",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-077",
+      "title": "The Seven Deadly Sins: Grudge of Edinburgh Part 2",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-078",
+      "title": "Kuroko's Basketball: Winter Cup Compilation — Shadow and Light",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-079",
+      "title": "Kuroko's Basketball: Winter Cup Compilation — Beyond the Tears",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-080",
+      "title": "Kuroko's Basketball: Winter Cup Compilation — Crossing the Door",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-081",
+      "title": "Kuroko's Basketball: Last Game",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-082",
+      "title": "No Game No Life: Zero",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-083",
+      "title": "KonoSuba: God's Blessing on This Wonderful World! Legend of Crimson",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-084",
+      "title": "Goblin Slayer: Goblin's Crown",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-085",
+      "title": "Sword Art Online: Ordinal Scale",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-086",
+      "title": "Sword Art Online Progressive: Aria of a Starless Night",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-087",
+      "title": "Sword Art Online Progressive: Scherzo of Deep Night",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-088",
+      "title": "Jujutsu Kaisen 0",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-089",
+      "title": "Berserk: The Golden Age Arc I — The Egg of the King",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-090",
+      "title": "Berserk: The Golden Age Arc II — The Battle for Doldrey",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    },
+    {
+      "animeId": "movie-091",
+      "title": "Berserk: The Golden Age Arc III — The Advent",
+      "format": "MOVIE",
+      "provider": null,
+      "externalId": null,
+      "posterUrl": null,
+      "status": "pending"
+    }
+  ]
+}
