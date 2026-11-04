@@ -6,6 +6,7 @@ import Footer from "../components/layout/Footer.astro";
 import Hero from "../components/hero/Hero.astro";
 import HomeGallery from "../components/home/HomeGallery";
 import AnimeOfTheWeek from "../components/home/AnimeOfTheWeek.astro";
+import WeeklyEpisodes from "../components/home/WeeklyEpisodes";
 import { getWatchedLibrary } from "../data/library";
 const collectionEntries = getWatchedLibrary();
 const lang = Astro.locals.lang;
@@ -31,6 +32,7 @@ const isEnglish = lang === "en";
     </section>
 
     <AnimeOfTheWeek />
+    <WeeklyEpisodes lang={lang} client:load />
   </main>
 
   <Footer />
