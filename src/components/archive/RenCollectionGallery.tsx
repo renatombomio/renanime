@@ -12,7 +12,7 @@ interface Entry {
 }
 
 interface Media {
-  title?: { romaji?: string | null; english?: string | null };
+  title?: { romaji?: string | null; english?: string | null; native?: string | null };
   startDate?: { year?: number | null; month?: number | null; day?: number | null } | null;
   format?: string | null;
   coverImage?: { extraLarge?: string | null; large?: string | null };
@@ -126,7 +126,7 @@ async function fetchMedia(entries: Entry[], resolveFallbackPosters = true): Prom
 }
 
 function titleOf(entry: Entry, media?: Media | null) {
-  return media?.title?.romaji || media?.title?.english || entry.title;
+  return media?.title?.english || media?.title?.native || media?.title?.romaji || entry.title;
 }
 
 function isMovie(entry: Entry, media?: Media | null) {
