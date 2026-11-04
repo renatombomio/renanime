@@ -62,20 +62,24 @@ export default function NotificationBell({ lang = "es" }: { lang?: Lang }) {
     <div className="notification-bell-wrap">
       <style>{`
         .notification-bell-wrap{position:relative;flex:0 0 auto;margin-left:1rem}
-        .notification-bell-trigger{position:relative;display:grid;place-items:center;width:38px;height:38px;border:1px solid rgba(245,242,236,.2);border-radius:50%;background:transparent;color:#f5f2ec;cursor:pointer}
+        .notification-bell-trigger{position:relative;display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--color-border-strong);border-radius:50%;background:transparent;color:var(--color-text-primary);cursor:pointer;transition:border-color var(--duration-fast) var(--ease-out),color var(--duration-fast) var(--ease-out)}
+        .notification-bell-trigger:hover,.notification-bell-trigger:focus-visible{border-color:var(--color-border-accent);color:var(--color-accent)}
+        .notification-bell-trigger:focus-visible{outline:2px solid var(--color-focus);outline-offset:3px}
         .notification-bell-trigger svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-        .notification-bell-count{position:absolute;top:-4px;right:-5px;min-width:17px;height:17px;padding:0 4px;display:grid;place-items:center;border-radius:99px;background:#ec4899;color:#fff;font-size:10px;font-weight:700}
-        .notification-panel{position:absolute;top:calc(100% + 12px);right:0;z-index:80;width:min(360px,calc(100vw - 28px));max-height: min(480px,calc(100vh - 100px));overflow:auto;border:1px solid rgba(245,242,236,.14);border-radius:14px;background:#0b0b0b;box-shadow:0 16px 50px rgba(0,0,0,.5);color:#f5f2ec}
-        .notification-panel-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+        .notification-bell-count{position:absolute;top:-4px;right:-5px;min-width:17px;height:17px;padding:0 4px;display:grid;place-items:center;border-radius:var(--radius-pill);background:var(--color-accent);color:#fff;font-size:10px;font-weight:700}
+        .notification-panel{position:absolute;top:calc(100% + 12px);right:0;z-index:80;width:min(360px,calc(100vw - 28px));max-height:min(480px,calc(100vh - 100px));overflow:auto;border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-background);box-shadow:var(--shadow-overlay);color:var(--color-text-primary)}
+        .notification-panel-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--color-border)}
         .notification-panel-head strong{font-size:13px}
-        .notification-panel-head button{border:0;background:none;color:#ec4899;font-size:11px;cursor:pointer}
-        .notification-item{display:flex;gap:10px;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.07);text-decoration:none;color:inherit}
-        .notification-item.unread{background:rgba(236,72,153,.07)}
-        .notification-avatar{width:34px;height:34px;flex:0 0 34px;border-radius:50%;object-fit:cover;background:#222}
+        .notification-panel-head button{border:0;background:none;color:var(--color-accent);font-size:11px;cursor:pointer}
+        .notification-panel-head button:hover,.notification-panel-head button:focus-visible{color:var(--color-accent-soft)}
+        .notification-item{display:flex;gap:10px;padding:12px 14px;border-bottom:1px solid var(--color-border);text-decoration:none;color:inherit}
+        .notification-item:hover{background:var(--color-surface-hover)}
+        .notification-item.unread{background:color-mix(in srgb,var(--color-accent) 7%,transparent)}
+        .notification-avatar{width:34px;height:34px;flex:0 0 34px;border-radius:50%;object-fit:cover;background:var(--color-surface-raised)}
         .notification-copy{min-width:0;display:grid;gap:4px}
-        .notification-copy p{margin:0;font-size:11px;line-height:1.45;color:#ddd}
-        .notification-copy small{font-size:10px;color:#777}
-        .notification-empty{padding:24px 16px;color:#888;font-size:12px;text-align:center}
+        .notification-copy p{margin:0;font-size:11px;line-height:1.45;color:var(--color-text-secondary)}
+        .notification-copy small{font-size:10px;color:var(--color-muted-500)}
+        .notification-empty{padding:24px 16px;color:var(--color-text-muted);font-size:12px;text-align:center}
         @media(max-width:1120px){.notification-bell-wrap{margin:0 .5rem 0 auto}.notification-panel{right:-54px}}
       `}</style>
       <button type="button" className="notification-bell-trigger" aria-label={copy("Notificaciones","Notifications")} aria-expanded={open} onClick={() => { setOpen(value => !value); if (!open) void load(); }}>
