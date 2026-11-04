@@ -380,7 +380,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
   }finally{setLikeBusy(false)}
  };
  const translateSynopsis=async()=>{if(lang==="en"||!media?.description||translating)return;setTranslating(true);const value=await translateToSpanish(media.description);setTranslatedSynopsis(value);setTranslating(false)};
- const title=FRANCHISE_MEDIA_ALIASES[entry.animeId]?entry.title:(lang==="en"?(media?.title?.english||media?.title?.romaji||entry.title):(media?.title?.romaji||media?.title?.english||entry.title));
+ const title=media?.title?.english||media?.title?.native||media?.title?.romaji||entry.title;
  const poster=media?.coverImage?.extraLarge||media?.coverImage?.large;
  const banner=media?.bannerImage||poster;
  const personal=entry.state;
