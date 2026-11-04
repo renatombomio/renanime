@@ -39,7 +39,7 @@ function chooseCandidate(items, requestedTitle, requestedFormat, getTitles, getF
     return { item, exact, score, format: getFormat(item), poster: getPoster(item) };
   }).filter((candidate) => {
     if (requestedFormat === "MOVIE" && String(candidate.format).toUpperCase() !== "MOVIE") return false;
-    if (requestedFormat !== "MOVIE" && ["MOVIE", "SPECIAL", "MUSIC", "CM", "PV"].includes(String(candidate.format).toUpperCase())) return false;
+    if (requestedFormat === "SERIES" && ["MOVIE", "SPECIAL", "MUSIC", "CM", "PV"].includes(String(candidate.format).toUpperCase())) return false;
     return (candidate.exact || candidate.score >= 0.72) && candidate.poster;
   }).sort((a, b) => Number(b.exact) - Number(a.exact) || b.score - a.score);
   return candidates[0] ?? null;
@@ -96,6 +96,7 @@ async function fromJikan(entry) {
   url.searchParams.set("q", entry.title);
   url.searchParams.set("limit", "10");
   if (entry.format === "MOVIE") url.searchParams.set("type", "movie");
+  if (entry.format === "SERIES") url.searchParams.set("type", "tv");
   const payload = await fetchJson(url);
   const items = payload?.data ?? [];
   const match = chooseCandidate(items, entry.title, entry.format,
@@ -125,7 +126,7 @@ function parseEntries(source) {
     entries.push({
       animeId: match[1],
       title: match[2].replace(/\\"/g, '"').replace(/\\'/g, "'"),
-      format: match[3] || "SERIES",
+      format: match[3] || null,
     });
   }
   return entries;
