@@ -1,4 +1,5 @@
 import { fetchRenMediaByIdentity } from "../../lib/api/ren-anime-identities";
+import { getDisplayTitle } from "../../lib/anime/display-title";
 import AnimePosterDisplay from "../anime/AnimePosterDisplay";
 import { useEffect, useRef, useState } from "react";
 
@@ -8,7 +9,7 @@ interface Entry {
 }
 
 interface Media {
-  title?: { romaji?: string | null; english?: string | null };
+  title?: { romaji?: string | null; english?: string | null; native?: string | null };
   coverImage?: { extraLarge?: string | null; large?: string | null };
 }
 
@@ -124,7 +125,7 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
             <a
               className="home-gallery-card"
               href={`${lang === "en" ? "/en" : ""}/anime/${entry.animeId}`}
-              aria-label={`${lang === "en" ? "View" : "Ver"} ${lang === "en" ? (item?.title?.native || item?.title?.english || item?.title?.romaji || entry.title) : (item?.title?.native || item?.title?.english || item?.title?.romaji || entry.title)}`}
+              aria-label={`${lang === "en" ? "View" : "Ver"} ${getDisplayTitle(item?.title, entry.title)}`}
               key={entry.animeId}
             >
               <AnimePosterDisplay src={image} title={entry.title} loading={index < 6 ? "eager" : "lazy"} />
