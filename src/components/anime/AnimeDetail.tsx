@@ -304,7 +304,7 @@ async function findAnimeBatch(entries: LibraryEntry[]): Promise<Record<string, M
         } else if (media.coverImage?.extraLarge || media.coverImage?.large) {
           result[entry.animeId] = media;
         } else {
-          const poster = await fetchFallbackPoster(entry.title, entry.format);
+          const poster = await fetchFallbackPoster(entry.title, entry.format, { skipAniList: true });
           result[entry.animeId] = poster
             ? { ...media, coverImage: { extraLarge: poster, large: poster } }
             : media;
