@@ -87,7 +87,7 @@ async function fetchMedia(entries: Entry[], resolveFallbackPosters = true): Prom
       await Promise.all(chunk.map(async (entry) => {
         const current = result[entry.animeId];
         if (!current?.coverImage?.extraLarge && !current?.coverImage?.large) {
-          const poster = await fetchFallbackPoster(entry.title, entry.format);
+          const poster = await fetchFallbackPoster(entry.title, entry.format, { skipAniList: true });
           if (poster) result[entry.animeId] = {
             ...(current ?? {}),
             title: current?.title ?? { romaji: entry.title },
