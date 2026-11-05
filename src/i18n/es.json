@@ -197,5 +197,6 @@
   "seasonEpisodes.loading": "Cargando puntuaciones verificadas…",
   "seasonEpisodes.empty": "Todavía no hay puntuaciones de episodios disponibles para esta temporada.",
   "seasonEpisodes.episode": "Episodio",
-  "seasonEpisodes.votes": "votos"
+  "seasonEpisodes.votes": "votos",
+  "seasonEpisodes.ariaLabel": "Episodios mejor valorados de esta temporada"
 }
