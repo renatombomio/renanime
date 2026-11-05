@@ -1,8 +1,7 @@
-import { supabaseServer } from './supabase-server'
+import { isSupabaseServerConfigured, supabaseServer } from './supabase-server'
 
 export async function getRenanimeUser(token: string | undefined) {
-  if (!token) {
-    console.error('Renanime session: missing session cookie')
+  if (!token || !isSupabaseServerConfigured) {
     return null
   }
 
