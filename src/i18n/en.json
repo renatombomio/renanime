@@ -197,5 +197,6 @@
   "seasonEpisodes.loading": "Loading verified ratings…",
   "seasonEpisodes.empty": "No episode ratings are available for this season yet.",
   "seasonEpisodes.episode": "Episode",
-  "seasonEpisodes.votes": "votes"
+  "seasonEpisodes.votes": "votes",
+  "seasonEpisodes.ariaLabel": "Top-rated episodes this season"
 }
