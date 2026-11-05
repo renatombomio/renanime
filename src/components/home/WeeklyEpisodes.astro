@@ -1,6 +1,8 @@
 ---
-import { localizedPath, useT, type Lang } from "../../i18n";
-
+/**
+ * WeeklyEpisodes — presentation-only component.
+ * Receives the already-ranked weekly AniList episodes from the page data layer.
+ */
 export interface WeeklyEpisode {
   animeId: number;
   title: string;
@@ -11,23 +13,32 @@ export interface WeeklyEpisode {
   airingLabel?: string | null;
 }
 
-interface Props {
+export interface Props {
   episodes: WeeklyEpisode[];
-  lang: Lang;
+  href: (animeId: number) => string;
+  labels: {
+    eyebrow: string;
+    title: string;
+    titleAccent: string;
+    subtitle: string;
+    episode: string;
+    episodeShort: string;
+  };
 }
 
-const { episodes, lang } = Astro.props;
-const t = useT(lang);
+const { episodes, href, labels } = Astro.props;
 const rows = episodes.slice(0, 5);
-const rankColors = ["#ec4899", "#e0a458", "#9b7bd6", "#1d1d1d", "#1d1d1d"];
-const href = (animeId: number) => localizedPath(lang, `/anime/${animeId}/`);
+const rankColors = ["#ffffff", "#d8d4cc", "#d8d4cc", "#d8d4cc", "#d8d4cc"];
 ---
 
 {rows.length > 0 && (
   <section class="weekly-episodes" aria-labelledby="weekly-episodes-title">
     <header class="we-header">
-      <h2 id="weekly-episodes-title" class="we-title">{lang === "en" ? "Airing this week" : "En emisión esta semana"}</h2>
-      <span class="we-count">TOP 5 <i></i> ANILIST</span>
+      <p class="we-eyebrow"><span class="we-dot" aria-hidden="true"></span>{labels.eyebrow}</p>
+      <h2 id="weekly-episodes-title" class="we-title">
+        {labels.title.replace(labels.titleAccent, "").trim()} <span>{labels.titleAccent}</span>
+      </h2>
+      <p class="we-subtitle">{labels.subtitle}</p>
     </header>
 
     <ol class="we-list">
@@ -36,32 +47,31 @@ const href = (animeId: number) => localizedPath(lang, `/anime/${animeId}/`);
           <a
             class:list={["we-row", { "is-top": i === 0 }]}
             href={href(ep.animeId)}
-            style={`--tint:${ep.tint || "#ec4899"}; --rank-bg:${rankColors[i]};`}
+            style={`--tint:${ep.tint || "#343438"}; --rank:${rankColors[i]};`}
           >
+            <span
+              class="we-banner"
+              aria-hidden="true"
+              style={ep.banner ? `background-image:url('${ep.banner}')` : undefined}
+            ></span>
+            <span class="we-shade" aria-hidden="true"></span>
             <span class="we-rank" aria-hidden="true">{i + 1}</span>
-            <span class="we-body">
-              <span
-                class="we-banner"
-                aria-hidden="true"
-                style={ep.banner ? `background-image:url('${ep.banner}')` : undefined}
-              ></span>
-              <span class="we-text">
-                <span class="we-name">{ep.title}</span>
-                <span class="we-meta">
-                  {ep.format && <span class="we-chip we-chip--format">{ep.format}</span>}
-                  <span class="we-ep">
-                    <span class="we-ep-long">{t("weeklyEpisodes.episode")}</span>
-                    <span class="we-ep-short">{t("weeklyEpisodes.episodeShort")}</span> {ep.episode}
-                  </span>
+            <span class="we-text">
+              <span class="we-name">{ep.title}</span>
+              <span class="we-meta">
+                {ep.format && <span class="we-chip">{ep.format}</span>}
+                <span class="we-chip we-chip--ep">
+                  <span class="we-ep-long">{labels.episode}</span>
+                  <span class="we-ep-short">{labels.episodeShort}</span> {ep.episode}
                 </span>
               </span>
-              {ep.airingLabel && (
-                <span class="we-airing">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
-                  <span>{ep.airingLabel}</span>
-                </span>
-              )}
             </span>
+            {ep.airingLabel && (
+              <span class="we-time">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+                {ep.airingLabel}
+              </span>
+            )}
           </a>
         </li>
       ))}
@@ -70,46 +80,55 @@ const href = (animeId: number) => localizedPath(lang, `/anime/${animeId}/`);
 )}
 
 <style>
-  .weekly-episodes { width:min(100% - 32px, 900px); margin:0 auto; padding:28px 0 36px; color:#f5f2ec; border-top:1px solid rgba(255,255,255,.08); }
-  .we-header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
-  .we-title { margin:0; font:700 clamp(18px,2.2vw,22px)/1.2 Inter,ui-sans-serif,system-ui,sans-serif; letter-spacing:-.035em; }
-  .we-count { display:inline-flex; align-items:center; gap:7px; flex:none; padding:5px 8px; border:1px solid rgba(255,255,255,.12); border-radius:999px; color:#aaa; font:600 9px/1 ui-monospace,monospace; letter-spacing:.08em; }
-  .we-count i { width:3px; height:3px; border-radius:50%; background:#ec4899; }
-  .we-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:7px; }
-  .we-row { display:flex; align-items:stretch; min-height:70px; border-radius:10px; overflow:hidden; background:#111214; border:1px solid rgba(255,255,255,.09); color:inherit; text-decoration:none; transition:border-color .18s,transform .18s,background .18s; }
-  .we-row.is-top { border-color:rgba(236,72,153,.45); }
-  .we-row:hover { border-color:var(--tint); background:#171719; transform:translateY(-1px); }
-  .we-row:focus-visible { outline:2px solid #ec4899; outline-offset:2px; }
-  .we-rank { flex:0 0 38px; display:flex; align-items:center; justify-content:center; align-self:center; width:26px; height:26px; margin:0 0 0 10px; border-radius:50%; background:rgba(255,255,255,.08); color:#c8c4ca; font:700 12px/1 Inter,ui-sans-serif,system-ui,sans-serif; }
-  .is-top .we-rank { background:#ec4899; color:#160b12; }
-  .we-body { position:relative; flex:1; display:flex; align-items:center; min-width:0; overflow:hidden; padding:10px 12px 10px 2px; }
-  .we-banner { position:absolute; inset:0 0 0 auto; width:42%; background:linear-gradient(90deg,#111214 0%,rgba(17,18,20,.65) 28%,rgba(17,18,20,.12) 100%),linear-gradient(0deg,rgba(10,10,12,.28),rgba(10,10,12,.28)); background-size:cover; background-position:center; opacity:.72; }
-  .we-text { position:relative; z-index:1; display:block; min-width:0; max-width:72%; }
-  .we-name { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-weight:650; font-size:14px; line-height:1.25; }
-  .we-meta { display:flex; flex-wrap:wrap; gap:7px; align-items:center; margin-top:5px; }
-  .we-chip { padding:2px 7px; border-radius:5px; font-size:9px; font-weight:700; }
-  .we-chip--format { background:#292653; color:#d5d1ff; }
-  .we-ep { font-size:11px; color:#aaa6ad; }
-  .we-ep-short { display:none; }
-  .we-airing { position:relative; z-index:1; display:flex; align-items:center; gap:5px; margin:5px 0 0; color:#e6c36c; font-size:10px; font-weight:650; white-space:nowrap; }
-  .we-airing svg { width:12px; height:12px; flex:none; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; }
-  @media(max-width:640px){
-    .weekly-episodes{width:calc(100% - 26px);padding:22px 0 28px}
-    .we-header{margin-bottom:11px}
-    .we-title{font-size:17px}
-    .we-count{font-size:8px;padding:5px 7px}
-    .we-list{gap:6px}
-    .we-row{min-height:66px;border-radius:9px}
-    .we-rank{flex-basis:32px;width:24px;height:24px;margin-left:8px;font-size:11px}
-    .we-body{padding:8px 8px 8px 0}
-    .we-banner{width:44%;opacity:.58;background-image:linear-gradient(90deg,#111214 0%,rgba(17,18,20,.62) 30%,rgba(17,18,20,.12) 100%),var(--episode-banner); }
-    .we-text{max-width:76%}
-    .we-name{font-size:12px;line-height:1.22}
-    .we-meta{gap:5px;margin-top:4px}
-    .we-chip{font-size:8px;padding:2px 6px}
-    .we-ep{font-size:10px}
-    .we-ep-long{display:none}
-    .we-ep-short{display:inline}
-    .we-airing{gap:4px;margin-top:4px;font-size:9px}
-    .we-airing svg{width:11px;height:11px}
-  }</style>
+  .weekly-episodes { max-width: 900px; margin: 0 auto; padding: 56px 0; color: #f5f2ec; }
+  .we-header { margin-bottom: 24px; }
+  .we-eyebrow { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 14px; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #cfcbd3; }
+  .we-dot { width: 7px; height: 7px; border-radius: 50%; background: #ec4899; box-shadow: 0 0 0 0 rgba(236,72,153,.7); animation: we-pulse 2s infinite; }
+  @keyframes we-pulse { 70% { box-shadow: 0 0 0 8px rgba(236,72,153,0); } 100% { box-shadow: 0 0 0 0 rgba(236,72,153,0); } }
+  .we-title { margin: 0; font-size: clamp(28px, 4.4vw, 40px); font-weight: 800; line-height: 1.1; letter-spacing: -.02em; color: #fff; }
+  .we-title span { color: #8f8a96; }
+  .we-subtitle { margin: 8px 0 0; font-size: 14px; color: #8f8a96; }
+  .we-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  .we-row { position: relative; isolation: isolate; display: flex; align-items: center; height: 96px; padding: 0 20px 0 12px; border-radius: 18px; overflow: hidden; background: #0b0b0e; border: 1px solid rgba(255,255,255,.08); color: inherit; text-decoration: none; transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
+  .we-row.is-top { height: 132px; border-color: rgba(255,255,255,.28); box-shadow: 0 14px 44px -18px rgba(0,0,0,.9); }
+  .we-row:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.4); box-shadow: 0 14px 40px -16px rgba(0,0,0,.9); }
+  .we-row:focus-visible { outline: 2px solid #ec4899; outline-offset: 3px; }
+  .we-banner { position: absolute; inset: 0; z-index: -2; background: radial-gradient(120% 140% at 85% 30%, color-mix(in srgb, var(--tint) 28%, #0b0b0e), #0b0b0e 70%) center / cover; background-size: cover; background-position: center 30%; transition: transform .6s ease; }
+  .we-row:hover .we-banner { transform: scale(1.05); }
+  .we-shade { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, #0b0b0e 0%, rgba(11,11,14,.92) 30%, rgba(11,11,14,.45) 62%, rgba(11,11,14,.15) 100%), linear-gradient(0deg, rgba(11,11,14,.55), transparent 45%); }
+  .we-rank { flex: 0 0 64px; text-align: center; font-size: 60px; font-weight: 900; line-height: 1; letter-spacing: -.04em; color: transparent; -webkit-text-stroke: 1.5px var(--rank); opacity: .9; }
+  .is-top .we-rank { flex-basis: 84px; font-size: 84px; color: var(--rank); -webkit-text-stroke: 0; text-shadow: 0 0 28px rgba(255,255,255,.25); }
+  .we-text { display: block; min-width: 0; max-width: 58%; padding-left: 8px; }
+  .we-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-weight: 800; font-size: 18px; line-height: 1.2; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,.6); }
+  .is-top .we-name { font-size: 24px; }
+  .we-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 10px; }
+  .we-chip { padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; color: #f5f2ec; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.14); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .we-chip--ep { background: rgba(255,255,255,.06); color: #d8d4cc; }
+  .we-ep-short { display: none; }
+  .we-time { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; font-size: 13px; font-weight: 700; color: #fff; background: rgba(10,10,12,.55); border: 1px solid rgba(255,255,255,.18); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); white-space: nowrap; }
+  .we-time svg { width: 15px; height: 15px; fill: none; stroke: #e8e5ec; stroke-width: 2.2; stroke-linecap: round; }
+  .is-top .we-time { background: rgba(10,10,12,.65); border-color: rgba(255,255,255,.28); }
+  @media (max-width: 640px) {
+    .weekly-episodes { padding: 36px 16px; }
+    .we-title { font-size: 28px; }
+    .we-subtitle { font-size: 13px; }
+    .we-list { gap: 10px; }
+    .we-row { height: 84px; padding: 0 12px 0 6px; border-radius: 16px; }
+    .we-row.is-top { height: 112px; }
+    .we-rank { flex-basis: 42px; font-size: 42px; }
+    .is-top .we-rank { flex-basis: 54px; font-size: 56px; }
+    .we-text { max-width: none; flex: 1; padding: 0 4px 0 6px; }
+    .we-name { font-size: 14px; }
+    .is-top .we-name { font-size: 17px; }
+    .we-meta { margin-top: 7px; }
+    .we-chip { font-size: 10px; padding: 3px 8px; }
+    .we-ep-long { display: none; }
+    .we-ep-short { display: inline; }
+    .we-time { right: 10px; top: auto; bottom: 10px; transform: none; padding: 4px 9px; font-size: 11px; gap: 4px; }
+    .we-time svg { width: 12px; height: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .we-dot { animation: none; }
+    .we-row, .we-banner { transition: none; }
+  }
+</style>

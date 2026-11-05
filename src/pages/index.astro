@@ -8,6 +8,7 @@ import HomeGallery from "../components/home/HomeGallery";
 import AnimeOfTheWeek from "../components/home/AnimeOfTheWeek.astro";
 import WeeklyEpisodes from "../components/home/WeeklyEpisodes.astro";
 import { getWatchedLibrary } from "../data/library";
+import { localizedPath } from "../i18n";
 const collectionEntries = getWatchedLibrary();
 const lang = Astro.locals.lang;
 const isEnglish = lang === "en";
@@ -50,7 +51,18 @@ try {
     </section>
 
     <AnimeOfTheWeek />
-    <WeeklyEpisodes episodes={weeklyEpisodes} lang={lang} />
+    <WeeklyEpisodes
+      episodes={weeklyEpisodes}
+      href={(animeId) => localizedPath(lang, `/anime/${animeId}/`)}
+      labels={{
+        eyebrow: isEnglish ? "This week" : "Esta semana",
+        title: isEnglish ? "Popular episodes this week" : "Episodios populares de la semana",
+        titleAccent: isEnglish ? "this week" : "de la semana",
+        subtitle: isEnglish ? "Top 5 by popularity · AniList" : "Top 5 por popularidad · AniList",
+        episode: isEnglish ? "Episode" : "Episodio",
+        episodeShort: "Ep.",
+      }}
+    />
   </main>
 
   <Footer />
