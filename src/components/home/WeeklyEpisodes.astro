@@ -26,13 +26,8 @@ const href = (animeId: number) => localizedPath(lang, `/anime/${animeId}/`);
 {rows.length > 0 && (
   <section class="weekly-episodes" aria-labelledby="weekly-episodes-title">
     <header class="we-header">
-      <div>
-        <p class="we-eyebrow">{t("weeklyEpisodes.eyebrow")}</p>
-        <h2 id="weekly-episodes-title" class="we-title">
-          {t("weeklyEpisodes.heading")} <em>{t("weeklyEpisodes.accent")}</em>
-        </h2>
-      </div>
-      <p class="we-subtitle">{t("weeklyEpisodes.subtitle")}</p>
+      <h2 id="weekly-episodes-title" class="we-title">{lang === "en" ? "Airing this week" : "En emisión esta semana"}</h2>
+      <span class="we-count">TOP 5 <i></i> ANILIST</span>
     </header>
 
     <ol class="we-list">
@@ -43,7 +38,7 @@ const href = (animeId: number) => localizedPath(lang, `/anime/${animeId}/`);
             href={href(ep.animeId)}
             style={`--tint:${ep.tint || "#ec4899"}; --rank-bg:${rankColors[i]};`}
           >
-            <span class:list={["we-rank", { "is-light": i >= 3 }]} aria-hidden="true">{i + 1}</span>
+            <span class="we-rank" aria-hidden="true">{i + 1}</span>
             <span class="we-body">
               <span
                 class="we-banner"
@@ -75,51 +70,46 @@ const href = (animeId: number) => localizedPath(lang, `/anime/${animeId}/`);
 )}
 
 <style>
-  .weekly-episodes { max-width: 900px; margin: 0 auto; padding: 56px 0; color: #f5f2ec; }
-  .we-header { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; }
-  .we-eyebrow { margin: 0; font: 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .2em; text-transform: uppercase; color: #ec4899; }
-  .we-title { margin: 10px 0 0; font-family: "Instrument Serif", Georgia, serif; font-weight: 400; font-size: 56px; line-height: 1; letter-spacing: -.02em; }
-  .we-title em { color: #ec4899; }
-  .we-subtitle { margin: 0; font-size: 13px; color: #a39e95; }
-  .we-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
-  .we-row { display: flex; align-items: stretch; height: 92px; border-radius: 16px; overflow: hidden; background: #121212; border: 1px solid rgba(245,242,236,.12); color: inherit; text-decoration: none; }
-  .we-row.is-top { height: 112px; border-color: #ec4899; }
-  .we-row:hover { border-color: var(--tint); }
-  .we-row:focus-visible { outline: 2px solid #ec4899; outline-offset: 2px; }
-  .we-rank { flex: 0 0 68px; display: flex; align-items: center; justify-content: center; font-family: "Instrument Serif", Georgia, serif; font-size: 42px; background: var(--rank-bg); color: #090909; }
-  .we-rank.is-light { color: #f5f2ec; }
-  .is-top .we-rank { flex-basis: 84px; font-size: 56px; }
-  .we-body { position: relative; flex: 1; display: flex; align-items: center; min-width: 0; overflow: hidden; }
-  .we-banner { position: absolute; inset: 0 0 0 auto; width: 58%; background: linear-gradient(120deg, color-mix(in srgb, var(--tint) 90%, #090909), color-mix(in srgb, var(--tint) 35%, #090909)) center / cover; background-size: cover; background-position: center; -webkit-mask-image: linear-gradient(90deg, transparent, #000 55%); mask-image: linear-gradient(90deg, transparent, #000 55%); opacity: .85; }
-  .we-text { position: relative; z-index: 1; display: block; min-width: 0; max-width: 62%; padding: 0 24px; }
-  .we-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-weight: 700; font-size: 18px; line-height: 1.2; }
-  .is-top .we-name { font-size: 22px; color: #f9a8c9; }
-  .we-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
-  .we-chip { padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; }
-  .we-chip--format { background: #2a2a6a; color: #cfd0ff; }
-  .we-ep { font-size: 13px; color: #c9c4bb; }
-  .we-ep-short { display: none; }
-  .we-airing { position: absolute; right: 26px; top: 0; bottom: 0; z-index: 1; display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700; }
-  .we-airing svg { width: 22px; height: 22px; fill: none; stroke: #f5c542; stroke-width: 2; stroke-linecap: round; }
-  @media (max-width: 640px) {
-    .weekly-episodes { padding: 32px 16px; }
-    .we-title { font-size: 38px; }
-    .we-eyebrow { font-size: 11px; }
-    .we-list { gap: 10px; }
-    .we-row { height: 72px; border-radius: 12px; }
-    .we-row.is-top { height: 88px; }
-    .we-rank { flex-basis: 44px; font-size: 28px; }
-    .is-top .we-rank { flex-basis: 52px; font-size: 34px; }
-    .we-banner { width: 60%; }
-    .we-text { padding: 0 12px; max-width: 64%; }
-    .we-name { font-size: 14px; }
-    .is-top .we-name { font-size: 16px; }
-    .we-chip { font-size: 10px; padding: 2px 8px; }
-    .we-meta { gap: 6px; margin-top: 6px; }
-    .we-ep { font-size: 11px; }
-    .we-ep-long { display: none; }
-    .we-ep-short { display: inline; }
-    .we-airing { right: 12px; gap: 5px; font-size: 13px; }
-    .we-airing svg { width: 16px; height: 16px; }
-  }
-</style>
+  .weekly-episodes { width:min(100% - 32px, 900px); margin:0 auto; padding:28px 0 36px; color:#f5f2ec; border-top:1px solid rgba(255,255,255,.08); }
+  .we-header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
+  .we-title { margin:0; font:700 clamp(18px,2.2vw,22px)/1.2 Inter,ui-sans-serif,system-ui,sans-serif; letter-spacing:-.035em; }
+  .we-count { display:inline-flex; align-items:center; gap:7px; flex:none; padding:5px 8px; border:1px solid rgba(255,255,255,.12); border-radius:999px; color:#aaa; font:600 9px/1 ui-monospace,monospace; letter-spacing:.08em; }
+  .we-count i { width:3px; height:3px; border-radius:50%; background:#ec4899; }
+  .we-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:7px; }
+  .we-row { display:flex; align-items:stretch; min-height:70px; border-radius:10px; overflow:hidden; background:#111214; border:1px solid rgba(255,255,255,.09); color:inherit; text-decoration:none; transition:border-color .18s,transform .18s,background .18s; }
+  .we-row.is-top { border-color:rgba(236,72,153,.45); }
+  .we-row:hover { border-color:var(--tint); background:#171719; transform:translateY(-1px); }
+  .we-row:focus-visible { outline:2px solid #ec4899; outline-offset:2px; }
+  .we-rank { flex:0 0 38px; display:flex; align-items:center; justify-content:center; align-self:center; width:26px; height:26px; margin:0 0 0 10px; border-radius:50%; background:rgba(255,255,255,.08); color:#c8c4ca; font:700 12px/1 Inter,ui-sans-serif,system-ui,sans-serif; }
+  .is-top .we-rank { background:#ec4899; color:#160b12; }
+  .we-body { position:relative; flex:1; display:flex; align-items:center; min-width:0; overflow:hidden; padding:10px 12px 10px 2px; }
+  .we-banner { position:absolute; inset:0 0 0 auto; width:42%; background:linear-gradient(90deg,#111214 0%,rgba(17,18,20,.65) 28%,rgba(17,18,20,.12) 100%),linear-gradient(0deg,rgba(10,10,12,.28),rgba(10,10,12,.28)); background-size:cover; background-position:center; opacity:.72; }
+  .we-text { position:relative; z-index:1; display:block; min-width:0; max-width:72%; }
+  .we-name { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; font-weight:650; font-size:14px; line-height:1.25; }
+  .we-meta { display:flex; flex-wrap:wrap; gap:7px; align-items:center; margin-top:5px; }
+  .we-chip { padding:2px 7px; border-radius:5px; font-size:9px; font-weight:700; }
+  .we-chip--format { background:#292653; color:#d5d1ff; }
+  .we-ep { font-size:11px; color:#aaa6ad; }
+  .we-ep-short { display:none; }
+  .we-airing { position:relative; z-index:1; display:flex; align-items:center; gap:5px; margin:5px 0 0; color:#e6c36c; font-size:10px; font-weight:650; white-space:nowrap; }
+  .we-airing svg { width:12px; height:12px; flex:none; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; }
+  @media(max-width:640px){
+    .weekly-episodes{width:calc(100% - 26px);padding:22px 0 28px}
+    .we-header{margin-bottom:11px}
+    .we-title{font-size:17px}
+    .we-count{font-size:8px;padding:5px 7px}
+    .we-list{gap:6px}
+    .we-row{min-height:66px;border-radius:9px}
+    .we-rank{flex-basis:32px;width:24px;height:24px;margin-left:8px;font-size:11px}
+    .we-body{padding:8px 8px 8px 0}
+    .we-banner{width:44%;opacity:.58;background-image:linear-gradient(90deg,#111214 0%,rgba(17,18,20,.62) 30%,rgba(17,18,20,.12) 100%),var(--episode-banner); }
+    .we-text{max-width:76%}
+    .we-name{font-size:12px;line-height:1.22}
+    .we-meta{gap:5px;margin-top:4px}
+    .we-chip{font-size:8px;padding:2px 6px}
+    .we-ep{font-size:10px}
+    .we-ep-long{display:none}
+    .we-ep-short{display:inline}
+    .we-airing{gap:4px;margin-top:4px;font-size:9px}
+    .we-airing svg{width:11px;height:11px}
+  }</style>

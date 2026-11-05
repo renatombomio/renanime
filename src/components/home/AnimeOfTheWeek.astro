@@ -101,7 +101,7 @@ const availableProviders = providerConfig.flatMap((provider) => {
 <section class="anime-week" aria-labelledby="anime-week-title">
   <div class="anime-week-inner">
     <div class="anime-week-heading">
-      <h2 id="anime-week-title">{isEnglish ? "Anime of the week" : "Anime de la semana"}</h2>
+      <h2 id="anime-week-title">{isEnglish ? "Featured anime" : "Anime destacado"}</h2>
     </div>
 
     {anime && selection ? (
@@ -139,42 +139,40 @@ const availableProviders = providerConfig.flatMap((provider) => {
 </section>
 
 <style>
-  .anime-week{padding:clamp(3.5rem,7vw,6rem) 0;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent 75%);color:#f5f2ec;border-top:1px solid rgba(255,255,255,.07)}
-  .anime-week-inner{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin:0 auto}
-  .anime-week-heading{margin-bottom:1.75rem}
-  .anime-week-heading h2{margin:0;font-size:clamp(1.9rem,4vw,3rem);font-weight:700;letter-spacing:-.055em}
-  .anime-week-card{display:grid;grid-template-columns:clamp(190px,27vw,320px) minmax(0,1fr);align-items:center;gap:clamp(1.5rem,4vw,3.5rem);width:100%;max-width:none;padding:clamp(1rem,2.5vw,2rem);border:1px solid rgba(255,255,255,.09);border-radius:12px;background:linear-gradient(115deg,rgba(255,255,255,.055),rgba(255,255,255,.012));color:inherit;text-decoration:none;transition:border-color .25s,background .25s}
-  .anime-week-poster{width:100%;aspect-ratio:3/4;overflow:hidden;border-radius:9px;background:#111}
-  .anime-week-poster img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .35s ease}
-  .anime-week-card:hover{border-color:rgba(249,168,212,.4);background:linear-gradient(115deg,rgba(255,255,255,.075),rgba(255,255,255,.02))}\n  .anime-week-card:hover .anime-week-poster img{transform:scale(1.025)}
+  .anime-week{padding:26px 0 22px;background:transparent;color:#f5f2ec;border-top:1px solid rgba(255,255,255,.08)}
+  .anime-week-inner{width:min(calc(100% - 32px),900px);margin:0 auto}
+  .anime-week-heading{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .anime-week-heading:after{content:"WEEKLY PICK";font:600 9px/1 ui-monospace,monospace;letter-spacing:.1em;color:#999;border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:5px 7px}
+  .anime-week-heading h2{margin:0;font:700 clamp(18px,2.2vw,22px)/1.2 Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:-.035em}
+  .anime-week-card{display:grid;grid-template-columns:94px minmax(0,1fr);align-items:center;gap:14px;width:100%;max-width:620px;padding:10px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:#111214;color:inherit;text-decoration:none;transition:border-color .2s,background .2s}
+  .anime-week-poster{width:94px;aspect-ratio:3/4;overflow:hidden;border-radius:7px;background:#19191b}
+  .anime-week-poster img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .3s ease}
+  .anime-week-card:hover{border-color:rgba(249,168,212,.4);background:#171719}
+  .anime-week-card:hover .anime-week-poster img{transform:scale(1.025)}
   .anime-week-poster-fallback{display:grid;place-items:center;height:100%;color:#ec4899;font-weight:800}
-  .anime-week-content{min-width:0;padding:.35rem 0}
-  .anime-week-content h3{margin:0 0 1.1rem;font-size:clamp(2rem,4.2vw,3.6rem);line-height:1.02;letter-spacing:-.055em;max-width:15ch}
-  .anime-week-score{display:inline-flex;align-items:center;gap:.25rem;padding:.35rem .65rem;border:1px solid rgba(236,72,153,.55);border-radius:999px;color:#f9a8d4;font-size:.78rem;font-weight:600}
-  .anime-week-meta{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:.85rem;color:#a5a5a5;font-size:.82rem;text-transform:capitalize}
-  .anime-week-meta span+span:before{content:"·";margin-right:.55rem;color:#666}
-  .anime-week-streaming{display:flex;align-items:center;flex-wrap:wrap;gap:.7rem;margin-top:1rem;min-height:30px}
-  .anime-week-provider{display:grid;place-items:center;width:30px;height:30px;color:#f5f2ec;opacity:.9;transition:opacity .2s,transform .2s}
-  .anime-week-provider:hover{opacity:1;transform:translateY(-2px)}
-  .anime-week-provider svg{display:block;width:24px;height:24px}
-  .provider-netflix{color:#e50914}
-  .provider-hbo{color:#a78bfa}
-  .provider-wordmark{font-size:1rem;font-weight:900;letter-spacing:-.08em}
-  .provider-prime{color:#00a8e1}
-  .provider-crunchyroll{color:#f47521}
-  .anime-week-unavailable{padding:1rem 0;color:#999}
+  .anime-week-content{min-width:0;padding:0}
+  .anime-week-content h3{margin:0 0 8px;font:650 clamp(16px,2vw,19px)/1.2 Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:-.025em;max-width:28ch}
+  .anime-week-score{display:inline-flex;align-items:center;gap:.25rem;padding:4px 7px;border:1px solid rgba(236,72,153,.48);border-radius:999px;color:#f9a8d4;font-size:10px;font-weight:650}
+  .anime-week-meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:7px;color:#a5a5a5;font-size:10px;text-transform:capitalize}
+  .anime-week-meta span+span:before{content:"·";margin-right:7px;color:#666}
+  .anime-week-streaming{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-top:7px;min-height:22px}
+  .anime-week-provider{display:grid;place-items:center;width:22px;height:22px;color:#f5f2ec;opacity:.9}
+  .anime-week-provider svg{display:block;width:18px;height:18px}
+  .provider-netflix{color:#e50914}.provider-hbo{color:#a78bfa}.provider-wordmark{font-size:12px;font-weight:900;letter-spacing:-.08em}.provider-prime{color:#00a8e1}.provider-crunchyroll{color:#f47521}
+  .anime-week-unavailable{padding:10px 0;color:#999;font-size:13px}
   @media(max-width:650px){
-    .anime-week{padding:2.75rem 0 3rem}
-    .anime-week-heading{margin-bottom:1.25rem}
-    .anime-week-card{grid-template-columns:clamp(112px,34vw,150px) minmax(0,1fr);align-items:center;gap:1rem;padding:.75rem;border-radius:9px}
-    .anime-week-poster{width:100%;border-radius:7px}
-    .anime-week-content{padding:0}
-    .anime-week-content h3{font-size:clamp(1.25rem,5.5vw,1.7rem);line-height:1.08;margin-bottom:.7rem}
-    .anime-week-score{font-size:.72rem;padding:.3rem .55rem}
-    .anime-week-meta{font-size:.72rem;gap:.4rem;margin-top:.65rem}
-    .anime-week-meta span+span:before{margin-right:.4rem}
-    .anime-week-streaming{gap:.55rem;margin-top:.75rem;min-height:24px}
-    .anime-week-provider{width:25px;height:25px}
-    .anime-week-provider svg{width:21px;height:21px}
-  }
-</style>
+    .anime-week{padding:20px 0 16px}
+    .anime-week-inner{width:calc(100% - 26px)}
+    .anime-week-heading{margin-bottom:10px}
+    .anime-week-heading h2{font-size:17px}
+    .anime-week-card{grid-template-columns:84px minmax(0,1fr);gap:11px;padding:8px;border-radius:9px}
+    .anime-week-poster{width:84px;border-radius:6px}
+    .anime-week-content h3{font-size:14px;line-height:1.2;margin-bottom:6px}
+    .anime-week-score{font-size:9px;padding:3px 6px}
+    .anime-week-meta{font-size:9px;gap:5px;margin-top:5px}
+    .anime-week-meta span+span:before{margin-right:5px}
+    .anime-week-streaming{gap:5px;margin-top:5px;min-height:19px}
+    .anime-week-provider{width:19px;height:19px}
+    .anime-week-provider svg{width:16px;height:16px}
+    .anime-week-heading:after{font-size:8px;padding:4px 6px}
+  }</style>
