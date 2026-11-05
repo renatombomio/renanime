@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import es from "../../i18n/es.json";
+import en from "../../i18n/en.json";
 
 type SeasonEpisode = {
   id: string;
@@ -20,7 +22,7 @@ type ResponsePayload = {
 type Props = { lang?: string };
 
 export default function SeasonEpisodes({ lang = "es" }: Props) {
-  const isEnglish = lang === "en";
+  const t = lang === "en" ? en : es;
   const [episodes, setEpisodes] = useState<SeasonEpisode[]>([]);
   const [loading, setLoading] = useState(true);
   const [unavailable, setUnavailable] = useState(false);
@@ -59,11 +61,11 @@ export default function SeasonEpisodes({ lang = "es" }: Props) {
   return (
     <section className="season-episodes" aria-labelledby="season-episodes-title">
       <div className="season-episodes-inner">
-        <h2 id="season-episodes-title">{isEnglish ? "Season highlights" : "Episodios destacados de la temporada"}</h2>
+        <h2 id="season-episodes-title">{t["seasonEpisodes.heading"]}</h2>
         {loading ? (
-          <div className="season-episodes-status" aria-live="polite">{isEnglish ? "Loading verified ratings…" : "Cargando puntuaciones verificadas…"}</div>
+          <div className="season-episodes-status" aria-live="polite">{t["seasonEpisodes.loading"]}</div>
         ) : episodes.length ? (
-          <div className="season-episodes-track" aria-label={isEnglish ? "Top-rated episodes this season" : "Episodios mejor valorados de esta temporada"}>
+          <div className="season-episodes-track" aria-label={t["seasonEpisodes.ariaLabel"]}>
             {episodes.map((episode) => (
               <a className="season-episode-card" href={episode.url} key={episode.id}>
                 <div className="season-episode-poster">
@@ -71,15 +73,15 @@ export default function SeasonEpisodes({ lang = "es" }: Props) {
                 </div>
                 <div className="season-episode-info">
                   <span className="season-episode-anime">{episode.animeTitle}</span>
-                  <span className="season-episode-number">{episode.episodeNumber}</span>
+                  <span className="season-episode-number">{t["seasonEpisodes.episode"]} {episode.episodeNumber}</span>
                   {episode.episodeTitle && <span className="season-episode-title">{episode.episodeTitle}</span>}
-                  <span className="season-episode-score">★ {episode.score.toFixed(1)} <small>· {episode.votes.toLocaleString(isEnglish ? "en" : "es")} {isEnglish ? "votes" : "votos"}</small></span>
+                  <span className="season-episode-score">★ {episode.score.toFixed(1)} <small>· {episode.votes.toLocaleString(isEnglish ? "en" : "es")} {t["seasonEpisodes.votes"]}</small></span>
                 </div>
               </a>
             ))}
           </div>
         ) : (
-          <p className="season-episodes-status">{isEnglish ? "No episode ratings are available for this season yet." : "Todavía no hay puntuaciones de episodios disponibles para esta temporada."}</p>
+          <p className="season-episodes-status">{t["seasonEpisodes.empty"]}</p>
         )}
       </div>
       <style>{`
