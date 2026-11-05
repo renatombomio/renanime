@@ -5,10 +5,23 @@ import Navbar from "../components/layout/Navbar.astro";
 import Footer from "../components/layout/Footer.astro";
 import Hero from "../components/hero/Hero.astro";
 import HomeGallery from "../components/home/HomeGallery";
+import WeeklyEpisodes from "../components/home/WeeklyEpisodes.astro";
 import { getWatchedLibrary } from "../data/library";
 const collectionEntries = getWatchedLibrary();
 const lang = Astro.locals.lang;
 const isEnglish = lang === "en";
+let weeklyEpisodes = [];
+try {
+  const response = await fetch(new URL(`/api/weekly-popular-episodes?lang=${lang}`, Astro.url), {
+    headers: { Accept: "application/json" },
+  });
+  if (!response.ok) throw new Error(`Weekly episodes API returned HTTP ${response.status}`);
+  const payload = await response.json();
+  if (!payload.success || !Array.isArray(payload.episodes)) throw new Error("Weekly episodes API returned an invalid payload.");
+  weeklyEpisodes = payload.episodes;
+} catch (error) {
+  console.error("[home] Weekly popular episodes unavailable:", error);
+}
 ---
 
 <Layout
@@ -28,6 +41,8 @@ const isEnglish = lang === "en";
     <section class="home-gallery-section" aria-label={isEnglish ? "Ren's collection" : "Colección de Ren"}>
       <HomeGallery entries={collectionEntries} lang={Astro.locals.lang} client:load />
     </section>
+
+    <WeeklyEpisodes episodes={weeklyEpisodes} lang={lang} />
   </main>
 
   <Footer />
