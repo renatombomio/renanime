@@ -15,7 +15,6 @@ type WeeklyEpisode = { animeId: number; title: string; banner: string | null; ti
 type AniListResponse = { data?: { Page?: { pageInfo?: { hasNextPage?: boolean }; airingSchedules?: AiringSchedule[] } }; errors?: Array<{ message?: string }> };
 
 const ANILIST_ENDPOINT = "https://graphql.anilist.co";
-const PAGE_SIZE = 50;
 const MAX_PAGES = 3;
 const CACHE_SECONDS = 60 * 60;
 
@@ -62,7 +61,7 @@ async function fetchAiringPage(page: number, from: number, to: number): Promise<
 
 export const GET: APIRoute = async ({ request }) => {
   const now = new Date();
-  const lang = new URL(request.url).pathname.startsWith("/en/") ? "en" : "es";
+  const lang = new URL(request.url).searchParams.get("lang") === "en" ? "en" : "es";
   const { from, to } = getUtcWeekRange(now);
   try {
     const schedules: AiringSchedule[] = [];
