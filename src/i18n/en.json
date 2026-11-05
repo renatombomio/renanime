@@ -187,10 +187,15 @@
   "genres.unknownDate": "Unknown date",
   "genres.error": "We couldn't retrieve anime for this genre.",
   "favorites.loadMoreCount": "Load more · {shown} / {total}",
-  "renCollection.pageTitle": "Ren\u2019s Collection",
-  "renCollection.heading": "Ren\u2019s Collection",
+  "renCollection.pageTitle": "Ren’s Collection",
+  "renCollection.heading": "Ren’s Collection",
   "ghibli.loading": "Opening the archive…",
   "ghibli.openFilm": "Open {title}",
   "ghibli.watched": "WATCHED",
-  "ghibli.storyLoading": "Remembering the journey…"
+  "ghibli.storyLoading": "Remembering the journey…",
+  "seasonEpisodes.heading": "Season highlights",
+  "seasonEpisodes.loading": "Loading verified ratings…",
+  "seasonEpisodes.empty": "No episode ratings are available for this season yet.",
+  "seasonEpisodes.episode": "Episode",
+  "seasonEpisodes.votes": "votes"
 }
