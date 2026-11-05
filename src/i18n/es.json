@@ -198,5 +198,11 @@
   "seasonEpisodes.empty": "Todavía no hay puntuaciones de episodios disponibles para esta temporada.",
   "seasonEpisodes.episode": "Episodio",
   "seasonEpisodes.votes": "votos",
-  "seasonEpisodes.ariaLabel": "Episodios mejor valorados de esta temporada"
+  "seasonEpisodes.ariaLabel": "Episodios mejor valorados de esta temporada",
+  "weeklyEpisodes.eyebrow": "Esta semana",
+  "weeklyEpisodes.heading": "Episodios populares",
+  "weeklyEpisodes.accent": "de la semana",
+  "weeklyEpisodes.subtitle": "Top 5 por popularidad · AniList",
+  "weeklyEpisodes.episode": "Episodio",
+  "weeklyEpisodes.episodeShort": "Ep."
 }
