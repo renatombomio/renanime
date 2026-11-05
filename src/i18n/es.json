@@ -191,5 +191,11 @@
   "ghibli.loading": "Abriendo el archivo…",
   "ghibli.openFilm": "Abrir {title}",
   "ghibli.watched": "VISTA",
-  "ghibli.storyLoading": "Recordando el viaje…"
+  "ghibli.storyLoading": "Recordando el viaje…",
+  "weeklyEpisodes.eyebrow": "Esta semana",
+  "weeklyEpisodes.heading": "Episodios populares",
+  "weeklyEpisodes.accent": "de la semana",
+  "weeklyEpisodes.subtitle": "Top 5 por popularidad · AniList",
+  "weeklyEpisodes.episode": "Episodio",
+  "weeklyEpisodes.episodeShort": "Ep."
 }
