@@ -134,7 +134,7 @@ export const GET: APIRoute = async () => {
             animeUrl: `/anime/${animeItem.id}/`,
             poster: animeItem.coverImage.large || animeItem.bannerImage || "",
             episode: episode.mal_id,
-            episodeNumber: `Episode ${episode.mal_id}`,
+            episodeNumber: String(episode.mal_id),
             episodeTitle: episode.title || "",
             score: episode.score,
             votes: episode.scored_by || 0,
