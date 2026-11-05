@@ -192,5 +192,10 @@
   "ghibli.loading": "Abriendo el archivo…",
   "ghibli.openFilm": "Abrir {title}",
   "ghibli.watched": "VISTA",
-  "ghibli.storyLoading": "Recordando el viaje…"
+  "ghibli.storyLoading": "Recordando el viaje…",
+  "seasonEpisodes.heading": "Episodios destacados de la temporada",
+  "seasonEpisodes.loading": "Cargando puntuaciones verificadas…",
+  "seasonEpisodes.empty": "Todavía no hay puntuaciones de episodios disponibles para esta temporada.",
+  "seasonEpisodes.episode": "Episodio",
+  "seasonEpisodes.votes": "votos"
 }
