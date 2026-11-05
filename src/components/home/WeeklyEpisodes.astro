@@ -1,0 +1,125 @@
+---
+import { localizedPath, useT, type Lang } from "../../i18n";
+
+export interface WeeklyEpisode {
+  animeId: number;
+  title: string;
+  banner?: string | null;
+  tint?: string | null;
+  format?: string | null;
+  episode: number;
+  airingLabel?: string | null;
+}
+
+interface Props {
+  episodes: WeeklyEpisode[];
+  lang: Lang;
+}
+
+const { episodes, lang } = Astro.props;
+const t = useT(lang);
+const rows = episodes.slice(0, 5);
+const rankColors = ["#ec4899", "#e0a458", "#9b7bd6", "#1d1d1d", "#1d1d1d"];
+const href = (animeId: number) => localizedPath(lang, `/anime/${animeId}/`);
+---
+
+{rows.length > 0 && (
+  <section class="weekly-episodes" aria-labelledby="weekly-episodes-title">
+    <header class="we-header">
+      <div>
+        <p class="we-eyebrow">{t("weeklyEpisodes.eyebrow")}</p>
+        <h2 id="weekly-episodes-title" class="we-title">
+          {t("weeklyEpisodes.heading")} <em>{t("weeklyEpisodes.accent")}</em>
+        </h2>
+      </div>
+      <p class="we-subtitle">{t("weeklyEpisodes.subtitle")}</p>
+    </header>
+
+    <ol class="we-list">
+      {rows.map((ep, i) => (
+        <li>
+          <a
+            class:list={["we-row", { "is-top": i === 0 }]}
+            href={href(ep.animeId)}
+            style={`--tint:${ep.tint || "#ec4899"}; --rank-bg:${rankColors[i]};`}
+          >
+            <span class:list={["we-rank", { "is-light": i >= 3 }]} aria-hidden="true">{i + 1}</span>
+            <span class="we-body">
+              <span
+                class="we-banner"
+                aria-hidden="true"
+                style={ep.banner ? `background-image:url('${ep.banner}')` : undefined}
+              ></span>
+              <span class="we-text">
+                <span class="we-name">{ep.title}</span>
+                <span class="we-meta">
+                  {ep.format && <span class="we-chip we-chip--format">{ep.format}</span>}
+                  <span class="we-ep">
+                    <span class="we-ep-long">{t("weeklyEpisodes.episode")}</span>
+                    <span class="we-ep-short">{t("weeklyEpisodes.episodeShort")}</span> {ep.episode}
+                  </span>
+                </span>
+              </span>
+              {ep.airingLabel && (
+                <span class="we-airing">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+                  <span>{ep.airingLabel}</span>
+                </span>
+              )}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+)}
+
+<style>
+  .weekly-episodes { max-width: 900px; margin: 0 auto; padding: 56px 0; color: #f5f2ec; }
+  .we-header { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; }
+  .we-eyebrow { margin: 0; font: 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .2em; text-transform: uppercase; color: #ec4899; }
+  .we-title { margin: 10px 0 0; font-family: "Instrument Serif", Georgia, serif; font-weight: 400; font-size: 56px; line-height: 1; letter-spacing: -.02em; }
+  .we-title em { color: #ec4899; }
+  .we-subtitle { margin: 0; font-size: 13px; color: #a39e95; }
+  .we-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  .we-row { display: flex; align-items: stretch; height: 92px; border-radius: 16px; overflow: hidden; background: #121212; border: 1px solid rgba(245,242,236,.12); color: inherit; text-decoration: none; }
+  .we-row.is-top { height: 112px; border-color: #ec4899; }
+  .we-row:hover { border-color: var(--tint); }
+  .we-row:focus-visible { outline: 2px solid #ec4899; outline-offset: 2px; }
+  .we-rank { flex: 0 0 68px; display: flex; align-items: center; justify-content: center; font-family: "Instrument Serif", Georgia, serif; font-size: 42px; background: var(--rank-bg); color: #090909; }
+  .we-rank.is-light { color: #f5f2ec; }
+  .is-top .we-rank { flex-basis: 84px; font-size: 56px; }
+  .we-body { position: relative; flex: 1; display: flex; align-items: center; min-width: 0; overflow: hidden; }
+  .we-banner { position: absolute; inset: 0 0 0 auto; width: 58%; background: linear-gradient(120deg, color-mix(in srgb, var(--tint) 90%, #090909), color-mix(in srgb, var(--tint) 35%, #090909)) center / cover; background-size: cover; background-position: center; -webkit-mask-image: linear-gradient(90deg, transparent, #000 55%); mask-image: linear-gradient(90deg, transparent, #000 55%); opacity: .85; }
+  .we-text { position: relative; z-index: 1; display: block; min-width: 0; max-width: 62%; padding: 0 24px; }
+  .we-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-weight: 700; font-size: 18px; line-height: 1.2; }
+  .is-top .we-name { font-size: 22px; color: #f9a8c9; }
+  .we-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+  .we-chip { padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .we-chip--format { background: #2a2a6a; color: #cfd0ff; }
+  .we-ep { font-size: 13px; color: #c9c4bb; }
+  .we-ep-short { display: none; }
+  .we-airing { position: absolute; right: 26px; top: 0; bottom: 0; z-index: 1; display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700; }
+  .we-airing svg { width: 22px; height: 22px; fill: none; stroke: #f5c542; stroke-width: 2; stroke-linecap: round; }
+  @media (max-width: 640px) {
+    .weekly-episodes { padding: 32px 16px; }
+    .we-title { font-size: 38px; }
+    .we-eyebrow { font-size: 11px; }
+    .we-list { gap: 10px; }
+    .we-row { height: 72px; border-radius: 12px; }
+    .we-row.is-top { height: 88px; }
+    .we-rank { flex-basis: 44px; font-size: 28px; }
+    .is-top .we-rank { flex-basis: 52px; font-size: 34px; }
+    .we-banner { width: 60%; }
+    .we-text { padding: 0 12px; max-width: 64%; }
+    .we-name { font-size: 14px; }
+    .is-top .we-name { font-size: 16px; }
+    .we-chip { font-size: 10px; padding: 2px 8px; }
+    .we-meta { gap: 6px; margin-top: 6px; }
+    .we-ep { font-size: 11px; }
+    .we-ep-long { display: none; }
+    .we-ep-short { display: inline; }
+    .we-airing { right: 12px; gap: 5px; font-size: 13px; }
+    .we-airing svg { width: 16px; height: 16px; }
+  }
+</style>
