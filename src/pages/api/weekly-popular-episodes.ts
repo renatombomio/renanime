@@ -42,8 +42,10 @@ function getDisplayTitle(media: AniListMedia): string { return media.title.romaj
 function getAiringLabel(airingAt: number, now: Date, lang: "es" | "en"): string | null {
   if (airingAt * 1000 <= now.getTime()) return null;
   const locale = lang === "en" ? "en-GB" : "es-ES";
-  const formatted = new Intl.DateTimeFormat(locale, { weekday: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "Europe/Amsterdam" }).format(new Date(airingAt * 1000));
-  return formatted.charAt(0).toLocaleUpperCase(locale) + formatted.slice(1);
+  const date = new Date(airingAt * 1000);
+  const weekday = new Intl.DateTimeFormat(locale, { weekday: "short", timeZone: "Europe/Amsterdam" }).format(date);
+  const time = new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "Europe/Amsterdam" }).format(date);
+  return `${weekday.charAt(0).toLocaleUpperCase(locale)}${weekday.slice(1)} ${time}`;
 }
 
 async function fetchAiringPage(page: number, from: number, to: number): Promise<AniListResponse> {
