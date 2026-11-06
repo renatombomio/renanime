@@ -74,7 +74,7 @@ try {
       if (titleResponse.ok) {
         const payload = await titleResponse.json();
         const titles = new Map((payload.data?.Page?.media ?? []).map((item: any) => [item.id, item.title.english || item.title.romaji || "Anime"]));
-        communityActivity = communityActivity.map((item) => ({ ...item, animeTitle: titles.get(item.animeId) || "Anime" }));
+        communityActivity = communityActivity.map((item) => item.animeId === null ? item : ({ ...item, animeTitle: titles.get(item.animeId) || "Anime" }));
       }
     } catch (titleError) { console.error("[home] Community anime titles unavailable:", titleError); }
   }
