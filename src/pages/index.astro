@@ -7,9 +7,45 @@ import Hero from "../components/hero/Hero.astro";
 import HomeGallery from "../components/home/HomeGallery";
 import AnimeOfTheWeek from "../components/home/AnimeOfTheWeek.astro";
 import WeeklyEpisodes from "../components/home/WeeklyEpisodes.astro";
+import HomeCommunity from "../components/home/HomeCommunity.astro";
+import { createSupabaseSsrClient } from "../lib/supabase-ssr";
 import { getWatchedLibrary } from "../data/library";
 import { localizedPath } from "../i18n";
 const collectionEntries = getWatchedLibrary();
+const supabase = createSupabaseSsrClient(Astro.request, Astro.cookies);
+let communityMembers: { id: string; aka: string; avatar_url: string | null; last_seen_at: string | null }[] = [];
+let communityActivity: { id: string; animeId: number; content: string; createdAt: string; aka: string; avatarUrl: string | null }[] = [];
+try {
+  const [{ data: memberRows, error: memberError }, { data: commentRows, error: commentError }] = await Promise.all([
+    supabase.from("profiles")
+      .select("id, aka, avatar_url, last_seen_at")
+      .eq("is_private", false)
+      .not("aka", "is", null)
+      .order("last_seen_at", { ascending: false, nullsFirst: false })
+      .limit(18),
+    supabase.from("anime_comments")
+      .select("id, anime_id, content, created_at, profiles!inner(aka, avatar_url)")
+      .order("created_at", { ascending: false })
+      .limit(8),
+  ]);
+  if (memberError) console.error("[home] Community members unavailable:", memberError.message);
+  else communityMembers = (memberRows ?? []).filter((member) => Boolean(member.aka));
+  if (commentError) console.error("[home] Community activity unavailable:", commentError.message);
+  else communityActivity = (commentRows ?? []).flatMap((comment) => {
+    const profile = Array.isArray(comment.profiles) ? comment.profiles[0] : comment.profiles;
+    if (!profile?.aka || !Number.isInteger(comment.anime_id)) return [];
+    return [{
+      id: comment.id,
+      animeId: comment.anime_id,
+      content: comment.content,
+      createdAt: comment.created_at,
+      aka: profile.aka,
+      avatarUrl: profile.avatar_url,
+    }];
+  });
+} catch (error) {
+  console.error("[home] Community data unavailable:", error);
+}
 const lang = Astro.locals.lang;
 const isEnglish = lang === "en";
 let weeklyEpisodes = [];
@@ -50,6 +86,21 @@ try {
       <HomeGallery entries={collectionEntries} lang={Astro.locals.lang} client:load />
     </section>
 
+    <HomeCommunity
+      members={communityMembers}
+      activity={communityActivity}
+      href={(animeId) => localizedPath(lang, `/anime/${animeId}/`)}
+      profileHref={(aka) => localizedPath(lang, `/u/${encodeURIComponent(aka)}/`)}
+      labels={{
+        title: isEnglish ? "Community" : "Comunidad",
+        members: isEnglish ? "People on Renanime" : "Gente en Renanime",
+        activity: isEnglish ? "Recent activity" : "Actividad reciente",
+        emptyMembers: isEnglish ? "The community is just getting started." : "La comunidad está empezando a crecer.",
+        emptyActivity: isEnglish ? "No recent activity yet." : "Todavía no hay actividad reciente.",
+        viewAll: isEnglish ? "View community" : "Ver comunidad",
+        commented: isEnglish ? "commented on" : "ha comentado en",
+      }}
+    />
     <AnimeOfTheWeek />
     <WeeklyEpisodes
       episodes={weeklyEpisodes}

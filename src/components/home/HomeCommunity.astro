@@ -1,0 +1,117 @@
+---
+interface CommunityMember {
+  id: string;
+  aka: string;
+  avatar_url: string | null;
+  last_seen_at: string | null;
+}
+interface CommunityActivity {
+  id: string;
+  animeId: number;
+  content: string;
+  createdAt: string;
+  aka: string;
+  avatarUrl: string | null;
+}
+interface Props {
+  members: CommunityMember[];
+  activity: CommunityActivity[];
+  href: (animeId: number) => string;
+  profileHref: (aka: string) => string;
+  labels: {
+    title: string;
+    members: string;
+    activity: string;
+    emptyMembers: string;
+    emptyActivity: string;
+    viewAll: string;
+    commented: string;
+  };
+}
+const { members, activity, href, profileHref, labels } = Astro.props;
+const memberLoop = members.length > 1 ? [...members, ...members] : members;
+const formatAge = (value: string) => {
+  const elapsed = Math.max(0, Date.now() - new Date(value).getTime());
+  const minutes = Math.floor(elapsed / 60_000);
+  if (minutes < 1) return "ahora";
+  if (minutes < 60) return `hace ${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `hace ${hours} h`;
+  const days = Math.floor(hours / 24);
+  return `hace ${days} d`;
+};
+---
+{(members.length > 0 || activity.length > 0) && (
+  <section class="home-community" aria-label={labels.title}>
+    <div class="community-heading">
+      <h2>{labels.title}</h2>
+      <a href={Astro.locals.lang === "en" ? "/en/community/" : "/community/"}>{labels.viewAll}<span aria-hidden="true"> ↗</span></a>
+    </div>
+    <div class="community-members-block">
+      <p class="community-kicker">{labels.members}</p>
+      {members.length > 0 ? (
+        <div class="members-marquee" aria-label={labels.members}>
+          <div class:list={["members-track", { "is-static": members.length < 2 }]}>
+            {memberLoop.map((member, index) => (
+              <a class="member-pill" href={profileHref(member.aka)} aria-hidden={index >= members.length ? "true" : undefined} tabindex={index >= members.length ? -1 : undefined}>
+                <img src={member.avatar_url || "/images/profile-avatar-placeholder.svg"} alt="" loading="lazy" />
+                <span>@{member.aka}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      ) : <p class="community-empty">{labels.emptyMembers}</p>}
+    </div>
+    <div class="community-activity-block">
+      <p class="community-kicker">{labels.activity}</p>
+      {activity.length > 0 ? (
+        <div class="activity-list">
+          {activity.slice(0, 5).map((item) => (
+            <article class="activity-item">
+              <a class="activity-avatar" href={profileHref(item.aka)} aria-label={`@${item.aka}`}>
+                <img src={item.avatarUrl || "/images/profile-avatar-placeholder.svg"} alt="" loading="lazy" />
+              </a>
+              <div class="activity-copy">
+                <p><a href={profileHref(item.aka)}>@{item.aka}</a> {labels.commented} <a href={href(item.animeId)}>{Astro.locals.lang === "en" ? "anime" : "un anime"}</a></p>
+                <a class="activity-content" href={href(item.animeId)}>{item.content}</a>
+                <time datetime={item.createdAt}>{formatAge(item.createdAt)}</time>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : <p class="community-empty">{labels.emptyActivity}</p>}
+    </div>
+  </section>
+)}
+<style>
+  .home-community{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin:0 auto;padding:2.25rem 0 3rem;color:#f5f2ec}
+  .community-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.35rem}
+  .community-heading h2{margin:0;font-size:clamp(1.2rem,2.4vw,1.65rem);font-weight:750;letter-spacing:-.035em}
+  .community-heading>a{color:#aaa;font-size:.72rem;text-decoration:none;white-space:nowrap}
+  .community-heading>a:hover{color:#fff}
+  .community-kicker{margin:0 0 .8rem;color:#8e8e94;font-size:.68rem;font-weight:650;letter-spacing:.08em;text-transform:uppercase}
+  .community-members-block{overflow:hidden}
+  .members-marquee{overflow:hidden;position:relative;width:100%;mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent)}
+  .members-track{display:flex;width:max-content;align-items:center;gap:1.15rem;animation:community-marquee 42s linear infinite}
+  .members-track:hover{animation-play-state:paused}
+  .members-track.is-static{animation:none}
+  .member-pill{display:flex;flex:0 0 auto;align-items:center;gap:.55rem;min-width:0;color:#e8e8e8;text-decoration:none}
+  .member-pill img{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#191919;border:1px solid rgba(255,255,255,.12)}
+  .member-pill span{max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.75rem;color:#c5c5c8}
+  .member-pill:hover span{color:#fff}
+  @keyframes community-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .community-activity-block{margin-top:2rem}
+  .activity-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem}
+  .activity-item{display:flex;align-items:flex-start;gap:.7rem;min-width:0;padding:.8rem;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:rgba(255,255,255,.025)}
+  .activity-avatar{display:block;flex:0 0 34px;width:34px;height:34px}
+  .activity-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;background:#191919}
+  .activity-copy{display:grid;gap:.28rem;min-width:0}
+  .activity-copy p{margin:0;color:#929297;font-size:.7rem;line-height:1.4}
+  .activity-copy p a:first-child{color:#f0f0f0;font-weight:650;text-decoration:none}
+  .activity-copy p a:last-child{color:#c5c5c8;text-decoration:none}
+  .activity-content{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;color:#d2d2d5;font-size:.76rem;line-height:1.45;text-decoration:none;overflow-wrap:anywhere}
+  .activity-copy time{color:#777;font-size:.64rem}
+  .community-empty{margin:0;color:#85858b;font-size:.78rem}
+  @media(max-width:640px){.home-community{width:calc(100% - 2rem);padding:1.8rem 0 2.5rem}.members-track{gap:.9rem;animation-duration:34s}.member-pill{gap:.42rem}.member-pill img{width:38px;height:38px}.member-pill span{font-size:.7rem;max-width:92px}.community-activity-block{margin-top:1.6rem}.activity-list{grid-template-columns:1fr;gap:.55rem}.activity-item{padding:.7rem}}
+  @media(prefers-reduced-motion:reduce){.members-track{animation:none}}
+</style>

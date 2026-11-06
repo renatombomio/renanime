@@ -204,5 +204,12 @@
   "weeklyEpisodes.accent": "this week",
   "weeklyEpisodes.subtitle": "Top 5 by popularity · AniList",
   "weeklyEpisodes.episode": "Episode",
-  "weeklyEpisodes.episodeShort": "Ep."
+  "weeklyEpisodes.episodeShort": "Ep.",
+  "homeCommunity.title": "Community",
+  "homeCommunity.members": "People on Renanime",
+  "homeCommunity.activity": "Recent activity",
+  "homeCommunity.emptyMembers": "The community is just getting started.",
+  "homeCommunity.emptyActivity": "No recent activity yet.",
+  "homeCommunity.viewAll": "View community",
+  "homeCommunity.commented": "commented on"
 }
