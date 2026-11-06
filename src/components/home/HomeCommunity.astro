@@ -18,7 +18,6 @@ interface CommunityActivity {
 interface Props {
   members: CommunityMember[];
   activity: CommunityActivity[];
-  stats: { users: number; comments: number; likes: number };
   href: (animeId: number) => string;
   profileHref: (aka: string) => string;
   labels: {
@@ -32,8 +31,7 @@ interface Props {
     joined: string;
   };
 }
-const { members, activity, stats, href, profileHref, labels } = Astro.props;
-const numberFormat = new Intl.NumberFormat(Astro.locals.lang === "en" ? "en" : "es");
+const { members, activity, href, profileHref, labels } = Astro.props;
 const memberLoop = members.length > 1 ? [...members, ...members] : members.length === 1 ? Array.from({ length: 6 }, () => members[0]) : [];
 const formatAge = (value: string) => {
   const elapsed = Math.max(0, Date.now() - new Date(value).getTime());
@@ -50,13 +48,6 @@ const formatAge = (value: string) => {
   <section class="home-community" aria-label={labels.title}>
     <div class="community-heading">
       <h2>{labels.title}</h2>
-    </div>
-    <div class="community-stats" aria-label={labels.title}>
-      <div class="community-users-stat"><strong>{numberFormat.format(stats.users)}</strong><span>{Astro.locals.lang === "en" ? "members" : "usuarios"}</span></div>
-      <div class="community-secondary-stats">
-        <div class="community-small-stat"><strong>{numberFormat.format(stats.comments)}</strong><span>{Astro.locals.lang === "en" ? "comments" : "comentarios"}</span></div>
-        <div class="community-small-stat"><strong>{numberFormat.format(stats.likes)}</strong><span>likes</span></div>
-      </div>
     </div>
     <div class="community-members-block">
       <p class="community-kicker">{labels.members}</p>
@@ -101,14 +92,6 @@ const formatAge = (value: string) => {
   .community-heading h2{margin:0;font-size:clamp(2rem,4vw,2.8rem);font-weight:750;letter-spacing:-.035em}
   .community-heading>a{color:#aaa;font-size:.72rem;text-decoration:none;white-space:nowrap}
   .community-heading>a:hover{color:#fff}
-  .community-stats{display:flex;align-items:center;gap:1.6rem;margin:0 0 2rem;padding:1.15rem 1.25rem;border:1px solid rgba(255,255,255,.09);border-radius:16px;background:linear-gradient(110deg,rgba(255,255,255,.045),rgba(255,255,255,.012))}
-  .community-users-stat{display:grid;gap:.1rem;min-width:0}
-  .community-users-stat strong{font-size:clamp(2.5rem,6vw,4.2rem);font-weight:800;line-height:.95;letter-spacing:-.065em;font-variant-numeric:tabular-nums}
-  .community-users-stat span,.community-small-stat span{color:#929297;font-size:.7rem;letter-spacing:.04em;text-transform:uppercase}
-  .community-secondary-stats{display:flex;align-items:center;gap:1.5rem;padding-left:1.5rem;border-left:1px solid rgba(255,255,255,.12)}
-  .community-small-stat{display:grid;gap:.18rem}
-  .community-small-stat strong{font-size:1.2rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
-  .community-small-stat span{font-size:.6rem;white-space:nowrap}
   .community-kicker{margin:0 0 1rem;color:#8e8e94;font-size:.68rem;font-weight:650;letter-spacing:.08em;text-transform:uppercase}
   .community-members-block{overflow:hidden}
   .members-marquee{overflow:hidden;position:relative;width:100%;mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent)}

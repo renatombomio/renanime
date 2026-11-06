@@ -15,9 +15,9 @@ const collectionEntries = getWatchedLibrary();
 const supabase = createSupabaseSsrClient(Astro.request, Astro.cookies);
 let communityMembers: { id: string; aka: string; avatar_url: string | null; last_seen_at: string | null }[] = [];
 let communityActivity: { id: string; animeId: number | null; action: "comment" | "like" | "joined"; content: string | null; createdAt: string; aka: string; avatarUrl: string | null; animeTitle: string }[] = [];
-let communityStats = { users: 0, comments: 0, likes: 0 };
+let otakuCount = 0;
 try {
-  const [{ data: memberRows, error: memberError }, { data: commentRows, error: commentError }, { data: likeRows, error: likeError }, { data: joinedRows, error: joinedError }, { count: userCount, error: userCountError }, { count: commentCount, error: commentCountError }, { count: likeCount, error: likeCountError }] = await Promise.all([
+  const [{ data: memberRows, error: memberError }, { data: commentRows, error: commentError }, { data: likeRows, error: likeError }, { data: joinedRows, error: joinedError }, { count: userCount, error: userCountError }] = await Promise.all([
     supabase.from("profiles")
       .select("id, aka, avatar_url, last_seen_at")
       .eq("is_private", false)
@@ -39,13 +39,9 @@ try {
       .order("created_at", { ascending: false })
       .limit(5),
     supabase.from("profiles").select("id", { count: "exact", head: true }),
-    supabase.from("anime_comments").select("id", { count: "exact", head: true }),
-    supabase.from("anime_likes").select("id", { count: "exact", head: true }),
   ]);
-  if (userCountError) console.error("[home] User count unavailable:", userCountError.message);
-  if (commentCountError) console.error("[home] Comment count unavailable:", commentCountError.message);
-  if (likeCountError) console.error("[home] Like count unavailable:", likeCountError.message);
-  communityStats = { users: userCountError ? 0 : userCount ?? 0, comments: commentCountError ? 0 : commentCount ?? 0, likes: likeCountError ? 0 : likeCount ?? 0 };
+  if (userCountError) console.error("[home] Historical otaku count unavailable:", userCountError.message);
+  otakuCount = userCountError ? 0 : userCount ?? 0;
   if (memberError) console.error("[home] Community members unavailable:", memberError.message);
   else communityMembers = (memberRows ?? []).filter((member) => Boolean(member.aka));
   if (commentError) console.error("[home] Community activity unavailable:", commentError.message);
@@ -143,10 +139,14 @@ try {
       }}
     />
 
+    <section class="otaku-counter" aria-label={isEnglish ? "Registered otakus" : "Otakus registrados"}>
+      <strong>{new Intl.NumberFormat(isEnglish ? "en" : "es").format(otakuCount)}</strong>
+      <span>otakus</span>
+    </section>
+
     <HomeCommunity
       members={communityMembers}
       activity={communityActivity}
-      stats={communityStats}
       href={(animeId) => localizedPath(lang, `/anime/${animeId}/`)}
       profileHref={(aka) => localizedPath(lang, `/u/${encodeURIComponent(aka)}/`)}
       labels={{
@@ -189,6 +189,9 @@ try {
     }
   }
 
+  .otaku-counter{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.15rem;padding:2.8rem 1rem 1.2rem;text-align:center;color:#f5f2ec}
+  .otaku-counter strong{font-size:clamp(3.5rem,10vw,6.5rem);font-weight:850;line-height:.88;letter-spacing:-.075em;font-variant-numeric:tabular-nums}
+  .otaku-counter span{color:#929297;font-size:.78rem;font-weight:650;letter-spacing:.16em;text-transform:uppercase}
   .home-gallery-section {
     width: min(calc(100% - (var(--gutter) * 2)), var(--container-max));
     margin: 0 auto;
