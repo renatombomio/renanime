@@ -53,10 +53,10 @@ const formatAge = (value: string) => {
         <div class="members-marquee" aria-label={labels.members}>
           <div class:list={["members-track", { "is-static": members.length < 2 }]}>
             {memberLoop.map((member, index) => (
-              <a class="member-pill" href={profileHref(member.aka)} aria-hidden={index >= members.length ? "true" : undefined} tabindex={index >= members.length ? -1 : undefined}>
+              <div class="member-pill" aria-hidden={index >= members.length ? "true" : undefined}>
                 <img src={member.avatar_url || "/images/profile-avatar-placeholder.svg"} alt="" loading="lazy" />
                 <span>@{member.aka}</span>
-              </a>
+              </div>
             ))}
           </div>
         </div>
@@ -93,12 +93,10 @@ const formatAge = (value: string) => {
   .community-members-block{overflow:hidden}
   .members-marquee{overflow:hidden;position:relative;width:100%;mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent)}
   .members-track{display:flex;width:max-content;align-items:center;gap:1.15rem;animation:community-marquee 42s linear infinite}
-  .members-track:hover{animation-play-state:paused}
   .members-track.is-static{animation:none}
-  .member-pill{display:flex;flex:0 0 auto;align-items:center;gap:.55rem;min-width:0;color:#e8e8e8;text-decoration:none}
+  .member-pill{display:flex;flex:0 0 auto;align-items:center;gap:.55rem;min-width:0;color:#e8e8e8}
   .member-pill img{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#191919;border:1px solid rgba(255,255,255,.12)}
   .member-pill span{max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.75rem;color:#c5c5c8}
-  .member-pill:hover span{color:#fff}
   @keyframes community-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
   .community-activity-block{margin-top:2rem}
   .activity-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem}
