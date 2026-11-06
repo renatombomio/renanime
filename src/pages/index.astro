@@ -15,8 +15,9 @@ const collectionEntries = getWatchedLibrary();
 const supabase = createSupabaseSsrClient(Astro.request, Astro.cookies);
 let communityMembers: { id: string; aka: string; avatar_url: string | null; last_seen_at: string | null }[] = [];
 let communityActivity: { id: string; animeId: number | null; action: "comment" | "like" | "joined"; content: string | null; createdAt: string; aka: string; avatarUrl: string | null; animeTitle: string }[] = [];
+let communityStats = { users: 0, comments: 0, likes: 0 };
 try {
-  const [{ data: memberRows, error: memberError }, { data: commentRows, error: commentError }, { data: likeRows, error: likeError }, { data: joinedRows, error: joinedError }] = await Promise.all([
+  const [{ data: memberRows, error: memberError }, { data: commentRows, error: commentError }, { data: likeRows, error: likeError }, { data: joinedRows, error: joinedError }, { count: userCount, error: userCountError }, { count: commentCount, error: commentCountError }, { count: likeCount, error: likeCountError }] = await Promise.all([
     supabase.from("profiles")
       .select("id, aka, avatar_url, last_seen_at")
       .eq("is_private", false)
@@ -37,7 +38,14 @@ try {
       .not("aka", "is", null)
       .order("created_at", { ascending: false })
       .limit(5),
+    supabase.from("profiles").select("id", { count: "exact", head: true }),
+    supabase.from("anime_comments").select("id", { count: "exact", head: true }),
+    supabase.from("anime_likes").select("id", { count: "exact", head: true }),
   ]);
+  if (userCountError) console.error("[home] User count unavailable:", userCountError.message);
+  if (commentCountError) console.error("[home] Comment count unavailable:", commentCountError.message);
+  if (likeCountError) console.error("[home] Like count unavailable:", likeCountError.message);
+  communityStats = { users: userCountError ? 0 : userCount ?? 0, comments: commentCountError ? 0 : commentCount ?? 0, likes: likeCountError ? 0 : likeCount ?? 0 };
   if (memberError) console.error("[home] Community members unavailable:", memberError.message);
   else communityMembers = (memberRows ?? []).filter((member) => Boolean(member.aka));
   if (commentError) console.error("[home] Community activity unavailable:", commentError.message);
@@ -138,6 +146,7 @@ try {
     <HomeCommunity
       members={communityMembers}
       activity={communityActivity}
+      stats={communityStats}
       href={(animeId) => localizedPath(lang, `/anime/${animeId}/`)}
       profileHref={(aka) => localizedPath(lang, `/u/${encodeURIComponent(aka)}/`)}
       labels={{
