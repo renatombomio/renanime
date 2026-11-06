@@ -2,14 +2,15 @@
 interface CommunityMember {
   id: string;
   aka: string;
-  name: string | null;
   avatar_url: string | null;
   last_seen_at: string | null;
 }
 interface CommunityActivity {
   id: string;
   animeId: number;
-  content: string;
+  action: "comment" | "like";
+  content: string | null;
+  animeTitle: string;
   createdAt: string;
   aka: string;
   avatarUrl: string | null;
@@ -25,8 +26,8 @@ interface Props {
     activity: string;
     emptyMembers: string;
     emptyActivity: string;
-    viewAll: string;
     commented: string;
+    liked: string;
   };
 }
 const { members, activity, href, profileHref, labels } = Astro.props;
@@ -46,7 +47,6 @@ const formatAge = (value: string) => {
   <section class="home-community" aria-label={labels.title}>
     <div class="community-heading">
       <h2>{labels.title}</h2>
-      <a href={Astro.locals.lang === "en" ? "/en/community/" : "/community/"}>{labels.viewAll}<span aria-hidden="true"> ↗</span></a>
     </div>
     <div class="community-members-block">
       <p class="community-kicker">{labels.members}</p>
@@ -56,7 +56,6 @@ const formatAge = (value: string) => {
             {memberLoop.map((member, index) => (
               <div class="member-pill" aria-hidden={index >= members.length ? "true" : undefined}>
                 <img src={member.avatar_url || "/images/profile-avatar-placeholder.svg"} alt="" loading="lazy" />
-                <span class="member-name">{member.name || member.aka}</span>
                 <span class="member-handle">@{member.aka}</span>
               </div>
             ))}
@@ -74,8 +73,9 @@ const formatAge = (value: string) => {
                 <img src={item.avatarUrl || "/images/profile-avatar-placeholder.svg"} alt="" loading="lazy" />
               </a>
               <div class="activity-copy">
-                <p><a href={profileHref(item.aka)}>@{item.aka}</a><span>{labels.commented}</span></p>
-                <a class="activity-content" href={href(item.animeId)}>{item.content}</a>
+                <p><a href={profileHref(item.aka)}>@{item.aka}</a><span>{item.action === "like" ? labels.liked : labels.commented}</span></p>
+                {item.action === "comment" && item.content && <p class="activity-content">{item.content}</p>}
+                <a class="activity-anime" href={href(item.animeId)}>{item.animeTitle}</a>
                 <time datetime={item.createdAt}>{formatAge(item.createdAt)}</time>
               </div>
             </article>
@@ -105,9 +105,9 @@ const formatAge = (value: string) => {
   .activity-avatar{display:block;flex:0 0 34px;width:34px;height:34px}
   .activity-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;background:#191919}
   .activity-copy{display:grid;gap:.28rem;min-width:0}
-  .activity-copy p{margin:0;color:#929297;font-size:.7rem;line-height:1.4}
+  .activity-copy p{display:flex;flex-wrap:wrap;gap:.3rem;margin:0;color:#929297;font-size:.7rem;line-height:1.4}
   .activity-copy p a:first-child{color:#f0f0f0;font-weight:650;text-decoration:none}
-  .activity-copy p a:last-child{color:#c5c5c8;text-decoration:none}
+  .activity-anime{color:#c5c5c8;font-size:.72rem;text-decoration:none}.activity-anime:before{content:"↳ ";color:#777}
   .activity-content{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;color:#d2d2d5;font-size:.82rem;line-height:1.4;text-decoration:none;overflow-wrap:anywhere}
   .activity-copy time{color:#777;font-size:.64rem}
   .community-empty{margin:0;color:#85858b;font-size:.78rem}

@@ -14,17 +14,21 @@ import { localizedPath } from "../i18n";
 const collectionEntries = getWatchedLibrary();
 const supabase = createSupabaseSsrClient(Astro.request, Astro.cookies);
 let communityMembers: { id: string; aka: string; name: string | null; avatar_url: string | null; last_seen_at: string | null }[] = [];
-let communityActivity: { id: string; animeId: number; content: string; createdAt: string; aka: string; avatarUrl: string | null }[] = [];
+let communityActivity: { id: string; animeId: number; action: "comment" | "like"; content: string | null; createdAt: string; aka: string; avatarUrl: string | null; animeTitle: string }[] = [];
 try {
-  const [{ data: memberRows, error: memberError }, { data: commentRows, error: commentError }] = await Promise.all([
+  const [{ data: memberRows, error: memberError }, { data: commentRows, error: commentError }, { data: likeRows, error: likeError }] = await Promise.all([
     supabase.from("profiles")
-      .select("id, aka, name, avatar_url, last_seen_at")
+      .select("id, aka, avatar_url, last_seen_at")
       .eq("is_private", false)
       .not("aka", "is", null)
       .order("last_seen_at", { ascending: false, nullsFirst: false })
       .limit(18),
     supabase.from("anime_comments")
       .select("id, anime_id, content, created_at, profiles!inner(aka, avatar_url)")
+      .order("created_at", { ascending: false })
+      .limit(8),
+    supabase.from("anime_likes")
+      .select("id, anime_id, created_at, profiles!inner(aka, avatar_url)")
       .order("created_at", { ascending: false })
       .limit(8),
   ]);
@@ -35,14 +39,34 @@ try {
     const profile = Array.isArray(comment.profiles) ? comment.profiles[0] : comment.profiles;
     if (!profile?.aka || !Number.isInteger(comment.anime_id)) return [];
     return [{
-      id: comment.id,
-      animeId: comment.anime_id,
-      content: comment.content,
-      createdAt: comment.created_at,
-      aka: profile.aka,
-      avatarUrl: profile.avatar_url,
+      id: comment.id, animeId: comment.anime_id, action: "comment" as const,
+      content: comment.content, createdAt: comment.created_at, aka: profile.aka,
+      avatarUrl: profile.avatar_url, animeTitle: "",
     }];
   });
+  if (likeError) console.error("[home] Community likes unavailable:", likeError.message);
+  else communityActivity.push(...(likeRows ?? []).flatMap((like) => {
+    const profile = Array.isArray(like.profiles) ? like.profiles[0] : like.profiles;
+    if (!profile?.aka || !Number.isInteger(like.anime_id)) return [];
+    return [{ id: like.id, animeId: like.anime_id, action: "like" as const, content: null,
+      createdAt: like.created_at, aka: profile.aka, avatarUrl: profile.avatar_url, animeTitle: "" }];
+  }));
+  communityActivity.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  communityActivity = communityActivity.slice(0, 5);
+  const animeIds = [...new Set(communityActivity.map((item) => item.animeId))];
+  if (animeIds.length) {
+    try {
+      const titleResponse = await fetch("https://graphql.anilist.co", {
+        method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ query: "query ($ids: [Int]) { Page { media(id_in: $ids, type: ANIME) { id title { romaji english } } } }", variables: { ids: animeIds } }),
+      });
+      if (titleResponse.ok) {
+        const payload = await titleResponse.json();
+        const titles = new Map((payload.data?.Page?.media ?? []).map((item: any) => [item.id, item.title.english || item.title.romaji || "Anime"]));
+        communityActivity = communityActivity.map((item) => ({ ...item, animeTitle: titles.get(item.animeId) || "Anime" }));
+      }
+    } catch (titleError) { console.error("[home] Community anime titles unavailable:", titleError); }
+  }
 } catch (error) {
   console.error("[home] Community data unavailable:", error);
 }
@@ -111,8 +135,9 @@ try {
         activity: isEnglish ? "Recent activity" : "Actividad reciente",
         emptyMembers: isEnglish ? "The community is just getting started." : "La comunidad está empezando a crecer.",
         emptyActivity: isEnglish ? "No recent activity yet." : "Todavía no hay actividad reciente.",
-        viewAll: isEnglish ? "View community" : "Ver comunidad",
+        viewAll: "",
         commented: isEnglish ? "commented on" : "ha comentado",
+        liked: isEnglish ? "liked" : "le ha dado like a",
       }}
     />
   </main>
