@@ -2,6 +2,7 @@
 interface CommunityMember {
   id: string;
   aka: string;
+  name: string | null;
   avatar_url: string | null;
   last_seen_at: string | null;
 }
@@ -29,7 +30,7 @@ interface Props {
   };
 }
 const { members, activity, href, profileHref, labels } = Astro.props;
-const memberLoop = members.length > 1 ? [...members, ...members] : members;
+const memberLoop = members.length > 1 ? [...members, ...members] : members.length === 1 ? Array.from({ length: 6 }, () => members[0]) : [];
 const formatAge = (value: string) => {
   const elapsed = Math.max(0, Date.now() - new Date(value).getTime());
   const minutes = Math.floor(elapsed / 60_000);
@@ -55,7 +56,8 @@ const formatAge = (value: string) => {
             {memberLoop.map((member, index) => (
               <div class="member-pill" aria-hidden={index >= members.length ? "true" : undefined}>
                 <img src={member.avatar_url || "/images/profile-avatar-placeholder.svg"} alt="" loading="lazy" />
-                <span>@{member.aka}</span>
+                <span class="member-name">{member.name || member.aka}</span>
+                <span class="member-handle">@{member.aka}</span>
               </div>
             ))}
           </div>
@@ -72,7 +74,7 @@ const formatAge = (value: string) => {
                 <img src={item.avatarUrl || "/images/profile-avatar-placeholder.svg"} alt="" loading="lazy" />
               </a>
               <div class="activity-copy">
-                <p><a href={profileHref(item.aka)}>@{item.aka}</a> {labels.commented} <a href={href(item.animeId)}>{Astro.locals.lang === "en" ? "anime" : "un anime"}</a></p>
+                <p><a href={profileHref(item.aka)}>@{item.aka}</a><span>{labels.commented}</span></p>
                 <a class="activity-content" href={href(item.animeId)}>{item.content}</a>
                 <time datetime={item.createdAt}>{formatAge(item.createdAt)}</time>
               </div>
@@ -84,21 +86,20 @@ const formatAge = (value: string) => {
   </section>
 )}
 <style>
-  .home-community{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin:0 auto;padding:2.25rem 0 3rem;color:#f5f2ec}
-  .community-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.35rem}
-  .community-heading h2{margin:0;font-size:clamp(1.2rem,2.4vw,1.65rem);font-weight:750;letter-spacing:-.035em}
+  .home-community{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin:0 auto;padding:3rem 0 3.5rem;color:#f5f2ec}
+  .community-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.8rem}
+  .community-heading h2{margin:0;font-size:clamp(2rem,4vw,2.8rem);font-weight:750;letter-spacing:-.035em}
   .community-heading>a{color:#aaa;font-size:.72rem;text-decoration:none;white-space:nowrap}
   .community-heading>a:hover{color:#fff}
-  .community-kicker{margin:0 0 .8rem;color:#8e8e94;font-size:.68rem;font-weight:650;letter-spacing:.08em;text-transform:uppercase}
+  .community-kicker{margin:0 0 1rem;color:#8e8e94;font-size:.68rem;font-weight:650;letter-spacing:.08em;text-transform:uppercase}
   .community-members-block{overflow:hidden}
   .members-marquee{overflow:hidden;position:relative;width:100%;mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent)}
-  .members-track{display:flex;width:max-content;align-items:center;gap:1.15rem;animation:community-marquee 42s linear infinite}
-  .members-track.is-static{animation:none}
-  .member-pill{display:flex;flex:0 0 auto;align-items:center;gap:.55rem;min-width:0;color:#e8e8e8}
-  .member-pill img{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#191919;border:1px solid rgba(255,255,255,.12)}
-  .member-pill span{max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.75rem;color:#c5c5c8}
+  .members-track{display:flex;width:max-content;align-items:flex-start;gap:1.5rem;animation:community-marquee 34s linear infinite;will-change:transform}
+  .member-pill{display:flex;flex:0 0 auto;flex-direction:column;align-items:center;gap:.28rem;min-width:0;color:#e8e8e8;text-align:center}
+  .member-pill img{width:58px;height:58px;border-radius:50%;object-fit:cover;background:#191919;border:1px solid rgba(255,255,255,.12)}
+  .member-pill span{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.member-name{font-size:.78rem;font-weight:650;color:#f0f0f0}.member-handle{font-size:.68rem;color:#929297}
   @keyframes community-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-  .community-activity-block{margin-top:2rem}
+  .community-activity-block{margin-top:2.6rem}
   .activity-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem}
   .activity-item{display:flex;align-items:flex-start;gap:.7rem;min-width:0;padding:.8rem;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:rgba(255,255,255,.025)}
   .activity-avatar{display:block;flex:0 0 34px;width:34px;height:34px}
@@ -107,9 +108,9 @@ const formatAge = (value: string) => {
   .activity-copy p{margin:0;color:#929297;font-size:.7rem;line-height:1.4}
   .activity-copy p a:first-child{color:#f0f0f0;font-weight:650;text-decoration:none}
   .activity-copy p a:last-child{color:#c5c5c8;text-decoration:none}
-  .activity-content{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;color:#d2d2d5;font-size:.76rem;line-height:1.45;text-decoration:none;overflow-wrap:anywhere}
+  .activity-content{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;color:#d2d2d5;font-size:.82rem;line-height:1.4;text-decoration:none;overflow-wrap:anywhere}
   .activity-copy time{color:#777;font-size:.64rem}
   .community-empty{margin:0;color:#85858b;font-size:.78rem}
-  @media(max-width:640px){.home-community{width:calc(100% - 2rem);padding:1.8rem 0 2.5rem}.members-track{gap:.9rem;animation-duration:34s}.member-pill{gap:.42rem}.member-pill img{width:38px;height:38px}.member-pill span{font-size:.7rem;max-width:92px}.community-activity-block{margin-top:1.6rem}.activity-list{grid-template-columns:1fr;gap:.55rem}.activity-item{padding:.7rem}}
+  @media(max-width:640px){.home-community{width:calc(100% - 2rem);padding:2.6rem 0 3rem}.community-heading h2{font-size:2.15rem}.members-track{gap:1rem;animation-duration:28s}.member-pill{flex-basis:78px}.member-pill img{width:54px;height:54px}.member-name{font-size:.74rem}.member-handle{font-size:.65rem}.community-activity-block{margin-top:2.1rem}.activity-list{grid-template-columns:1fr;gap:.55rem}.activity-item{padding:.7rem}}
   @media(prefers-reduced-motion:reduce){.members-track{animation:none}}
 </style>

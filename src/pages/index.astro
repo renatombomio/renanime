@@ -13,12 +13,12 @@ import { getWatchedLibrary } from "../data/library";
 import { localizedPath } from "../i18n";
 const collectionEntries = getWatchedLibrary();
 const supabase = createSupabaseSsrClient(Astro.request, Astro.cookies);
-let communityMembers: { id: string; aka: string; avatar_url: string | null; last_seen_at: string | null }[] = [];
+let communityMembers: { id: string; aka: string; name: string | null; avatar_url: string | null; last_seen_at: string | null }[] = [];
 let communityActivity: { id: string; animeId: number; content: string; createdAt: string; aka: string; avatarUrl: string | null }[] = [];
 try {
   const [{ data: memberRows, error: memberError }, { data: commentRows, error: commentError }] = await Promise.all([
     supabase.from("profiles")
-      .select("id, aka, avatar_url, last_seen_at")
+      .select("id, aka, name, avatar_url, last_seen_at")
       .eq("is_private", false)
       .not("aka", "is", null)
       .order("last_seen_at", { ascending: false, nullsFirst: false })
@@ -86,6 +86,20 @@ try {
       <HomeGallery entries={collectionEntries} lang={Astro.locals.lang} client:load />
     </section>
 
+    <AnimeOfTheWeek />
+    <WeeklyEpisodes
+      episodes={weeklyEpisodes}
+      href={(animeId) => localizedPath(lang, `/anime/${animeId}/`)}
+      labels={{
+        eyebrow: isEnglish ? "This week" : "Esta semana",
+        title: isEnglish ? "Popular episodes this week" : "Episodios populares de la semana",
+        titleAccent: isEnglish ? "this week" : "de la semana",
+        subtitle: isEnglish ? "Top 5 by popularity · AniList" : "Top 5 por popularidad · AniList",
+        episode: isEnglish ? "Episode" : "Episodio",
+        episodeShort: "Ep.",
+      }}
+    />
+
     <HomeCommunity
       members={communityMembers}
       activity={communityActivity}
@@ -98,20 +112,7 @@ try {
         emptyMembers: isEnglish ? "The community is just getting started." : "La comunidad está empezando a crecer.",
         emptyActivity: isEnglish ? "No recent activity yet." : "Todavía no hay actividad reciente.",
         viewAll: isEnglish ? "View community" : "Ver comunidad",
-        commented: isEnglish ? "commented on" : "ha comentado en",
-      }}
-    />
-    <AnimeOfTheWeek />
-    <WeeklyEpisodes
-      episodes={weeklyEpisodes}
-      href={(animeId) => localizedPath(lang, `/anime/${animeId}/`)}
-      labels={{
-        eyebrow: isEnglish ? "This week" : "Esta semana",
-        title: isEnglish ? "Popular episodes this week" : "Episodios populares de la semana",
-        titleAccent: isEnglish ? "this week" : "de la semana",
-        subtitle: isEnglish ? "Top 5 by popularity · AniList" : "Top 5 por popularidad · AniList",
-        episode: isEnglish ? "Episode" : "Episodio",
-        episodeShort: "Ep.",
+        commented: isEnglish ? "commented on" : "ha comentado",
       }}
     />
   </main>
