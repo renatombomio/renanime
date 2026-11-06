@@ -52,7 +52,7 @@ const formatAge = (value: string) => {
       <p class="community-kicker">{labels.members}</p>
       {members.length > 0 ? (
         <div class="members-marquee" aria-label={labels.members}>
-          <div class:list={["members-track", { "is-static": members.length < 2 }]}>
+          <div class="members-track">
             {memberLoop.map((member, index) => (
               <div class="member-pill" aria-hidden={index >= members.length ? "true" : undefined}>
                 <img src={member.avatar_url || "/images/profile-avatar-placeholder.svg"} alt="" loading="lazy" />
