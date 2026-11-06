@@ -14,9 +14,9 @@ import { localizedPath } from "../i18n";
 const collectionEntries = getWatchedLibrary();
 const supabase = createSupabaseSsrClient(Astro.request, Astro.cookies);
 let communityMembers: { id: string; aka: string; avatar_url: string | null; last_seen_at: string | null }[] = [];
-let communityActivity: { id: string; animeId: number; action: "comment" | "like"; content: string | null; createdAt: string; aka: string; avatarUrl: string | null; animeTitle: string }[] = [];
+let communityActivity: { id: string; animeId: number | null; action: "comment" | "like" | "joined"; content: string | null; createdAt: string; aka: string; avatarUrl: string | null; animeTitle: string }[] = [];
 try {
-  const [{ data: memberRows, error: memberError }, { data: commentRows, error: commentError }, { data: likeRows, error: likeError }] = await Promise.all([
+  const [{ data: memberRows, error: memberError }, { data: commentRows, error: commentError }, { data: likeRows, error: likeError }, { data: joinedRows, error: joinedError }] = await Promise.all([
     supabase.from("profiles")
       .select("id, aka, avatar_url, last_seen_at")
       .eq("is_private", false)
@@ -31,6 +31,12 @@ try {
       .select("id, anime_id, created_at, profiles!inner(aka, avatar_url)")
       .order("created_at", { ascending: false })
       .limit(8),
+    supabase.from("profiles")
+      .select("id, aka, avatar_url, created_at")
+      .eq("is_private", false)
+      .not("aka", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(5),
   ]);
   if (memberError) console.error("[home] Community members unavailable:", memberError.message);
   else communityMembers = (memberRows ?? []).filter((member) => Boolean(member.aka));
@@ -51,9 +57,14 @@ try {
     return [{ id: like.id, animeId: like.anime_id, action: "like" as const, content: null,
       createdAt: like.created_at, aka: profile.aka, avatarUrl: profile.avatar_url, animeTitle: "" }];
   }));
+  if (joinedError) console.error("[home] New community members unavailable:", joinedError.message);
+  else communityActivity.push(...(joinedRows ?? []).flatMap((profile) => {
+    if (!profile.aka || !profile.created_at) return [];
+    return [{ id: profile.id, animeId: null, action: "joined" as const, content: null, createdAt: profile.created_at, aka: profile.aka, avatarUrl: profile.avatar_url, animeTitle: "" }];
+  }));
   communityActivity.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   communityActivity = communityActivity.slice(0, 5);
-  const animeIds = [...new Set(communityActivity.map((item) => item.animeId))];
+  const animeIds = [...new Set(communityActivity.flatMap((item) => item.animeId === null ? [] : [item.animeId]))];
   if (animeIds.length) {
     try {
       const titleResponse = await fetch("https://graphql.anilist.co", {
@@ -138,6 +149,7 @@ try {
         viewAll: "",
         commented: isEnglish ? "commented on" : "ha comentado",
         liked: isEnglish ? "liked" : "le ha dado like a",
+        joined: isEnglish ? "joined Renanime" : "se ha unido a Renanime",
       }}
     />
   </main>

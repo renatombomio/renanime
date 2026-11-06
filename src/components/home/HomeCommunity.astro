@@ -7,8 +7,8 @@ interface CommunityMember {
 }
 interface CommunityActivity {
   id: string;
-  animeId: number;
-  action: "comment" | "like";
+  animeId: number | null;
+  action: "comment" | "like" | "joined";
   content: string | null;
   animeTitle: string;
   createdAt: string;
@@ -28,6 +28,7 @@ interface Props {
     emptyActivity: string;
     commented: string;
     liked: string;
+    joined: string;
   };
 }
 const { members, activity, href, profileHref, labels } = Astro.props;
@@ -73,9 +74,9 @@ const formatAge = (value: string) => {
                 <img src={item.avatarUrl || "/images/profile-avatar-placeholder.svg"} alt="" loading="lazy" />
               </a>
               <div class="activity-copy">
-                <p><a href={profileHref(item.aka)}>@{item.aka}</a><span>{item.action === "like" ? labels.liked : labels.commented}</span></p>
+                <p><a href={profileHref(item.aka)}>@{item.aka}</a><span>{item.action === "like" ? labels.liked : item.action === "joined" ? labels.joined : labels.commented}</span></p>
                 {item.action === "comment" && item.content && <p class="activity-content">{item.content}</p>}
-                <a class="activity-anime" href={href(item.animeId)}>{item.animeTitle}</a>
+                {item.animeId !== null && <a class="activity-anime" href={href(item.animeId)}>{item.animeTitle}</a>}
                 <time datetime={item.createdAt}>{formatAge(item.createdAt)}</time>
               </div>
             </article>
