@@ -139,11 +139,6 @@ try {
       }}
     />
 
-    <section class="otaku-counter" aria-label={isEnglish ? "Registered otakus" : "Otakus registrados"}>
-      <strong>{new Intl.NumberFormat(isEnglish ? "en" : "es").format(otakuCount)}</strong>
-      <span>otakus</span>
-    </section>
-
     <HomeCommunity
       members={communityMembers}
       activity={communityActivity}
@@ -161,6 +156,11 @@ try {
         joined: isEnglish ? "joined Renanime" : "se ha unido a Renanime",
       }}
     />
+
+    <section class="otaku-counter" aria-label={isEnglish ? "Registered otakus" : "Otakus registrados"}>
+      <strong>{new Intl.NumberFormat(isEnglish ? "en" : "es").format(otakuCount)}</strong>
+      <span>otakus</span>
+    </section>
   </main>
 
   <Footer />
