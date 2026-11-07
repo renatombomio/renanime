@@ -8,17 +8,30 @@ const lang = Astro.locals.lang;
 const isEnglish = lang === "en";
 const title = isEnglish ? "My community" : "Mi comunidad";
 const supabase = createSupabaseSsrClient(Astro.request, Astro.cookies);
-const { data: members, error } = await supabase
-  .from("profiles")
-  .select("id, aka, headline, bio, avatar_url, interests, last_seen_at")
-  .eq("is_private", false)
-  .not("aka", "is", null)
-  .order("last_seen_at", { ascending: false, nullsFirst: false })
-  .order("created_at", { ascending: false })
-  .limit(60);
+const { count: publicCount, error: countError } = await supabase.from("profiles").select("id", { count: "exact", head: true }).eq("is_private", false).not("aka", "is", null);
+const maxOffset = Math.max(0, (publicCount ?? 0) - 9);
+const randomOffset = maxOffset > 0 ? Math.floor(Math.random() * (maxOffset + 1)) : 0;
+const { data: members, error } = await supabase.from("profiles").select("id, aka, headline, bio, avatar_url, interests, last_seen_at, created_at").eq("is_private", false).not("aka", "is", null).order("created_at", { ascending: true }).range(randomOffset, randomOffset + 8);
+if (countError) console.error("Community profile count error:", countError.message);
 if (error) console.error("Community directory error:", error.message);
 const profiles = Array.isArray(members) ? members : [];
 const onlineCutoff = Date.now() - 5 * 60 * 1000;
+type ActivityItem = { id: string; action: "comment" | "like" | "joined"; content: string | null; createdAt: string; aka: string; avatarUrl: string | null; animeId: number | null; animeTitle: string };
+let activity: ActivityItem[] = [];
+try {
+  const [comments, likes, joined] = await Promise.all([
+    supabase.from("anime_comments").select("id, anime_id, content, created_at, profiles!inner(aka, avatar_url, is_private)").eq("profiles.is_private", false).order("created_at", { ascending: false }).limit(8),
+    supabase.from("anime_likes").select("id, anime_id, created_at, profiles!inner(aka, avatar_url, is_private)").eq("profiles.is_private", false).order("created_at", { ascending: false }).limit(8),
+    supabase.from("profiles").select("id, aka, avatar_url, created_at").eq("is_private", false).not("aka", "is", null).order("created_at", { ascending: false }).limit(5),
+  ]);
+  if (!comments.error) activity.push(...(comments.data ?? []).flatMap((row) => { const p = Array.isArray(row.profiles) ? row.profiles[0] : row.profiles; return p?.aka && Number.isInteger(row.anime_id) ? [{ id: row.id, action: "comment" as const, content: row.content, createdAt: row.created_at, aka: p.aka, avatarUrl: p.avatar_url, animeId: row.anime_id, animeTitle: "" }] : []; }));
+  if (!likes.error) activity.push(...(likes.data ?? []).flatMap((row) => { const p = Array.isArray(row.profiles) ? row.profiles[0] : row.profiles; return p?.aka && Number.isInteger(row.anime_id) ? [{ id: row.id, action: "like" as const, content: null, createdAt: row.created_at, aka: p.aka, avatarUrl: p.avatar_url, animeId: row.anime_id, animeTitle: "" }] : []; }));
+  if (!joined.error) activity.push(...(joined.data ?? []).map((row) => ({ id: row.id, action: "joined" as const, content: null, createdAt: row.created_at, aka: row.aka, avatarUrl: row.avatar_url, animeId: null, animeTitle: "" })));
+  activity.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); activity = activity.slice(0,5);
+  const ids = [...new Set(activity.flatMap((item) => item.animeId === null ? [] : [item.animeId]))];
+  if (ids.length) { const response = await fetch("https://graphql.anilist.co", { method:"POST", headers:{"Content-Type":"application/json",Accept:"application/json"}, body:JSON.stringify({query:"query ($ids: [Int]) { Page { media(id_in: $ids, type: ANIME) { id title { romaji english } } } }",variables:{ids}}) }); if (response.ok) { const payload = await response.json(); const titles = new Map((payload.data?.Page?.media ?? []).map((item:any) => [item.id,item.title.english || item.title.romaji || "Anime"])); activity = activity.map((item) => item.animeId === null ? item : ({...item,animeTitle:titles.get(item.animeId) || "Anime"})); } }
+} catch (activityError) { console.error("Community activity unavailable:", activityError); }
+const formatAge = (value: string) => { const minutes = Math.max(0, Math.floor((Date.now() - new Date(value).getTime()) / 60000)); if (isEnglish) { if (minutes < 1) return "just now"; if (minutes < 60) return minutes + "m ago"; const hours = Math.floor(minutes / 60); return hours < 24 ? hours + "h ago" : Math.floor(hours / 24) + "d ago"; } if (minutes < 1) return "ahora"; if (minutes < 60) return "hace " + minutes + " min"; const hours = Math.floor(minutes / 60); return hours < 24 ? "hace " + hours + " h" : "hace " + Math.floor(hours / 24) + " d"; };
 ---
 
 <Layout title={`${title} — Renanime's Gallery`}>
@@ -55,11 +68,25 @@ const onlineCutoff = Date.now() - 5 * 60 * 1000;
       )}
       <p class="community-no-results" id="community-no-results" hidden>{isEnglish ? "No profiles match your search." : "No hay perfiles que coincidan con tu búsqueda."}</p>
     </section>
+    <section class="community-activity" aria-labelledby="activity-title">
+      <header class="community-section-heading"><p class="community-eyebrow">{isEnglish ? "What's happening" : "Qué está pasando"}</p><h2 id="activity-title">{isEnglish ? "Recent activity" : "Actividad reciente"}</h2></header>
+      {activity.length ? <div class="activity-list">{activity.map((item) => <article class="activity-item"><a class="activity-avatar" href={`${isEnglish ? "/en" : ""}/u/${encodeURIComponent(item.aka)}/`} aria-label={`@${item.aka}`}><img src={item.avatarUrl || "/images/profile-avatar-placeholder.svg"} alt="" loading="lazy" /></a><div class="activity-copy"><p><a href={`${isEnglish ? "/en" : ""}/u/${encodeURIComponent(item.aka)}/`}>@{item.aka}</a><span>{item.action === "like" ? (isEnglish ? "liked" : "le ha dado like a") : item.action === "joined" ? (isEnglish ? "joined Renanime" : "se ha unido a Renanime") : (isEnglish ? "commented on" : "ha comentado en")}</span></p>{item.action === "comment" && item.content && <p class="activity-content">{item.content}</p>}{item.animeId !== null && <a class="activity-anime" href={`${isEnglish ? "/en" : ""}/anime/${item.animeId}/`}>{item.animeTitle}</a>}<time datetime={item.createdAt}>{formatAge(item.createdAt)}</time></div></article>)}</div> : <p class="community-empty">{isEnglish ? "No recent activity yet." : "Todavía no hay actividad reciente."}</p>}
+    </section>
   </main>
 </Layout>
 
 <style>
   .community-page{min-height:70vh;padding-block:clamp(6rem,11vw,10rem) var(--section-space)}
+  .community-activity{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin:4rem auto 0}
+  .community-section-heading{margin-bottom:1.4rem}.community-section-heading h2{margin:0;color:#f5f2ec;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-.04em}
+  .community-eyebrow{margin:0 0 .4rem;color:#929297;font-size:.68rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+  .activity-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem}
+  .activity-item{display:flex;gap:.75rem;min-width:0;padding:.9rem;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.025)}
+  .activity-avatar{display:block;flex:0 0 38px;width:38px;height:38px}.activity-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;background:#191919}
+  .activity-copy{display:grid;gap:.3rem;min-width:0}.activity-copy p{display:flex;flex-wrap:wrap;gap:.3rem;margin:0;color:#929297;font-size:.72rem;line-height:1.4}
+  .activity-copy p a:first-child{color:#f0f0f0;font-weight:700;text-decoration:none}.activity-content{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;color:#d2d2d5;font-size:.82rem;line-height:1.45;overflow-wrap:anywhere}
+  .activity-anime{color:#ddd;font-size:.74rem;text-decoration:none}.activity-copy time{color:#777;font-size:.66rem}
+  @media(max-width:680px){.activity-list{grid-template-columns:1fr}}
   .community-directory{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin:0 auto}
   .community-tools{display:flex;justify-content:flex-end;margin-bottom:1.25rem}
   .community-search{display:flex;align-items:center;gap:.65rem;width:min(100%,440px);height:42px;padding:0 .9rem;border:1px solid rgba(245,242,236,.16);border-radius:999px;background:#0b0b0b;color:#999}
