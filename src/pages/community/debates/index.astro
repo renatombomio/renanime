@@ -1,0 +1,53 @@
+---
+export const prerender = false;
+import Layout from "../../../layouts/Layout.astro";
+import Navbar from "../../../components/layout/Navbar.astro";
+import { createSupabaseSsrClient } from "../../../lib/supabase-ssr";
+const en = Astro.locals.lang === "en";
+const base = en ? "/en" : "";
+const url = new URL(Astro.request.url);
+const sort = ["newest","comments","likes"].includes(url.searchParams.get("sort") ?? "") ? url.searchParams.get("sort")! : "newest";
+const category = ["all","anime","characters","theories","comparisons","manga","general"].includes(url.searchParams.get("category") ?? "") ? url.searchParams.get("category")! : "all";
+const labels: Record<string,string> = en ? {all:"All",anime:"Anime",characters:"Characters",theories:"Theories",comparisons:"Comparisons",manga:"Manga",general:"General"} : {all:"Todos",anime:"Anime",characters:"Personajes",theories:"Teorías",comparisons:"Comparaciones",manga:"Manga",general:"General"};
+const supabase = createSupabaseSsrClient(Astro.request, Astro.cookies);
+const { data: auth } = await supabase.auth.getUser();
+const { data, error } = await supabase.from("community_debates").select("id,title,body,category,created_at,profiles!inner(aka,avatar_url,is_private)").eq("status","published").eq("profiles.is_private",false).order("created_at",{ascending:false}).limit(60);
+const rows = (data ?? []).filter((x:any) => category === "all" || x.category === category);
+const ids = rows.map((x:any) => x.id);
+const [likes,comments,mine] = ids.length ? await Promise.all([
+  supabase.from("community_debate_likes").select("debate_id").in("debate_id",ids),
+  supabase.from("community_debate_comments").select("debate_id").eq("status","visible").in("debate_id",ids),
+  auth.user ? supabase.from("community_debate_likes").select("debate_id").eq("user_id",auth.user.id).in("debate_id",ids) : Promise.resolve({data:[]})
+]) : [{data:[]},{data:[]},{data:[]}];
+const stats = new Map(ids.map((id:string) => [id,{likes:0,comments:0,liked:false}]));
+for (const x of likes.data ?? []) stats.get(x.debate_id)!.likes++;
+for (const x of comments.data ?? []) stats.get(x.debate_id)!.comments++;
+for (const x of mine.data ?? []) stats.get(x.debate_id)!.liked = true;
+const ordered = [...rows].sort((a:any,b:any) => sort === "likes" ? stats.get(b.id)!.likes-stats.get(a.id)!.likes : sort === "comments" ? stats.get(b.id)!.comments-stats.get(a.id)!.comments : new Date(b.created_at).getTime()-new Date(a.created_at).getTime());
+---
+<Layout title={en ? "Community debates — Renanime" : "Debates de la comunidad — Renanime"}>
+<Navbar />
+<main id="main-content" class="debates">
+<header><p class="eyebrow">{en ? "Community" : "Comunidad"}</p><h1>Debates</h1><p>{en ? "Ideas, theories and conversations about the stories we love." : "Ideas, teorías y conversaciones sobre las historias que nos gustan."}</p><button id="open-form" type="button">{en ? "＋ Start a debate" : "＋ Crear debate"}</button></header>
+<section id="create-panel" hidden>
+{auth.user ? <form id="debate-form">
+<label>{en ? "Title" : "Título"}<input name="title" minlength="8" maxlength="120" required /></label>
+<label>{en ? "Category" : "Categoría"}<select name="category">{Object.entries(labels).filter(([k])=>k!=="all").map(([k,v])=><option value={k}>{v}</option>)}</select></label>
+<label>{en ? "Your argument" : "Tu argumento"}<textarea name="body" minlength="20" maxlength="3000" rows="5" required /></label>
+<p class="note">{en ? "Public image uploads are disabled until image moderation is ready." : "Las imágenes públicas están desactivadas hasta que la moderación esté preparada."}</p>
+<p id="form-error" role="alert" hidden></p><button type="submit">{en ? "Publish debate" : "Publicar debate"}</button>
+</form> : <p>{en ? "Sign in to create a debate." : "Inicia sesión para crear un debate."} <a href={base+"/login/"}>{en ? "Sign in" : "Iniciar sesión"}</a></p>}
+</section>
+<nav class="filters"><div>{#each ["newest","comments","likes"] as item}<a class:active={sort===item} href={base+"/community/debates/?sort="+item+"&category="+category}>{item==="newest"?(en?"Newest":"Más recientes"):item==="comments"?(en?"Most discussed":"Más comentados"):(en?"Most liked":"Más valorados")}</a>{/each}</div><div>{#each Object.entries(labels) as entry}<a class:active={category===entry[0]} href={base+"/community/debates/?sort="+sort+"&category="+entry[0]}>{entry[1]}</a>{/each}</div></nav>
+{error ? <p class="empty">{en ? "Debates are temporarily unavailable." : "Los debates no están disponibles temporalmente."}</p> : ordered.length ? <section class="list">{ordered.map((d:any)=>{const p=Array.isArray(d.profiles)?d.profiles[0]:d.profiles;const s=stats.get(d.id)!;return <article><div class="author"><img src={p?.avatar_url||"/images/profile-avatar-placeholder.svg"} alt="" /><a href={base+"/u/"+encodeURIComponent(p.aka)+"/"}>@{p.aka}</a><time>{new Intl.DateTimeFormat(en?"en":"es",{dateStyle:"medium"}).format(new Date(d.created_at))}</time></div><a class="title" href={base+"/community/debates/"+d.id+"/"}><h2>{d.title}</h2></a><p class="excerpt">{d.body}</p><footer><span>{labels[d.category]}</span><span>{s.comments} {en?"comments":"comentarios"}</span><span>{s.likes} likes</span></footer></article>})}</section> : <p class="empty">{en ? "No debates yet. Start the first one." : "Todavía no hay debates. Inicia el primero."}</p>}
+</main>
+</Layout>
+<style>
+.debates{width:min(calc(100% - 2*var(--gutter)),850px);min-height:70vh;margin:auto;padding:clamp(6rem,11vw,9rem) 0 var(--section-space);color:#f5f2ec}.debates header{padding-bottom:1.6rem;border-bottom:1px solid #ffffff1a}.eyebrow{color:#ec4899;font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase}.debates h1{margin:0;font-size:clamp(2.5rem,8vw,4.5rem);letter-spacing:-.06em}.debates header p:not(.eyebrow){color:#999}.debates button{border:0;border-radius:999px;background:#f5f2ec;color:#111;padding:.7rem 1rem;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}#create-panel{margin:1rem 0;padding:1rem;border:1px solid #ffffff20;border-radius:14px;background:#111}#create-panel[hidden]{display:none}#debate-form{display:grid;gap:.8rem}#debate-form label{display:grid;gap:.4rem;font-size:.8rem;color:#ddd}#debate-form input,#debate-form select,#debate-form textarea{width:100%;padding:.7rem;border:1px solid #333;border-radius:8px;background:#080809;color:white;font:inherit}.note,#form-error{font-size:.72rem;color:#999}.filters{display:grid;gap:.7rem;padding:1rem 0}.filters div{display:flex;gap:.4rem;overflow:auto;scrollbar-width:none}.filters a{flex:0 0 auto;padding:.5rem .7rem;border:1px solid #ffffff20;border-radius:99px;color:#aaa;font-size:.7rem;text-decoration:none}.filters a.active{background:#f5f2ec;color:#111}.list{display:grid;gap:.8rem}.list article{padding:1rem;border:1px solid #ffffff1a;border-radius:14px;background:#ffffff06}.author{display:flex;align-items:center;gap:.55rem;color:#888;font-size:.7rem}.author img{width:28px;height:28px;border-radius:50%;object-fit:cover}.author a{color:#eee;text-decoration:none;font-weight:700}.author time{margin-left:auto}.title{color:#f5f2ec;text-decoration:none}.title h2{margin:.8rem 0 .4rem;font-size:1.3rem;letter-spacing:-.03em}.excerpt{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;color:#aaa;font-size:.82rem;line-height:1.6;white-space:pre-wrap}.list footer{display:flex;gap:1rem;margin-top:.9rem;color:#888;font-size:.7rem}.list footer span:first-child{color:#ddd}.empty{padding:2rem 0;color:#888}
+</style>
+<script>
+const panel=document.querySelector<HTMLElement>("#create-panel");
+document.querySelector("#open-form")?.addEventListener("click",()=>{if(panel)panel.hidden=!panel.hidden});
+const form=document.querySelector<HTMLFormElement>("#debate-form");
+form?.addEventListener("submit",async(event)=>{event.preventDefault();const button=form.querySelector<HTMLButtonElement>('button[type="submit"]');if(button)button.disabled=true;const fd=new FormData(form);const error=document.querySelector<HTMLElement>("#form-error");try{const r=await fetch("/api/community/debates",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({title:fd.get("title"),body:fd.get("body"),category:fd.get("category")})});const result=await r.json();if(!r.ok||!result.ok)throw new Error();window.location.href="/community/debates/"+result.id+"/"}catch{if(error){error.textContent="No se ha podido publicar. Revisa los campos e inténtalo de nuevo.";error.hidden=false}if(button)button.disabled=false}});
+</script>
