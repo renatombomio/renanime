@@ -15,6 +15,8 @@ const { data: members, error } = await supabase.from("profiles").select("id, aka
 if (countError) console.error("Community profile count error:", countError.message);
 if (error) console.error("Community directory error:", error.message);
 const profiles = Array.isArray(members) ? members : [];
+const { data: latestDebates } = await supabase.from("community_debates").select("id,title,body,category,created_at,profiles!inner(aka,is_private)").eq("status","published").eq("profiles.is_private",false).order("created_at",{ascending:false}).limit(2);
+const debateCategories: Record<string,string> = isEnglish ? {anime:"Anime",characters:"Characters",theories:"Theories",comparisons:"Comparisons",manga:"Manga",general:"General"} : {anime:"Anime",characters:"Personajes",theories:"Teorías",comparisons:"Comparaciones",manga:"Manga",general:"General"};
 const onlineCutoff = Date.now() - 5 * 60 * 1000;
 type ActivityItem = { id: string; action: "comment" | "like" | "joined"; content: string | null; createdAt: string; aka: string; avatarUrl: string | null; animeId: number | null; animeTitle: string };
 let activity: ActivityItem[] = [];
@@ -69,8 +71,16 @@ const formatAge = (value: string) => { const minutes = Math.max(0, Math.floor((D
       <p class="community-no-results" id="community-no-results" hidden>{isEnglish ? "No profiles match your search." : "No hay perfiles que coincidan con tu búsqueda."}</p>
     </section>
     <section class="community-activity" aria-labelledby="activity-title">
-      <header class="community-section-heading"><p class="community-eyebrow">{isEnglish ? "What's happening" : "Qué está pasando"}</p><h2 id="activity-title">{isEnglish ? "Recent activity" : "Actividad reciente"}</h2></header>
-      {activity.length ? <div class="activity-list">{activity.map((item) => <article class="activity-item"><a class="activity-avatar" href={`${isEnglish ? "/en" : ""}/u/${encodeURIComponent(item.aka)}/`} aria-label={`@${item.aka}`}><img src={item.avatarUrl || "/images/profile-avatar-placeholder.svg"} alt="" loading="lazy" /></a><div class="activity-copy"><p><a href={`${isEnglish ? "/en" : ""}/u/${encodeURIComponent(item.aka)}/`}>@{item.aka}</a><span>{item.action === "like" ? (isEnglish ? "liked" : "le ha dado like a") : item.action === "joined" ? (isEnglish ? "joined Renanime" : "se ha unido a Renanime") : (isEnglish ? "commented on" : "ha comentado en")}</span></p>{item.action === "comment" && item.content && <p class="activity-content">{item.content}</p>}{item.animeId !== null && <a class="activity-anime" href={`${isEnglish ? "/en" : ""}/anime/${item.animeId}/`}>{item.animeTitle}</a>}<time datetime={item.createdAt}>{formatAge(item.createdAt)}</time></div></article>)}</div> : <p class="community-empty">{isEnglish ? "No recent activity yet." : "Todavía no hay actividad reciente."}</p>}
+      <details class="activity-disclosure">
+        <summary><strong id="activity-title">{isEnglish ? "Recent activity" : "Actividad reciente"}</strong>
+          {activity.length ? <span class="activity-summary-preview"><img src={activity[0].avatarUrl || "/images/profile-avatar-placeholder.svg"} alt="" /><span><b>@{activity[0].aka}</b> {isEnglish ? "recently active" : "actividad reciente"}</span></span> : <span class="activity-summary-preview">{isEnglish ? "No recent activity" : "Sin actividad reciente"}</span>}
+          <span class="activity-chevron" aria-hidden="true">⌄</span></summary>
+        {activity.length ? <div class="activity-list">{activity.map((item) => <article class="activity-item"><a class="activity-avatar" href={(isEnglish ? "/en" : "") + "/u/" + encodeURIComponent(item.aka) + "/"} aria-label={"@" + item.aka}><img src={item.avatarUrl || "/images/profile-avatar-placeholder.svg"} alt="" loading="lazy" /></a><div class="activity-copy"><p><a href={(isEnglish ? "/en" : "") + "/u/" + encodeURIComponent(item.aka) + "/"}>@{item.aka}</a><span>{item.action === "like" ? (isEnglish ? "liked" : "le ha dado like a") : item.action === "joined" ? (isEnglish ? "joined Renanime" : "se ha unido a Renanime") : (isEnglish ? "commented on" : "ha comentado en")}</span></p>{item.action === "comment" && item.content && <p class="activity-content">{item.content}</p>}{item.animeId !== null && <a class="activity-anime" href={(isEnglish ? "/en" : "") + "/anime/" + item.animeId + "/"}>{item.animeTitle}</a>}<time datetime={item.createdAt}>{formatAge(item.createdAt)}</time></div></article>)}</div> : <p class="community-empty">{isEnglish ? "No recent activity yet." : "Todavía no hay actividad reciente."}</p>}
+      </details>
+      <a class="community-create-debate" href={(isEnglish ? "/en" : "") + "/community/debates/"}><strong>{isEnglish ? "Start a debate" : "Generar debate"}</strong><span>{isEnglish ? "Share an opinion or theory" : "Comparte una opinión o teoría"} ↗</span></a>
+      <div class="community-debate-previews"><header><h2>{isEnglish ? "Latest debates" : "Últimos debates"}</h2><a href={(isEnglish ? "/en" : "") + "/community/debates/"}>{isEnglish ? "View all" : "Ver todos"}</a></header>
+        {latestDebates?.length ? latestDebates.map((debate: any) => { const profile = Array.isArray(debate.profiles) ? debate.profiles[0] : debate.profiles; return <a class="community-debate-card" href={(isEnglish ? "/en" : "") + "/community/debates/" + debate.id + "/"}><small>{debateCategories[debate.category] || "General"}</small><strong>{debate.title}</strong><span>{debate.body}</span><small>@{profile?.aka} · {formatAge(debate.created_at)}</small></a>; }) : <p class="community-empty">{isEnglish ? "No debates yet." : "Todavía no hay debates."}</p>}
+      </div>
     </section>
   </main>
 </Layout>
@@ -87,6 +97,17 @@ const formatAge = (value: string) => { const minutes = Math.max(0, Math.floor((D
   .activity-copy p a:first-child{color:#f0f0f0;font-weight:700;text-decoration:none}.activity-content{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;color:#d2d2d5;font-size:.82rem;line-height:1.45;overflow-wrap:anywhere}
   .activity-anime{color:#ddd;font-size:.74rem;text-decoration:none}.activity-copy time{color:#777;font-size:.66rem}
   @media(max-width:680px){.activity-list{grid-template-columns:1fr}}
+  .activity-disclosure{border-bottom:1px solid rgba(255,255,255,.1)}
+  .activity-disclosure summary{display:flex;align-items:center;gap:.7rem;min-height:68px;padding:.75rem 0;list-style:none;cursor:pointer}
+  .activity-disclosure summary::-webkit-details-marker{display:none}
+  #activity-title{color:#f5f2ec;font-size:clamp(1.3rem,4vw,1.7rem);letter-spacing:-.04em}
+  .activity-summary-preview{display:flex;align-items:center;gap:.5rem;min-width:0;margin-left:auto;color:#999;font-size:.7rem}
+  .activity-summary-preview img{width:27px;height:27px;border-radius:50%;object-fit:cover}.activity-summary-preview span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.activity-summary-preview b{color:#eee}
+  .activity-chevron{color:#aaa}.activity-disclosure[open] .activity-chevron{transform:rotate(180deg)}.activity-disclosure[open] .activity-summary-preview{display:none}
+  .community-create-debate{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin:1.4rem 0;padding:1rem 1.1rem;border:1px solid rgba(236,72,153,.35);border-radius:14px;background:rgba(236,72,153,.08);color:#f5f2ec;text-decoration:none}.community-create-debate strong{font-size:.95rem}.community-create-debate span{color:#aaa;font-size:.72rem}
+  .community-debate-previews{display:grid;gap:.7rem}.community-debate-previews header{display:flex;align-items:center;justify-content:space-between}.community-debate-previews h2{margin:0;color:#f5f2ec;font-size:1.2rem}.community-debate-previews header>a{color:#ec4899;font-size:.72rem;text-decoration:none}
+  .community-debate-card{display:grid;gap:.4rem;padding:1rem;border:1px solid rgba(255,255,255,.1);border-radius:13px;color:#f5f2ec;text-decoration:none}.community-debate-card small{color:#ec4899;font-size:.67rem}.community-debate-card span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;color:#aaa;font-size:.75rem;line-height:1.5}
+  @media(max-width:680px){.activity-disclosure summary{flex-wrap:wrap}#activity-title{width:100%}.activity-summary-preview{margin-left:0}}
   .community-directory{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin:0 auto}
   .community-tools{display:flex;justify-content:flex-end;margin-bottom:1.25rem}
   .community-search{display:flex;align-items:center;gap:.65rem;width:min(100%,440px);height:42px;padding:0 .9rem;border:1px solid rgba(245,242,236,.16);border-radius:999px;background:#0b0b0b;color:#999}
