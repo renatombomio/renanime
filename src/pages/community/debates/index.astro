@@ -113,28 +113,32 @@ const publicImage=(path:string|null,status:string|null)=>{
   <p id="search-empty" class="empty" hidden>{en?"No debates match your search.":"No hay debates que coincidan con tu búsqueda."}</p>
 </main>
 
-<dialog class="composer-sheet" id="composer-sheet" aria-labelledby="composer-title">
-  
+<dialog class="composer-sheet" id="composer-sheet">
   <section class="sheet-panel">
     <form id="debate-form" enctype="multipart/form-data">
+      <div class="sheet-grab" aria-hidden="true"></div>
       <div class="sheet-top">
         <button class="cancel" type="button" id="cancel-composer">{en?"Cancel":"Cancelar"}</button>
-        <strong id="composer-title">{en?"New debate":"Nuevo debate"}</strong>
-        <button class="publish" type="submit">{en?"Publish":"Publicar"}</button>
+        <button class="publish" type="submit" disabled>{en?"Publish":"Publicar"}</button>
       </div>
       {auth.user ? <>
         <div class="composer-content">
           <img class="av composer-avatar" src={viewer?.avatar_url||"/images/profile-avatar-placeholder.svg"} alt=""/>
           <div class="composer-fields">
-            <textarea name="title" id="debate-title" minlength="8" maxlength="120" required placeholder={en?"What would you like to debate?":"¿Qué quieres debatir?"}></textarea>
-            <textarea name="body" id="debate-body" maxlength="1500" rows="3" placeholder={en?"Add more context (optional)…":"Añade más contexto (opcional)…"}></textarea>
+            <textarea name="title" id="debate-title" minlength="8" maxlength="120" required rows="1" placeholder={en?"What would you like to debate?":"¿Qué quieres debatir?"}></textarea>
             <div class="image-preview" id="image-preview" hidden><img id="preview-img" alt=""/><button type="button" id="remove-image" aria-label={en?"Remove image":"Quitar imagen"}>×</button></div>
+            <div class="anime-field">
+              <label class="anime-label" for="anime-title">{en?"RELATED ANIME · OPTIONAL":"ANIME RELACIONADO · OPCIONAL"}</label>
+              <div class="anime-control">
+                <input type="text" name="animeTitle" id="anime-title" maxlength="120" placeholder={en?"Choose an anime":"Selecciona un anime"}/>
+                <button type="button" id="remove-anime" aria-label={en?"Remove related anime":"Quitar anime relacionado"} hidden>×</button>
+              </div>
+              <input type="hidden" name="animeId" id="anime-id" value=""/>
+            </div>
             <div class="cats composer-cats" role="group" aria-label={en?"Choose a category":"Elige una categoría"}>
               {Object.entries(labels).filter(([key])=>key!=="all").map(([key,label],index)=><button type="button" class:list={["cat-choice",index===0&&"active"]} data-category={key}>{label}</button>)}
               <input type="hidden" name="category" id="debate-category" value="anime"/>
             </div>
-            <input class="anime-input" type="text" name="animeTitle" id="anime-title" maxlength="120" placeholder={en?"Related anime (optional)":"Anime relacionado (opcional)"}/>
-            <input type="hidden" name="animeId" id="anime-id" value=""/>
             <div class="composer-bottom">
               <label class="image-picker" for="debate-image" aria-label={en?"Add image":"Añadir imagen"}>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg>
@@ -262,7 +266,7 @@ searchInput?.addEventListener("input",()=>{const query=searchInput.value.trim().
 .sheet-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
 .sheet-top button{min-height:36px;border:0;background:transparent;font:inherit;font-size:14px;font-weight:700}
 .cancel{padding:0;color:#a39fa9}
-.sheet-top .publish{padding:9px 20px;border-radius:999px;background:#ec4899;color:#fff;font-size:14px;font-weight:700;line-height:1.2}
+.sheet-top .publish{padding:9px 20px;border-radius:999px;background:var(--color-accent);color:#fff;font-size:14px;font-weight:700;line-height:1.2}
 .sheet-top .publish:disabled{opacity:.4;cursor:not-allowed}
 .composer-content{display:flex;align-items:flex-start;gap:12px;padding:0}
 .composer-avatar{width:38px;height:38px;flex:0 0 38px;margin-top:2px}
@@ -276,7 +280,7 @@ searchInput?.addEventListener("input",()=>{const query=searchInput.value.trim().
 .anime-field{margin-top:12px}
 .anime-label{display:block;margin-bottom:6px;color:#77737d;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
 .anime-control{display:flex;align-items:center;gap:8px;min-height:42px;padding:0 12px;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:#17171b}
-.anime-control input{flex:1;min-width:0;padding:10px 0;border:0;outline:0;background:transparent;color:#cfcbd3;font:inherit;font-size:14px}
+.anime-control:focus-within{border-color:rgba(255,255,255,.2)}.anime-control input{flex:1;min-width:0;padding:10px 0;border:0;outline:0;background:transparent;color:#cfcbd3;font:inherit;font-size:14px}
 .anime-control input::placeholder{color:#77737d}
 .anime-control button{width:24px;height:24px;padding:0;border:0;background:transparent;color:#a39fa9;font-size:20px;line-height:1}
 .anime-control button[hidden]{display:none}
@@ -284,7 +288,7 @@ searchInput?.addEventListener("input",()=>{const query=searchInput.value.trim().
 .composer-cats::-webkit-scrollbar{display:none}
 .cat-choice{flex:0 0 auto;min-height:32px;padding:0 10px;cursor:pointer}
 .composer-bottom{display:flex;align-items:center;gap:6px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07)}
-.image-picker{display:grid;place-items:center;width:30px;height:30px;padding:0;border:0;border-radius:0;background:transparent;color:#ec4899;cursor:pointer}
+.image-picker{display:grid;place-items:center;width:30px;height:30px;padding:0;border:0;border-radius:0;background:transparent;color:var(--color-accent);cursor:pointer}
 .image-picker svg{width:22px;height:22px;stroke:currentColor}
 .composer-bottom>span{margin-left:auto;color:#77737d;font-size:12px}
 .form-error{margin:8px 0 0;color:#ff9da9;font-size:12px;line-height:1.4}
