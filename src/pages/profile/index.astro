@@ -455,7 +455,7 @@ const profileCommentsCount = commentsCountError ? 0 : commentsCount ?? 0;
 
   // ClientRouter keeps the document alive between routes: delegate clicks to the
   // persistent document so controls work on every visit to /profile/.
-  document.addEventListener("click", (event) => {
+  document.addEventListener("click", async (event) => {
     const characterLikeButton = target.closest<HTMLButtonElement>("[data-character-like]");
     if (characterLikeButton) {
       event.preventDefault();
