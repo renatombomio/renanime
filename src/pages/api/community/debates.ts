@@ -20,6 +20,10 @@ export const POST:APIRoute=async({request,cookies})=>{
   const rawAnimeId=typeof form.get("animeId")==="string"?(form.get("animeId") as string).trim():"";
   const animeId=rawAnimeId&&/^\d+$/.test(rawAnimeId)?Number(rawAnimeId):null;
   const image=form.get("image");
+  const rawZoom=Number(form.get("imageZoom")??1);
+  const rawPositionY=Number(form.get("imagePositionY")??50);
+  const imageZoom=Number.isFinite(rawZoom)?Math.min(2.5,Math.max(1,rawZoom)):1;
+  const imagePositionY=Number.isFinite(rawPositionY)?Math.min(100,Math.max(0,rawPositionY)):50;
   if(title.length<8||title.length>120)return json({ok:false,error:"INVALID_TITLE"},400);
   if(rawBody.length>500)return json({ok:false,error:"INVALID_BODY"},400);
   if(!categories.has(category))return json({ok:false,error:"INVALID_CATEGORY"},400);
@@ -36,11 +40,20 @@ export const POST:APIRoute=async({request,cookies})=>{
   let imagePath:string|null=null;
   if(image instanceof File&&image.size>0){
    const input=Buffer.from(await image.arrayBuffer());
-   const pipeline=sharp(input,{failOn:"error",limitInputPixels:40_000_000});
-   const metadata=await pipeline.metadata();
+   const metadata=await sharp(input,{failOn:"error",limitInputPixels:40_000_000}).metadata();
    if(!metadata.format||!["jpeg","png","webp","avif"].includes(metadata.format))return json({ok:false,error:"INVALID_IMAGE"},400);
-   const webp=await sharp(input,{failOn:"error",limitInputPixels:40_000_000})
-    .rotate().resize({width:1600,height:1600,fit:"inside",withoutEnlargement:true})
+   const oriented=await sharp(input,{failOn:"error",limitInputPixels:40_000_000}).rotate().toBuffer();
+   const orientedMetadata=await sharp(oriented).metadata();
+   const width=orientedMetadata.width??0;
+   const height=orientedMetadata.height??0;
+   if(!width||!height)return json({ok:false,error:"INVALID_IMAGE"},400);
+   const cropWidth=Math.max(1,Math.round(width/imageZoom));
+   const cropHeight=Math.max(1,Math.round(height/imageZoom));
+   const cropLeft=Math.max(0,Math.floor((width-cropWidth)/2));
+   const cropTop=Math.max(0,Math.min(height-cropHeight,Math.round((height-cropHeight)*(imagePositionY/100))));
+   const webp=await sharp(oriented)
+    .extract({left:cropLeft,top:cropTop,width:cropWidth,height:cropHeight})
+    .resize({width:1600,height:1600,fit:"inside",withoutEnlargement:true})
     .webp({quality:82,effort:5}).toBuffer();
    if(!webp.length||webp.length>MAX_UPLOAD_BYTES)return json({ok:false,error:"INVALID_IMAGE"},400);
    imagePath=auth.user.id+"/"+crypto.randomUUID()+".webp";
