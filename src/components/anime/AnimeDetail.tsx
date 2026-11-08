@@ -458,22 +458,6 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
         <span className="anime-detail-label">{t("detail.trailer")}</span>
         <div className="anime-detail-video"><iframe src={"https://www.youtube.com/embed/"+media.trailer.id+"?rel=0"} title={(lang==="en"?"Trailer for ":"Tráiler de ")+title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
        </section>}
-       {(() => {
-        const characters = (media?.characters?.edges ?? [])
-          .filter((edge) => edge?.node?.id && edge.node.name?.full && edge.node.image?.large)
-          .filter((edge, index, all) => all.findIndex((item) => item.node?.id === edge.node?.id) === index)
-          .slice(0, 12);
-        return characters.length ? <section className="anime-detail-characters" aria-label={lang === "en" ? "Characters" : "Personajes"}>
-          <div className="anime-detail-recommendations-head"><span className="anime-detail-label">{lang === "en" ? "Characters" : "Personajes"}</span></div>
-          <div className="anime-detail-characters-track">
-            {characters.map(({node, role}) => <article className="anime-detail-character" key={node!.id}>
-              <div className="anime-detail-character-image"><img src={node!.image!.large!} alt={node!.name!.full!} loading="lazy" /></div>
-              <strong className="anime-detail-character-name">{node!.name!.full}</strong>
-              <span className="anime-detail-character-role">{role === "MAIN" ? (lang === "en" ? "Main character" : "Principal") : (lang === "en" ? "Supporting" : "Secundario")}</span>
-            </article>)}
-          </div>
-        </section> : null;
-       })()}
        {typeof media?.id === "number" && <CharacterCarousel animeId={media.id} lang={lang} />}
        {typeof media?.id === "number" && <AnimeComments animeId={media.id} lang={lang} />}
     </div>
