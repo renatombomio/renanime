@@ -1,4 +1,5 @@
-import { fetchRenMediaByIdentity, hasRenAnimeIdentity } from "../../lib/api/ren-anime-identities";
+import { fetchRenMediaByIdentity } from "../../lib/api/ren-anime-identities";
+import coverManifest from "../../data/ren-cover-manifest.json";
 import { getDisplayTitle } from "../../lib/anime/display-title";
 import AnimePosterDisplay from "../anime/AnimePosterDisplay";
 import { useEffect, useMemo, useState } from "react";
@@ -28,9 +29,20 @@ type Filter = "ALL" | "SERIES" | "MOVIES";
 type Sort = "ADDED" | "TITLE" | "YEAR";
 
 const PAGE_SIZE = 15;
+const coverByAnimeId = new Map(
+  (coverManifest as { entries?: { animeId: string; posterUrl?: string | null }[] }).entries?.map((entry) => [entry.animeId, entry.posterUrl]) ?? [],
+);
 
 async function fetchMedia(entries: Entry[]): Promise<Record<string, Media | null>> {
-  return fetchRenMediaByIdentity(entries);
+  const identityMedia = fetchRenMediaByIdentity(entries);
+  const result: Record<string, Media | null> = { ...identityMedia };
+  for (const entry of entries) {
+    const poster = coverByAnimeId.get(entry.animeId);
+    if (!result[entry.animeId] && poster) {
+      result[entry.animeId] = { coverImage: { extraLarge: poster, large: poster } };
+    }
+  }
+  return result;
 }
 
 function titleOf(entry: Entry, media?: Media | null) {
@@ -43,7 +55,7 @@ function isMovie(entry: Entry, media?: Media | null) {
 
 export default function HomeGallery({ entries, lang = "es" }: Props) {
   const t = useT(lang);
-  const verifiedEntries = useMemo(() => entries.filter((entry) => hasRenAnimeIdentity(entry.animeId)), [entries]);
+  const verifiedEntries = useMemo(() => entries, [entries]);
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [media, setMedia] = useState<Record<string, Media | null>>({});
   const [loading, setLoading] = useState(false);
