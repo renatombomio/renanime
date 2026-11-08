@@ -22,9 +22,9 @@ export const POST: APIRoute = async ({ request, cookies, params }) => {
       if (error && error.code !== "23505") return json({ ok: false, error: "LIKE_FAILED" }, 503);
       liked = true;
     }
-    const { count, error } = await supabase.from("character_likes").select("id", { count: "exact", head: true }).eq("character_id", characterId);
+    const { data: totals, error } = await supabase.from("character_like_totals").select("like_count").eq("character_id", characterId).maybeSingle();
     if (error) return json({ ok: false, error: "LIKE_COUNT_FAILED" }, 503);
-    return json({ ok: true, liked, count: count ?? 0 });
+    return json({ ok: true, liked, count: Number(totals?.like_count) || 0 });
   } catch {
     return json({ ok: false, error: "LIKE_FAILED" }, 503);
   }
