@@ -2,26 +2,49 @@
 export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/layout/Navbar.astro";
-import DebateComposerBar from "../../components/community/DebateComposerBar.astro";
 import "../../styles/community-social.css";
 import { createSupabaseSsrClient } from "../../lib/supabase-ssr";
 const en=Astro.locals.lang==="en", base=en?"/en":"";
 const supabase=createSupabaseSsrClient(Astro.request,Astro.cookies);
 const {data:auth}=await supabase.auth.getUser();
-const {data:me}=auth.user?await supabase.from("profiles").select("id,aka,avatar_url,headline,bio,interests,is_private").eq("id",auth.user.id).maybeSingle():{data:null};
 const {data:memberCandidates,error:membersError}=await supabase.from("profiles").select("id,aka,avatar_url,headline,bio,interests").eq("is_private",false).not("aka","is",null).limit(100);
 const shuffledMembers=[...(memberCandidates??[])];
 for(let i=shuffledMembers.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffledMembers[i],shuffledMembers[j]]=[shuffledMembers[j],shuffledMembers[i]];}
 const members=shuffledMembers.slice(0,9);
-const {data:debates,error:debatesError}=await supabase.from("community_debates").select("id,title,body,category,image_path,image_status,created_at,profiles!inner(aka,avatar_url,is_private)").eq("status","published").eq("profiles.is_private",false).order("created_at",{ascending:false}).limit(2);
-const debateIds=(debates??[]).map((d:any)=>d.id);
-const [debateLikes,debateComments]=debateIds.length?await Promise.all([
- supabase.from("community_debate_likes").select("debate_id").in("debate_id",debateIds),
- supabase.from("community_debate_comments").select("debate_id").eq("status","visible").in("debate_id",debateIds)
-]):[{data:[]},{data:[]}];
-const debateStats=new Map(debateIds.map((id:string)=>[id,{likes:0,comments:0}]));
-for(const item of debateLikes.data??[])debateStats.get(item.debate_id)!.likes++;
-for(const item of debateComments.data??[])debateStats.get(item.debate_id)!.comments++;
+const [{data:debates,error:debatesError},{data:debateLikeRows,error:debateLikesError}]=await Promise.all([
+ supabase.from("community_debates").select("id,title,body,category,image_path,image_status,created_at,profiles!inner(aka,avatar_url,is_private)").eq("status","published").eq("profiles.is_private",false),
+ supabase.from("community_debate_likes").select("debate_id,created_at")
+]);
+const debateCounts=new Map<string,{likes:number;lastLike:string}>();
+for(const item of debateLikeRows??[]){
+ const current=debateCounts.get(item.debate_id)??{likes:0,lastLike:item.created_at};
+ current.likes++;
+ if(new Date(item.created_at).getTime()>new Date(current.lastLike).getTime())current.lastLike=item.created_at;
+ debateCounts.set(item.debate_id,current);
+}
+const trendingDebate=[...(debates??[])].filter((d:any)=>(debateCounts.get(d.id)?.likes??0)>0).sort((a:any,b:any)=>{
+ const aStats=debateCounts.get(a.id)!,bStats=debateCounts.get(b.id)!;
+ return bStats.likes-aStats.likes||new Date(bStats.lastLike).getTime()-new Date(aStats.lastLike).getTime()||new Date(b.created_at).getTime()-new Date(a.created_at).getTime();
+})[0]??null;
+const trendingDebateStats=trendingDebate?debateCounts.get(trendingDebate.id)??{likes:0,lastLike:""}:{likes:0,lastLike:""};
+const {data:trendingDebateComments}=trendingDebate?await supabase.from("community_debate_comments").select("id",{count:"exact",head:true}).eq("debate_id",trendingDebate.id).eq("status","visible"):{data:null,count:0};
+const {data:animeLikeRows,error:animeLikesError}=await supabase.from("anime_likes").select("anime_id,created_at");
+const animeCounts=new Map<number,{likes:number;lastLike:string}>();
+for(const item of animeLikeRows??[]){
+ const id=Number(item.anime_id);if(!Number.isSafeInteger(id)||id<=0)continue;
+ const current=animeCounts.get(id)??{likes:0,lastLike:item.created_at};
+ current.likes++;
+ if(new Date(item.created_at).getTime()>new Date(current.lastLike).getTime())current.lastLike=item.created_at;
+ animeCounts.set(id,current);
+}
+const topAnime=[...animeCounts.entries()].map(([id,stats])=>({id,...stats})).sort((a,b)=>b.likes-a.likes||new Date(b.lastLike).getTime()-new Date(a.lastLike).getTime()).slice(0,5);
+let topAnimeMetadata=new Map<number,{title:string;cover:string|null}>();
+if(topAnime.length){
+ try{
+  const response=await fetch("https://graphql.anilist.co",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({query:"query ($ids: [Int]) { Page { media(id_in: $ids, type: ANIME) { id title { romaji english } coverImage { extraLarge large } } } }",variables:{ids:topAnime.map(x=>x.id)}})});
+  if(response.ok){const payload=await response.json();topAnimeMetadata=new Map((payload.data?.Page?.media??[]).map((x:any)=>[x.id,{title:x.title.romaji||x.title.english||"Anime",cover:x.coverImage.extraLarge||x.coverImage.large||null}]));}
+ }catch(error){console.error("Community top anime metadata error:",error);}
+}
 type Activity={id:string;kind:"comment"|"like"|"joined";aka:string;avatar:string|null;created:string;content:string|null;animeId:number|null;animeTitle:string};
 let activity:Activity[]=[];
 try{
@@ -47,14 +70,47 @@ const cats:Record<string,string>=en?{anime:"Anime",characters:"Characters",theor
  <section class="members-section"><div class="sec"><h2>{en?"Members":"Miembros"} <small>{members.length}</small></h2></div>
  {members.length?<div class="members-grid">{members.map((m:any)=><a class="member community-searchable" data-search={["@"+m.aka,m.headline,m.bio,...(m.interests??[])].filter(Boolean).join(" ").toLowerCase()} href={base+"/u/"+encodeURIComponent(m.aka)+"/"}><img class="av" src={m.avatar_url||"/images/profile-avatar-placeholder.svg"} alt="" loading="lazy"/><span>@{m.aka}</span></a>)}</div>:<p class="community-note">{membersError?(en?"Could not load members.":"No se han podido cargar los miembros."):(en?"No public members found.":"No hay miembros públicos disponibles.")}</p>}
  </section>
- <DebateComposerBar lang={en?"en":"es"} avatarUrl={me?.avatar_url??null}/>
- <section><div class="sec"><h2>{en?"Trending debates":"Debates en tendencia"}</h2><a href={base+"/community/debates/"}>{en?"View all":"Ver todos"}</a></div>
- {debatesError?<p class="community-note">{en?"Debates are temporarily unavailable.":"Los debates no están disponibles temporalmente."}</p>:debates?.length?<div class="trending-posts">{debates.map((d:any)=>{const p=Array.isArray(d.profiles)?d.profiles[0]:d.profiles;const stats=debateStats.get(d.id)??{likes:0,comments:0};return <article class="post community-searchable" data-search={[d.title,d.body,d.category,p?.aka].join(" ").toLowerCase()}><div class="hd"><a class="author" href={base+"/u/"+encodeURIComponent(p?.aka||"")+"/"}><img class="av" src={p?.avatar_url||"/images/profile-avatar-placeholder.svg"} alt="" loading="lazy"/><span>@{p?.aka}</span></a><time>{age(d.created_at)}</time></div><div class="post-content"><a class="post-main" href={base+"/community/debates/"+d.id+"/"}><h3>{d.title}</h3>{d.body&&<p class="tx">{d.body}</p>}</a>{d.image_path&&d.image_status==="approved"&&<a class="community-debate-image" href={supabase.storage.from("debate-images").getPublicUrl(d.image_path).data.publicUrl} target="_blank" rel="noreferrer"><img src={supabase.storage.from("debate-images").getPublicUrl(d.image_path).data.publicUrl} alt={d.title} loading="lazy"/></a>}<div class="tags"><span class="tag">{cats[d.category]||"General"}</span></div></div><div class="acts"><a class="act" href={base+"/community/debates/"+d.id+"/"} aria-label={en?"Likes":"Me gusta"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 11-8.8 11S3.2 14 3.2 8.8a4.5 4.5 0 0 1 8.8-1.1 4.5 4.5 0 0 1 8.8 1.1Z"/></svg><span>{stats.likes}</span></a><a class="act" href={base+"/community/debates/"+d.id+"/"} aria-label={en?"Comments":"Comentarios"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H5l-1-4.5A7.5 7.5 0 1 1 20 11.5Z"/></svg><span>{stats.comments}</span></a><button class="act share" type="button" data-share-url={base+"/community/debates/"+d.id+"/"} aria-label={en?"Share debate":"Compartir debate"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m-5 5 5-5 5 5M4 14v6h16v-6"/></svg></button></div></article>})}</div>:<p class="community-note">{en?"No debates yet. Start the first one.":"Todavía no hay debates. Inicia el primero."}</p>}
+ <section class="community-trending-section"><div class="sec"><h2>{en?"Trending debate":"Debate en tendencia"}</h2><a href={base+"/community/debates/"}>{en?"View all":"Ver todos"}</a></div>
+ {debatesError||debateLikesError?<p class="community-note">{en?"Debates are temporarily unavailable.":"Los debates no están disponibles temporalmente."}</p>:trendingDebate?(()=>{const d:any=trendingDebate;const p=Array.isArray(d.profiles)?d.profiles[0]:d.profiles;return <article class="post community-searchable" data-search={[d.title,d.body,d.category,p?.aka].join(" ").toLowerCase()}><div class="hd"><a class="author" href={base+"/u/"+encodeURIComponent(p?.aka||"")+"/"}><img class="av" src={p?.avatar_url||"/images/profile-avatar-placeholder.svg"} alt="" loading="lazy"/><span>@{p?.aka}</span></a><time>{age(d.created_at)}</time></div><div class="post-content"><a class="post-main" href={base+"/community/debates/"+d.id+"/"}><h3>{d.title}</h3>{d.body&&<p class="tx">{d.body}</p>}</a>{d.image_path&&d.image_status==="approved"&&<a class="community-debate-image" href={supabase.storage.from("debate-images").getPublicUrl(d.image_path).data.publicUrl} target="_blank" rel="noreferrer"><img src={supabase.storage.from("debate-images").getPublicUrl(d.image_path).data.publicUrl} alt={d.title} loading="lazy"/></a>}<div class="tags"><span class="tag">{cats[d.category]||"General"}</span></div></div><div class="acts"><a class="act" href={base+"/community/debates/"+d.id+"/"} aria-label={en?"Likes":"Me gusta"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 11-8.8 11S3.2 14 3.2 8.8a4.5 4.5 0 0 1 8.8-1.1 4.5 4.5 0 0 1 8.8 1.1Z"/></svg><span>{trendingDebateStats.likes}</span></a><a class="act" href={base+"/community/debates/"+d.id+"/"} aria-label={en?"Comments":"Comentarios"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H5l-1-4.5A7.5 7.5 0 1 1 20 11.5Z"/></svg><span>{trendingDebateComments?.length??0}</span></a><button class="act share" type="button" data-share-url={base+"/community/debates/"+d.id+"/"} aria-label={en?"Share debate":"Compartir debate"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m-5 5 5-5 5 5M4 14v6h16v-6"/></svg></button></div></article>})():<p class="community-note">{en?"No liked debates yet.":"Todavía no hay debates con me gusta."}</p>}
+ </section>
+ <section class="community-top-anime-section"><div class="sec"><h2>{en?"Loved by Renanime":"El anime más querido de Renanime"}</h2><a href={base+"/community/anime-ranking/"}>{en?"Top 10":"Ranking"}</a></div>
+ {animeLikesError?<p class="community-note">{en?"Anime ranking is temporarily unavailable.":"El ranking de anime no está disponible temporalmente."}</p>:topAnime.length?<div class="top-anime-layout">
+ {#if topAnime[0]}
+ <a class="top-anime-feature" href={base+"/anime/"+topAnime[0].id+"/"}>
+  {#if topAnimeMetadata.get(topAnime[0].id)?.cover}<img class="top-anime-feature-cover" src={topAnimeMetadata.get(topAnime[0].id)?.cover??""} alt="" loading="lazy"/>{/if}
+  <span class="top-anime-feature-rank">#1 · {en?"Most loved":"El más querido"}</span>
+  <span class="top-anime-feature-title">{topAnimeMetadata.get(topAnime[0].id)?.title??("Anime #"+topAnime[0].id)}</span>
+  <span class="top-anime-likes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 11-8.8 11S3.2 14 3.2 8.8a4.5 4.5 0 0 1 8.8-1.1 4.5 4.5 0 0 1 8.8 1.1Z"/></svg>{topAnime[0].likes.toLocaleString(en?"en":"es")}</span>
+ </a>
+ {/if}
+ <div class="top-anime-list">{topAnime.slice(1).map((anime,index)=><a class="top-anime-row" href={base+"/anime/"+anime.id+"/"}><span class="top-anime-position">#{index+2}</span>{#if topAnimeMetadata.get(anime.id)?.cover}<img src={topAnimeMetadata.get(anime.id)?.cover??""} alt="" loading="lazy"/>{/if}<span class="top-anime-name">{topAnimeMetadata.get(anime.id)?.title??("Anime #"+anime.id)}</span><span class="top-anime-row-likes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 11-8.8 11S3.2 14 3.2 8.8a4.5 4.5 0 0 1 8.8-1.1 4.5 4.5 0 0 1 8.8 1.1Z"/></svg>{anime.likes.toLocaleString(en?"en":"es")}</span></a>)}</div>
+ </div>:<p class="community-note">{en?"No anime likes yet.":"Todavía no hay animes con me gusta."}</p>}
  </section>
  <section class="activity-section"><div class="sec"><h2>{en?"Recent activity":"Actividad reciente"}</h2></div>
  {activity.length?<div class="activity-feed">{activity.map(x=><article class="actv"><a href={base+"/u/"+encodeURIComponent(x.aka)+"/"} aria-label={"@"+x.aka}><img class="av" src={x.avatar||"/images/profile-avatar-placeholder.svg"} alt="" loading="lazy"/></a><div class="t"><a href={base+"/u/"+encodeURIComponent(x.aka)+"/"}><b>@{x.aka}</b></a> {x.kind==="like"?(en?"liked":"le ha gustado"):x.kind==="joined"?(en?"joined Renanime":"se ha unido a Renanime"):(en?"commented on":"ha comentado en")} {x.animeId!==null&&<a href={base+"/anime/"+x.animeId+"/"}><q>{x.animeTitle}</q></a>}{x.kind==="comment"&&x.content&&<span class="activity-quote"> “{x.content}”</span>}</div><em>{age(x.created)}</em></article>)}</div>:<p class="community-note">{en?"No recent activity yet.":"Todavía no hay actividad reciente."}</p>}
  </section><p id="community-no-results" class="community-note" hidden>{en?"No results match your search.":"No hay resultados para esa búsqueda."}</p>
-</main></Layout>
+</main>
+<style>
+.community-top-anime-section{padding-bottom:18px}
+.top-anime-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:12px;padding:4px 16px 12px}
+.top-anime-feature{position:relative;display:flex;min-height:310px;flex-direction:column;justify-content:flex-end;gap:8px;padding:16px;border-radius:14px;overflow:hidden;background:linear-gradient(180deg,#24202a,#09090b);color:#fff;text-decoration:none;isolation:isolate}
+.top-anime-feature:after{position:absolute;z-index:-1;inset:0;content:"";background:linear-gradient(180deg,rgba(0,0,0,.08) 15%,rgba(0,0,0,.88) 100%)}
+.top-anime-feature-cover{position:absolute;z-index:-2;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 25%}
+.top-anime-feature-rank{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#f2c5d8}
+.top-anime-feature-title{font-size:clamp(19px,3vw,27px);font-weight:850;line-height:1.08;letter-spacing:-.035em}
+.top-anime-likes,.top-anime-row-likes{display:inline-flex;align-items:center;gap:6px;color:#f2efe9;font-size:13px;font-weight:750;font-variant-numeric:tabular-nums}
+.top-anime-likes svg,.top-anime-row-likes svg{width:17px;height:17px;fill:var(--color-accent);stroke:var(--color-accent);stroke-width:1.5}
+.top-anime-list{display:grid;grid-template-rows:repeat(4,minmax(0,1fr));gap:8px}
+.top-anime-row{display:grid;grid-template-columns:24px 42px minmax(0,1fr);grid-template-rows:1fr auto;align-items:center;gap:3px 8px;min-width:0;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.08);color:#f2efe9;text-decoration:none}
+.top-anime-row img{grid-column:2;grid-row:1/3;width:42px;height:56px;border-radius:6px;object-fit:cover;background:#202024}
+.top-anime-position{grid-column:1;grid-row:1/3;color:#8e8993;font-size:12px;font-weight:800}
+.top-anime-name{grid-column:3;grid-row:1;align-self:end;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:12px;font-weight:750;line-height:1.25}
+.top-anime-row-likes{grid-column:3;grid-row:2;align-self:start;font-size:11px;color:#a39fa9}
+.top-anime-row-likes svg{width:13px;height:13px}
+@media(max-width:520px){.top-anime-layout{grid-template-columns:minmax(0,1fr) minmax(0,.95fr);gap:9px;padding-left:12px;padding-right:12px}.top-anime-feature{min-height:260px;padding:12px}.top-anime-feature-title{font-size:19px}.top-anime-row{grid-template-columns:19px 36px minmax(0,1fr);gap:3px 6px}.top-anime-row img{width:36px;height:50px}.top-anime-name{font-size:10.5px}.top-anime-row-likes{font-size:10px}}
+@media(max-width:360px){.top-anime-layout{grid-template-columns:1fr}.top-anime-feature{min-height:300px}.top-anime-list{grid-template-rows:none}.top-anime-row{min-height:62px}}
+</style>
+</Layout>
 <script>
 const input=document.querySelector<HTMLInputElement>("#community-search");const items=[...document.querySelectorAll<HTMLElement>(".community-searchable")];const empty=document.querySelector<HTMLElement>("#community-no-results");
 input?.addEventListener("input",()=>{const q=input.value.trim().toLowerCase();let n=0;items.forEach(el=>{const ok=!q||(el.dataset.search||"").includes(q);el.hidden=!ok;if(ok)n++;});if(empty)empty.hidden=n>0;});
