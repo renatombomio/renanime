@@ -73,7 +73,7 @@ export default function HomeGallery({ entries, lang = "es" }: Props) {
 
     let cancelled = false;
     setLoading(true);
-    fetchMedia(missing, !needsCompleteMetadata).then((result) => {
+    fetchMedia(missing).then((result) => {
       if (!cancelled) {
         setMedia((current) => ({ ...current, ...result }));
       }
