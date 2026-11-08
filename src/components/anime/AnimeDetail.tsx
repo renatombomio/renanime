@@ -9,6 +9,7 @@ import { fetchFallbackPoster, selectBestAnimeCandidate } from "../../lib/api/pos
 import { fetchFallbackAnime } from "../../lib/api/anime-fallback";
 import { useT, type Lang } from "../../i18n";
 import AnimeComments from "./AnimeComments";
+import ShareAnime from "./ShareAnime";
 
 interface Media {
   id: number | string;
@@ -24,6 +25,7 @@ interface Media {
   coverImage?: { extraLarge?: string|null; large?: string|null };
   bannerImage?: string|null;
   trailer?: { id?: string|null; site?: string|null; thumbnail?: string|null }|null;
+  characters?: { edges?: { role?: string|null; node?: { id:number; name?: { full?:string|null }; image?: { large?:string|null } }|null }[] }|null;
   recommendations?: { nodes?: { mediaRecommendation?: { id:number; title?: { romaji?:string|null; english?:string|null; native?:string|null }; coverImage?: { extraLarge?:string|null; large?:string|null }; format?:string|null; startDate?: { year?:number|null }|null }|null }[] }|null;
   relations?: { edges?: { relationType?: string|null; node?: { id:number; type?:string|null; format?:string|null; title?: { romaji?:string|null; english?:string|null }; coverImage?: { extraLarge?:string|null; large?:string|null } } }[] }|null;
 }
@@ -126,6 +128,7 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
           coverImage{extraLarge large}
           bannerImage
           trailer{id site thumbnail}
+          characters(page:1,perPage:12,sort:ROLE){edges{role node{id name{full} image{large}}}}
           relations{
             edges{
               relationType
@@ -399,6 +402,14 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
     .anime-detail-like.is-liked svg{fill:currentColor}
     .anime-detail-like:disabled{opacity:.55;cursor:wait}
     .anime-detail-like-notice{margin:.45rem 0 0;color:#f3a3bd;font-size:.72rem}
+    .anime-detail-characters{grid-column:1/-1;width:100%;min-width:0;margin-top:1.45rem}
+    .anime-detail-characters-track{display:flex;gap:.7rem;overflow-x:auto;padding:.2rem 0 .7rem;scroll-snap-type:x mandatory;scrollbar-width:thin;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+    .anime-detail-character{flex:0 0 104px;min-width:0;scroll-snap-align:start}
+    .anime-detail-character-image{aspect-ratio:3/4;overflow:hidden;border:1px solid rgba(255,255,255,.12);border-radius:9px;background:#171717}
+    .anime-detail-character-image img{display:block;width:100%;height:100%;object-fit:cover}
+    .anime-detail-character-name{display:block;margin-top:.45rem;color:var(--color-paper-100);font-size:.7rem;line-height:1.25;font-weight:600}
+    .anime-detail-character-role{display:block;margin-top:.2rem;color:var(--color-muted-400);font-size:.55rem;text-transform:uppercase;letter-spacing:.06em}
+    .anime-detail-share-wrap{margin-top:.85rem}
     .anime-detail-recommendations{grid-column:1 / -1;margin-top:2rem;width:100%;min-width:0}
     .anime-detail-recommendations-head{margin-bottom:.8rem}
     .anime-detail-recommendations-track{display:flex;gap:.7rem;min-height:0;overflow-x:auto;padding:.15rem 0 .65rem;scroll-snap-type:x mandatory;scrollbar-width:thin;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
@@ -424,6 +435,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
        <div className="anime-detail-copy-main">
        {personal.favorite&&<span className="anime-detail-eyebrow">{t("detail.favorite")}</span>}
        <h1>{title}</h1>
+        {typeof media?.id === "number" && <ShareAnime title={title} animeId={media.id} lang={lang} />}
         {nativeTitle&&<p className="anime-detail-native-title" lang="ja">{nativeTitle}</p>}
        <div className="anime-detail-meta">
   <span className="anime-detail-meta-type"><strong>{format(entry.format||media?.format,lang)}</strong></span>
@@ -444,6 +456,22 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
         <span className="anime-detail-label">{t("detail.trailer")}</span>
         <div className="anime-detail-video"><iframe src={"https://www.youtube.com/embed/"+media.trailer.id+"?rel=0"} title={(lang==="en"?"Trailer for ":"Tráiler de ")+title} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
        </section>}
+       {(() => {
+        const characters = (media?.characters?.edges ?? [])
+          .filter((edge) => edge?.node?.id && edge.node.name?.full && edge.node.image?.large)
+          .filter((edge, index, all) => all.findIndex((item) => item.node?.id === edge.node?.id) === index)
+          .slice(0, 12);
+        return characters.length ? <section className="anime-detail-characters" aria-label={lang === "en" ? "Characters" : "Personajes"}>
+          <div className="anime-detail-recommendations-head"><span className="anime-detail-label">{lang === "en" ? "Characters" : "Personajes"}</span></div>
+          <div className="anime-detail-characters-track">
+            {characters.map(({node, role}) => <article className="anime-detail-character" key={node!.id}>
+              <div className="anime-detail-character-image"><img src={node!.image!.large!} alt={node!.name!.full!} loading="lazy" /></div>
+              <strong className="anime-detail-character-name">{node!.name!.full}</strong>
+              <span className="anime-detail-character-role">{role === "MAIN" ? (lang === "en" ? "Main character" : "Principal") : (lang === "en" ? "Supporting" : "Secundario")}</span>
+            </article>)}
+          </div>
+        </section> : null;
+       })()}
        {(() => {
         const seen = new Set<number>();
         const items = (media?.recommendations?.nodes ?? [])
