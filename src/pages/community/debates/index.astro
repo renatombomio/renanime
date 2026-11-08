@@ -208,7 +208,7 @@ const resetImageAdjustments=()=>{imageZoom=1;imagePositionY=50;updateImageAdjust
 const pointerDistance=(points:{x:number;y:number}[])=>Math.hypot(points[0].x-points[1].x,points[0].y-points[1].y);
 const pointerCenterY=(points:{x:number;y:number}[])=> (points[0].y+points[1].y)/2;
 preview?.addEventListener("pointerdown",(event)=>{
- if(!previewImage||!previewDimensions)return;
+ if((event.target as HTMLElement).closest("button")||!previewImage||!previewDimensions)return;
  event.preventDefault();
  preview.setPointerCapture(event.pointerId);
  activePointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
