@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Lang } from "../../i18n";
 
 interface ShareAnimeProps {
@@ -9,10 +9,11 @@ interface ShareAnimeProps {
 
 export default function ShareAnime({ title, animeId, lang }: ShareAnimeProps) {
   const [notice, setNotice] = useState("");
+  const [url, setUrl] = useState("");
   const isEnglish = lang === "en";
-  const url = typeof window !== "undefined"
-    ? new URL((isEnglish ? "/en" : "") + "/anime/" + animeId, window.location.origin).toString()
-    : "";
+  useEffect(() => {
+    setUrl(new URL((isEnglish ? "/en" : "") + "/anime/" + animeId, window.location.origin).toString());
+  }, [animeId, isEnglish]);
   const message = isEnglish
     ? `Take a look at ${title} on Renanime World: ${url}`
     : `Mira este anime en Renanime World: ${title} — ${url}`;
