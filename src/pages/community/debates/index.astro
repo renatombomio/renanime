@@ -128,7 +128,7 @@ const publicImage=(path:string|null,status:string|null)=>{
           <img class="av composer-avatar" src={viewer?.avatar_url||"/images/profile-avatar-placeholder.svg"} alt=""/>
           <div class="composer-fields">
             <textarea name="title" id="debate-title" minlength="8" maxlength="120" required rows="1" placeholder={en?"What would you like to debate?":"¿Qué quieres debatir?"}></textarea>
-            <textarea name="body" id="debate-body" maxlength="1500" rows="1" placeholder={en?"Add your argument (optional)":"Añade tu argumento (opcional)"}></textarea>
+            <textarea name="body" id="debate-body" maxlength="500" rows="1" placeholder={en?"Add your argument (optional)":"Añade tu argumento (opcional)"}></textarea>
             <div class="image-preview" id="image-preview" hidden><img id="preview-img" alt=""/><button type="button" id="remove-image" aria-label={en?"Remove image":"Quitar imagen"}>×</button></div>
             <div class="anime-field">
               <label class="anime-label" for="anime-title">{en?"RELATED ANIME · OPTIONAL":"ANIME RELACIONADO · OPCIONAL"}</label>
