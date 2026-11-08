@@ -67,10 +67,10 @@ const publicImage=(path:string|null,status:string|null)=>{
   </div>
 
   <nav class="sort" aria-label={en?"Sort debates":"Ordenar debates"}>
-    {Object.entries(sortLabels).map(([key,label])=><a class:active={sort===key} href={base+"/community/debates/?sort="+key+"&category="+category}>{label}</a>)}
+    {Object.entries(sortLabels).map(([key,label])=><a class:list={{active:sort===key}} href={base+"/community/debates/?sort="+key+"&category="+category}>{label}</a>)}
   </nav>
   <nav class="cats" aria-label={en?"Debate categories":"Categorías de debate"}>
-    {Object.entries(labels).map(([key,label])=><a class:active={category===key} href={base+"/community/debates/?sort="+sort+"&category="+key}>{label}</a>)}
+    {Object.entries(labels).map(([key,label])=><a class:list={{active:category===key}} href={base+"/community/debates/?sort="+sort+"&category="+key}>{label}</a>)}
   </nav>
 
   {error ? <p class="empty">{en?"Debates are temporarily unavailable.":"Los debates no están disponibles temporalmente."}</p> :
@@ -127,8 +127,8 @@ const publicImage=(path:string|null,status:string|null)=>{
         <div class="composer-content">
           <img class="av composer-avatar" src={viewer?.avatar_url||"/images/profile-avatar-placeholder.svg"} alt=""/>
           <div class="composer-fields">
-            <textarea name="title" id="debate-title" minlength="8" maxlength="120" required rows="1" placeholder={en?"What would you like to debate?":"¿Qué quieres debatir?"}></textarea>
-            <textarea name="body" id="debate-body" maxlength="500" rows="1" placeholder={en?"Add your argument (optional)":"Añade tu argumento (opcional)"}></textarea>
+            <textarea name="title" id="debate-title" minlength="8" maxlength="120" required rows="1" autofocus placeholder={en?"What would you like to debate?":"¿Qué quieres debatir?"}></textarea>
+            <textarea name="body" id="debate-body" maxlength="500" rows="1" placeholder={en?"Add your argument (optional)":"Añade tu argumento (opcional)"}></textarea><span class="body-count" id="body-count" hidden></span>
             <div class="image-preview" id="image-preview" hidden><img id="preview-img" alt=""/><button type="button" id="remove-image" aria-label={en?"Remove image":"Quitar imagen"}>×</button></div>
             <div class="anime-field">
               <label class="anime-label" for="anime-title">{en?"RELATED ANIME · OPTIONAL":"ANIME RELACIONADO · OPCIONAL"}</label>
@@ -161,7 +161,7 @@ const publicImage=(path:string|null,status:string|null)=>{
 <script>
 const sheet=document.querySelector<HTMLDialogElement>("#composer-sheet");
 const closeSheet=()=>{if(sheet?.open)sheet.close();document.body.classList.remove("sheet-open");};
-const openSheet=()=>{if(sheet&&!sheet.open){sheet.showModal();document.body.classList.add("sheet-open");}};
+const openSheet=()=>{if(sheet&&!sheet.open){sheet.showModal();document.body.classList.add("sheet-open");requestAnimationFrame(()=>titleInput?.focus({preventScroll:true}));}};
 document.querySelector(".create-row .compose")?.addEventListener("click",(event)=>{event.preventDefault();openSheet();});
 document.querySelector("#cancel-composer")?.addEventListener("click",closeSheet);
 sheet?.addEventListener("click",(event)=>{if(event.target===sheet)closeSheet();});
@@ -199,7 +199,7 @@ const updateTitleState=()=>{
  if(titleCount)titleCount.textContent=titleInput.value.length+" / 120";
  if(publishButton)publishButton.disabled=titleInput.value.trim().length<8||titleInput.value.trim().length>120;
 };
-const updateBodyState=()=>{if(bodyInput)autoGrow(bodyInput,22);};
+const bodyCount=document.querySelector<HTMLElement>("#body-count");\nconst updateBodyState=()=>{if(bodyInput)autoGrow(bodyInput,22);if(bodyCount){const length=bodyInput?.value.length??0;bodyCount.textContent=length+" / 500";bodyCount.hidden=length<=400;}};
 titleInput?.addEventListener("input",updateTitleState);
 bodyInput?.addEventListener("input",updateBodyState);
 updateTitleState();
@@ -260,10 +260,10 @@ searchInput?.addEventListener("input",()=>{const query=searchInput.value.trim().
 .tx{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;margin:0;color:#b9b5bf;font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
 .image-link{display:block;margin-top:10px;overflow:hidden;border-radius:11px;background:#09090b}
 .img{display:block;width:100%;max-height:170px;object-fit:cover}
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .tag{padding:5px 11px;border-radius:999px;background:#25252a;color:#a39fa9;font-size:12px;font-weight:650}
 .anime-tag{background:#20252a;color:#a9c4d5}
-.acts{display:flex;align-items:center;gap:22px;margin-top:8px;padding-top:0;border-top:0}
+.acts{display:flex;align-items:center;gap:22px;margin-top:3px;padding-top:0;border-top:0}
 .act{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:40px;min-height:40px;padding:0 4px;border:0;background:transparent;color:#a39fa9;text-decoration:none;font-size:12px}
 .act svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .act.liked{color:var(--color-accent)}.act:disabled{opacity:.62;cursor:not-allowed}.act:disabled svg{opacity:.8}
@@ -274,7 +274,7 @@ searchInput?.addEventListener("input",()=>{const query=searchInput.value.trim().
 .sheet-panel{max-height:min(88dvh,760px);overflow:auto;border:0;border-top:1px solid rgba(255,255,255,.1);border-radius:22px 22px 0 0;background:#101013;padding:10px 16px calc(18px + env(safe-area-inset-bottom))}
 .sheet-grab{width:40px;height:4px;border-radius:2px;background:rgba(255,255,255,.2);margin:0 auto 12px}
 .sheet-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
-.sheet-top button{min-height:36px;border:0;background:transparent;font:inherit;font-size:14px;font-weight:700}
+.sheet-top button{min-height:36px;border:0;background:transparent;font:inherit;font-size:14px;font-weight:700;outline:none}.sheet-top button:focus-visible{outline:2px solid var(--color-accent);outline-offset:3px;border-radius:6px}
 .cancel{padding:0;color:#a39fa9}
 .sheet-top .publish{padding:9px 20px;border-radius:999px;background:var(--color-accent);color:#fff;font-size:14px;font-weight:700;line-height:1.2}
 .sheet-top .publish:disabled{opacity:.4;cursor:not-allowed}
@@ -285,7 +285,7 @@ searchInput?.addEventListener("input",()=>{const query=searchInput.value.trim().
 #debate-title{min-height:24px;color:#f2efe9;font-size:17px;font-weight:700;line-height:1.35}
 #debate-title::placeholder{color:#8d8993}
 #debate-body{min-height:22px;margin-top:2px;color:#b9b5bf;font-size:14.5px;font-weight:400;line-height:1.45}
-#debate-body::placeholder{color:#8d8993}
+#debate-body::placeholder{color:#8d8993}\n.body-count{display:block;margin-top:2px;text-align:right;color:#77737d;font-size:11px;line-height:1.2}.body-count[hidden]{display:none}
 .image-preview{position:relative;width:100%;height:150px;margin:6px 0 0;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:#17171b;overflow:hidden}
 .image-preview[hidden]{display:none}
 .image-preview img{display:block;width:100%;height:100%;max-width:100%;max-height:none;border-radius:13px;object-fit:cover}
