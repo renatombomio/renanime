@@ -162,7 +162,6 @@ const profileCommentsCount = commentsCountError ? 0 : commentsCount ?? 0;
             <button class="profile-character-remove" type="button" data-character-like={character.id} aria-label={isEnglish ? "Remove from favourites" : "Quitar de favoritos"} title={isEnglish ? "Remove from favourites" : "Quitar de favoritos"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 11-8.8 11S3.2 14 3.2 8.8a4.5 4.5 0 0 1 8.8-1.1 4.5 4.5 0 0 1 8.8 1.1Z"/></svg></button>
           </article>)}
         </div> : <p class="profile-character-empty">{isEnglish ? "You haven't liked any characters yet. Tap the heart on a character card in an anime page to add one here." : "Todavía no has marcado personajes como favoritos. Pulsa el corazón de una tarjeta en la ficha de un anime para añadirlos aquí."}</p>}
-        {characterFavoritesCount > 4 && <a class="profile-character-see-all" href={localizedPath(Astro.locals.lang, "/profile/characters/")}>{isEnglish ? "See all " : "Ver todos "}{characterFavoritesCount} {isEnglish ? "characters" : "personajes"}</a>}
       </section>
 
 
