@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import type { PersonalAnimeEntry } from "../../types/personal";
 import { createSupabaseSsrClient } from "../../lib/supabase-ssr";
 
 export const prerender = false;
