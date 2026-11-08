@@ -69,7 +69,7 @@ for(const item of characterLikeRows??[]){
  characterCounts.set(id,current);
 }
 const characterMetadataById=new Map((characterMetadata??[]).map((item:any)=>[item.id,item]));
-const topCharacters=[...characterCounts.entries()].map(([id,stats])=>({id,...stats,...(characterMetadataById.get(id)??{})})).filter(item=>item.name).sort((a,b)=>b.likes-a.likes||new Date(b.lastLike).getTime()-new Date(a.lastLike).getTime()).slice(0,5);
+const topCharacters=[...characterCounts.entries()].map(([id,stats])=>({id,...stats,...(characterMetadataById.get(id)??{})})).filter(item=>item.name).sort((a,b)=>b.likes-a.likes||new Date(b.lastLike).getTime()-new Date(a.lastLike).getTime()).slice(0,6);
 type Activity={id:string;kind:"comment"|"like"|"joined";aka:string;avatar:string|null;created:string;content:string|null;animeId:number|null;animeTitle:string};
 let activity:Activity[]=[];
 try{
