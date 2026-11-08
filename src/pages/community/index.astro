@@ -8,13 +8,11 @@ import { createSupabaseSsrClient } from "../../lib/supabase-ssr";
 const en=Astro.locals.lang==="en", base=en?"/en":"";
 const supabase=createSupabaseSsrClient(Astro.request,Astro.cookies);
 const {data:auth}=await supabase.auth.getUser();
-const {data:me}=auth.user?await supabase.from("profiles").select("avatar_url").eq("id",auth.user.id).maybeSingle():{data:null};
-let memberQuery=supabase.from("profiles").select("id,aka,avatar_url,headline,bio,interests").eq("is_private",false).not("aka","is",null).limit(100);
-if(auth.user)memberQuery=memberQuery.neq("id",auth.user.id);
-const {data:memberCandidates,error:membersError}=await memberQuery;
-const shuffledMembers=[...(memberCandidates??[])];
+const {data:me}=auth.user?await supabase.from("profiles").select("id,aka,avatar_url,headline,bio,interests,is_private").eq("id",auth.user.id).maybeSingle():{data:null};
+const {data:memberCandidates,error:membersError}=await supabase.from("profiles").select("id,aka,avatar_url,headline,bio,interests").eq("is_private",false).not("aka","is",null).limit(100);
+const shuffledMembers=[...(memberCandidates??[])].filter((member:any)=>member.id!==auth.user?.id);
 for(let i=shuffledMembers.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffledMembers[i],shuffledMembers[j]]=[shuffledMembers[j],shuffledMembers[i]];}
-const members=shuffledMembers.slice(0,9);
+const members=[...(me?.aka?[me]:[]),...shuffledMembers.slice(0,8)];
 const {data:debates,error:debatesError}=await supabase.from("community_debates").select("id,title,body,category,created_at,profiles!inner(aka,avatar_url,is_private)").eq("status","published").eq("profiles.is_private",false).order("created_at",{ascending:false}).limit(2);
 const debateIds=(debates??[]).map((d:any)=>d.id);
 const [debateLikes,debateComments]=debateIds.length?await Promise.all([
@@ -47,7 +45,7 @@ const cats:Record<string,string>=en?{anime:"Anime",characters:"Characters",theor
  <header class="community-top"><h1>{en?"Community":"Comunidad"}</h1></header>
  <label class="srch"><span class="sr-only">{en?"Search users or debates":"Buscar usuarios o debates"}</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input id="community-search" type="search" placeholder={en?"Search users or debates":"Buscar usuarios o debates"} autocomplete="off"/></label>
  <section class="members-section"><div class="sec"><h2>{en?"Members":"Miembros"} <small>{members.length}</small></h2></div>
- {membersError?<p class="community-note">{en?"Could not load members.":"No se han podido cargar los miembros."}</p>:members.length?<div class="members-grid">{members.map((m:any)=><a class="member community-searchable" data-search={["@"+m.aka,m.headline,m.bio,...(m.interests??[])].filter(Boolean).join(" ").toLowerCase()} href={base+"/u/"+encodeURIComponent(m.aka)+"/"}><img class="av" src={m.avatar_url||"/images/profile-avatar-placeholder.svg"} alt="" loading="lazy"/><span>@{m.aka}</span></a>)}</div>:<p class="community-note">{en?"No public members found.":"No hay miembros públicos disponibles."}</p>}
+ {members.length?<div class="members-grid">{members.map((m:any)=><a class="member community-searchable" data-search={["@"+m.aka,m.headline,m.bio,...(m.interests??[])].filter(Boolean).join(" ").toLowerCase()} href={base+"/u/"+encodeURIComponent(m.aka)+"/"}><img class="av" src={m.avatar_url||"/images/profile-avatar-placeholder.svg"} alt="" loading="lazy"/><span>@{m.aka}</span></a>)}</div>:<p class="community-note">{membersError?(en?"Could not load members.":"No se han podido cargar los miembros."):(en?"No public members found.":"No hay miembros públicos disponibles.")}</p>}
  </section>
  <DebateComposerBar lang={en?"en":"es"} avatarUrl={me?.avatar_url??null}/>
  <section><div class="sec"><h2>{en?"Trending debates":"Debates en tendencia"}</h2><a href={base+"/community/debates/"}>{en?"View all":"Ver todos"}</a></div>
