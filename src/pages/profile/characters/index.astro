@@ -1,0 +1,101 @@
+---
+export const prerender = false;
+import Layout from "../../../layouts/Layout.astro";
+import Navbar from "../../../components/layout/Navbar.astro";
+import { createSupabaseSsrClient } from "../../../lib/supabase-ssr";
+import { localizedPath } from "../../../i18n";
+
+const lang = Astro.locals.lang;
+const isEnglish = lang === "en";
+const user = Astro.locals.renanimeUser;
+if (!user) return Astro.redirect(localizedPath(lang, "/login/"));
+const supabase = createSupabaseSsrClient(Astro.request, Astro.cookies);
+const { data, error } = await supabase
+  .from("character_likes")
+  .select("character_id, created_at, characters(id, name, image_url)")
+  .eq("user_id", user.id)
+  .order("created_at", { ascending: false })
+  .limit(1000);
+if (error) console.error("Renanime all character favorites error:", error.message);
+const characters = (data ?? []).map((row: any) => ({
+  ...(Array.isArray(row.characters) ? row.characters[0] : row.characters),
+  character_id: row.character_id,
+})).filter((item: any) => item?.id && item?.name);
+---
+<Layout title={isEnglish ? "Favourite characters — Renanime" : "Personajes favoritos — Renanime"}>
+  <Navbar />
+  <main class="liked-characters-page">
+    <a class="back-link" href={localizedPath(lang, "/profile/")}>← {isEnglish ? "Back to profile" : "Volver al perfil"}</a>
+    <header class="page-heading">
+      <div><p>{isEnglish ? "YOUR COLLECTION" : "TU COLECCIÓN"}</p><h1>{isEnglish ? "Favourite characters" : "Personajes favoritos"}</h1></div>
+      <span id="liked-character-count">{characters.length}</span>
+    </header>
+    {error ? <p class="empty-state">{isEnglish ? "Your favourites could not be loaded." : "No se han podido cargar tus favoritos."}</p> :
+      characters.length ? <div class="character-grid" id="liked-character-grid">
+        {characters.map((character: any) => <article class="character-card" data-character-card={character.id}>
+          {character.image_url && <img src={character.image_url} alt="" loading="lazy" />}
+          <div class="character-copy"><strong>{character.name}</strong><span>{isEnglish ? "Your favourite" : "Tu favorito"}</span></div>
+          <button type="button" class="remove-like" data-character-like={character.id} aria-label={isEnglish ? "Remove from favourites" : "Quitar de favoritos"} title={isEnglish ? "Remove from favourites" : "Quitar de favoritos"}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 11-8.8 11S3.2 14 3.2 8.8a4.5 4.5 0 0 1 8.8-1.1 4.5 4.5 0 0 1 8.8 1.1Z"/></svg>
+          </button>
+        </article>)}
+      </div> : <p class="empty-state" id="liked-character-empty">{isEnglish ? "You haven't liked any characters yet. Explore an anime and tap the heart on a character card." : "Todavía no has marcado personajes como favoritos. Explora un anime y pulsa el corazón de una de sus tarjetas."}</p>}
+    <p class="feedback" id="liked-character-feedback" role="status" aria-live="polite"></p>
+  </main>
+  <script>
+    const english = document.documentElement.lang === "en";
+    const copy = (es: string, en: string) => english ? en : es;
+    document.addEventListener("click", async (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const button = target.closest<HTMLButtonElement>("[data-character-like]");
+      if (!button || button.disabled) return;
+      const id = button.dataset.characterLike;
+      if (!id) return;
+      button.disabled = true;
+      try {
+        const response = await fetch("/api/characters/" + id + "/like", { method: "POST", credentials: "same-origin" });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || !result.ok || result.liked) throw new Error("UNLIKE_FAILED");
+        button.closest("[data-character-card]")?.remove();
+        const count = document.querySelector<HTMLElement>("#liked-character-count");
+        if (count) count.textContent = String(Math.max(0, Number(count.textContent || 0) - 1));
+        if (!document.querySelector("[data-character-card]")) {
+          const grid = document.querySelector("#liked-character-grid");
+          grid?.remove();
+          const empty = document.createElement("p");
+          empty.className = "empty-state";
+          empty.textContent = copy("Todavía no has marcado personajes como favoritos. Explora un anime y pulsa el corazón de una de sus tarjetas.", "You haven't liked any characters yet. Explore an anime and tap the heart on a character card.");
+          document.querySelector(".page-heading")?.insertAdjacentElement("afterend", empty);
+        }
+      } catch {
+        const feedback = document.querySelector<HTMLElement>("#liked-character-feedback");
+        if (feedback) feedback.textContent = copy("No se pudo actualizar el favorito. Inténtalo de nuevo.", "Could not update favourite. Try again.");
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</Layout>
+
+<style>
+  .liked-characters-page{width:min(100% - 32px,1040px);margin:0 auto;padding:28px 0 64px;color:#f5f2ec}
+  .back-link{display:inline-block;margin-bottom:28px;color:#aaa4b0;text-decoration:none;font-size:.82rem}
+  .page-heading{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:20px}
+  .page-heading p{margin:0 0 7px;color:#ec4899;font-size:.66rem;font-weight:800;letter-spacing:.16em}
+  .page-heading h1{margin:0;font-size:clamp(1.55rem,4vw,2.2rem);letter-spacing:-.04em}
+  .page-heading>span{color:#aaa4b0;font-size:.9rem;font-variant-numeric:tabular-nums}
+  .character-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .character-card{position:relative;display:flex;align-items:center;gap:12px;min-width:0;padding:9px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:#101012}
+  .character-card>img{width:68px;height:84px;flex:0 0 68px;object-fit:cover;border-radius:9px;background:#222}
+  .character-copy{display:grid;gap:5px;min-width:0;padding-right:30px}
+  .character-copy strong{font-size:.82rem;line-height:1.25;overflow-wrap:anywhere}
+  .character-copy span{color:#99939f;font-size:.7rem}
+  .remove-like{position:absolute;right:9px;top:9px;display:grid;place-items:center;width:32px;height:32px;border:1px solid rgba(236,72,153,.45);border-radius:50%;background:#090909;color:#ec4899;cursor:pointer}
+  .remove-like svg{width:17px;height:17px;fill:currentColor;stroke:currentColor;stroke-width:1.2}
+  .remove-like:disabled{opacity:.5;cursor:wait}
+  .empty-state{color:#aaa4b0;font-size:.86rem;line-height:1.6}
+  .feedback{min-height:1.2em;color:#ff8ab9;font-size:.75rem}
+  @media(max-width:680px){.character-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.character-card{gap:8px;padding:7px}.character-card>img{width:58px;height:74px;flex-basis:58px}.character-copy strong{font-size:.75rem}}
+  @media(max-width:360px){.character-grid{grid-template-columns:1fr}}
+</style>
