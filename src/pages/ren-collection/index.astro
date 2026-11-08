@@ -3,12 +3,9 @@ import Layout from "../../layouts/Layout.astro";
 import { useT } from "../../i18n";
 import Navbar from "../../components/layout/Navbar.astro";
 import RenCollectionGallery from "../../components/archive/RenCollectionGallery";
-import FavoritesView from "../../components/favorites/FavoritesView";
-import { getWatchedLibrary, getFavoritesLibrary, getRecommendedLibrary } from "../../data/library";
+import { getWatchedLibrary } from "../../data/library";
 
 const collectionEntries = getWatchedLibrary();
-const favoriteEntries = getFavoritesLibrary();
-const recommendationEntries = getRecommendedLibrary().filter((entry) => !entry.state.favorite);
 const lang = Astro.locals.lang;
 const t = useT(lang);
 const description = lang === "en"
@@ -22,7 +19,6 @@ const description = lang === "en"
   <main id="main-content" class="ren-collection-page">
     <h1 class="sr-only">{t("renCollection.heading")}</h1>
     <section class="ren-collection-content" aria-label={lang === "en" ? "Ren's anime collection" : "Colección de Ren"}>
-      <FavoritesView entries={favoriteEntries} recommendations={recommendationEntries} lang={lang} client:load />
       <RenCollectionGallery entries={collectionEntries} lang={lang} client:load />
     </section>
   </main>
