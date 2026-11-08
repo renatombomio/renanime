@@ -80,35 +80,32 @@ export const GET: APIRoute = async ({ request, cookies }) => {
     const { data: auth, error: authError } = await supabase.auth.getUser();
     if (authError || !auth.user) return json({ ok: false, error: "AUTH_REQUIRED" }, 401);
 
+    const url = new URL(request.url);
+    const requestedLimit = Number(url.searchParams.get("limit") ?? 500);
+    const requestedOffset = Number(url.searchParams.get("offset") ?? 0);
+    const limit = Number.isSafeInteger(requestedLimit) ? Math.min(Math.max(requestedLimit, 1), 500) : 500;
+    const offset = Number.isSafeInteger(requestedOffset) ? Math.max(requestedOffset, 0) : 0;
+
     const { data, error } = await supabase
       .from("user_anime")
-      .select("anime_id, status, metadata")
+      .select("anime_id,status,metadata")
       .eq("user_id", auth.user.id)
-      .order("updated_at", { ascending: false });
+      .order("updated_at", { ascending: false })
+      .order("anime_id", { ascending: false })
+      .range(offset, offset + limit - 1);
 
     if (error) {
-      console.error("Library read failed:", error.code);
+      console.error("Library read failed:", { code: error.code, message: error.message });
       return json({ ok: false, error: "LIBRARY_UNAVAILABLE" }, 500);
     }
 
-    const entries = (data ?? []).map((row) => {
-      const metadata = (row.metadata && typeof row.metadata === "object" ? row.metadata : {}) as Record<string, unknown>;
-      return {
-        animeId: String(row.anime_id),
-        format: metadata.format,
-        franchiseId: metadata.franchiseId,
-        state: {
-          status: row.status === "seen" ? "WATCHED" : "PENDING",
-          favorite: metadata.favorite === true,
-          recommended: metadata.recommended === true,
-          ...(typeof metadata.personalScore === "number" ? { personalScore: metadata.personalScore } : {}),
-          ...(typeof metadata.personalRanking === "number" ? { personalRanking: metadata.personalRanking } : {}),
-          ...(typeof metadata.review === "string" ? { review: metadata.review } : {}),
-        },
-      };
+    const entries = (data ?? []).map(serializeEntry);
+    return json({
+      entries,
+      offset,
+      limit,
+      hasMore: entries.length === limit,
     });
-
-    return json(entries);
   } catch (error) {
     console.error("Library read setup failed:", error);
     return json({ ok: false, error: "AUTH_UNAVAILABLE" }, 503);
