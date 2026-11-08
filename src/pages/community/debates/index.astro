@@ -190,8 +190,17 @@ const imageZoomField=document.createElement("input");
 imageZoomField.type="hidden";imageZoomField.name="imageZoom";imageZoomField.value="1";
 const imagePositionField=document.createElement("input");
 imagePositionField.type="hidden";imagePositionField.name="imagePositionY";imagePositionField.value="50";
-form?.append(imageZoomField,imagePositionField);
+document.querySelector<HTMLFormElement>("#debate-form")?.append(imageZoomField,imagePositionField);
 let previewUrl:string|undefined;
+let previewDimensions:{width:number;height:number}|null=null;
+const fitImagePreview=()=>{
+ if(!preview||!previewDimensions)return;
+ const maxWidth=preview.parentElement?.clientWidth??320;
+ const scale=Math.min(maxWidth/previewDimensions.width,260/previewDimensions.height);
+ preview.style.width=Math.round(previewDimensions.width*scale)+"px";
+ preview.style.height=Math.round(previewDimensions.height*scale)+"px";
+};
+window.addEventListener("resize",fitImagePreview);
 const updateImageAdjustments=()=>{
  const zoom=Number(zoomInput?.value||1);
  const position=Number(positionInput?.value||50);
@@ -216,8 +225,8 @@ imageInput?.addEventListener("change",()=>{
  if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=URL.createObjectURL(file);
  if(previewImage){
   previewImage.onload=()=>{
-   const ratio=previewImage.naturalWidth/Math.max(1,previewImage.naturalHeight);
-   if(preview)preview.style.aspectRatio=String(ratio);
+   previewDimensions={width:previewImage.naturalWidth,height:previewImage.naturalHeight};
+   fitImagePreview();
   };
   previewImage.src=previewUrl;
  }
@@ -227,7 +236,7 @@ imageInput?.addEventListener("change",()=>{
 });
 document.querySelector("#remove-image")?.addEventListener("click",()=>{
  if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=undefined;if(imageInput)imageInput.value="";
- if(preview){preview.hidden=true;preview.style.aspectRatio="";}
+ if(preview){preview.hidden=true;preview.style.aspectRatio="";preview.style.width="";preview.style.height="";}previewDimensions=null;
  if(imageControls)imageControls.hidden=true;
  resetImageAdjustments();
 });
