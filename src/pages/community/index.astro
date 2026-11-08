@@ -10,9 +10,9 @@ const supabase=createSupabaseSsrClient(Astro.request,Astro.cookies);
 const {data:auth}=await supabase.auth.getUser();
 const {data:me}=auth.user?await supabase.from("profiles").select("id,aka,avatar_url,headline,bio,interests,is_private").eq("id",auth.user.id).maybeSingle():{data:null};
 const {data:memberCandidates,error:membersError}=await supabase.from("profiles").select("id,aka,avatar_url,headline,bio,interests").eq("is_private",false).not("aka","is",null).limit(100);
-const shuffledMembers=[...(memberCandidates??[])].filter((member:any)=>member.id!==auth.user?.id);
+const shuffledMembers=[...(memberCandidates??[])];
 for(let i=shuffledMembers.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffledMembers[i],shuffledMembers[j]]=[shuffledMembers[j],shuffledMembers[i]];}
-const members=[...(me?.aka?[me]:[]),...shuffledMembers.slice(0,8)];
+const members=shuffledMembers.slice(0,9);
 const {data:debates,error:debatesError}=await supabase.from("community_debates").select("id,title,body,category,created_at,profiles!inner(aka,avatar_url,is_private)").eq("status","published").eq("profiles.is_private",false).order("created_at",{ascending:false}).limit(2);
 const debateIds=(debates??[]).map((d:any)=>d.id);
 const [debateLikes,debateComments]=debateIds.length?await Promise.all([
