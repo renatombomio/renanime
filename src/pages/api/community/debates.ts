@@ -21,7 +21,7 @@ export const POST:APIRoute=async({request,cookies})=>{
   const animeId=rawAnimeId&&/^\d+$/.test(rawAnimeId)?Number(rawAnimeId):null;
   const image=form.get("image");
   if(title.length<8||title.length>120)return json({ok:false,error:"INVALID_TITLE"},400);
-  if(rawBody.length>1500)return json({ok:false,error:"INVALID_BODY"},400);
+  if(rawBody.length>500)return json({ok:false,error:"INVALID_BODY"},400);
   if(!categories.has(category))return json({ok:false,error:"INVALID_CATEGORY"},400);
   if(animeId!==null&&(!Number.isSafeInteger(animeId)||animeId<=0))return json({ok:false,error:"INVALID_ANIME"},400);
   if(image!==null&&(!(image instanceof File)||image.size===0))return json({ok:false,error:"INVALID_IMAGE"},400);
