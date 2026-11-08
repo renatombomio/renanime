@@ -3,66 +3,273 @@ export const prerender = false;
 import Layout from "../../../layouts/Layout.astro";
 import Navbar from "../../../components/layout/Navbar.astro";
 import DebateComposerBar from "../../../components/community/DebateComposerBar.astro";
-import "../../../styles/community-social.css";
 import { createSupabaseSsrClient } from "../../../lib/supabase-ssr";
+
 const en = Astro.locals.lang === "en";
 const base = en ? "/en" : "";
 const url = new URL(Astro.request.url);
-const sort = ["newest","comments","likes"].includes(url.searchParams.get("sort") ?? "") ? url.searchParams.get("sort")! : "newest";
+const sort = ["for-you","newest","likes","comments"].includes(url.searchParams.get("sort") ?? "") ? url.searchParams.get("sort")! : "for-you";
 const category = ["all","anime","characters","theories","comparisons","manga","general"].includes(url.searchParams.get("category") ?? "") ? url.searchParams.get("category")! : "all";
-const labels: Record<string,string> = en ? {all:"All",anime:"Anime",characters:"Characters",theories:"Theories",comparisons:"Comparisons",manga:"Manga",general:"General"} : {all:"Todos",anime:"Anime",characters:"Personajes",theories:"Teorías",comparisons:"Comparaciones",manga:"Manga",general:"General"};
+const labels:Record<string,string> = en
+  ? {all:"All",anime:"Anime",characters:"Characters",theories:"Theories",comparisons:"Comparisons",manga:"Manga",general:"General"}
+  : {all:"Todos",anime:"Anime",characters:"Personajes",theories:"Teorías",comparisons:"Comparaciones",manga:"Manga",general:"General"};
+const sortLabels:Record<string,string> = en
+  ? {"for-you":"For you",newest:"Recent",likes:"Popular",comments:"Most discussed"}
+  : {"for-you":"Para ti",newest:"Recientes",likes:"Populares",comments:"Más comentados"};
 const supabase = createSupabaseSsrClient(Astro.request, Astro.cookies);
-const { data: auth } = await supabase.auth.getUser();
-const { data, error } = await supabase.from("community_debates").select("id,title,body,category,created_at,profiles!inner(aka,avatar_url,is_private)").eq("status","published").eq("profiles.is_private",false).order("created_at",{ascending:false}).limit(60);
-const rows = (data ?? []).filter((x:any) => category === "all" || x.category === category);
-const ids = rows.map((x:any) => x.id);
-const [likes,comments,mine] = ids.length ? await Promise.all([
+const {data:auth} = await supabase.auth.getUser();
+const {data:viewer} = auth.user ? await supabase.from("profiles").select("avatar_url,aka").eq("id",auth.user.id).maybeSingle() : {data:null};
+const {data,error} = await supabase.from("community_debates")
+  .select("id,title,body,category,anime_id,anime_title,image_path,image_status,created_at,profiles!inner(aka,avatar_url,is_private)")
+  .eq("status","published").eq("profiles.is_private",false).order("created_at",{ascending:false}).limit(60);
+const rows=(data??[]).filter((x:any)=>category==="all"||x.category===category);
+const ids=rows.map((x:any)=>x.id);
+const [likes,comments,mine]=ids.length?await Promise.all([
   supabase.from("community_debate_likes").select("debate_id").in("debate_id",ids),
   supabase.from("community_debate_comments").select("debate_id").eq("status","visible").in("debate_id",ids),
-  auth.user ? supabase.from("community_debate_likes").select("debate_id").eq("user_id",auth.user.id).in("debate_id",ids) : Promise.resolve({data:[]})
-]) : [{data:[]},{data:[]},{data:[]}];
-const stats = new Map(ids.map((id:string) => [id,{likes:0,comments:0,liked:false}]));
-for (const x of likes.data ?? []) stats.get(x.debate_id)!.likes++;
-for (const x of comments.data ?? []) stats.get(x.debate_id)!.comments++;
-for (const x of mine.data ?? []) stats.get(x.debate_id)!.liked = true;
-const ordered = [...rows].sort((a:any,b:any) => sort === "likes" ? stats.get(b.id)!.likes-stats.get(a.id)!.likes : sort === "comments" ? stats.get(b.id)!.comments-stats.get(a.id)!.comments : new Date(b.created_at).getTime()-new Date(a.created_at).getTime());
+  auth.user?supabase.from("community_debate_likes").select("debate_id").eq("user_id",auth.user.id).in("debate_id",ids):Promise.resolve({data:[]})
+]):[{data:[]},{data:[]},{data:[]}];
+const stats=new Map(ids.map((id:string)=>[id,{likes:0,comments:0,liked:false}]));
+for(const x of likes.data??[])stats.get(x.debate_id)!.likes++;
+for(const x of comments.data??[])stats.get(x.debate_id)!.comments++;
+for(const x of mine.data??[])stats.get(x.debate_id)!.liked=true;
+const ordered=[...rows].sort((a:any,b:any)=>{
+  if(sort==="likes")return stats.get(b.id)!.likes-stats.get(a.id)!.likes;
+  if(sort==="comments")return stats.get(b.id)!.comments-stats.get(a.id)!.comments;
+  return new Date(b.created_at).getTime()-new Date(a.created_at).getTime();
+});
+const relativeTime=(value:string)=>{
+ const minutes=Math.max(0,Math.floor((Date.now()-new Date(value).getTime())/60000));
+ if(en){if(minutes<1)return "now";if(minutes<60)return minutes+" m";const hours=Math.floor(minutes/60);if(hours<24)return hours+" h";const days=Math.floor(hours/24);return days+" d";}
+ if(minutes<1)return "ahora";if(minutes<60)return minutes+" min";const hours=Math.floor(minutes/60);if(hours<24)return hours+" h";return Math.floor(hours/24)+" d";
+};
+const publicImage=(path:string|null,status:string|null)=>{
+ if(!path||status!=="approved")return null;
+ return supabase.storage.from("debate-images").getPublicUrl(path).data.publicUrl;
+};
 ---
-<Layout title={en ? "Community debates — Renanime" : "Debates de la comunidad — Renanime"}>
+<Layout title={en ? "Debates — Renanime" : "Debates — Renanime"}>
 <Navbar />
 <main id="main-content" class="debates">
-<header><p class="eyebrow">{en ? "Community" : "Comunidad"}</p><h1>Debates</h1><p>{en ? "Ideas, theories and conversations about the stories we love." : "Ideas, teorías y conversaciones sobre las historias que nos gustan."}</p><DebateComposerBar lang={en ? "en" : "es"} /></header>
-<section id="create-panel" class="composer" hidden>
-{auth.user ? <form id="debate-form" enctype="multipart/form-data">
-  <div class="composer-intro"><span class="composer-step">NUEVO DEBATE</span><h2>{en ? "What's on your mind?" : "¿Qué quieres debatir?"}</h2><p>{en ? "Start with a clear question or opinion. Explain your reasons and invite others to join in." : "Plantea una pregunta o una opinión clara. Explica tus razones y deja espacio para que otros participen."}</p></div>
-  <label class="field-label">{en ? "Debate title" : "Título del debate"}<input name="title" minlength="8" maxlength="120" required placeholder={en ? "e.g. Is Tengen Uzui the strongest Sound Hashira?" : "Ej. ¿Es Tengen Uzui el hashira del sonido más fuerte?"} /><small>{en ? "Make it specific so people know what they're discussing." : "Procura que sea concreto: así todos sabrán de qué trata."}</small></label>
-  <div class="field-label"><label for="debate-category">{en ? "Topic" : "Tema"}</label><select id="debate-category" name="category">{Object.entries(labels).filter(([k])=>k!=="all").map(([k,v])=><option value={k}>{v}</option>)}</select></div>
-  <label class="field-label">{en ? "Your point of view" : "Tu argumento"}<textarea name="body" minlength="20" maxlength="3000" rows="5" required placeholder={en ? "What do you think? Add context, examples or reasons…" : "¿Qué opinas? Añade contexto, ejemplos o razones para defender tu postura…"}></textarea><small>{en ? "Avoid spoilers without a warning. Keep the conversation respectful." : "Evita spoilers sin avisar y mantén un tono respetuoso."}</small></label>
-  <div class="image-field"><div><strong>{en ? "Add an image" : "Añadir una imagen"}</strong><p>{en ? "Optional · JPG, PNG, WebP or AVIF · up to 5 MB" : "Opcional · JPG, PNG, WebP o AVIF · máximo 5 MB"}</p></div><label class="image-picker" for="debate-image">{en ? "Choose image" : "Elegir imagen"}</label><input id="debate-image" name="image" type="file" accept="image/jpeg,image/png,image/webp,image/avif" hidden /><div id="image-preview" class="image-preview" hidden><img id="preview-img" alt="" /><span id="preview-name"></span><button id="remove-image" type="button" aria-label={en ? "Remove image" : "Quitar imagen"}>×</button></div><small class="image-review-note">{en ? "Images are reviewed before they become visible to everyone." : "Las imágenes se revisan antes de mostrarse públicamente."}</small></div>
-  <div class="composer-footer"><span id="body-count">0 / 3000</span><p id="form-error" role="alert" hidden></p><button class="publish-button" type="submit">{en ? "Publish debate" : "Publicar debate"} <span aria-hidden="true">↗</span></button></div>
-</form> : <div class="login-prompt"><p>{en ? "Sign in to start a conversation with the community." : "Inicia sesión para abrir una conversación con la comunidad."}</p><a href={base+"/login/"}>{en ? "Sign in" : "Iniciar sesión"}</a></div>}
-</section>
-<nav class="filters"><div>{["newest","comments","likes"].map((item)=><a class:list={{active:sort===item}} href={base+"/community/debates/?sort="+item+"&category="+category}>{item==="newest"?(en?"Newest":"Más recientes"):item==="comments"?(en?"Most discussed":"Más comentados"):(en?"Most liked":"Más valorados")}</a>)}</div><div>{Object.entries(labels).map((entry)=><a class:list={{active:category===entry[0]}} href={base+"/community/debates/?sort="+sort+"&category="+entry[0]}>{entry[1]}</a>)}</div></nav>
-{error ? <p class="empty">{en ? "Debates are temporarily unavailable." : "Los debates no están disponibles temporalmente."}</p> : ordered.length ? <section class="list">{ordered.map((d:any)=>{const p=Array.isArray(d.profiles)?d.profiles[0]:d.profiles;const s=stats.get(d.id)!;return <article><div class="author"><img src={p?.avatar_url||"/images/profile-avatar-placeholder.svg"} alt="" /><a href={base+"/u/"+encodeURIComponent(p.aka)+"/"}>@{p.aka}</a><time>{new Intl.DateTimeFormat(en?"en":"es",{dateStyle:"medium"}).format(new Date(d.created_at))}</time></div><a class="title" href={base+"/community/debates/"+d.id+"/"}><h2>{d.title}</h2></a><p class="excerpt">{d.body}</p><footer><span>{labels[d.category]}</span><span>{s.comments} {en?"comments":"comentarios"}</span><span>{s.likes} likes</span></footer></article>})}</section> : <p class="empty">{en ? "No debates yet. Start the first one." : "Todavía no hay debates. Inicia el primero."}</p>}
+  <header class="debates-head">
+    <h1>Debates</h1>
+    <button class="search-toggle" id="search-toggle" type="button" aria-label={en?"Search debates":"Buscar debates"} aria-expanded="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
+    </button>
+  </header>
+  <label class="feed-search" id="feed-search" hidden>
+    <span class="sr-only">{en?"Search debates":"Buscar debates"}</span>
+    <input id="feed-search-input" type="search" placeholder={en?"Search debates…":"Buscar debates…"} autocomplete="off"/>
+  </label>
+
+  <div class="create-row">
+    <DebateComposerBar lang={en?"en":"es"} avatarUrl={viewer?.avatar_url??null}/>
+  </div>
+
+  <nav class="sort" aria-label={en?"Sort debates":"Ordenar debates"}>
+    {Object.entries(sortLabels).map(([key,label])=><a class:active={sort===key} href={base+"/community/debates/?sort="+key+"&category="+category}>{label}</a>)}
+  </nav>
+  <nav class="cats" aria-label={en?"Debate categories":"Categorías de debate"}>
+    {Object.entries(labels).map(([key,label])=><a class:active={category===key} href={base+"/community/debates/?sort="+sort+"&category="+key}>{label}</a>)}
+  </nav>
+
+  {error ? <p class="empty">{en?"Debates are temporarily unavailable.":"Los debates no están disponibles temporalmente."}</p> :
+  ordered.length ? <section class="feed" id="debate-feed">
+    {ordered.map((debate:any)=>{
+      const profile=Array.isArray(debate.profiles)?debate.profiles[0]:debate.profiles;
+      const statsForPost=stats.get(debate.id)!;
+      const imageUrl=publicImage(debate.image_path,debate.image_status);
+      return <article class="post" data-search={[debate.title,debate.body,debate.anime_title,debate.category,profile?.aka].filter(Boolean).join(" ").toLowerCase()}>
+        <div class="hd">
+          <a class="author" href={base+"/u/"+encodeURIComponent(profile?.aka??"")+"/"}>
+            <img class="av" src={profile?.avatar_url||"/images/profile-avatar-placeholder.svg"} alt="" loading="lazy"/>
+            <span>@{profile?.aka}</span>
+          </a>
+          <time datetime={debate.created_at}>{relativeTime(debate.created_at)}</time>
+          <button class="more" type="button" aria-label={en?"More options":"Más opciones"} data-debate-menu={debate.id}>⋯</button>
+        </div>
+        <a class="body" href={base+"/community/debates/"+debate.id+"/"}>
+          <h2>{debate.title}</h2>
+          {debate.body&&<p class="tx">{debate.body}</p>}
+        </a>
+        {imageUrl&&<a class="image-link" href={imageUrl} target="_blank" rel="noreferrer"><img class="img" src={imageUrl} alt={debate.title} loading="lazy"/></a>}
+        <div class="tags">
+          <span class="tag">{labels[debate.category]||labels.general}</span>
+          {debate.anime_title&&<span class="tag anime-tag">{debate.anime_title}</span>}
+        </div>
+        <div class="acts">
+          <a class:list={["act",statsForPost.liked&&"liked"]} href={base+"/community/debates/"+debate.id+"/"} aria-label={en?"Like debate":"Me gusta"}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 11-8.8 11S3.2 14 3.2 8.8a4.5 4.5 0 0 1 8.8-1.1 4.5 4.5 0 0 1 8.8 1.1Z"/></svg><span>{statsForPost.likes}</span>
+          </a>
+          <a class="act" href={base+"/community/debates/"+debate.id+"/#comments"} aria-label={en?"Comments":"Comentarios"}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H5l-1-4.5A7.5 7.5 0 1 1 20 11.5Z"/></svg><span>{statsForPost.comments}</span>
+          </a>
+          <button class="act share" type="button" data-share-url={base+"/community/debates/"+debate.id+"/"} aria-label={en?"Share debate":"Compartir debate"}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m-5 5 5-5 5 5M4 14v6h16v-6"/></svg>
+          </button>
+        </div>
+      </article>;
+    })}
+  </section> : <p class="empty">{en?"No debates yet. Start the first one.":"Todavía no hay debates. Inicia el primero."}</p>}
+  <p id="search-empty" class="empty" hidden>{en?"No debates match your search.":"No hay debates que coincidan con tu búsqueda."}</p>
 </main>
+
+<dialog class="composer-sheet" id="composer-sheet" aria-labelledby="composer-title">
+  <div class="sheet-backdrop" data-close-sheet></div>
+  <section class="sheet-panel">
+    <form id="debate-form" enctype="multipart/form-data">
+      <div class="sheet-top">
+        <button class="cancel" type="button" id="cancel-composer">{en?"Cancel":"Cancelar"}</button>
+        <strong id="composer-title">{en?"New debate":"Nuevo debate"}</strong>
+        <button class="publish" type="submit">{en?"Publish":"Publicar"}</button>
+      </div>
+      {auth.user ? <>
+        <div class="composer-content">
+          <img class="av composer-avatar" src={viewer?.avatar_url||"/images/profile-avatar-placeholder.svg"} alt=""/>
+          <div class="composer-fields">
+            <textarea name="title" id="debate-title" minlength="8" maxlength="120" required placeholder={en?"What would you like to debate?":"¿Qué quieres debatir?"}></textarea>
+            <textarea name="body" id="debate-body" maxlength="1500" rows="3" placeholder={en?"Add more context (optional)…":"Añade más contexto (opcional)…"}></textarea>
+            <div class="image-preview" id="image-preview" hidden><img id="preview-img" alt=""/><button type="button" id="remove-image" aria-label={en?"Remove image":"Quitar imagen"}>×</button></div>
+            <div class="cats composer-cats" role="group" aria-label={en?"Choose a category":"Elige una categoría"}>
+              {Object.entries(labels).filter(([key])=>key!=="all").map(([key,label],index)=><button type="button" class:list={["cat-choice",index===0&&"active"]} data-category={key}>{label}</button>)}
+              <input type="hidden" name="category" id="debate-category" value="anime"/>
+            </div>
+            <input class="anime-input" type="text" name="animeTitle" id="anime-title" maxlength="120" placeholder={en?"Related anime (optional)":"Anime relacionado (opcional)"}/>
+            <input type="hidden" name="animeId" id="anime-id" value=""/>
+            <div class="composer-bottom">
+              <label class="image-picker" for="debate-image" aria-label={en?"Add image":"Añadir imagen"}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg>
+              </label>
+              <input id="debate-image" name="image" type="file" accept="image/jpeg,image/png,image/webp,image/avif" hidden/>
+              <span id="title-count">0 / 120</span>
+            </div>
+            <p class="form-error" id="form-error" role="alert" hidden></p>
+          </div>
+        </div>
+      </> : <div class="login-prompt">{en?"Sign in to publish a debate.":"Inicia sesión para publicar un debate."} <a href={base+"/login/"}>{en?"Sign in":"Iniciar sesión"}</a></div>}
+    </form>
+  </section>
+</dialog>
 </Layout>
-<style>
-.debates{width:min(calc(100% - 2*var(--gutter)),850px);min-height:70vh;margin:auto;padding:clamp(6rem,11vw,9rem) 0 var(--section-space);color:#f5f2ec}.debates header{padding-bottom:1.6rem;border-bottom:1px solid #ffffff1a}.eyebrow{color:#ec4899;font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase}.debates h1{margin:0;font-size:clamp(2.5rem,8vw,4.5rem);letter-spacing:-.06em}.debates header p:not(.eyebrow){color:#999}.debates button{border:0;border-radius:999px;background:#f5f2ec;color:#111;padding:.7rem 1rem;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer}.composer{margin:1.15rem 0 1.4rem;padding:clamp(1rem,4vw,1.5rem);border:1px solid rgba(255,255,255,.13);border-radius:16px;background:#101012}.composer[hidden]{display:none}.composer-intro{margin-bottom:1.3rem}.composer-step{color:#ec4899;font-size:.62rem;font-weight:800;letter-spacing:.16em}.composer-intro h2{margin:.35rem 0;font-size:1.35rem;letter-spacing:-.04em}.composer-intro p{max-width:540px;margin:0;color:#999;font-size:.78rem;line-height:1.55}.field-label{display:grid;gap:.45rem;margin:1rem 0;color:#e7e4df;font-size:.78rem;font-weight:600}.field-label small{color:#85858a;font-size:.68rem;font-weight:400;line-height:1.45}.field-label input,.field-label select,.field-label textarea{width:100%;min-height:44px;padding:.75rem .85rem;border:1px solid #38383d;border-radius:9px;background:#09090b;color:#f5f2ec;font:inherit;font-size:.82rem;outline:none}.field-label input:focus,.field-label select:focus,.field-label textarea:focus{border-color:#ec4899;box-shadow:0 0 0 2px rgba(236,72,153,.13)}.field-label textarea{min-height:138px;resize:vertical;line-height:1.55}.image-field{display:grid;grid-template-columns:1fr auto;gap:.35rem .8rem;align-items:center;margin-top:1.2rem;padding:1rem;border:1px dashed #45454b;border-radius:11px}.image-field strong{font-size:.78rem}.image-field p{margin:.25rem 0 0;color:#888;font-size:.67rem}.image-picker{padding:.58rem .8rem;border:1px solid #444;border-radius:999px;color:#eee;font-size:.7rem;cursor:pointer}.image-picker:hover{border-color:#ec4899}.image-review-note{grid-column:1/-1;color:#888;font-size:.65rem;line-height:1.4}.image-preview{position:relative;grid-column:1/-1;display:flex;align-items:center;gap:.7rem;margin-top:.55rem;padding:.55rem;background:#080809;border-radius:8px;color:#bbb;font-size:.68rem}.image-preview[hidden]{display:none}.image-preview img{width:58px;height:58px;border-radius:6px;object-fit:cover}.image-preview span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.image-preview button{margin-left:auto;border:0;background:none;color:#ddd;font-size:1.2rem}.composer-footer{display:flex;align-items:center;gap:.8rem;margin-top:1.1rem;padding-top:.9rem;border-top:1px solid #ffffff12}.composer-footer>span{color:#777;font-size:.67rem}.publish-button{margin-left:auto;display:flex;align-items:center;gap:.7rem;padding:.78rem 1.1rem;border:0;border-radius:999px;background:#f5f2ec;color:#111;font:inherit;font-size:.76rem;font-weight:700}.publish-button:disabled{opacity:.55}.composer-footer p{margin:0;color:#fca5a5;font-size:.68rem}.composer-footer p[hidden]{display:none}.login-prompt{padding:1.2rem;border:1px solid #ffffff1a;border-radius:12px;color:#aaa;font-size:.8rem}.login-prompt a{color:#ec4899}..filters{display:grid;gap:.7rem;padding:1rem 0}.filters div{display:flex;gap:.4rem;overflow:auto;scrollbar-width:none}.filters a{flex:0 0 auto;padding:.5rem .7rem;border:1px solid #ffffff20;border-radius:99px;color:#aaa;font-size:.7rem;text-decoration:none}.filters a.active{background:#f5f2ec;color:#111}.list{display:grid;gap:.8rem}.list article{padding:1rem;border:1px solid #ffffff1a;border-radius:14px;background:#ffffff06}.author{display:flex;align-items:center;gap:.55rem;color:#888;font-size:.7rem}.author img{width:28px;height:28px;border-radius:50%;object-fit:cover}.author a{color:#eee;text-decoration:none;font-weight:700}.author time{margin-left:auto}.title{color:#f5f2ec;text-decoration:none}.title h2{margin:.8rem 0 .4rem;font-size:1.3rem;letter-spacing:-.03em}.excerpt{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;color:#aaa;font-size:.82rem;line-height:1.6;white-space:pre-wrap}.list footer{display:flex;gap:1rem;margin-top:.9rem;color:#888;font-size:.7rem}.list footer span:first-child{color:#ddd}.empty{padding:2rem 0;color:#888}
-</style>
+
 <script>
-const panel=document.querySelector<HTMLElement>("#create-panel");
-const openComposer=()=>{if(panel){panel.hidden=false;panel.scrollIntoView({behavior:"smooth",block:"start"})}};
-if(new URLSearchParams(window.location.search).get("compose")==="1")openComposer();
-const form=document.querySelector<HTMLFormElement>("#debate-form");
+const sheet=document.querySelector<HTMLDialogElement>("#composer-sheet");
+const closeSheet=()=>{if(sheet?.open)sheet.close();document.body.classList.remove("sheet-open");};
+const openSheet=()=>{if(sheet&&!sheet.open){sheet.showModal();document.body.classList.add("sheet-open");}};
+document.querySelector(".create-row .compose")?.addEventListener("click",(event)=>{event.preventDefault();openSheet();});
+document.querySelector("#cancel-composer")?.addEventListener("click",closeSheet);
+document.querySelector("[data-close-sheet]")?.addEventListener("click",closeSheet);
+if(new URLSearchParams(window.location.search).get("compose")==="1"){openSheet();const clean=new URL(window.location.href);clean.searchParams.delete("compose");history.replaceState({}, "", clean);}
+sheet?.addEventListener("click",(event)=>{if(event.target===sheet)closeSheet();});
+const categoryInput=document.querySelector<HTMLInputElement>("#debate-category");
+document.querySelectorAll<HTMLButtonElement>("[data-category]").forEach(button=>button.addEventListener("click",()=>{
+ document.querySelectorAll("[data-category]").forEach(x=>x.classList.remove("active"));button.classList.add("active");if(categoryInput)categoryInput.value=button.dataset.category||"general";
+}));
 const imageInput=document.querySelector<HTMLInputElement>("#debate-image");
 const preview=document.querySelector<HTMLElement>("#image-preview");
 const previewImage=document.querySelector<HTMLImageElement>("#preview-img");
-const previewName=document.querySelector<HTMLElement>("#preview-name");
-const bodyInput=form?.querySelector<HTMLTextAreaElement>('textarea[name="body"]');
-const counter=document.querySelector<HTMLElement>("#body-count");
+let previewUrl:string|undefined;
+imageInput?.addEventListener("change",()=>{
+ const file=imageInput.files?.[0];if(!file)return;
+ if(file.size>5*1024*1024||!["image/jpeg","image/png","image/webp","image/avif"].includes(file.type)){imageInput.value="";return;}
+ if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=URL.createObjectURL(file);
+ if(previewImage)previewImage.src=previewUrl;if(preview)preview.hidden=false;
+});
+document.querySelector("#remove-image")?.addEventListener("click",()=>{
+ if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=undefined;if(imageInput)imageInput.value="";if(preview)preview.hidden=true;
+});
+const titleInput=document.querySelector<HTMLTextAreaElement>("#debate-title");
+const titleCount=document.querySelector<HTMLElement>("#title-count");
+titleInput?.addEventListener("input",()=>{if(titleCount)titleCount.textContent=titleInput.value.length+" / 120";});
+const form=document.querySelector<HTMLFormElement>("#debate-form");
 const error=document.querySelector<HTMLElement>("#form-error");
-let imageUrl:string|undefined;
-bodyInput?.addEventListener("input",()=>{if(counter)counter.textContent=bodyInput.value.length+" / 3000"});
-imageInput?.addEventListener("change",()=>{const file=imageInput.files?.[0];if(!file)return;if(!["image/jpeg","image/png","image/webp","image/avif"].includes(file.type)||file.size>5*1024*1024){imageInput.value="";if(error){error.textContent="Imagen no válida. Usa JPG, PNG, WebP o AVIF de máximo 5 MB.";error.hidden=false}return}if(imageUrl)URL.revokeObjectURL(imageUrl);imageUrl=URL.createObjectURL(file);if(previewImage)previewImage.src=imageUrl;if(previewName)previewName.textContent=file.name;if(preview)preview.hidden=false;if(error)error.hidden=true});
-document.querySelector("#remove-image")?.addEventListener("click",()=>{if(imageUrl)URL.revokeObjectURL(imageUrl);imageUrl=undefined;if(imageInput)imageInput.value="";if(preview)preview.hidden=true});
-form?.addEventListener("submit",async(event)=>{event.preventDefault();if(!form.reportValidity())return;const button=form.querySelector<HTMLButtonElement>('button[type="submit"]');if(button){button.disabled=true;button.innerHTML="Publicando…"}if(error)error.hidden=true;try{const r=await fetch("/api/community/debates",{method:"POST",credentials:"same-origin",body:new FormData(form)});const result=await r.json();if(!r.ok||!result.ok)throw new Error(result.error||"CREATE_FAILED");window.location.href="/community/debates/"}catch{if(error){error.textContent="No se ha podido publicar. Revisa los campos e inténtalo de nuevo.";error.hidden=false}if(button){button.disabled=false;button.innerHTML='Publicar debate <span aria-hidden="true">↗</span>'}}});
+form?.addEventListener("submit",async(event)=>{
+ event.preventDefault();if(!form.reportValidity())return;
+ const submit=form.querySelector<HTMLButtonElement>(".publish");if(submit){submit.disabled=true;submit.textContent="…";}
+ if(error)error.hidden=true;
+ try{
+  const response=await fetch(base+"/api/community/debates",{method:"POST",credentials:"same-origin",body:new FormData(form)});
+  const result=await response.json();
+  if(!response.ok||!result.ok){if(result.error==="IMAGE_UPLOAD_FAILED")throw new Error("IMAGE_UPLOAD_FAILED");throw new Error(result.error||"CREATE_FAILED");}
+  window.location.reload();
+ }catch(err){
+  if(error){error.textContent=err instanceof Error&&err.message==="IMAGE_UPLOAD_FAILED"?(en?"Could not upload the image. Try again.":"No se pudo subir la imagen. Inténtalo de nuevo."):(en?"Could not publish the debate. Try again.":"No se pudo publicar el debate. Inténtalo de nuevo.");error.hidden=false;}
+  if(submit){submit.disabled=false;submit.textContent=en?"Publish":"Publicar";}
+ }
+});
+document.querySelectorAll<HTMLButtonElement>(".share").forEach(button=>button.addEventListener("click",async()=>{
+ const url=new URL(button.dataset.shareUrl||"",window.location.origin).toString();
+ try{if(navigator.share)await navigator.share({url});else if(navigator.clipboard)await navigator.clipboard.writeText(url);}catch{}
+}));
+const searchToggle=document.querySelector<HTMLButtonElement>("#search-toggle");
+const searchPanel=document.querySelector<HTMLElement>("#feed-search");
+const searchInput=document.querySelector<HTMLInputElement>("#feed-search-input");
+searchToggle?.addEventListener("click",()=>{const open=searchPanel?.hidden??true;if(searchPanel)searchPanel.hidden=!open;searchToggle.setAttribute("aria-expanded",String(open));if(open)searchInput?.focus();});
+searchInput?.addEventListener("input",()=>{const query=searchInput.value.trim().toLowerCase();const cards=[...document.querySelectorAll<HTMLElement>(".post")];let count=0;cards.forEach(card=>{const match=!query||(card.dataset.search||"").includes(query);card.hidden=!match;if(match)count++;});const empty=document.querySelector<HTMLElement>("#search-empty");if(empty)empty.hidden=count>0;});
 </script>
+
+<style>
+.debates{width:min(100%,640px);min-height:70vh;margin:0 auto;padding:calc(var(--header-height,64px) + 18px) 0 4rem;color:#f2efe9;background:#09090b}
+.debates-head{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 6px}
+.debates-head h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.035em;line-height:1.2}
+.search-toggle{display:grid;place-items:center;width:40px;height:40px;border:0;background:transparent;color:#a39fa9}
+.search-toggle svg,.image-picker svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.feed-search{display:block;padding:8px 16px}.feed-search[hidden]{display:none}
+.feed-search input{width:100%;padding:11px 14px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:#131316;color:#f2efe9;font:inherit;font-size:14px;outline:none}
+.create-row{padding:8px 16px 4px}.create-row .compose{margin:0;min-height:58px;padding:10px 12px;background:#131316;border:1px solid rgba(255,255,255,.08)}
+.create-row .compose>.av{width:38px;height:38px;flex-basis:38px}.create-row .compose .in{font-size:13px;color:#a39fa9}.create-row .compose .go{width:38px;height:38px;background:#ec4899}
+.sort,.cats{display:flex;align-items:center;gap:8px;padding:12px 16px 4px;flex-wrap:wrap}
+.sort a,.cats a,.cat-choice{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:0 12px;border:1px solid rgba(255,255,255,.08);border-radius:999px;background:#131316;color:#a39fa9;text-decoration:none;font-size:12px;font-weight:650;white-space:nowrap}
+.sort a.active,.cats a.active,.cat-choice.active{border-color:rgba(236,72,153,.42);background:rgba(236,72,153,.12);color:#f2efe9}
+.feed{display:grid;gap:10px;padding:12px 12px 0}
+.post{padding:14px;border:1px solid rgba(255,255,255,.07);border-radius:15px;background:#131316}
+.hd{display:flex;align-items:center;gap:9px;min-height:38px}
+.author{display:flex;align-items:center;gap:9px;min-width:0;color:#f2efe9;text-decoration:none;font-size:12px;font-weight:750}
+.av{display:block;width:38px;height:38px;flex:0 0 38px;border-radius:50%;object-fit:cover;background:#25252a}
+.hd time{margin-left:auto;color:#77737d;font-size:11px;white-space:nowrap}
+.more{width:40px;height:40px;border:0;background:transparent;color:#a39fa9;font-size:22px;line-height:1}
+.body{display:block;margin-top:10px;color:inherit;text-decoration:none}
+.body h2{margin:0 0 6px;font-size:17px;font-weight:800;line-height:1.3;letter-spacing:-.02em}
+.tx{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;margin:0;color:#b9b5bf;font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.image-link{display:block;margin-top:10px;overflow:hidden;border-radius:11px;background:#09090b}
+.img{display:block;width:100%;max-height:170px;object-fit:cover}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+.tag{padding:5px 9px;border-radius:999px;background:#252127;color:#e7a1c5;font-size:10px;font-weight:700}
+.anime-tag{background:#20252a;color:#a9c4d5}
+.acts{display:flex;align-items:center;gap:22px;margin-top:11px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06)}
+.act{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:40px;min-height:40px;padding:0 4px;border:0;background:transparent;color:#a39fa9;text-decoration:none;font-size:12px}
+.act svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.act.liked{color:#ec4899}
+.empty{padding:24px 16px;color:#77737d;font-size:13px}
+.composer-sheet{position:fixed;inset:auto 0 0;width:100%;max-width:640px;max-height:min(88dvh,760px);margin:0 auto;padding:0;border:0;border-radius:20px 20px 0 0;background:#131316;color:#f2efe9;overflow:visible}
+.composer-sheet::backdrop{background:rgba(0,0,0,.68)}
+.composer-sheet[open]{animation:sheet-in .22s ease-out}
+.sheet-panel{max-height:min(88dvh,760px);overflow:auto;border-radius:20px 20px 0 0;background:#131316;padding:0 16px calc(18px + env(safe-area-inset-bottom))}
+.sheet-top{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 0;background:#131316;border-bottom:1px solid rgba(255,255,255,.07)}
+.sheet-top button{min-height:40px;border:0;background:transparent;font:inherit;font-size:13px;font-weight:700}
+.cancel{color:#a39fa9}.sheet-top strong{font-size:14px;font-weight:750}.sheet-top .publish{padding:0 15px;border-radius:999px;background:#ec4899;color:#fff}
+.composer-content{display:flex;align-items:flex-start;gap:11px;padding:16px 0}
+.composer-avatar{margin-top:2px}
+.composer-fields{flex:1;min-width:0}
+.composer-fields textarea{display:block;width:100%;resize:vertical;border:0;outline:0;background:transparent;color:#f2efe9;font:inherit;font-size:15px;line-height:1.45}
+.composer-fields textarea::placeholder{color:#8d8993}
+#debate-title{min-height:64px;font-weight:700}
+#debate-body{min-height:72px;margin-top:5px;color:#c2bec7;font-size:13px}
+.image-preview{position:relative;margin:8px 0;max-width:100%;width:max-content}
+.image-preview[hidden]{display:none}
+.image-preview img{display:block;max-width:100%;max-height:170px;border-radius:10px;object-fit:cover}
+.image-preview button{position:absolute;top:6px;right:6px;width:30px;height:30px;border:0;border-radius:50%;background:rgba(0,0,0,.72);color:#fff;font-size:21px;line-height:1}
+.composer-cats{padding:8px 0 4px;gap:6px}
+.cat-choice{min-height:32px;padding:0 10px;cursor:pointer}
+.anime-input{width:100%;margin-top:8px;padding:10px 0;border:0;border-bottom:1px solid rgba(255,255,255,.08);outline:0;background:transparent;color:#f2efe9;font:inherit;font-size:13px}
+.anime-input::placeholder{color:#77737d}
+.composer-bottom{display:flex;align-items:center;gap:12px;padding-top:10px}
+.image-picker{display:grid;place-items:center;width:40px;height:40px;border:1px solid rgba(255,255,255,.1);border-radius:50%;color:#a39fa9;cursor:pointer}
+.composer-bottom>span{margin-left:auto;color:#77737d;font-size:11px}
+.form-error{margin:8px 0 0;color:#ff9da9;font-size:12px;line-height:1.4}
+.form-error[hidden]{display:none}
+.login-prompt{padding:22px 0;color:#a39fa9;font-size:13px}.login-prompt a{color:#ec4899}
+body.sheet-open{overflow:hidden}
+@keyframes sheet-in{from{transform:translateY(24px);opacity:.7}to{transform:translateY(0);opacity:1}}
+@media(min-width:641px){.debates{padding-top:100px}.composer-sheet{bottom:0;border-radius:20px 20px 0 0}}
+</style>

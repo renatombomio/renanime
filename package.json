@@ -32,7 +32,8 @@
     "react-dom": "^19.3.0",
     "tailwindcss": "^4.3.3",
     "three": "^0.174.0",
-    "three-stdlib": "^2.36.0"
+    "three-stdlib": "^2.36.0",
+    "sharp": "^0.35.4"
   },
   "allowScripts": {
     "esbuild": true
@@ -41,4 +42,4 @@
     "@types/three": "^0.174.0",
     "vitest": "5.0.3"
   }
-}
+}\n
