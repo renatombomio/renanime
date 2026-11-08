@@ -76,7 +76,8 @@ export function getPersonalEntry(animeId: string): PersonalAnimeEntry | null {
   return library.find((entry) => entry.animeId === animeId) ?? null;
 }
 
-async function save(entry: PersonalAnimeEntry) {
+async function save(entry: PersonalAnimeEntry): Promise<PersonalAnimeEntry> {
+  const previous = getPersonalEntry(entry.animeId);
   library = [...library.filter((item) => item.animeId !== entry.animeId), entry];
   notify();
 
@@ -85,43 +86,63 @@ async function save(entry: PersonalAnimeEntry) {
       method: "POST",
       body: JSON.stringify({ entry }),
     });
-    const saved = remote as PersonalAnimeEntry;
+    if (!remote?.ok || !remote.entry || remote.entry.animeId !== entry.animeId) {
+      throw new Error("No se pudo confirmar el guardado en el servidor");
+    }
+    const saved = remote.entry as PersonalAnimeEntry;
     library = [...library.filter((item) => item.animeId !== entry.animeId), saved];
     notify();
-  } catch {}
+    return saved;
+  } catch (error) {
+    library = previous
+      ? [...library.filter((item) => item.animeId !== entry.animeId), previous]
+      : library.filter((item) => item.animeId !== entry.animeId);
+    notify();
+    throw error;
+  }
 }
 
-export function addToPersonalList(animeId: string): PersonalAnimeEntry {
+export async function addToPersonalList(animeId: string): Promise<PersonalAnimeEntry> {
   const existing = getPersonalEntry(animeId);
   if (existing) return existing;
   const entry: PersonalAnimeEntry = {
     animeId,
     state: { status: "PENDING", favorite: false, recommended: false },
   };
-  void save(entry);
-  return entry;
+  return save(entry);
 }
 
-export function markPersonalWatched(animeId: string): PersonalAnimeEntry {
+export async function markPersonalWatched(animeId: string): Promise<PersonalAnimeEntry> {
   const existing = getPersonalEntry(animeId);
   const entry = existing
     ? { ...existing, state: { ...existing.state, status: "WATCHED" as const } }
     : { animeId, state: { status: "WATCHED" as const, favorite: false, recommended: false } };
-  void save(entry);
-  return entry;
+  return save(entry);
 }
 
-export function setPersonalStatus(animeId: string, status: PersonalAnimeStatus) {
+export async function setPersonalStatus(animeId: string, status: PersonalAnimeStatus) {
   if (status === "PENDING") return addToPersonalList(animeId);
   if (status === "WATCHED") return markPersonalWatched(animeId);
-  removeFromPersonalLibrary(animeId);
+  await removeFromPersonalLibrary(animeId);
   return null;
 }
 
-export function removeFromPersonalLibrary(animeId: string) {
+export async function removeFromPersonalLibrary(animeId: string): Promise<void> {
+  const previous = getPersonalEntry(animeId);
   library = library.filter((entry) => entry.animeId !== animeId);
   notify();
-  void request("/api/library?animeId=" + encodeURIComponent(animeId), { method: "DELETE" }).catch(() => {});
+
+  try {
+    const response = await fetch("/api/library?animeId=" + encodeURIComponent(animeId), {
+      method: "DELETE",
+      credentials: "same-origin",
+    });
+    if (!response.ok) throw new Error("No se pudo eliminar de la biblioteca");
+  } catch (error) {
+    if (previous) library = [...library.filter((entry) => entry.animeId !== animeId), previous];
+    notify();
+    throw error;
+  }
 }
 
 export function subscribeToPersonalLibrary(callback: () => void) {
