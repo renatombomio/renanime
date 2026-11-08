@@ -130,6 +130,11 @@ const publicImage=(path:string|null,status:string|null)=>{
             <textarea name="title" id="debate-title" minlength="8" maxlength="120" required rows="1" autofocus placeholder={en?"What would you like to debate?":"¿Qué quieres debatir?"}></textarea>
             <textarea name="body" id="debate-body" maxlength="500" rows="1" placeholder={en?"Add your argument (optional)":"Añade tu argumento (opcional)"}></textarea><span class="body-count" id="body-count" hidden></span>
             <div class="image-preview" id="image-preview" hidden><img id="preview-img" alt=""/><button type="button" id="remove-image" aria-label={en?"Remove image":"Quitar imagen"}>×</button></div>
+            <div class="image-controls" id="image-controls" hidden>
+              <label class="image-control"><span>{en?"Zoom":"Zoom"}</span><input id="image-zoom" type="range" min="1" max="2.5" step="0.05" value="1"/><output id="image-zoom-value">1×</output></label>
+              <label class="image-control"><span>{en?"Vertical position":"Posición vertical"}</span><input id="image-position" type="range" min="0" max="100" step="1" value="50"/><output id="image-position-value">{en?"Center":"Centro"}</output></label>
+              <button class="image-reset" type="button" id="reset-image">{en?"Reset":"Restablecer"}</button>
+            </div>
             <div class="anime-field">
               <label class="anime-label" for="anime-title">{en?"RELATED ANIME · OPTIONAL":"ANIME RELACIONADO · OPCIONAL"}</label>
               <div class="anime-control">
@@ -176,15 +181,55 @@ document.querySelectorAll<HTMLButtonElement>("[data-category]").forEach(button=>
 const imageInput=document.querySelector<HTMLInputElement>("#debate-image");
 const preview=document.querySelector<HTMLElement>("#image-preview");
 const previewImage=document.querySelector<HTMLImageElement>("#preview-img");
+const imageControls=document.querySelector<HTMLElement>("#image-controls");
+const zoomInput=document.querySelector<HTMLInputElement>("#image-zoom");
+const positionInput=document.querySelector<HTMLInputElement>("#image-position");
+const zoomValue=document.querySelector<HTMLOutputElement>("#image-zoom-value");
+const positionValue=document.querySelector<HTMLOutputElement>("#image-position-value");
+const imageZoomField=document.createElement("input");
+imageZoomField.type="hidden";imageZoomField.name="imageZoom";imageZoomField.value="1";
+const imagePositionField=document.createElement("input");
+imagePositionField.type="hidden";imagePositionField.name="imagePositionY";imagePositionField.value="50";
+form?.append(imageZoomField,imagePositionField);
 let previewUrl:string|undefined;
+const updateImageAdjustments=()=>{
+ const zoom=Number(zoomInput?.value||1);
+ const position=Number(positionInput?.value||50);
+ const pan=(50-position)*(zoom-1);
+ if(previewImage){previewImage.style.transform="translateY("+pan+"%) scale("+zoom+")";}
+ if(zoomValue)zoomValue.value=zoom.toFixed(2).replace(/0+$/,"").replace(/\.$/,"")+"×";
+ if(positionValue)positionValue.value=position<45?(en?"Top":"Arriba"):position>55?(en?"Bottom":"Abajo"):(en?"Center":"Centro");
+ imageZoomField.value=String(zoom);
+ imagePositionField.value=String(position);
+};
+const resetImageAdjustments=()=>{
+ if(zoomInput)zoomInput.value="1";
+ if(positionInput)positionInput.value="50";
+ updateImageAdjustments();
+};
+zoomInput?.addEventListener("input",updateImageAdjustments);
+positionInput?.addEventListener("input",updateImageAdjustments);
+document.querySelector("#reset-image")?.addEventListener("click",resetImageAdjustments);
 imageInput?.addEventListener("change",()=>{
  const file=imageInput.files?.[0];if(!file)return;
  if(file.size>5*1024*1024||!["image/jpeg","image/png","image/webp","image/avif"].includes(file.type)){imageInput.value="";return;}
  if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=URL.createObjectURL(file);
- if(previewImage)previewImage.src=previewUrl;if(preview)preview.hidden=false;
+ if(previewImage){
+  previewImage.onload=()=>{
+   const ratio=previewImage.naturalWidth/Math.max(1,previewImage.naturalHeight);
+   if(preview)preview.style.aspectRatio=String(ratio);
+  };
+  previewImage.src=previewUrl;
+ }
+ if(preview)preview.hidden=false;
+ if(imageControls)imageControls.hidden=false;
+ resetImageAdjustments();
 });
 document.querySelector("#remove-image")?.addEventListener("click",()=>{
- if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=undefined;if(imageInput)imageInput.value="";if(preview)preview.hidden=true;
+ if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=undefined;if(imageInput)imageInput.value="";
+ if(preview){preview.hidden=true;preview.style.aspectRatio="";}
+ if(imageControls)imageControls.hidden=true;
+ resetImageAdjustments();
 });
 const titleInput=document.querySelector<HTMLTextAreaElement>("#debate-title");
 const bodyInput=document.querySelector<HTMLTextAreaElement>("#debate-body");
@@ -289,10 +334,17 @@ searchInput?.addEventListener("input",()=>{const query=searchInput.value.trim().
 #debate-body{min-height:22px;margin-top:2px;color:#b9b5bf;font-size:14.5px;font-weight:400;line-height:1.45}
 #debate-body::placeholder{color:#8d8993}
 .body-count{display:block;margin-top:2px;text-align:right;color:#77737d;font-size:11px;line-height:1.2}.body-count[hidden]{display:none}
-.image-preview{position:relative;width:100%;height:auto;max-height:40dvh;margin:6px 0 0;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:#17171b;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.image-preview{position:relative;width:100%;max-height:260px;margin:6px 0 0;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:#09090b;overflow:hidden;display:block;isolation:isolate}
 .image-preview[hidden]{display:none}
-.image-preview img{display:block;width:100%;height:auto;max-width:100%;max-height:40dvh;border-radius:13px;object-fit:contain}
-.image-preview button{position:absolute;top:7px;right:7px;display:grid;place-items:center;width:28px;height:28px;padding:0;border:0;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;font-size:20px;line-height:1}
+.image-preview img{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;max-height:none;border-radius:13px;object-fit:cover;transform-origin:center center;will-change:transform}
+.image-preview button{position:absolute;z-index:2;top:7px;right:7px;display:grid;place-items:center;width:28px;height:28px;padding:0;border:0;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;font-size:20px;line-height:1}
+.image-controls{display:grid;grid-template-columns:1fr auto;gap:8px 12px;margin-top:10px;padding:10px 12px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:#17171b}
+.image-controls[hidden]{display:none}
+.image-control{display:grid;grid-template-columns:105px minmax(0,1fr) 38px;align-items:center;gap:8px;color:#aaa6b0;font-size:11px}
+.image-control input{width:100%;min-width:0;accent-color:var(--color-accent)}
+.image-control output{text-align:right;color:#f2efe9;font-size:11px;font-variant-numeric:tabular-nums}
+.image-reset{grid-column:2;grid-row:1 / span 2;align-self:center;padding:7px 9px;border:1px solid rgba(255,255,255,.1);border-radius:8px;background:transparent;color:#aaa6b0;font:inherit;font-size:11px}
+@media(max-width:380px){.image-control{grid-template-columns:86px minmax(0,1fr) 34px;gap:5px}.image-reset{padding:6px}}
 .anime-field{margin-top:12px}
 .anime-label{display:block;margin-bottom:6px;color:#77737d;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
 .anime-control{display:flex;align-items:center;gap:8px;min-height:42px;padding:0 12px;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:#17171b}
