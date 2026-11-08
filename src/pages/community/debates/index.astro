@@ -88,13 +88,15 @@ const publicImage=(path:string|null,status:string|null)=>{
           <time datetime={debate.created_at}>{relativeTime(debate.created_at)}</time>
           <button class="more" type="button" disabled aria-label={en?"More options unavailable":"Más opciones no disponibles"} title={en?"Coming soon":"Próximamente"}>⋯</button>
         </div>
-        <a class="body" href={base+"/community/debates/"+debate.id+"/"}>
-          <h2>{debate.title}</h2>
-          {debate.body&&<p class="tx">{debate.body}</p>}
-        </a>
-        {imageUrl&&<a class="image-link" href={imageUrl} target="_blank" rel="noreferrer"><img class="img" src={imageUrl} alt={debate.title} loading="lazy"/></a>}
-        <div class="tags">
-          <span class="tag">{labels[debate.category]||labels.general}</span>
+        <div class="post-content">
+          <a class="body" href={base+"/community/debates/"+debate.id+"/"}>
+            <h2>{debate.title}</h2>
+            {debate.body&&<p class="tx">{debate.body}</p>}
+          </a>
+          {imageUrl&&<a class="image-link" href={imageUrl} target="_blank" rel="noreferrer"><img class="img" src={imageUrl} alt={debate.title} loading="lazy"/></a>}
+          <div class="tags">
+            <span class="tag">{labels[debate.category]||labels.general}</span>
+          </div>
         </div>
         <div class="acts">
           <button class="act" type="button" disabled aria-label={en?"Like unavailable":"Me gusta no disponible"} title={en?"Coming soon":"Próximamente"}>
@@ -234,10 +236,10 @@ searchInput?.addEventListener("input",()=>{const query=searchInput.value.trim().
 .search-toggle svg,.image-picker svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .feed-search{display:block;padding:8px 16px}.feed-search[hidden]{display:none}
 .feed-search input{width:100%;padding:11px 14px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:#131316;color:#f2efe9;font:inherit;font-size:14px;outline:none}
-.create-row{padding:8px 16px 4px}.create-row :global(.compose){display:flex;align-items:center;gap:12px;width:100%;height:58px;min-height:58px;box-sizing:border-box;margin:0;padding:9px 10px;border:1px solid rgba(255,255,255,.08);border-radius:999px;background:#131316;overflow:hidden}.create-row :global(.compose>.av){display:block;width:38px;height:38px;flex:0 0 38px;border-radius:50%;object-fit:cover}.create-row :global(.compose .in){flex:1;min-width:0;font-size:13px;color:#a39fa9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.create-row :global(.compose .go){display:grid;place-items:center;width:38px;height:38px;flex:0 0 38px;border-radius:50%;background:#ec4899;color:#fff}
+.create-row{padding:8px 16px 4px}.create-row :global(.compose){display:flex;align-items:center;gap:12px;width:100%;min-height:58px;margin:0;padding:0;border:0;border-radius:0;background:transparent;overflow:visible}.create-row :global(.compose>.av){display:block;width:38px;height:38px;flex:0 0 38px;border-radius:50%;object-fit:cover}.create-row :global(.compose-field){display:flex;align-items:center;gap:10px;flex:1;min-width:0;height:52px;padding:6px 7px 6px 14px;border:1px solid rgba(255,255,255,.08);border-radius:999px;background:#131316}.create-row :global(.compose .in){flex:1;min-width:0;font-size:13px;color:#a39fa9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.create-row :global(.compose .go){display:grid;place-items:center;width:36px;height:36px;flex:0 0 36px;border-radius:50%;background:var(--color-accent);color:#fff;font-size:23px;font-weight:300;line-height:1}
 .sort,.cats{display:flex;align-items:center;gap:8px;padding:12px 16px 4px;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}.sort::-webkit-scrollbar,.cats::-webkit-scrollbar{display:none}.sort a,.cats a{flex:0 0 auto}
-.sort a,.cats a,.cat-choice{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:0 12px;border:1px solid rgba(255,255,255,.08);border-radius:999px;background:#131316;color:#a39fa9;text-decoration:none;font-size:12px;font-weight:650;white-space:nowrap}
-.sort a.active,.cats a.active,.cat-choice.active{border-color:rgba(236,72,153,.42);background:rgba(236,72,153,.12);color:#f2efe9}
+.sort a,.cats a,.cat-choice{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:0 12px;border:1px solid rgba(255,255,255,.08);border-radius:999px;background:#131316;color:#a39fa9;text-decoration:none;font-size:12px;font-weight:650;white-space:nowrap}.cats a{min-height:28px;padding:5px 11px;font-size:12px}
+.sort a.active,.cats a.active,.cat-choice.active{border-color:var(--color-border-accent);background:var(--color-accent-subtle);color:#f2efe9}
 .feed{display:grid;gap:0;padding:8px 0 0}
 .post{min-width:0;padding:18px 16px;border:0;border-bottom:1px solid rgba(255,255,255,.08);border-radius:0;background:transparent}.post:first-child{border-top:1px solid rgba(255,255,255,.08)}
 .hd{display:flex;align-items:center;gap:9px;min-height:38px}
@@ -245,15 +247,15 @@ searchInput?.addEventListener("input",()=>{const query=searchInput.value.trim().
 .av{display:block;width:38px;height:38px;flex:0 0 38px;border-radius:50%;object-fit:cover;background:#25252a}
 .hd time{margin-left:auto;color:#77737d;font-size:11px;white-space:nowrap}
 .more{width:36px;height:36px;border:0;background:transparent;color:#77737d;font-size:22px;line-height:1}.more:disabled{opacity:.75;cursor:default}
-.body{display:block;margin-top:10px;color:inherit;text-decoration:none}
+.post-content{margin-left:47px;min-width:0}.body{display:block;margin-top:10px;color:inherit;text-decoration:none}
 .body h2{margin:0 0 6px;font-size:17px;font-weight:800;line-height:1.3;letter-spacing:-.02em}
 .tx{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;margin:0;color:#b9b5bf;font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
 .image-link{display:block;margin-top:10px;overflow:hidden;border-radius:11px;background:#09090b}
 .img{display:block;width:100%;max-height:170px;object-fit:cover}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
-.tag{padding:5px 9px;border-radius:999px;background:#252127;color:#e7a1c5;font-size:10px;font-weight:700}
+.tag{padding:5px 11px;border-radius:999px;background:#25252a;color:#a39fa9;font-size:12px;font-weight:650}
 .anime-tag{background:#20252a;color:#a9c4d5}
-.acts{display:flex;align-items:center;gap:22px;margin-top:11px;padding-top:8px;border-top:1px solid rgba(255,255,255,.06)}
+.acts{display:flex;align-items:center;gap:22px;margin-top:8px;padding-top:0;border-top:0}
 .act{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:40px;min-height:40px;padding:0 4px;border:0;background:transparent;color:#a39fa9;text-decoration:none;font-size:12px}
 .act svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .act.liked{color:#ec4899}.act:disabled{opacity:.62;cursor:not-allowed}.act:disabled svg{opacity:.8}
