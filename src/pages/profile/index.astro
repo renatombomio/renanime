@@ -152,7 +152,7 @@ const profileCommentsCount = commentsCountError ? 0 : commentsCount ?? 0;
         <div class="profile-anime-grid" id="profile-watched-grid" data-ids={JSON.stringify(watched.slice(0, 4).map((entry: any) => String(entry.anime_id)))}></div>
         <div class="profile-library-heading"><h2>{isEnglish ? "My list" : "Mi lista"}</h2><a href={localizedPath(Astro.locals.lang, "/pending/")}>{isEnglish ? "See all" : "Ver todos"}</a></div>
         <div class="profile-anime-grid" id="profile-pending-grid" data-ids={JSON.stringify(pending.slice(0, 4).map((entry: any) => String(entry.anime_id)))}></div>
-        <div class="profile-library-heading"><h2>{isEnglish ? "Favorite anime" : "Animes favoritos"}</h2></div>
+        <div class="profile-library-heading"><h2>{isEnglish ? "Favorite anime" : "Animes favoritos"}</h2><a href={localizedPath(Astro.locals.lang, "/profile/anime-favorites/")}>{isEnglish ? "See all" : "Ver todos"}</a></div>
         <div class="profile-anime-grid" id="profile-favorites-grid" data-ids={JSON.stringify(favorites.map((entry: any) => String(entry.anime_id)))}></div>
         <div class="profile-library-heading" id="profile-character-favorites"><h2>{isEnglish ? "Favourite characters" : "Personajes favoritos"}</h2><a href={localizedPath(Astro.locals.lang, "/profile/characters/")}>{isEnglish ? "See all" : "Ver todos"}</a></div>
         {characterFavorites.length ? <div class="profile-character-grid">
