@@ -1,0 +1,131 @@
+---
+export const prerender = false;
+import Layout from "../../../layouts/Layout.astro";
+import Navbar from "../../../components/layout/Navbar.astro";
+import { createSupabaseSsrClient } from "../../../lib/supabase-ssr";
+import { localizedPath } from "../../../i18n";
+
+const lang = Astro.locals.lang;
+const isEnglish = lang === "en";
+const user = Astro.locals.renanimeUser;
+if (!user) return Astro.redirect(localizedPath(lang, "/login/"));
+const supabase = createSupabaseSsrClient(Astro.request, Astro.cookies);
+const { data, error } = await supabase
+  .from("anime_likes")
+  .select("anime_id, created_at")
+  .eq("user_id", user.id)
+  .order("created_at", { ascending: false })
+  .limit(1000);
+if (error) console.error("Renanime profile anime favorites error:", error.message);
+const animeIds = (data ?? []).map((row: any) => String(row.anime_id)).filter((id: string) => /^\\d+$/.test(id));
+---
+<Layout title={isEnglish ? "My favourite anime — Renanime" : "Mis animes favoritos — Renanime"}>
+  <Navbar />
+  <main class="profile-anime-favorites">
+    <a class="back-link" href={localizedPath(lang, "/profile/")}>← {isEnglish ? "Back to profile" : "Volver al perfil"}</a>
+    <header class="page-heading">
+      <div><p>{isEnglish ? "YOUR COLLECTION" : "TU COLECCIÓN"}</p><h1>{isEnglish ? "Favourite anime" : "Animes favoritos"}</h1></div>
+      <span id="favorite-anime-total">{animeIds.length}</span>
+    </header>
+    {error ? <p class="empty-state">{isEnglish ? "Your favourites could not be loaded." : "No se han podido cargar tus favoritos."}</p> :
+      <div id="favorite-anime-grid" class="anime-grid" data-ids={JSON.stringify(animeIds)}></div>}
+    <button id="load-more-favorite-anime" class="load-more" type="button" hidden>{isEnglish ? "Load more" : "Cargar más"}</button>
+    <p id="favorite-anime-feedback" class="feedback" role="status" aria-live="polite"></p>
+  </main>
+  <script>
+    const english = document.documentElement.lang === "en";
+    const copy = (es: string, en: string) => english ? en : es;
+    const grid = document.querySelector<HTMLElement>("#favorite-anime-grid");
+    const loadButton = document.querySelector<HTMLButtonElement>("#load-more-favorite-anime");
+    const feedback = document.querySelector<HTMLElement>("#favorite-anime-feedback");
+    const ids = grid ? JSON.parse(grid.dataset.ids || "[]") as string[] : [];
+    let cursor = 0;
+    const batchSize = 24;
+
+    function createAnimeCard(anime: any) {
+      const title = anime.title?.english || anime.title?.romaji || "Anime";
+      const card = document.createElement("a");
+      card.className = "anime-card";
+      card.href = (english ? "/en" : "") + "/anime/" + anime.id;
+      card.setAttribute("aria-label", title);
+      const image = document.createElement("img");
+      image.src = anime.coverImage?.large || "";
+      image.alt = "";
+      image.loading = "lazy";
+      const copyNode = document.createElement("span");
+      copyNode.className = "anime-card-copy";
+      const titleNode = document.createElement("strong");
+      titleNode.textContent = title;
+      const meta = document.createElement("span");
+      meta.textContent = anime.format || "";
+      copyNode.append(titleNode, meta);
+      card.append(image, copyNode);
+      return card;
+    }
+
+    async function loadNextBatch() {
+      if (!grid || !loadButton || loadButton.disabled) return;
+      if (cursor >= ids.length) { loadButton.hidden = true; return; }
+      const batch = ids.slice(cursor, cursor + batchSize);
+      loadButton.disabled = true;
+      loadButton.textContent = copy("Cargando…", "Loading…");
+      if (feedback) feedback.textContent = "";
+      try {
+        const variables: Record<string, number> = {};
+        const fields = batch.map((id, index) => {
+          variables["id" + index] = Number(id);
+          return "a" + index + ": Media(id: $id" + index + ", type: ANIME) { id title { romaji english } coverImage { large } format }";
+        }).join("\\n");
+        const definitions = batch.map((_, index) => "$id" + index + ": Int!").join(", ");
+        const response = await fetch("https://graphql.anilist.co", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify({ query: "query FavouriteAnime(" + definitions + ") { " + fields + " }", variables }),
+        });
+        if (!response.ok) throw new Error("ANILIST_UNAVAILABLE");
+        const payload = await response.json();
+        const cards = batch.map((_, index) => payload.data?.["a" + index]).filter(Boolean).map(createAnimeCard);
+        grid.append(...cards);
+        cursor += batch.length;
+        loadButton.hidden = cursor >= ids.length;
+        loadButton.textContent = copy("Cargar más", "Load more");
+      } catch {
+        if (feedback) feedback.textContent = copy("No se pudieron cargar los animes. Inténtalo de nuevo.", "Could not load anime. Try again.");
+        loadButton.textContent = copy("Reintentar", "Retry");
+      } finally {
+        loadButton.disabled = false;
+      }
+    }
+
+    if (ids.length) {
+      if (loadButton) loadButton.hidden = false;
+      void loadNextBatch();
+    } else if (grid) {
+      const empty = document.createElement("p");
+      empty.className = "empty-state";
+      empty.textContent = copy("Todavía no has marcado animes como favoritos. Pulsa el corazón en la ficha de un anime para añadirlo aquí.", "You haven't liked any anime yet. Tap the heart on an anime page to add it here.");
+      grid.replaceWith(empty);
+    }
+    loadButton?.addEventListener("click", () => void loadNextBatch());
+  </script>
+</Layout>
+
+<style>
+  .profile-anime-favorites{width:min(100% - 32px,1040px);margin:0 auto;padding:28px 0 64px;color:#f5f2ec}
+  .back-link{display:inline-block;margin-bottom:28px;color:#aaa4b0;text-decoration:none;font-size:.82rem}
+  .page-heading{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:20px}
+  .page-heading p{margin:0 0 7px;color:#ec4899;font-size:.66rem;font-weight:800;letter-spacing:.16em}
+  .page-heading h1{margin:0;font-size:clamp(1.55rem,4vw,2.2rem);letter-spacing:-.04em}
+  .page-heading>span{color:#aaa4b0;font-size:.9rem;font-variant-numeric:tabular-nums}
+  .anime-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+  .anime-card{display:grid;gap:8px;min-width:0;color:inherit;text-decoration:none}
+  .anime-card img{display:block;width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:10px;background:#202024}
+  .anime-card-copy{display:grid;gap:4px}
+  .anime-card-copy strong{font-size:.82rem;line-height:1.25}
+  .anime-card-copy>span{color:#99939f;font-size:.65rem;text-transform:uppercase;letter-spacing:.08em}
+  .load-more{display:block;width:100%;margin-top:22px;padding:12px;border:1px solid rgba(255,255,255,.22);border-radius:10px;background:#111;color:#fff;font:inherit;font-size:.8rem;cursor:pointer}
+  .load-more:disabled{opacity:.5}
+  .empty-state{color:#aaa4b0;font-size:.86rem;line-height:1.6}
+  .feedback{min-height:1.2em;color:#ff8ab9;font-size:.75rem}
+  @media(max-width:680px){.anime-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 10px}.anime-card-copy strong{font-size:.75rem}}
+</style>
