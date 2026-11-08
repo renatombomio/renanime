@@ -27,6 +27,23 @@ function json(data: unknown, status = 200) {
   });
 }
 
+function serializeEntry(row: { anime_id: number; status: string; metadata: unknown }): PersonalAnimeEntry {
+  const metadata = row.metadata && typeof row.metadata === "object" ? row.metadata as Record<string, unknown> : {};
+  return {
+    animeId: String(row.anime_id),
+    format: metadata.format === "SERIES" || metadata.format === "MOVIE" ? metadata.format : undefined,
+    franchiseId: typeof metadata.franchiseId === "string" ? metadata.franchiseId : undefined,
+    state: {
+      status: row.status === "seen" ? "WATCHED" : "PENDING",
+      favorite: metadata.favorite === true,
+      recommended: metadata.recommended === true,
+      ...(typeof metadata.personalScore === "number" ? { personalScore: metadata.personalScore } : {}),
+      ...(typeof metadata.personalRanking === "number" ? { personalRanking: metadata.personalRanking } : {}),
+      ...(typeof metadata.review === "string" ? { review: metadata.review } : {}),
+    },
+  };
+}
+
 function normalizeEntry(entry: LibraryEntry, userId: string) {
   const animeId = Number(entry?.animeId);
   if (!Number.isSafeInteger(animeId) || animeId <= 0 || !entry.state) return null;
@@ -137,16 +154,18 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     const row = normalizeEntry(body.entry, auth.user.id);
     if (!row) return json({ ok: false, error: "INVALID_ENTRY" }, 400);
 
-    const { error } = await supabase
+    const { data: saved, error } = await supabase
       .from("user_anime")
-      .upsert(row, { onConflict: "user_id,anime_id" });
+      .upsert(row, { onConflict: "user_id,anime_id" })
+      .select("anime_id,status,metadata")
+      .single();
 
-    if (error) {
-      console.error("Library update failed:", error.code);
+    if (error || !saved) {
+      console.error("Library update failed:", { code: error?.code, message: error?.message });
       return json({ ok: false, error: "LIBRARY_UPDATE_FAILED" }, 500);
     }
 
-    return json({ ok: true });
+    return json({ ok: true, entry: serializeEntry(saved) });
   } catch (error) {
     console.error("Library write setup failed:", error);
     return json({ ok: false, error: "AUTH_UNAVAILABLE" }, 503);
