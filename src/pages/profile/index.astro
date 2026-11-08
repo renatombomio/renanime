@@ -42,7 +42,7 @@ const { data: characterFavoriteData, error: characterFavoriteError } = await sup
   .select("character_id, created_at, characters(id, name, image_url)")
   .eq("user_id", user.id)
   .order("created_at", { ascending: false })
-  .limit(6);
+  .limit(1000);
 if (characterFavoriteError) console.error("Renanime profile character favorites error:", characterFavoriteError.message);
 const characterFavorites = (characterFavoriteData ?? []).map((row: any) => ({
   ...(Array.isArray(row.characters) ? row.characters[0] : row.characters),
