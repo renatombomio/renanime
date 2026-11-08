@@ -161,7 +161,7 @@ const publicImage=(path:string|null,status:string|null)=>{
 <script>
 const sheet=document.querySelector<HTMLDialogElement>("#composer-sheet");
 const closeSheet=()=>{if(sheet?.open)sheet.close();document.body.classList.remove("sheet-open");};
-const openSheet=()=>{if(sheet&&!sheet.open){sheet.showModal();document.body.classList.add("sheet-open");requestAnimationFrame(()=>titleInput?.focus({preventScroll:true}));}};
+const openSheet=()=>{if(sheet&&!sheet.open){sheet.showModal();document.body.classList.add("sheet-open");requestAnimationFrame(()=>document.querySelector<HTMLTextAreaElement>("#debate-title")?.focus({preventScroll:true}));}};
 document.querySelector(".create-row .compose")?.addEventListener("click",(event)=>{event.preventDefault();openSheet();});
 document.querySelector("#cancel-composer")?.addEventListener("click",closeSheet);
 sheet?.addEventListener("click",(event)=>{if(event.target===sheet)closeSheet();});
