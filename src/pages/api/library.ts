@@ -134,6 +134,10 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         .map((entry) => normalizeEntry(entry, auth.user.id))
         .filter((entry): entry is NonNullable<typeof entry> => entry !== null);
 
+      if (rows.length !== body.entries.length) {
+        return json({ ok: false, error: "INVALID_LIBRARY_ENTRY" }, 400);
+      }
+
       if (rows.length) {
         const { error } = await supabase
           .from("user_anime")
