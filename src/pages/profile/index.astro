@@ -42,7 +42,7 @@ const { data: characterFavoriteData, error: characterFavoriteError } = await sup
   .select("character_id, created_at, characters(id, name, image_url)")
   .eq("user_id", user.id)
   .order("created_at", { ascending: false })
-  .limit(1000);
+  .limit(4);
 if (characterFavoriteError) console.error("Renanime profile character favorites error:", characterFavoriteError.message);
 const characterFavorites = (characterFavoriteData ?? []).map((row: any) => ({
   ...(Array.isArray(row.characters) ? row.characters[0] : row.characters),
@@ -154,7 +154,7 @@ const profileCommentsCount = commentsCountError ? 0 : commentsCount ?? 0;
         <div class="profile-anime-grid" id="profile-pending-grid" data-ids={JSON.stringify(pending.slice(0, 4).map((entry: any) => String(entry.anime_id)))}></div>
         <div class="profile-library-heading"><h2>{isEnglish ? "Favorite anime" : "Animes favoritos"}</h2></div>
         <div class="profile-anime-grid" id="profile-favorites-grid" data-ids={JSON.stringify(favorites.map((entry: any) => String(entry.anime_id)))}></div>
-        <div class="profile-library-heading" id="profile-character-favorites"><h2>{isEnglish ? "Favourite characters" : "Personajes favoritos"}</h2><span class="profile-character-count">{characterFavoritesCount ?? 0}</span></div>
+        <div class="profile-library-heading" id="profile-character-favorites"><h2>{isEnglish ? "Favourite characters" : "Personajes favoritos"}</h2><a href={localizedPath(Astro.locals.lang, "/profile/characters/")}>{isEnglish ? "See all" : "Ver todos"}</a></div>
         {characterFavorites.length ? <div class="profile-character-grid">
           {characterFavorites.map((character: any) => <article class="profile-character-card" data-character-id={character.id}>
             {character.image_url && <img src={character.image_url} alt="" loading="lazy" />}
@@ -162,6 +162,7 @@ const profileCommentsCount = commentsCountError ? 0 : commentsCount ?? 0;
             <button class="profile-character-remove" type="button" data-character-like={character.id} aria-label={isEnglish ? "Remove from favourites" : "Quitar de favoritos"} title={isEnglish ? "Remove from favourites" : "Quitar de favoritos"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 11-8.8 11S3.2 14 3.2 8.8a4.5 4.5 0 0 1 8.8-1.1 4.5 4.5 0 0 1 8.8 1.1Z"/></svg></button>
           </article>)}
         </div> : <p class="profile-character-empty">{isEnglish ? "You haven't liked any characters yet. Tap the heart on a character card in an anime page to add one here." : "Todavía no has marcado personajes como favoritos. Pulsa el corazón de una tarjeta en la ficha de un anime para añadirlos aquí."}</p>}
+        {characterFavoritesCount > 4 && <a class="profile-character-see-all" href={localizedPath(Astro.locals.lang, "/profile/characters/")}>{isEnglish ? "See all " : "Ver todos "}{characterFavoritesCount} {isEnglish ? "characters" : "personajes"}</a>}
       </section>
 
 
@@ -173,7 +174,7 @@ const profileCommentsCount = commentsCountError ? 0 : commentsCount ?? 0;
 </Layout>
 
 <style>
-  .profile-character-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0 24px}
+  .profile-character-see-all{display:inline-flex;margin:0 0 20px;color:#ec4899;font-size:.78rem;text-decoration:none}\n  .profile-character-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0 24px}
   .profile-character-card{position:relative;display:flex;align-items:center;gap:10px;min-width:0;padding:8px;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:#101012}
   .profile-character-card>img{width:64px;height:78px;flex:0 0 64px;object-fit:cover;border-radius:8px;background:#222}
   .profile-character-copy{display:grid;gap:5px;min-width:0;padding-right:26px}
