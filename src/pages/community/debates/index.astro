@@ -130,11 +130,7 @@ const publicImage=(path:string|null,status:string|null)=>{
             <textarea name="title" id="debate-title" minlength="8" maxlength="120" required rows="1" autofocus placeholder={en?"What would you like to debate?":"¿Qué quieres debatir?"}></textarea>
             <textarea name="body" id="debate-body" maxlength="500" rows="1" placeholder={en?"Add your argument (optional)":"Añade tu argumento (opcional)"}></textarea><span class="body-count" id="body-count" hidden></span>
             <div class="image-preview" id="image-preview" hidden><img id="preview-img" alt=""/><button type="button" id="remove-image" aria-label={en?"Remove image":"Quitar imagen"}>×</button></div>
-            <div class="image-controls" id="image-controls" hidden>
-              <label class="image-control"><span>{en?"Zoom":"Zoom"}</span><input id="image-zoom" type="range" min="1" max="2.5" step="0.05" value="1"/><output id="image-zoom-value">1×</output></label>
-              <label class="image-control"><span>{en?"Vertical position":"Posición vertical"}</span><input id="image-position" type="range" min="0" max="100" step="1" value="50"/><output id="image-position-value">{en?"Center":"Centro"}</output></label>
-              <button class="image-reset" type="button" id="reset-image">{en?"Reset":"Restablecer"}</button>
-            </div>
+
             <div class="anime-field">
               <label class="anime-label" for="anime-title">{en?"RELATED ANIME · OPTIONAL":"ANIME RELACIONADO · OPCIONAL"}</label>
               <div class="anime-control">
@@ -181,11 +177,6 @@ document.querySelectorAll<HTMLButtonElement>("[data-category]").forEach(button=>
 const imageInput=document.querySelector<HTMLInputElement>("#debate-image");
 const preview=document.querySelector<HTMLElement>("#image-preview");
 const previewImage=document.querySelector<HTMLImageElement>("#preview-img");
-const imageControls=document.querySelector<HTMLElement>("#image-controls");
-const zoomInput=document.querySelector<HTMLInputElement>("#image-zoom");
-const positionInput=document.querySelector<HTMLInputElement>("#image-position");
-const zoomValue=document.querySelector<HTMLOutputElement>("#image-zoom-value");
-const positionValue=document.querySelector<HTMLOutputElement>("#image-position-value");
 const imageZoomField=document.createElement("input");
 imageZoomField.type="hidden";imageZoomField.name="imageZoom";imageZoomField.value="1";
 const imagePositionField=document.createElement("input");
@@ -193,32 +184,66 @@ imagePositionField.type="hidden";imagePositionField.name="imagePositionY";imageP
 document.querySelector<HTMLFormElement>("#debate-form")?.append(imageZoomField,imagePositionField);
 let previewUrl:string|undefined;
 let previewDimensions:{width:number;height:number}|null=null;
+let imageZoom=1;
+let imagePositionY=50;
+const activePointers=new Map<number,{x:number;y:number}>();
+let gestureStart:{zoom:number;position:number;y:number;distance:number;centerY:number}|null=null;
+const clamp=(value:number,min:number,max:number)=>Math.min(max,Math.max(min,value));
 const fitImagePreview=()=>{
  if(!preview||!previewDimensions)return;
- const maxWidth=preview.parentElement?.clientWidth??320;
- const scale=Math.min(maxWidth/previewDimensions.width,260/previewDimensions.height);
- preview.style.width=Math.round(previewDimensions.width*scale)+"px";
- preview.style.height=Math.round(previewDimensions.height*scale)+"px";
+ const width=preview.parentElement?.clientWidth??320;
+ const height=width*previewDimensions.height/previewDimensions.width;
+ preview.style.width="100%";
+ preview.style.height=Math.round(height)+"px";
 };
-window.addEventListener("resize",fitImagePreview);
 const updateImageAdjustments=()=>{
- const zoom=Number(zoomInput?.value||1);
- const position=Number(positionInput?.value||50);
- const pan=(50-position)*(zoom-1);
- if(previewImage){previewImage.style.transform="translateY("+pan+"%) scale("+zoom+")";}
- if(zoomValue)zoomValue.value=zoom.toFixed(2).replace(/0+$/,"").replace(/\.$/,"")+"×";
- if(positionValue)positionValue.value=position<45?(en?"Top":"Arriba"):position>55?(en?"Bottom":"Abajo"):(en?"Center":"Centro");
- imageZoomField.value=String(zoom);
- imagePositionField.value=String(position);
+ if(!previewImage||!preview)return;
+ const maxTravel=(imageZoom-1)*preview.clientHeight/2;
+ const translateY=((50-imagePositionY)/50)*maxTravel;
+ previewImage.style.transform="translate3d(0,"+translateY+"px,0) scale("+imageZoom+")";
+ imageZoomField.value=String(imageZoom);
+ imagePositionField.value=String(imagePositionY);
 };
-const resetImageAdjustments=()=>{
- if(zoomInput)zoomInput.value="1";
- if(positionInput)positionInput.value="50";
+const resetImageAdjustments=()=>{imageZoom=1;imagePositionY=50;updateImageAdjustments();};
+const pointerDistance=(points:{x:number;y:number}[])=>Math.hypot(points[0].x-points[1].x,points[0].y-points[1].y);
+const pointerCenterY=(points:{x:number;y:number}[])=> (points[0].y+points[1].y)/2;
+preview?.addEventListener("pointerdown",(event)=>{
+ if(!previewImage||!previewDimensions)return;
+ event.preventDefault();
+ preview.setPointerCapture(event.pointerId);
+ activePointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
+ const points=[...activePointers.values()];
+ gestureStart={zoom:imageZoom,position:imagePositionY,y:event.clientY,distance:points.length>1?pointerDistance(points):0,centerY:points.length>1?pointerCenterY(points):event.clientY};
+});
+preview?.addEventListener("pointermove",(event)=>{
+ if(!activePointers.has(event.pointerId)||!gestureStart||!preview)return;
+ activePointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
+ const points=[...activePointers.values()];
+ if(points.length>=2&&gestureStart.distance>0){
+  const distance=pointerDistance(points);
+  imageZoom=clamp(gestureStart.zoom*(distance/gestureStart.distance),1,2.5);
+  const centerDelta=pointerCenterY(points)-gestureStart.centerY;
+  const maxTravel=Math.max(1,(imageZoom-1)*preview.clientHeight/2);
+  imagePositionY=clamp(gestureStart.position-(centerDelta/maxTravel)*50,0,100);
+ }else if(points.length===1){
+  const delta=event.clientY-gestureStart.y;
+  const maxTravel=Math.max(1,(imageZoom-1)*preview.clientHeight/2);
+  imagePositionY=clamp(gestureStart.position-(delta/maxTravel)*50,0,100);
+ }
  updateImageAdjustments();
+});
+const finishImageGesture=(event:PointerEvent)=>{
+ activePointers.delete(event.pointerId);
+ if(activePointers.size===0)gestureStart=null;
+ else{
+  const points=[...activePointers.values()];
+  gestureStart={zoom:imageZoom,position:imagePositionY,y:points[0].y,distance:points.length>1?pointerDistance(points):0,centerY:points.length>1?pointerCenterY(points):points[0].y};
+ }
 };
-zoomInput?.addEventListener("input",updateImageAdjustments);
-positionInput?.addEventListener("input",updateImageAdjustments);
-document.querySelector("#reset-image")?.addEventListener("click",resetImageAdjustments);
+preview?.addEventListener("pointerup",finishImageGesture);
+preview?.addEventListener("pointercancel",finishImageGesture);
+preview?.addEventListener("lostpointercapture",finishImageGesture);
+window.addEventListener("resize",fitImagePreview);
 imageInput?.addEventListener("change",()=>{
  const file=imageInput.files?.[0];if(!file)return;
  if(file.size>5*1024*1024||!["image/jpeg","image/png","image/webp","image/avif"].includes(file.type)){imageInput.value="";return;}
@@ -227,18 +252,17 @@ imageInput?.addEventListener("change",()=>{
   previewImage.onload=()=>{
    previewDimensions={width:previewImage.naturalWidth,height:previewImage.naturalHeight};
    fitImagePreview();
+   resetImageAdjustments();
   };
   previewImage.src=previewUrl;
  }
  if(preview)preview.hidden=false;
- if(imageControls)imageControls.hidden=false;
- resetImageAdjustments();
 });
 document.querySelector("#remove-image")?.addEventListener("click",()=>{
  if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=undefined;if(imageInput)imageInput.value="";
- if(preview){preview.hidden=true;preview.style.aspectRatio="";preview.style.width="";preview.style.height="";}previewDimensions=null;
- if(imageControls)imageControls.hidden=true;
- resetImageAdjustments();
+ if(preview){preview.hidden=true;preview.style.width="";preview.style.height="";}
+ if(previewImage){previewImage.removeAttribute("src");previewImage.style.transform="";}
+ previewDimensions=null;activePointers.clear();resetImageAdjustments();
 });
 const titleInput=document.querySelector<HTMLTextAreaElement>("#debate-title");
 const bodyInput=document.querySelector<HTMLTextAreaElement>("#debate-body");
@@ -314,8 +338,8 @@ searchInput?.addEventListener("input",()=>{const query=searchInput.value.trim().
 .post-content{margin-left:47px;min-width:0}.body{display:block;margin-top:10px;color:inherit;text-decoration:none}
 .body h2{margin:0 0 6px;font-size:17px;font-weight:800;line-height:1.3;letter-spacing:-.02em}
 .tx{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;margin:0;color:#b9b5bf;font-size:13px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
-.image-link{display:inline-block;width:fit-content;max-width:100%;margin-top:10px;overflow:hidden;border-radius:11px;background:#09090b;vertical-align:top}
-.img{display:block;width:auto;height:auto;max-width:100%;max-height:360px;object-fit:contain}
+.image-link{display:block;width:100%;max-width:100%;margin-top:10px;overflow:hidden;border-radius:11px;background:#09090b}
+.img{display:block;width:100%;height:auto;max-width:100%;max-height:none;object-fit:contain}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .tag{padding:5px 11px;border-radius:999px;background:#25252a;color:#a39fa9;font-size:12px;font-weight:650}
 .anime-tag{background:#20252a;color:#a9c4d5}
@@ -343,17 +367,11 @@ searchInput?.addEventListener("input",()=>{const query=searchInput.value.trim().
 #debate-body{min-height:22px;margin-top:2px;color:#b9b5bf;font-size:14.5px;font-weight:400;line-height:1.45}
 #debate-body::placeholder{color:#8d8993}
 .body-count{display:block;margin-top:2px;text-align:right;color:#77737d;font-size:11px;line-height:1.2}.body-count[hidden]{display:none}
-.image-preview{position:relative;width:100%;max-width:100%;max-height:260px;margin:6px 0 0;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:#09090b;overflow:hidden;display:block;isolation:isolate}
+.image-preview{position:relative;width:100%;max-width:100%;margin:6px 0 0;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:#09090b;overflow:hidden;display:block;isolation:isolate;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.image-preview:active{cursor:grabbing}
 .image-preview[hidden]{display:none}
-.image-preview img{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;max-height:none;border-radius:13px;object-fit:cover;transform-origin:center center;will-change:transform}
+.image-preview img{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;max-height:none;border-radius:13px;object-fit:cover;transform-origin:center center;will-change:transform;pointer-events:none;user-select:none;-webkit-user-drag:none}
 .image-preview button{position:absolute;z-index:2;top:7px;right:7px;display:grid;place-items:center;width:28px;height:28px;padding:0;border:0;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;font-size:20px;line-height:1}
-.image-controls{display:grid;grid-template-columns:1fr auto;gap:8px 12px;margin-top:10px;padding:10px 12px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:#17171b}
-.image-controls[hidden]{display:none}
-.image-control{display:grid;grid-template-columns:105px minmax(0,1fr) 38px;align-items:center;gap:8px;color:#aaa6b0;font-size:11px}
-.image-control input{width:100%;min-width:0;accent-color:var(--color-accent)}
-.image-control output{text-align:right;color:#f2efe9;font-size:11px;font-variant-numeric:tabular-nums}
-.image-reset{grid-column:2;grid-row:1 / span 2;align-self:center;padding:7px 9px;border:1px solid rgba(255,255,255,.1);border-radius:8px;background:transparent;color:#aaa6b0;font:inherit;font-size:11px}
-@media(max-width:380px){.image-control{grid-template-columns:86px minmax(0,1fr) 34px;gap:5px}.image-reset{padding:6px}}
 .anime-field{margin-top:12px}
 .anime-label{display:block;margin-bottom:6px;color:#77737d;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
 .anime-control{display:flex;align-items:center;gap:8px;min-height:42px;padding:0 12px;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:#17171b}
