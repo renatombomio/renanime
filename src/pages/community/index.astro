@@ -58,6 +58,18 @@ if(topAnime.length){
   if(response.ok){const payload=await response.json();topAnimeMetadata=new Map((payload.data?.Page?.media??[]).map((x:any)=>[x.id,{title:x.title.romaji||x.title.english||"Anime",cover:x.coverImage.extraLarge||x.coverImage.large||null}]));}
  }catch(error){console.error("Community top anime metadata error:",error);}
 }
+const {data:characterLikeRows,error:characterLikesError}=await fetchAllRows("character_likes","character_id,created_at","created_at");
+const {data:characterMetadata,error:characterMetadataError}=await supabase.from("characters").select("id,name,image_url");
+const characterCounts=new Map<number,{likes:number;lastLike:string}>();
+for(const item of characterLikeRows??[]){
+ const id=Number(item.character_id);if(!Number.isSafeInteger(id)||id<=0)continue;
+ const current=characterCounts.get(id)??{likes:0,lastLike:item.created_at};
+ current.likes++;
+ if(new Date(item.created_at).getTime()>new Date(current.lastLike).getTime())current.lastLike=item.created_at;
+ characterCounts.set(id,current);
+}
+const characterMetadataById=new Map((characterMetadata??[]).map((item:any)=>[item.id,item]));
+const topCharacters=[...characterCounts.entries()].map(([id,stats])=>({id,...stats,...(characterMetadataById.get(id)??{})})).filter(item=>item.name).sort((a,b)=>b.likes-a.likes||new Date(b.lastLike).getTime()-new Date(a.lastLike).getTime()).slice(0,5);
 type Activity={id:string;kind:"comment"|"like"|"joined";aka:string;avatar:string|null;created:string;content:string|null;animeId:number|null;animeTitle:string};
 let activity:Activity[]=[];
 try{
@@ -98,6 +110,15 @@ const cats:Record<string,string>=en?{anime:"Anime",characters:"Characters",theor
  <div class="top-anime-list">{topAnime.slice(1).map((anime,index)=><a class="top-anime-row" href={base+"/anime/"+anime.id+"/"}><span class="top-anime-position">#{index+2}</span>{topAnimeMetadata.get(anime.id)?.cover && <img src={topAnimeMetadata.get(anime.id)?.cover??""} alt="" loading="lazy"/>}<span class="top-anime-name">{topAnimeMetadata.get(anime.id)?.title??("Anime #"+anime.id)}</span><span class="top-anime-row-likes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 11-8.8 11S3.2 14 3.2 8.8a4.5 4.5 0 0 1 8.8-1.1 4.5 4.5 0 0 1 8.8 1.1Z"/></svg>{anime.likes.toLocaleString(en?"en":"es")}</span></a>)}</div>
  </div>:<p class="community-note">{en?"No anime likes yet.":"Todavía no hay animes con me gusta."}</p>}
  </section>
+ <section class="community-top-characters-section"><div class="sec"><h2>{en?"Loved by Renanime":"Los personajes más queridos de Renanime"}</h2></div>
+ {characterLikesError||characterMetadataError?<p class="community-note">{en?"Character ranking is temporarily unavailable.":"El ranking de personajes no está disponible temporalmente."}</p>:topCharacters.length?<div class="top-character-layout">
+  {topCharacters.map((character,index)=><article class={"top-character-card"+(index===0?" is-featured":"")}>
+   <span class="top-character-position">#{index+1}</span>
+   {character.image_url&&<img src={character.image_url} alt="" loading="lazy"/>}
+   <div class="top-character-info"><strong>{character.name}</strong><span>{character.likes.toLocaleString(en?"en":"es")} {en?"likes":"likes"}</span></div>
+  </article>)}
+ </div>:<p class="community-note">{en?"No character likes yet.":"Todavía no hay personajes con me gusta."}</p>}
+ </section>
  <section class="activity-section"><div class="sec"><h2>{en?"Recent activity":"Actividad reciente"}</h2></div>
  {activity.length?<div class="activity-feed">{activity.map(x=><article class="actv"><a href={base+"/u/"+encodeURIComponent(x.aka)+"/"} aria-label={"@"+x.aka}><img class="av" src={x.avatar||"/images/profile-avatar-placeholder.svg"} alt="" loading="lazy"/></a><div class="t"><a href={base+"/u/"+encodeURIComponent(x.aka)+"/"}><b>@{x.aka}</b></a> {x.kind==="like"?(en?"liked":"le ha gustado"):x.kind==="joined"?(en?"joined Renanime":"se ha unido a Renanime"):(en?"commented on":"ha comentado en")} {x.animeId!==null&&<a href={base+"/anime/"+x.animeId+"/"}><q>{x.animeTitle}</q></a>}{x.kind==="comment"&&x.content&&<span class="activity-quote"> “{x.content}”</span>}</div><em>{age(x.created)}</em></article>)}</div>:<p class="community-note">{en?"No recent activity yet.":"Todavía no hay actividad reciente."}</p>}
  </section><p id="community-no-results" class="community-note" hidden>{en?"No results match your search.":"No hay resultados para esa búsqueda."}</p>
@@ -114,6 +135,17 @@ const cats:Record<string,string>=en?{anime:"Anime",characters:"Characters",theor
 .community-trending-section .acts{gap:22px;margin:3px 0 0 47px;padding:0}
 .community-trending-section .act{min-width:40px;min-height:40px;padding:0 4px}
 .community-top-anime-section{padding-bottom:18px}
+.community-top-characters-section{padding:0 0 18px}
+.top-character-layout{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;padding:4px 16px 12px}
+.top-character-card{position:relative;min-width:0;overflow:hidden;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:#121114;color:#fff}
+.top-character-card img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;background:#202024}
+.top-character-position{position:absolute;z-index:1;top:7px;left:7px;padding:4px 7px;border-radius:999px;background:rgba(0,0,0,.78);font-size:10px;font-weight:800}
+.top-character-info{display:grid;gap:5px;padding:8px}
+.top-character-info strong{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:11px;line-height:1.2}
+.top-character-info span{color:#aaa4b0;font-size:10px;font-weight:700}
+.top-character-card.is-featured{border-color:rgba(242,197,216,.4)}
+@media(max-width:600px){.top-character-layout{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding-left:12px;padding-right:12px}.top-character-card:nth-child(n+4){display:none}.top-character-card.is-featured{grid-row:span 1}}
+
 .top-anime-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:12px;padding:4px 16px 12px}
 .top-anime-feature{position:relative;display:flex;min-height:310px;flex-direction:column;justify-content:flex-end;gap:8px;padding:16px;border-radius:14px;overflow:hidden;background:linear-gradient(180deg,#24202a,#09090b);color:#fff;text-decoration:none;isolation:isolate}
 .top-anime-feature:after{position:absolute;z-index:-1;inset:0;content:"";background:linear-gradient(180deg,rgba(0,0,0,.08) 15%,rgba(0,0,0,.88) 100%)}
