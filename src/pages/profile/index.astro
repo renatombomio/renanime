@@ -37,6 +37,21 @@ const { data: favoriteData, error: favoriteError } = await supabase
   .limit(4);
 if (favoriteError) console.error("Renanime profile favorites error:", favoriteError.message);
 const favorites = Array.isArray(favoriteData) ? favoriteData : [];
+const { data: characterFavoriteData, error: characterFavoriteError } = await supabase
+  .from("character_likes")
+  .select("character_id, created_at, characters(id, name, image_url)")
+  .eq("user_id", user.id)
+  .order("created_at", { ascending: false })
+  .limit(6);
+if (characterFavoriteError) console.error("Renanime profile character favorites error:", characterFavoriteError.message);
+const characterFavorites = (characterFavoriteData ?? []).map((row: any) => ({
+  ...(Array.isArray(row.characters) ? row.characters[0] : row.characters),
+  character_id: row.character_id,
+})).filter((item: any) => item?.id && item?.name);
+const { count: characterFavoritesCount } = await supabase
+  .from("character_likes")
+  .select("character_id", { count: "exact", head: true })
+  .eq("user_id", user.id);
 const favoritesCount = favoriteError ? 0 : (await supabase.from("anime_likes").select("anime_id", { count: "exact", head: true }).eq("user_id", user.id)).count ?? 0;
 const { count: commentsCount, error: commentsCountError } = await supabase
   .from("anime_comments")
@@ -129,6 +144,7 @@ const profileCommentsCount = commentsCountError ? 0 : commentsCount ?? 0;
           <strong>{pending.length}</strong><span>{isEnglish ? "On my list" : "En mi lista"}</span>
         </a>
         <a href="#profile-favorites-grid" class="profile-stat"><strong>{favoritesCount}</strong><span>{isEnglish ? "Favorites" : "Favoritos"}</span></a>
+        <a href="#profile-character-favorites" class="profile-stat"><strong>{characterFavoritesCount ?? 0}</strong><span>{isEnglish ? "Favourite characters" : "Personajes favoritos"}</span></a>
         <div class="profile-stat"><strong>{profileCommentsCount}</strong><span>{isEnglish ? "Comments" : "Comentarios"}</span></div>
       </section>
 
@@ -139,6 +155,14 @@ const profileCommentsCount = commentsCountError ? 0 : commentsCount ?? 0;
         <div class="profile-anime-grid" id="profile-pending-grid" data-ids={JSON.stringify(pending.slice(0, 4).map((entry: any) => String(entry.anime_id)))}></div>
         <div class="profile-library-heading"><h2>{isEnglish ? "Favorite anime" : "Animes favoritos"}</h2></div>
         <div class="profile-anime-grid" id="profile-favorites-grid" data-ids={JSON.stringify(favorites.map((entry: any) => String(entry.anime_id)))}></div>
+        <div class="profile-library-heading" id="profile-character-favorites"><h2>{isEnglish ? "Favourite characters" : "Personajes favoritos"}</h2><span class="profile-character-count">{characterFavoritesCount ?? 0}</span></div>
+        {characterFavorites.length ? <div class="profile-character-grid">
+          {characterFavorites.map((character: any) => <article class="profile-character-card" data-character-id={character.id}>
+            {character.image_url && <img src={character.image_url} alt="" loading="lazy" />}
+            <div class="profile-character-copy"><strong>{character.name}</strong><span>{isEnglish ? "Your favourite" : "Tu favorito"}</span></div>
+            <button class="profile-character-remove" type="button" data-character-like={character.id} aria-label={isEnglish ? "Remove from favourites" : "Quitar de favoritos"} title={isEnglish ? "Remove from favourites" : "Quitar de favoritos"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 11-8.8 11S3.2 14 3.2 8.8a4.5 4.5 0 0 1 8.8-1.1 4.5 4.5 0 0 1 8.8 1.1Z"/></svg></button>
+          </article>)}
+        </div> : <p class="profile-character-empty">{isEnglish ? "You haven't liked any characters yet. Tap the heart on a character card in an anime page to add one here." : "Todavía no has marcado personajes como favoritos. Pulsa el corazón de una tarjeta en la ficha de un anime para añadirlos aquí."}</p>}
       </section>
 
 
@@ -150,6 +174,17 @@ const profileCommentsCount = commentsCountError ? 0 : commentsCount ?? 0;
 </Layout>
 
 <style>
+  .profile-character-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0 24px}
+  .profile-character-card{position:relative;display:flex;align-items:center;gap:10px;min-width:0;padding:8px;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:#101012}
+  .profile-character-card>img{width:64px;height:78px;flex:0 0 64px;object-fit:cover;border-radius:8px;background:#222}
+  .profile-character-copy{display:grid;gap:5px;min-width:0;padding-right:26px}
+  .profile-character-copy strong{font-size:.78rem;line-height:1.25;overflow-wrap:anywhere}
+  .profile-character-copy span,.profile-character-count{color:#99939f;font-size:.68rem}
+  .profile-character-remove{position:absolute;right:8px;top:8px;display:grid;place-items:center;width:30px;height:30px;border:1px solid rgba(255,91,151,.35);border-radius:50%;background:rgba(0,0,0,.7);color:#ff5b97;cursor:pointer}
+  .profile-character-remove svg{width:16px;height:16px;fill:currentColor;stroke:currentColor;stroke-width:1.2}
+  .profile-character-remove:disabled{opacity:.5;cursor:wait}
+  .profile-character-empty{margin:8px 0 24px;color:#aaa4b0;font-size:.8rem;line-height:1.5}
+  @media(max-width:600px){.profile-character-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.profile-character-card{gap:7px;padding:6px}.profile-character-card>img{width:54px;height:68px;flex-basis:54px}.profile-character-copy strong{font-size:.7rem}}
   .profile-editor { margin: 0; overflow: visible; border: 0; border-radius: 0; background: transparent; }
   .cover-preview { position: relative; width: 100%; height: clamp(210px, 34vw, 340px); background: linear-gradient(135deg,#24202a,#111); background-size: cover; background-position: center; isolation: isolate; }
   .cover-edit { position:absolute; right:1rem; bottom:1rem; z-index:5; display:none; cursor:pointer; pointer-events:auto; }
@@ -421,6 +456,34 @@ const profileCommentsCount = commentsCountError ? 0 : commentsCount ?? 0;
   // ClientRouter keeps the document alive between routes: delegate clicks to the
   // persistent document so controls work on every visit to /profile/.
   document.addEventListener("click", (event) => {
+    const characterLikeButton = target.closest<HTMLButtonElement>("[data-character-like]");
+    if (characterLikeButton) {
+      event.preventDefault();
+      const characterId = characterLikeButton.dataset.characterLike;
+      if (!characterId || characterLikeButton.disabled) return;
+      characterLikeButton.disabled = true;
+      try {
+        const response = await fetch("/api/characters/" + characterId + "/like", { method: "POST", credentials: "same-origin" });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || !result.ok) throw new Error("character_favorite_failed");
+        if (!result.liked) {
+          characterLikeButton.closest(".profile-character-card")?.remove();
+          const count = document.querySelector<HTMLElement>(".profile-character-count");
+          if (count) count.textContent = String(Math.max(0, Number(count.textContent || 0) - 1));
+          const stat = document.querySelector<HTMLElement>(".profile-stat[href='#profile-character-favorites'] strong");
+          if (stat) stat.textContent = String(Math.max(0, Number(stat.textContent || 0) - 1));
+          if (!document.querySelector(".profile-character-card")) {
+            const grid = document.querySelector(".profile-character-grid");
+            grid?.insertAdjacentHTML("afterend", '<p class="profile-character-empty">' + copy("Todavía no has marcado personajes como favoritos. Pulsa el corazón de una tarjeta en la ficha de un anime para añadirlos aquí.", "You haven\'t liked any characters yet. Tap the heart on a character card in an anime page to add one here.") + '</p>');
+            grid?.remove();
+          }
+        }
+      } catch {
+        characterLikeButton.title = copy("No se pudo actualizar.", "Could not update.");
+      } finally { characterLikeButton.disabled = false; }
+      return;
+    }
+
     const target = event.target;
     if (!(target instanceof Element)) return;
 
