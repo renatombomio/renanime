@@ -38,30 +38,44 @@ async function request(input: RequestInfo, init?: RequestInit) {
   return response.json();
 }
 
+async function fetchRemoteLibrary(): Promise<PersonalAnimeEntry[]> {
+  const entries: PersonalAnimeEntry[] = [];
+  const pageSize = 500;
+  let offset = 0;
+  while (true) {
+    const page = await request("/api/library?limit=" + pageSize + "&offset=" + offset);
+    if (!Array.isArray(page?.entries)) throw new Error("Respuesta de biblioteca no válida");
+    entries.push(...page.entries as PersonalAnimeEntry[]);
+    if (page.hasMore !== true || page.entries.length === 0) break;
+    offset += page.entries.length;
+  }
+  return entries;
+}
+
 export async function hydratePersonalLibrary() {
   if (!isBrowser() || hydrated) return;
   if (hydrating) return hydrating;
 
   hydrating = (async () => {
     try {
-      const remote = await request("/api/library");
-      library = Array.isArray(remote) ? remote : [];
+      library = await fetchRemoteLibrary();
       const legacy = readLegacy();
 
       if (legacy.length) {
-        await request("/api/library", {
-          method: "POST",
-          body: JSON.stringify({ action: "sync", entries: legacy }),
-        });
-        const migrated = await request("/api/library");
-        library = Array.isArray(migrated) ? migrated : library;
+        for (let offset = 0; offset < legacy.length; offset += 500) {
+          await request("/api/library", {
+            method: "POST",
+            body: JSON.stringify({ action: "sync", entries: legacy.slice(offset, offset + 500) }),
+          });
+        }
+        library = await fetchRemoteLibrary();
       }
 
       window.localStorage.removeItem(STORAGE_KEY);
       hydrated = true;
       notify();
     } catch {
-      // Never delete legacy data when Supabase cannot be reached.
+      // Keep legacy browser data intact until every remote read/write succeeds.
     } finally {
       hydrating = null;
     }
