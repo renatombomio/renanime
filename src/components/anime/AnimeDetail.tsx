@@ -170,6 +170,7 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
             coverImage{extraLarge large}
             bannerImage
             trailer{id site thumbnail}
+            characters(page:1,perPage:12,sort:ROLE){edges{role node{id name{full} image{large}}}}
             relations{
               edges{
                 relationType
