@@ -50,12 +50,12 @@ export const POST:APIRoute=async({request,cookies})=>{
   }
 
   const {data,error}=await supabase.from("community_debates").insert({
-   author_id:auth.user.id,title,body,category,anime_id:animeId,anime_title:animeTitle||null,
+   author_id:auth.user.id,title,body,category,
    image_path:imagePath,image_status:imagePath?"approved":"none",status:"published"
   }).select("id").single();
   if(error||!data){
    if(uploadedPath)await supabase.storage.from("debate-images").remove([uploadedPath]);
-   console.warn("Community debate create failed:",error?.code);
+   console.error("Community debate create failed:",{code:error?.code,message:error?.message,details:error?.details,hint:error?.hint});
    return json({ok:false,error:"DEBATE_CREATE_FAILED"},503);
   }
   return json({ok:true,id:data.id},201);
