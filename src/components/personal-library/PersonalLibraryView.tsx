@@ -53,6 +53,8 @@ export default function PersonalLibraryView({mode,lang="es"}:Props){
   const [loading,setLoading]=useState(true);
   const [loadError,setLoadError]=useState(false);
   const [visible,setVisible]=useState(PAGE_SIZE);
+  const visibleEntries=entries.slice(0,visible);
+  const visibleIds=visibleEntries.map(entry=>entry.animeId).join("|");
 
   useEffect(()=>{
     void hydratePersonalLibrary();
@@ -67,7 +69,7 @@ export default function PersonalLibraryView({mode,lang="es"}:Props){
 
   useEffect(()=>{
     let cancelled=false;
-    const missing=entries.map(entry=>entry.animeId).filter(id=>!(id in media));
+    const missing=visibleEntries.map(entry=>entry.animeId).filter(id=>!(id in media));
     if(!missing.length){setLoading(false);return;}
     setLoading(true);
     setLoadError(false);
@@ -78,9 +80,8 @@ export default function PersonalLibraryView({mode,lang="es"}:Props){
       setLoadError(failed);
     }).catch(()=>{if(!cancelled)setLoadError(true);}).finally(()=>{if(!cancelled)setLoading(false);});
     return()=>{cancelled=true;};
-  },[entries.map(entry=>entry.animeId).join("|")]);
+  },[visibleIds]);
 
-  const visibleEntries=entries.slice(0,visible);
   const hasMore=visible<entries.length;
 
   if(loading&&!entries.length)return <p className="personal-library-status" role="status" aria-live="polite">{t("library.loading")}</p>;
