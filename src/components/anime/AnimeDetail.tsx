@@ -10,6 +10,7 @@ import { fetchFallbackAnime } from "../../lib/api/anime-fallback";
 import { useT, type Lang } from "../../i18n";
 import AnimeComments from "./AnimeComments";
 import ShareAnime from "./ShareAnime";
+import CharacterCarousel from "./CharacterCarousel";
 
 interface Media {
   id: number | string;
@@ -473,30 +474,7 @@ export default function AnimeDetail({entry,lang="es"}:{entry:LibraryEntry;lang?:
           </div>
         </section> : null;
        })()}
-       {(() => {
-        const seen = new Set<number>();
-        const items = (media?.recommendations?.nodes ?? [])
-          .map((node) => node.mediaRecommendation)
-          .filter((item): item is NonNullable<typeof item> => Boolean(item))
-          .filter((item) => item.id !== media?.id && !seen.has(item.id) && seen.add(item.id))
-          .slice(0, 8);
-        return items.length ? <section className="anime-detail-recommendations" aria-label={t("detail.recommendations")}>
-          <div className="anime-detail-recommendations-head">
-            <span className="anime-detail-label">{t("detail.recommendedNext")}</span>
-          </div>
-          <div className="anime-detail-recommendations-track">
-            {items.map((item) => {
-              const recTitle=getDisplayTitle(item.title,t("detail.noTitle"));
-              const recImage=item.coverImage?.extraLarge||item.coverImage?.large;
-              return <a className="anime-detail-recommendation" href={(lang==="en"?"/en":"") + "/anime/" + item.id} key={item.id}>
-                <div className="anime-detail-recommendation-poster">{recImage&&<img src={recImage} alt={recTitle} loading="lazy" />}</div>
-                <span className="anime-detail-recommendation-title">{recTitle}</span>
-                <span className="anime-detail-recommendation-meta">{item.format==="MOVIE"?t("detail.film"):t("detail.series")}{item.startDate?.year?" · "+item.startDate.year:""}</span>
-              </a>;
-            })}
-          </div>
-        </section> : null;
-       })()}
+       {typeof media?.id === "number" && <CharacterCarousel animeId={media.id} lang={lang} />}
        {typeof media?.id === "number" && <AnimeComments animeId={media.id} lang={lang} />}
     </div>
    </div>
