@@ -57,18 +57,20 @@ with check (
     or (
       image_status='approved'
       and image_path is not null
-      and split_part(image_path,'/',1)=(select auth.uid())::text
-      and split_part(image_path,'.',array_length(string_to_array(image_path,'.'),1))='webp'
+      and image_path like (select auth.uid())::text || '/%.webp'
     )
   )
 );
 
 -- Moderation uses a server-managed app_metadata claim; clients cannot set it.
+revoke update on table public.community_debates from authenticated;
+grant update (image_status) on table public.community_debates to authenticated;
+
 drop policy if exists "Community moderators can remove debate images" on public.community_debates;
 create policy "Community moderators can remove debate images"
 on public.community_debates for update to authenticated
 using ((select auth.jwt()->'app_metadata'->>'community_role')='moderator')
 with check (
   (select auth.jwt()->'app_metadata'->>'community_role')='moderator'
-  and image_status in ('removed','approved','none')
+  and image_status='removed'
 );
