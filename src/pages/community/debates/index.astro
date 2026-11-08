@@ -2,6 +2,8 @@
 export const prerender = false;
 import Layout from "../../../layouts/Layout.astro";
 import Navbar from "../../../components/layout/Navbar.astro";
+import DebateComposerBar from "../../../components/community/DebateComposerBar.astro";
+import "../../../styles/community-social.css";
 import { createSupabaseSsrClient } from "../../../lib/supabase-ssr";
 const en = Astro.locals.lang === "en";
 const base = en ? "/en" : "";
@@ -28,7 +30,7 @@ const ordered = [...rows].sort((a:any,b:any) => sort === "likes" ? stats.get(b.i
 <Layout title={en ? "Community debates — Renanime" : "Debates de la comunidad — Renanime"}>
 <Navbar />
 <main id="main-content" class="debates">
-<header><p class="eyebrow">{en ? "Community" : "Comunidad"}</p><h1>Debates</h1><p>{en ? "Ideas, theories and conversations about the stories we love." : "Ideas, teorías y conversaciones sobre las historias que nos gustan."}</p><button id="open-form" type="button">{en ? "＋ Start a debate" : "＋ Crear debate"}</button></header>
+<header><p class="eyebrow">{en ? "Community" : "Comunidad"}</p><h1>Debates</h1><p>{en ? "Ideas, theories and conversations about the stories we love." : "Ideas, teorías y conversaciones sobre las historias que nos gustan."}</p><DebateComposerBar lang={en ? "en" : "es"} /></header>
 <section id="create-panel" class="composer" hidden>
 {auth.user ? <form id="debate-form" enctype="multipart/form-data">
   <div class="composer-intro"><span class="composer-step">NUEVO DEBATE</span><h2>{en ? "What's on your mind?" : "¿Qué quieres debatir?"}</h2><p>{en ? "Start with a clear question or opinion. Explain your reasons and invite others to join in." : "Plantea una pregunta o una opinión clara. Explica tus razones y deja espacio para que otros participen."}</p></div>
@@ -48,7 +50,8 @@ const ordered = [...rows].sort((a:any,b:any) => sort === "likes" ? stats.get(b.i
 </style>
 <script>
 const panel=document.querySelector<HTMLElement>("#create-panel");
-document.querySelector("#open-form")?.addEventListener("click",()=>{if(panel){panel.hidden=!panel.hidden;if(!panel.hidden)panel.scrollIntoView({behavior:"smooth",block:"start"})}});
+const openComposer=()=>{if(panel){panel.hidden=false;panel.scrollIntoView({behavior:"smooth",block:"start")}};
+if(new URLSearchParams(window.location.search).get("compose")==="1")openComposer();
 const form=document.querySelector<HTMLFormElement>("#debate-form");
 const imageInput=document.querySelector<HTMLInputElement>("#debate-image");
 const preview=document.querySelector<HTMLElement>("#image-preview");
