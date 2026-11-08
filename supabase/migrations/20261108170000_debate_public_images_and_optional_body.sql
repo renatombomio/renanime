@@ -10,7 +10,7 @@ alter table public.community_debates
 
 alter table public.community_debates
   add constraint community_debates_body_check
-  check (body is null or char_length(btrim(body)) <= 1500);
+  check (body is null or char_length(btrim(body)) <= 500);
 
 alter table public.community_debates
   add column if not exists anime_id integer,
