@@ -172,14 +172,15 @@ const profileCommentsCount = commentsCountError ? 0 : commentsCount ?? 0;
 </Layout>
 
 <style>
-  .profile-character-see-all{display:inline-flex;margin:0 0 20px;color:#ec4899;font-size:.78rem;text-decoration:none}\n  .profile-character-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0 24px}
+  .profile-character-see-all{display:inline-flex;margin:0 0 20px;color:#ec4899;font-size:.78rem;text-decoration:none}
+  .profile main .profile-character-grid,.profile-character-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px;margin:12px 0 24px}
   .profile-character-card{display:grid;grid-template-rows:auto 1fr;gap:9px;min-width:0;padding:8px;border:1px solid rgba(255,255,255,.12);border-radius:13px;background:#101012}
   .profile-character-card>img{display:block;width:100%;aspect-ratio:1/1.12;object-fit:cover;object-position:center 25%;border-radius:9px;background:#222}
   .profile-character-copy{display:grid;gap:4px;min-width:0;padding:0 2px 2px}
   .profile-character-copy strong{font-size:.78rem;line-height:1.25;overflow-wrap:anywhere}
   .profile-character-copy span{color:#99939f;font-size:.68rem}
   .profile-character-empty{margin:8px 0 24px;color:#aaa4b0;font-size:.8rem;line-height:1.5}
-  @media(max-width:600px){.profile-character-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.profile-character-card{gap:7px;padding:6px}.profile-character-copy strong{font-size:.7rem}}
+  @media(max-width:600px){.profile main .profile-character-grid,.profile-character-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px}.profile-character-card{gap:7px;padding:6px}.profile-character-copy strong{font-size:.7rem}}
   .profile-editor { margin: 0; overflow: visible; border: 0; border-radius: 0; background: transparent; }
   .cover-preview { position: relative; width: 100%; height: clamp(210px, 34vw, 340px); background: linear-gradient(135deg,#24202a,#111); background-size: cover; background-position: center; isolation: isolate; }
   .cover-edit { position:absolute; right:1rem; bottom:1rem; z-index:5; display:none; cursor:pointer; pointer-events:auto; }
