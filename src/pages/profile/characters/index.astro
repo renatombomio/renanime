@@ -85,7 +85,7 @@ const characters = (data ?? []).map((row: any) => ({
   .page-heading p{margin:0 0 7px;color:#ec4899;font-size:.66rem;font-weight:800;letter-spacing:.16em}
   .page-heading h1{margin:0;font-size:clamp(1.55rem,4vw,2.2rem);letter-spacing:-.04em}
   .page-heading>span{color:#aaa4b0;font-size:.9rem;font-variant-numeric:tabular-nums}
-  .character-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  main.liked-characters-page .character-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px}
   .character-card{position:relative;display:grid;grid-template-rows:auto 1fr;gap:8px;min-width:0;padding:8px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:#101012}
   .character-card>img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;object-position:center 20%;border-radius:9px;background:#222}
   .character-copy{display:grid;gap:5px;min-width:0;padding:0 3px 3px}
@@ -96,5 +96,5 @@ const characters = (data ?? []).map((row: any) => ({
   .remove-like:disabled{opacity:.5;cursor:wait}
   .empty-state{color:#aaa4b0;font-size:.86rem;line-height:1.6}
   .feedback{min-height:1.2em;color:#ff8ab9;font-size:.75rem}
-  @media(max-width:680px){.character-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.character-card{gap:7px;padding:6px}.character-copy strong{font-size:.75rem}}
+  @media(max-width:680px){main.liked-characters-page .character-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px}.character-card{gap:7px;padding:6px}.character-copy strong{font-size:.75rem}}
 </style>
