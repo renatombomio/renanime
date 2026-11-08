@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { createSupabaseSsrClient } from "../../../../../lib/supabase-ssr";
+import { createSupabaseSsrClient } from "../../../../lib/supabase-ssr";
 
 export const prerender = false;
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
