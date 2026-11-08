@@ -10,9 +10,13 @@ export const DELETE: APIRoute = async ({ request, cookies, params }) => {
     const supabase = createSupabaseSsrClient(request, cookies);
     const { data: auth, error: authError } = await supabase.auth.getUser();
     if (authError || !auth.user) return json({ ok: false, error: "AUTH_REQUIRED" }, 401);
-    const { data, error } = await supabase.from("community_debates").delete().eq("id", id).eq("author_id", auth.user.id).select("id").maybeSingle();
+    const { data, error } = await supabase.from("community_debates").delete().eq("id", id).eq("author_id", auth.user.id).select("id,image_path").maybeSingle();
     if (error) return json({ ok: false, error: "DELETE_FAILED" }, 503);
     if (!data) return json({ ok: false, error: "NOT_OWNER_OR_NOT_FOUND" }, 404);
+    if (data.image_path && data.image_path.startsWith(auth.user.id + "/")) {
+      const { error: storageError } = await supabase.storage.from("debate-images").remove([data.image_path]);
+      if (storageError) console.error("Deleted debate left an orphaned image:", { debateId: id, code: storageError.name });
+    }
     return json({ ok: true, id: data.id });
   } catch {
     return json({ ok: false, error: "DELETE_FAILED" }, 503);
