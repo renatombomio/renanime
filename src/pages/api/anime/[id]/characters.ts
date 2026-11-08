@@ -17,10 +17,15 @@ export const GET: APIRoute = async ({ request, cookies, params }) => {
     if (cacheError) return json({ ok: false, error: "CHARACTER_CACHE_READ_FAILED" }, 503);
     if (cachedRelations?.length) {
       const ids = cachedRelations.map((row: any) => row.characters?.id).filter(Boolean);
-      const [{ data: auth }, { data: likeRows }] = await Promise.all([supabase.auth.getUser(), ids.length ? supabase.from("character_likes").select("character_id,user_id").in("character_id", ids) : Promise.resolve({ data: [] as any[] })]);
+      const [{ data: auth }, { data: ownLikes }, { data: totals }] = await Promise.all([
+        supabase.auth.getUser(),
+        ids.length ? supabase.from("character_likes").select("character_id").in("character_id", ids) : Promise.resolve({ data: [] as any[] }),
+        ids.length ? supabase.from("character_like_totals").select("character_id,like_count").in("character_id", ids) : Promise.resolve({ data: [] as any[] }),
+      ]);
       const stats = new Map<number, { count: number; liked: boolean }>();
       for (const id of ids) stats.set(id, { count: 0, liked: false });
-      for (const like of likeRows ?? []) { const stat = stats.get(like.character_id); if (stat) { stat.count++; if (auth.user?.id === like.user_id) stat.liked = true; } }
+      for (const total of totals ?? []) { const stat = stats.get(total.character_id); if (stat) stat.count = Number(total.like_count) || 0; }
+      for (const like of ownLikes ?? []) { const stat = stats.get(like.character_id); if (stat && auth.user) stat.liked = true; }
       const cachedCharacters = cachedRelations.map((row: any) => row.characters ? { ...row.characters, role: row.role, ...(stats.get(row.characters.id) ?? { count: 0, liked: false }) } : null).filter(Boolean);
       return json({ ok: true, characters: cachedCharacters, page, hasNextPage: cachedRelations.length === 25, total: null, cached: true });
     }
@@ -64,19 +69,21 @@ export const GET: APIRoute = async ({ request, cookies, params }) => {
     const { data: relations } = ids.length
       ? await supabase.from("anime_characters").select("character_id,role").eq("anime_id", animeId).in("character_id", ids)
       : { data: [] as any[] };
-    const { data: likeRows } = ids.length
-      ? await supabase.from("character_likes").select("character_id,user_id").in("character_id", ids)
-      : { data: [] as any[] };
+    const [{ data: ownLikes }, { data: totals }] = await Promise.all([
+      ids.length ? supabase.from("character_likes").select("character_id").in("character_id", ids) : Promise.resolve({ data: [] as any[] }),
+      ids.length ? supabase.from("character_like_totals").select("character_id,like_count").in("character_id", ids) : Promise.resolve({ data: [] as any[] }),
+    ]);
     const storedById = new Map((stored ?? []).map((item: any) => [item.id, item]));
     const roleById = new Map((relations ?? []).map((item: any) => [item.character_id, item.role]));
     const likesById = new Map<number, { count: number; liked: boolean }>();
     for (const id of ids) likesById.set(id, { count: 0, liked: false });
-    for (const like of likeRows ?? []) {
+    for (const total of totals ?? []) {
+      const item = likesById.get(total.character_id);
+      if (item) item.count = Number(total.like_count) || 0;
+    }
+    if (auth.user) for (const like of ownLikes ?? []) {
       const item = likesById.get(like.character_id);
-      if (item) {
-        item.count += 1;
-        if (auth.user?.id === like.user_id) item.liked = true;
-      }
+      if (item) item.liked = true;
     }
     const characters = ids.map((id: number) => {
       const item = storedById.get(id);
