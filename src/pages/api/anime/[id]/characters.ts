@@ -13,7 +13,7 @@ export const GET: APIRoute = async ({ request, cookies, params }) => {
   try {
     const supabase = createSupabaseSsrClient(request, cookies);
     const start = (page - 1) * 25;
-    const { data: cachedRelations, error: cacheError } = await supabase.from("anime_characters").select("role,sort_order,characters(id,name,image_url)").eq("anime_id", animeId).gte("sort_order", start).lt("sort_order", start + 25).order("sort_order", { ascending: true });
+    const { data: cachedRelations, error: cacheError, count: cachedTotal } = await supabase.from("anime_characters").select("role,sort_order,characters(id,name,image_url)", { count: "exact" }).eq("anime_id", animeId).gte("sort_order", start).lt("sort_order", start + 25).order("sort_order", { ascending: true });
     if (cacheError) return json({ ok: false, error: "CHARACTER_CACHE_READ_FAILED" }, 503);
     if (cachedRelations?.length) {
       const ids = cachedRelations.map((row: any) => row.characters?.id).filter(Boolean);
@@ -27,7 +27,7 @@ export const GET: APIRoute = async ({ request, cookies, params }) => {
       for (const total of totals ?? []) { const stat = stats.get(total.character_id); if (stat) stat.count = Number(total.like_count) || 0; }
       for (const like of ownLikes ?? []) { const stat = stats.get(like.character_id); if (stat && auth.user) stat.liked = true; }
       const cachedCharacters = cachedRelations.map((row: any) => row.characters ? { ...row.characters, role: row.role, ...(stats.get(row.characters.id) ?? { count: 0, liked: false }) } : null).filter(Boolean);
-      return json({ ok: true, characters: cachedCharacters, page, hasNextPage: cachedRelations.length === 25, total: null, cached: true });
+      return json({ ok: true, characters: cachedCharacters, page, hasNextPage: start + cachedRelations.length < (cachedTotal ?? 0), total: cachedTotal ?? null, cached: true });
     }
     const query = `query AnimeCharacters($id:Int!, $page:Int!, $perPage:Int!){
       Media(id:$id,type:ANIME){
