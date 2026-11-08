@@ -50,7 +50,7 @@ const ordered = [...rows].sort((a:any,b:any) => sort === "likes" ? stats.get(b.i
 </style>
 <script>
 const panel=document.querySelector<HTMLElement>("#create-panel");
-const openComposer=()=>{if(panel){panel.hidden=false;panel.scrollIntoView({behavior:"smooth",block:"start")}};
+const openComposer=()=>{if(panel){panel.hidden=false;panel.scrollIntoView({behavior:"smooth",block:"start"})}};
 if(new URLSearchParams(window.location.search).get("compose")==="1")openComposer();
 const form=document.querySelector<HTMLFormElement>("#debate-form");
 const imageInput=document.querySelector<HTMLInputElement>("#debate-image");
