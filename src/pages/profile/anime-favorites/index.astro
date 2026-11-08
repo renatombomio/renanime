@@ -56,9 +56,9 @@ const animeIds = (data ?? []).map((row: any) => String(row.anime_id)).filter((id
       copyNode.className = "anime-card-copy";
       const titleNode = document.createElement("strong");
       titleNode.textContent = title;
-      const meta = document.createElement("span");
-      meta.textContent = anime.format || "";
-      copyNode.append(titleNode, meta);
+      // Keep the favourite list focused on the anime title; format labels
+      // such as "TV" are not part of the title and add visual noise here.
+      copyNode.append(titleNode);
       card.append(image, copyNode);
       return card;
     }
