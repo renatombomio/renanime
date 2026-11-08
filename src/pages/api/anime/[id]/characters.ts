@@ -1,5 +1,4 @@
 import type { APIRoute } from "astro";
-import { createClient } from "@supabase/supabase-js";
 import { createSupabaseSsrClient } from "../../../../lib/supabase-ssr";
 
 export const prerender = false;
@@ -50,16 +49,16 @@ export const GET: APIRoute = async ({ request, cookies, params }) => {
 
     const edges = (connection.edges ?? []).filter((edge: any) => edge?.node?.id && edge?.node?.name?.full);
     if (edges.length) {
-      const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
-      const secretKey = import.meta.env.SUPABASE_SECRET_KEY;
-      if (!supabaseUrl || !secretKey) return json({ ok: false, error: "CATALOG_WRITE_NOT_CONFIGURED" }, 503);
-      const catalogWriter = createClient(supabaseUrl, secretKey, { auth: { persistSession: false, autoRefreshToken: false } });
       const characters = edges.map((edge: any) => ({ id: edge.node.id, name: edge.node.name.full, image_url: edge.node.image?.large ?? null }));
-      const relations = edges.map((edge: any, index: number) => ({ anime_id: animeId, character_id: edge.node.id, role: edge.role ?? null, sort_order: (page - 1) * 25 + index }));
-      const { error: characterError } = await catalogWriter.from("characters").upsert(characters, { onConflict: "id" });
-      if (characterError) return json({ ok: false, error: "CHARACTER_PERSIST_FAILED" }, 503);
-      const { error: relationError } = await catalogWriter.from("anime_characters").upsert(relations, { onConflict: "anime_id,character_id" });
-      if (relationError) return json({ ok: false, error: "CHARACTER_PERSIST_FAILED" }, 503);
+      const relations = edges.map((edge: any, index: number) => ({ character_id: edge.node.id, role: edge.role ?? null, sort_order: (page - 1) * 25 + index }));
+      // Public catalog sync is handled by a narrowly scoped SECURITY DEFINER RPC.
+      // No service-role/secret key is needed or exposed to this endpoint.
+      const { error: syncError } = await supabase.rpc("sync_anime_character_catalog", {
+        p_anime_id: animeId,
+        p_characters: characters,
+        p_relations: relations,
+      });
+      if (syncError) return json({ ok: false, error: "CHARACTER_PERSIST_FAILED" }, 503);
     }
     const ids = edges.map((edge: any) => edge.node.id);
     const [{ data: stored }, { data: auth }] = await Promise.all([
