@@ -258,7 +258,7 @@ searchInput?.addEventListener("input",()=>{const query=searchInput.value.trim().
 .acts{display:flex;align-items:center;gap:22px;margin-top:8px;padding-top:0;border-top:0}
 .act{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:40px;min-height:40px;padding:0 4px;border:0;background:transparent;color:#a39fa9;text-decoration:none;font-size:12px}
 .act svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.act.liked{color:#ec4899}.act:disabled{opacity:.62;cursor:not-allowed}.act:disabled svg{opacity:.8}
+.act.liked{color:var(--color-accent)}.act:disabled{opacity:.62;cursor:not-allowed}.act:disabled svg{opacity:.8}
 .empty{padding:24px 16px;color:#77737d;font-size:13px}
 .composer-sheet{position:fixed;inset:auto 0 0;width:100%;max-width:640px;max-height:min(88dvh,760px);margin:0 auto;padding:0;border:0;border-radius:22px 22px 0 0;background:#101013;color:#f2efe9;overflow:visible}
 .composer-sheet::backdrop{background:rgba(0,0,0,.68)}
@@ -295,7 +295,7 @@ searchInput?.addEventListener("input",()=>{const query=searchInput.value.trim().
 .composer-bottom>span{margin-left:auto;color:#77737d;font-size:12px}
 .form-error{margin:8px 0 0;color:#ff9da9;font-size:12px;line-height:1.4}
 .form-error[hidden]{display:none}
-.login-prompt{padding:22px 0;color:#a39fa9;font-size:13px}.login-prompt a{color:#ec4899}
+.login-prompt{padding:22px 0;color:#a39fa9;font-size:13px}.login-prompt a{color:var(--color-accent)}
  :global(body.sheet-open){overflow:hidden}
 @keyframes sheet-in{from{transform:translateY(24px);opacity:.7}to{transform:translateY(0);opacity:1}}
 @media(min-width:641px){.debates{padding-top:100px}.composer-sheet{bottom:0;border-radius:20px 20px 0 0}}
