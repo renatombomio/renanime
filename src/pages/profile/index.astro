@@ -144,7 +144,6 @@ const profileCommentsCount = commentsCountError ? 0 : commentsCount ?? 0;
           <strong>{pending.length}</strong><span>{isEnglish ? "On my list" : "En mi lista"}</span>
         </a>
         <a href="#profile-favorites-grid" class="profile-stat"><strong>{favoritesCount}</strong><span>{isEnglish ? "Favorites" : "Favoritos"}</span></a>
-        <a href="#profile-character-favorites" class="profile-stat"><strong>{characterFavoritesCount ?? 0}</strong><span>{isEnglish ? "Favourite characters" : "Personajes favoritos"}</span></a>
         <div class="profile-stat"><strong>{profileCommentsCount}</strong><span>{isEnglish ? "Comments" : "Comentarios"}</span></div>
       </section>
 
@@ -470,8 +469,6 @@ const profileCommentsCount = commentsCountError ? 0 : commentsCount ?? 0;
           characterLikeButton.closest(".profile-character-card")?.remove();
           const count = document.querySelector<HTMLElement>(".profile-character-count");
           if (count) count.textContent = String(Math.max(0, Number(count.textContent || 0) - 1));
-          const stat = document.querySelector<HTMLElement>(".profile-stat[href='#profile-character-favorites'] strong");
-          if (stat) stat.textContent = String(Math.max(0, Number(stat.textContent || 0) - 1));
           if (!document.querySelector(".profile-character-card")) {
             const grid = document.querySelector(".profile-character-grid");
             grid?.insertAdjacentHTML("afterend", '<p class="profile-character-empty">' + copy("Todavía no has marcado personajes como favoritos. Pulsa el corazón de una tarjeta en la ficha de un anime para añadirlos aquí.", "You haven\'t liked any characters yet. Tap the heart on a character card in an anime page to add one here.") + '</p>');
