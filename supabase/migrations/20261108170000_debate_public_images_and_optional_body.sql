@@ -63,7 +63,7 @@ with check (
 );
 
 -- Moderation uses a server-managed app_metadata claim; clients cannot set it.
-revoke update on table public.community_debates from authenticated;
+revoke update on table public.community_debates from anon, authenticated;
 grant update (image_status) on table public.community_debates to authenticated;
 
 drop policy if exists "Community moderators can remove debate images" on public.community_debates;
