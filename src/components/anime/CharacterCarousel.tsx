@@ -7,6 +7,7 @@ export default function CharacterCarousel({ animeId, lang = "es" }: { animeId: n
   const [characters, setCharacters] = useState<Character[]>([]);
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
+  const [total, setTotal] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [busyIds, setBusyIds] = useState<number[]>([]);
@@ -24,6 +25,7 @@ export default function CharacterCarousel({ animeId, lang = "es" }: { animeId: n
     });
     setPage(nextPage);
     setHasNextPage(Boolean(payload.hasNextPage));
+    if (typeof payload.total === "number") setTotal(payload.total);
   }
 
   useEffect(() => {
@@ -37,6 +39,7 @@ export default function CharacterCarousel({ animeId, lang = "es" }: { animeId: n
         setCharacters(payload.characters ?? []);
         setPage(1);
         setHasNextPage(Boolean(payload.hasNextPage));
+        setTotal(typeof payload.total === "number" ? payload.total : null);
       })
       .catch(() => { if (!cancelled) setNotice(en ? "Characters could not be loaded." : "No se pudieron cargar los personajes."); })
       .finally(() => { if (!cancelled) setLoading(false); });
@@ -74,7 +77,7 @@ export default function CharacterCarousel({ animeId, lang = "es" }: { animeId: n
   return <section className="anime-detail-characters" aria-label={en ? "Characters" : "Personajes"}>
     <div className="anime-detail-recommendations-head">
       <span className="anime-detail-label">{en ? "Characters" : "Personajes"}</span>
-      {characters.length > 0 && <span className="character-total">{characters.length}{hasNextPage ? "+" : ""}</span>}
+      {characters.length > 0 && <span className="character-total">{total ? (en ? characters.length + " of " + total : characters.length + " de " + total) : (en ? characters.length + " loaded" : characters.length + " cargados")}</span>}
     </div>
     {characters.length > 0 && <div className="anime-detail-characters-track">
       {characters.map((character) => <article className="anime-detail-character" key={character.id}>
@@ -89,16 +92,16 @@ export default function CharacterCarousel({ animeId, lang = "es" }: { animeId: n
         <span className="anime-detail-character-role">{character.role === "MAIN" ? (en ? "Main character" : "Principal") : (en ? "Supporting" : "Secundario")}</span>
       </article>)}
     </div>}
-    {hasNextPage && <button type="button" className="anime-character-load-more" onClick={loadMore} disabled={loadingMore}>{loadingMore ? (en ? "Loading…" : "Cargando…") : (en ? "Load more characters" : "Cargar más personajes")}</button>}
+    {hasNextPage && <button type="button" className="anime-character-load-more" onClick={loadMore} disabled={loadingMore}>{loadingMore ? (en ? "Loading…" : "Cargando…") : (en ? "Load next 25 characters" : "Cargar los siguientes 25 personajes")}</button>}
     {notice && <p className="anime-character-notice" role="status">{notice}</p>}
     <style>{`
       .anime-detail-character-image{position:relative}
-      .anime-character-like{position:absolute;right:.35rem;bottom:.35rem;display:inline-flex;align-items:center;gap:.25rem;padding:.3rem .4rem;border:1px solid rgba(255,255,255,.24);border-radius:999px;background:rgba(0,0,0,.78);color:#fff;font:inherit;font-size:.58rem;cursor:pointer}
-      .anime-character-like svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8}
-      .anime-character-like.is-liked{color:#ff4f91;border-color:rgba(255,79,145,.55)}
+      .anime-character-like{position:absolute;right:.4rem;bottom:.4rem;z-index:4;display:inline-flex;align-items:center;justify-content:center;gap:.3rem;min-width:42px;min-height:34px;padding:.35rem .55rem;border:1px solid rgba(255,255,255,.48);border-radius:999px;background:rgba(8,8,10,.94);color:#fff;font:inherit;font-size:.68rem;font-weight:700;box-shadow:0 2px 12px rgba(0,0,0,.5);cursor:pointer}
+      .anime-character-like svg{display:block;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+      .anime-character-like.is-liked{color:#ff6b9f;border-color:#ff6b9f;background:rgba(35,7,20,.96)}
       .anime-character-like.is-liked svg{fill:currentColor}
       .anime-character-like:disabled{opacity:.5}
-      .anime-character-load-more{margin-top:.5rem;padding:.5rem .8rem;border:1px solid rgba(255,255,255,.2);border-radius:999px;background:transparent;color:var(--color-paper-100);font:inherit;font-size:.68rem;cursor:pointer}
+      .anime-character-load-more{display:block;width:100%;margin-top:.65rem;padding:.72rem .9rem;border:1px solid rgba(255,255,255,.3);border-radius:9px;background:rgba(255,255,255,.06);color:var(--color-paper-100);font:inherit;font-size:.72rem;font-weight:700;cursor:pointer}
       .anime-character-load-more:disabled{opacity:.5}
       .anime-character-notice,.character-loading{margin:.5rem 0;color:var(--color-muted-400);font-size:.68rem}
       .character-total{margin-left:.5rem;color:var(--color-muted-400);font-size:.62rem}
