@@ -53,6 +53,7 @@ export default function PersonalLibraryActions({ animeId, lang = "es" }: Props) 
       <div className="personal-actions">
         <span className="personal-status" role="status" aria-live="polite">{t("actions.loading")}</span>
         {error && <span className="personal-error" role="alert">{error}</span>}
+        {error && <span className="personal-error" role="alert">{error}</span>}
         <style>{styles}</style>
       </div>
     );
