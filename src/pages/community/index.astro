@@ -58,14 +58,14 @@ if(topAnime.length){
   if(response.ok){const payload=await response.json();topAnimeMetadata=new Map((payload.data?.Page?.media??[]).map((x:any)=>[x.id,{title:x.title.romaji||x.title.english||"Anime",cover:x.coverImage.extraLarge||x.coverImage.large||null}]));}
  }catch(error){console.error("Community top anime metadata error:",error);}
 }
-const {data:characterLikeRows,error:characterLikesError}=await fetchAllRows("character_likes","character_id,created_at","created_at");
+const {data:characterLikeRows,error:characterLikesError}=await fetchAllRows("character_like_totals","character_id,like_count,updated_at","updated_at");
 const {data:characterMetadata,error:characterMetadataError}=await supabase.from("characters").select("id,name,image_url");
 const characterCounts=new Map<number,{likes:number;lastLike:string}>();
 for(const item of characterLikeRows??[]){
  const id=Number(item.character_id);if(!Number.isSafeInteger(id)||id<=0)continue;
- const current=characterCounts.get(id)??{likes:0,lastLike:item.created_at};
- current.likes++;
- if(new Date(item.created_at).getTime()>new Date(current.lastLike).getTime())current.lastLike=item.created_at;
+ const current=characterCounts.get(id)??{likes:0,lastLike:item.updated_at};
+ current.likes=Number(item.like_count)||0;
+ current.lastLike=item.updated_at;
  characterCounts.set(id,current);
 }
 const characterMetadataById=new Map((characterMetadata??[]).map((item:any)=>[item.id,item]));
