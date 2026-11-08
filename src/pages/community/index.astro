@@ -11,9 +11,22 @@ const {data:memberCandidates,error:membersError}=await supabase.from("profiles")
 const shuffledMembers=[...(memberCandidates??[])];
 for(let i=shuffledMembers.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffledMembers[i],shuffledMembers[j]]=[shuffledMembers[j],shuffledMembers[i]];}
 const members=shuffledMembers.slice(0,9);
+const fetchAllRows=async(table:string,columns:string,orderColumn:string,filters?:(query:any)=>any)=>{
+ const rows:any[]=[];let offset=0;
+ while(true){
+  let query=supabase.from(table).select(columns);
+  if(filters)query=filters(query);
+  const {data,error}=await query.order(orderColumn,{ascending:true}).range(offset,offset+999);
+  if(error)return {data:null,error};
+  rows.push(...(data??[]));
+  if(!data||data.length<1000)break;
+  offset+=1000;
+ }
+ return {data:rows,error:null};
+};
 const [{data:debates,error:debatesError},{data:debateLikeRows,error:debateLikesError}]=await Promise.all([
- supabase.from("community_debates").select("id,title,body,category,image_path,image_status,created_at,profiles!inner(aka,avatar_url,is_private)").eq("status","published").eq("profiles.is_private",false),
- supabase.from("community_debate_likes").select("debate_id,created_at")
+ fetchAllRows("community_debates","id,title,body,category,image_path,image_status,created_at,profiles!inner(aka,avatar_url,is_private)","created_at",q=>q.eq("status","published").eq("profiles.is_private",false)),
+ fetchAllRows("community_debate_likes","debate_id,created_at","created_at")
 ]);
 const debateCounts=new Map<string,{likes:number;lastLike:string}>();
 for(const item of debateLikeRows??[]){
@@ -28,7 +41,7 @@ const trendingDebate=[...(debates??[])].filter((d:any)=>(debateCounts.get(d.id)?
 })[0]??null;
 const trendingDebateStats=trendingDebate?debateCounts.get(trendingDebate.id)??{likes:0,lastLike:""}:{likes:0,lastLike:""};
 const {count:trendingDebateCommentsCount}=trendingDebate?await supabase.from("community_debate_comments").select("id",{count:"exact",head:true}).eq("debate_id",trendingDebate.id).eq("status","visible"):{data:null,count:0};
-const {data:animeLikeRows,error:animeLikesError}=await supabase.from("anime_likes").select("anime_id,created_at");
+const {data:animeLikeRows,error:animeLikesError}=await fetchAllRows("anime_likes","anime_id,created_at","created_at");
 const animeCounts=new Map<number,{likes:number;lastLike:string}>();
 for(const item of animeLikeRows??[]){
  const id=Number(item.anime_id);if(!Number.isSafeInteger(id)||id<=0)continue;
