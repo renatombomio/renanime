@@ -3,6 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/layout/Navbar.astro";
 import AnimeDetail from "../../components/anime/AnimeDetail";
 import { getLibrary } from "../../data/library";
+import { getGhibliFilms } from "../../data/ghibli";
 import type { LibraryEntry } from "../../types/personal";
 import { localizedPath, useT } from "../../i18n";
 
@@ -13,6 +14,10 @@ const { lang } = Astro.locals;
 const t = useT(lang);
 const library = getLibrary();
 let entry: LibraryEntry | undefined = library.find((item) => item.animeId === slug);
+if (!entry && slug) {
+  const ghibliFilm = getGhibliFilms().find((film) => film.id === slug);
+  if (ghibliFilm) entry = { animeId: ghibliFilm.id, title: ghibliFilm.searchTitle || ghibliFilm.title, format: "MOVIE", state: { status: ghibliFilm.watched ? "WATCHED" : "NOT_IN_COLLECTION", favorite: false, recommended: false } };
+}
 
 if (!entry && slug && /^\d+$/.test(slug)) {
   try {
