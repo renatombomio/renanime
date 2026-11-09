@@ -147,10 +147,12 @@ for (const character of characters) {
         if (!response.ok || !result.ok || result.liked) throw new Error("UNLIKE_FAILED");
         button.closest("[data-character-card]")?.remove();
         const count = document.querySelector<HTMLElement>("#liked-character-count");
-        if (count) count.textContent = String(Math.max(0, Number(count.textContent || 0) - 1));
-        if (!document.querySelector("[data-character-card]")) {
-          const grid = document.querySelector("#liked-character-grid");
+        const remaining = Math.max(0, Number(count?.textContent || 0) - 1);
+        if (count) count.textContent = String(remaining);
+        if (loadMore && grid) loadMore.dataset.offset = String(grid.querySelectorAll("[data-character-card]").length);
+        if (remaining === 0) {
           grid?.remove();
+          loadMore?.remove();
           const empty = document.createElement("p");
           empty.className = "empty-state";
           empty.textContent = copy("Todavía no has marcado personajes como favoritos. Explora un anime y pulsa el corazón de una de sus tarjetas.", "You haven't liked any characters yet. Explore an anime and tap the heart on a character card.");
