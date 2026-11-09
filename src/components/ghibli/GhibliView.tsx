@@ -189,12 +189,15 @@ export default function GhibliView({ films, lang = "es" }: { films: Film[]; lang
         <div ref={gridRef} className="ghibli-grid">
           {films.map((film, index) => {
             const item = media[film.id];
+            // Poster fallbacks can create a temporary { id: 0 } object.
+            // Only a real AniList ID may open the full Renanime anime detail.
+            const hasAniListDetail = Number.isInteger(item?.id) && item.id > 0;
             const image = item?.coverImage?.extraLarge || item?.coverImage?.large;
             const fallbackImage = film.id === "the-red-turtle" ? "https://www.ghibli.jp/images/red-turtle.jpg" : null;
             const posterImage = image || fallbackImage;
             const title = lang === "en" ? (item?.title?.english || item?.title?.romaji || film.title) : film.title;
-            const href = item
-              ? `${lang === "en" ? "/en" : ""}/anime/${item.id}/`
+            const href = hasAniListDetail
+              ? `${lang === "en" ? "/en" : ""}/anime/${item!.id}/`
               : `${lang === "en" ? "/en" : ""}/ghibli/anime?film=${encodeURIComponent(film.id)}`;
 
             return (
