@@ -24,7 +24,7 @@ const characters = (data ?? []).map((row: any) => ({
     .slice()
     .sort((a: any, b: any) => (a.role === "MAIN" ? 0 : 1) - (b.role === "MAIN" ? 0 : 1) || a.sort_order - b.sort_order)[0]?.anime_id ?? null,
 })).filter((item: any) => item?.id && item?.name);
-const characterAnimeIds = [...new Set(characterFavorites.map((item: any) => item.anime_id).filter((id: any) => Number.isInteger(id)))];
+const characterAnimeIds = [...new Set(characters.map((item: any) => item.anime_id).filter((id: any) => Number.isInteger(id)))];
 let characterAnimeTitles: Record<number, string> = {};
 if (characterAnimeIds.length) {
   const variables: Record<string, number> = {};
@@ -50,7 +50,7 @@ if (characterAnimeIds.length) {
     console.error("Renanime character anime titles error:", error);
   }
 }
-for (const character of characterFavorites) {
+for (const character of characters) {
   character.anime_title = character.anime_id ? characterAnimeTitles[character.anime_id] ?? "" : "";
 }
 ---
