@@ -22,7 +22,7 @@ const QUERY = `
   query WeeklyPopularEpisodes($page: Int!, $from: Int!, $to: Int!) {
     Page(page: $page, perPage: 50) {
       pageInfo { hasNextPage }
-      airingSchedules(airingAt_greater: $from, airingAt_lesser: $to, sort: TIME) {
+      airingSchedules(airingAt_greater: $from, airingAt_lesser: $to, notYetAired: false, sort: TIME) {
         episode airingAt
         media { id title { romaji english } coverImage { large color } bannerImage format popularity isAdult countryOfOrigin }
       }
@@ -30,11 +30,11 @@ const QUERY = `
   }
 `;
 
-function getUtcWeekRange(now: Date): { from: number; to: number } {
+function getPreviousUtcWeekRange(now: Date): { from: number; to: number } {
   const daysSinceMonday = (now.getUTCDay() + 6) % 7;
-  const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - daysSinceMonday));
-  const nextMonday = new Date(monday.getTime() + 7 * 24 * 60 * 60 * 1000);
-  return { from: Math.floor(monday.getTime() / 1000), to: Math.floor(nextMonday.getTime() / 1000) };
+  const thisMonday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - daysSinceMonday));
+  const previousMonday = new Date(thisMonday.getTime() - 7 * 24 * 60 * 60 * 1000);
+  return { from: Math.floor(previousMonday.getTime() / 1000), to: Math.floor(thisMonday.getTime() / 1000) };
 }
 
 function getDisplayTitle(media: AniListMedia): string { return media.title.romaji || media.title.english || "Untitled"; }
@@ -64,7 +64,7 @@ async function fetchAiringPage(page: number, from: number, to: number): Promise<
 export const GET: APIRoute = async ({ request }) => {
   const now = new Date();
   const lang = new URL(request.url).searchParams.get("lang") === "en" ? "en" : "es";
-  const { from, to } = getUtcWeekRange(now);
+  const { from, to } = getPreviousUtcWeekRange(now);
   try {
     const schedules: AiringSchedule[] = [];
     let hasNextPage = true;
