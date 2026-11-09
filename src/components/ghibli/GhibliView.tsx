@@ -196,9 +196,7 @@ export default function GhibliView({ films, lang = "es" }: { films: Film[]; lang
             const fallbackImage = film.id === "the-red-turtle" ? "https://www.ghibli.jp/images/red-turtle.jpg" : null;
             const posterImage = image || fallbackImage;
             const title = lang === "en" ? (item?.title?.english || item?.title?.romaji || film.title) : film.title;
-            const href = hasAniListDetail
-              ? `${lang === "en" ? "/en" : ""}/anime/${item!.id}/`
-              : `${lang === "en" ? "/en" : ""}/ghibli/anime?film=${encodeURIComponent(film.id)}`;
+            const href = (lang === "en" ? "/en" : "") + "/anime/" + encodeURIComponent(film.id) + "/";
 
             return (
               <article className={"ghibli-card" + (film.watched ? " is-watched" : "")} key={film.id}>
