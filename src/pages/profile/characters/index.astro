@@ -12,11 +12,12 @@ if (!user) return Astro.redirect(localizedPath(lang, "/login/"));
 const supabase = createSupabaseSsrClient(Astro.request, Astro.cookies);
 const { data, error } = await supabase
   .from("character_likes")
-  .select("character_id, created_at, characters(id, name, image_url, anime_characters(anime_id, role, sort_order))")
+  .select("character_id, created_at, characters(id, name, image_url, anime_characters(anime_id, role, sort_order))", { count: "exact" })
   .eq("user_id", user.id)
   .order("created_at", { ascending: false })
-  .limit(1000);
+  .range(0, 11);
 if (error) console.error("Renanime all character favorites error:", error.message);
+const totalCharacters = (await supabase.from("character_likes").select("id", { count: "exact", head: true }).eq("user_id", user.id)).count ?? 0;
 const characters = (data ?? []).map((row: any) => ({
   ...(Array.isArray(row.characters) ? row.characters[0] : row.characters),
   character_id: row.character_id,
@@ -60,10 +61,10 @@ for (const character of characters) {
     <a class="back-link" href={localizedPath(lang, "/profile/")}>← {isEnglish ? "Back to profile" : "Volver al perfil"}</a>
     <header class="page-heading">
       <div><p>{isEnglish ? "YOUR COLLECTION" : "TU COLECCIÓN"}</p><h1>{isEnglish ? "Favourite characters" : "Personajes favoritos"}</h1></div>
-      <span id="liked-character-count">{characters.length}</span>
+      <span id="liked-character-count">{totalCharacters}</span>
     </header>
     {error ? <p class="empty-state">{isEnglish ? "Your favourites could not be loaded." : "No se han podido cargar tus favoritos."}</p> :
-      characters.length ? <div class="character-grid" id="liked-character-grid">
+      characters.length ? <><div class="character-grid" id="liked-character-grid">
         {characters.map((character: any) => <article class="character-card" data-character-card={character.id}>
           {character.image_url && <img src={character.image_url} alt="" loading="lazy" />}
           <div class="character-copy"><strong>{character.name}</strong><span>{character.anime_title || (isEnglish ? "Anime unavailable" : "Anime no disponible")}</span></div>
@@ -71,12 +72,67 @@ for (const character of characters) {
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 11-8.8 11S3.2 14 3.2 8.8a4.5 4.5 0 0 1 8.8-1.1 4.5 4.5 0 0 1 8.8 1.1Z"/></svg>
           </button>
         </article>)}
-      </div> : <p class="empty-state" id="liked-character-empty">{isEnglish ? "You haven't liked any characters yet. Explore an anime and tap the heart on a character card." : "Todavía no has marcado personajes como favoritos. Explora un anime y pulsa el corazón de una de sus tarjetas."}</p>}
+      </div><button type="button" class="load-more" id="load-more-characters" data-offset={characters.length} hidden={characters.length >= totalCharacters}>{isEnglish ? "Show more" : "Mostrar más"}</button></> : <p class="empty-state" id="liked-character-empty">{isEnglish ? "You haven't liked any characters yet. Explore an anime and tap the heart on a character card." : "Todavía no has marcado personajes como favoritos. Explora un anime y pulsa el corazón de una de sus tarjetas."}</p>}
     <p class="feedback" id="liked-character-feedback" role="status" aria-live="polite"></p>
   </main>
   <script>
     const english = document.documentElement.lang === "en";
     const copy = (es: string, en: string) => english ? en : es;
+    const grid = document.querySelector<HTMLElement>("#liked-character-grid");
+    const loadMore = document.querySelector<HTMLButtonElement>("#load-more-characters");
+    const total = Number(document.querySelector("#liked-character-count")?.textContent || 0);
+    let loadingMore = false;
+    loadMore?.addEventListener("click", async () => {
+      if (loadingMore || !grid || !loadMore) return;
+      loadingMore = true;
+      loadMore.disabled = true;
+      loadMore.textContent = copy("Cargando…", "Loading…");
+      try {
+        const offset = Number(loadMore.dataset.offset || 0);
+        const response = await fetch("/api/profile/character-favorites?offset=" + offset + "&limit=12", { credentials: "same-origin" });
+        const payload = await response.json();
+        if (!response.ok || !payload.ok || !Array.isArray(payload.characters)) throw new Error("LOAD_FAILED");
+        for (const character of payload.characters) {
+          const card = document.createElement("article");
+          card.className = "character-card";
+          card.dataset.characterCard = String(character.id);
+          if (character.image_url) {
+            const image = document.createElement("img");
+            image.src = character.image_url;
+            image.alt = "";
+            image.loading = "lazy";
+            card.append(image);
+          }
+          const copyNode = document.createElement("div");
+          copyNode.className = "character-copy";
+          const name = document.createElement("strong");
+          name.textContent = character.name;
+          const anime = document.createElement("span");
+          anime.textContent = character.anime_title || copy("Anime no disponible", "Anime unavailable");
+          copyNode.append(name, anime);
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "remove-like";
+          button.dataset.characterLike = String(character.id);
+          button.setAttribute("aria-label", copy("Quitar de favoritos", "Remove from favourites"));
+          button.title = copy("Quitar de favoritos", "Remove from favourites");
+          button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.8c0 5.2-8.8 11-8.8 11S3.2 14 3.2 8.8a4.5 4.5 0 0 1 8.8-1.1 4.5 4.5 0 0 1 8.8 1.1Z"/></svg>';
+          card.append(copyNode, button);
+          grid.append(card);
+        }
+        const nextOffset = offset + payload.characters.length;
+        loadMore.dataset.offset = String(nextOffset);
+        loadMore.hidden = nextOffset >= total || payload.characters.length === 0;
+        loadMore.textContent = copy("Mostrar más", "Show more");
+      } catch {
+        const feedback = document.querySelector<HTMLElement>("#liked-character-feedback");
+        if (feedback) feedback.textContent = copy("No se pudieron cargar más personajes. Inténtalo de nuevo.", "Could not load more characters. Try again.");
+        loadMore.textContent = copy("Reintentar", "Retry");
+      } finally {
+        loadingMore = false;
+        loadMore.disabled = false;
+      }
+    });
     document.addEventListener("click", async (event) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
@@ -126,6 +182,8 @@ for (const character of characters) {
   .remove-like{position:absolute;right:9px;top:9px;display:grid;place-items:center;width:32px;height:32px;border:1px solid rgba(236,72,153,.45);border-radius:50%;background:#090909;color:#ec4899;cursor:pointer}
   .remove-like svg{width:17px;height:17px;fill:currentColor;stroke:currentColor;stroke-width:1.2}
   .remove-like:disabled{opacity:.5;cursor:wait}
+  .load-more{display:block;width:100%;margin:18px 0 0;padding:12px;border:1px solid rgba(236,72,153,.45);border-radius:10px;background:#101012;color:#ec4899;font:inherit;font-size:.82rem;cursor:pointer}
+  .load-more:disabled{opacity:.55;cursor:wait}
   .empty-state{color:#aaa4b0;font-size:.86rem;line-height:1.6}
   .feedback{min-height:1.2em;color:#ff8ab9;font-size:.75rem}
   @media(max-width:680px){main.liked-characters-page .character-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px}.character-card{gap:6px;padding:5px;border-radius:11px}.character-card>img{aspect-ratio:3/4}.character-copy{gap:3px;padding:0 1px 2px}.character-copy strong{font-size:.68rem}.character-copy span{font-size:.61rem}.remove-like{right:6px;top:6px;width:25px;height:25px}.remove-like svg{width:14px;height:14px}}
