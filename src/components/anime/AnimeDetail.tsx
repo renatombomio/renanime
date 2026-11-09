@@ -156,7 +156,7 @@ async function findAnime(entry: LibraryEntry): Promise<Media|null> {
         }
       }`
     : `query DetailBySearch($search:String!){
-        Page(page:1,perPage:1){
+        Page(page:1,perPage:10){
           media(search:$search,type:ANIME,sort:SEARCH_MATCH){
             id
             title{romaji english native}
