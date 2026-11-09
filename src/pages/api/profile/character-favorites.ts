@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { createSupabaseSsrClient } from "../../../../lib/supabase-ssr";
+import { createSupabaseSsrClient } from "../../../lib/supabase-ssr";
 
 export const prerender = false;
 
