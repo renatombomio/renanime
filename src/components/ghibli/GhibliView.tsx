@@ -194,7 +194,7 @@ export default function GhibliView({ films, lang = "es" }: { films: Film[]; lang
             const posterImage = image || fallbackImage;
             const title = lang === "en" ? (item?.title?.english || item?.title?.romaji || film.title) : film.title;
             const href = item
-              ? `${lang === "en" ? "/en" : ""}/ghibli/anime?id=${item.id}`
+              ? `${lang === "en" ? "/en" : ""}/anime/${item.id}/`
               : `${lang === "en" ? "/en" : ""}/ghibli/anime?film=${encodeURIComponent(film.id)}`;
 
             return (
