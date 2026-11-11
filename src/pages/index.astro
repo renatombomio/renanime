@@ -106,7 +106,7 @@ try {
 
     <RecommendedManga
       manga={recommendedManga}
-      href={recommendedManga?.siteUrl || "#"}
+      href={recommendedManga ? localizedPath(lang, `/manga/${recommendedManga.id}/`) : "#"}
       labels={{
         subtitle: isEnglish ? "A story worth discovering" : "Una historia que merece ser descubierta",
         volumes: isEnglish ? "volumes" : "tomos",
