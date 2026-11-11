@@ -96,15 +96,6 @@ try {
       }}
     />
 
-    <RecommendedManga
-      manga={recommendedManga}
-      href={recommendedManga ? localizedPath(lang, `/manga/${recommendedManga.id}/`) : "#"}
-      labels={{
-        subtitle: isEnglish ? "A story worth discovering" : "Una historia que merece ser descubierta",
-        volumes: isEnglish ? "volumes" : "tomos",
-        cta: isEnglish ? "View details" : "Ver ficha",
-      }}
-    />
 
     <HomeCommunity
       members={communityMembers}
