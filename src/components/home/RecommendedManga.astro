@@ -1,82 +1,46 @@
 ---
-import type { RecommendedManga } from "../../lib/recommended-manga";
-
 interface Props {
-  manga: RecommendedManga | null;
-  labels: {
-    eyebrow: string;
-    pick: string;
-    title: string;
-    unavailable: string;
-    readMore: string;
-    score: string;
-    chapters: string;
-    volumes: string;
-  };
+  manga: { id: number; title: string; author?: string | null; cover?: string | null; volumes?: number | null; status?: string | null; synopsis?: string | null } | null;
+  href: string;
+  labels: { subtitle: string; volumes: string; cta: string };
 }
-
-const { manga, labels } = Astro.props;
-const synopsis = manga?.description
-  ? manga.description.slice(0, 260) + (manga.description.length > 260 ? "…" : "")
-  : "";
+const { manga, href, labels } = Astro.props;
+const isEnglish = Astro.locals.lang === "en";
+const statusLabels: Record<string, string> = {
+  FINISHED: isEnglish ? "Completed" : "Finalizado",
+  RELEASING: isEnglish ? "Ongoing" : "En publicación",
+  NOT_YET_RELEASED: isEnglish ? "Upcoming" : "Próximamente",
+  CANCELLED: isEnglish ? "Cancelled" : "Cancelado",
+  HIATUS: isEnglish ? "On hiatus" : "En pausa",
+};
+const meta = [manga?.volumes ? manga.volumes + " " + labels.volumes : null, manga?.status ? statusLabels[manga.status] || null : null].filter(Boolean).join(" · ");
 ---
-
-<section class="recommended-manga" aria-labelledby="recommended-manga-title">
-  <div class="rm-inner">
-    <header class="rm-header">
-      <p class="rm-eyebrow"><span class="rm-dot" aria-hidden="true"></span>{labels.eyebrow}</p>
-      <h2 id="recommended-manga-title">{labels.title}</h2>
+{manga && (
+  <section class="featured-manga" aria-labelledby="featured-manga-title">
+    <header class="fm-heading">
+      <h2 id="featured-manga-title">{isEnglish ? "Recommended manga" : "Manga recomendado"}</h2>
+      <p>{labels.subtitle}</p>
     </header>
-
-    {manga ? (
-      <article class="rm-card">
-        <a class="rm-cover-link" href={manga.siteUrl} target="_blank" rel="noopener noreferrer" aria-label={`${labels.readMore}: ${manga.title}`}>
-          <div class="rm-cover" style={`--manga-tint:${manga.tint}`}>
-            {manga.cover && <img src={manga.cover} alt={manga.title} loading="lazy" decoding="async" />}
-          </div>
-        </a>
-        <div class="rm-content">
-          <p class="rm-label">{labels.pick}</p>
-          <h3><a href={manga.siteUrl} target="_blank" rel="noopener noreferrer">{manga.title}</a></h3>
-          <div class="rm-meta">
-            {manga.score !== null && <span class="rm-score">★ {(manga.score / 10).toFixed(1)} / 10</span>}
-            {manga.chapters && <span>{manga.chapters} {labels.chapters}</span>}
-            {manga.volumes && <span>{manga.volumes} {labels.volumes}</span>}
-          </div>
-          {manga.genres.length > 0 && <ul class="rm-genres">{manga.genres.slice(0, 4).map((genre) => <li>{genre}</li>)}</ul>}
-          {synopsis && <p class="rm-synopsis">{synopsis}</p>}
-          <a class="rm-link" href={manga.siteUrl} target="_blank" rel="noopener noreferrer">{labels.readMore}<span aria-hidden="true">↗</span></a>
-        </div>
-      </article>
-    ) : (
-      <p class="rm-unavailable">{labels.unavailable}</p>
-    )}
-  </div>
-</section>
-
+    <a class="fm" href={href}>
+      {manga.cover ? <img class="fm-cover" src={manga.cover} alt="" width="240" height="360" loading="lazy" decoding="async" /> : <span class="fm-cover fm-ph"><b>{manga.title}</b></span>}
+      <span class="fm-tx">
+        <h3 class="fm-title">{manga.title}</h3>
+        {manga.author && <span class="fm-by">{isEnglish ? "by" : "por"} {manga.author}</span>}
+        {meta && <span class="fm-meta">{meta}</span>}
+        {manga.synopsis && <p class="fm-syn">{manga.synopsis}</p>}
+        <span class="fm-go">{labels.cta}</span>
+      </span>
+    </a>
+  </section>
+)}
 <style>
-  .recommended-manga{padding:34px 0 30px;border-top:1px solid rgba(255,255,255,.08);color:#f5f2ec}
-  .rm-inner{width:min(calc(100% - 32px),900px);margin:0 auto}
-  .rm-header{margin-bottom:16px}
-  .rm-eyebrow{display:inline-flex;align-items:center;gap:8px;margin:0 0 10px;padding:6px 12px;border:1px solid rgba(255,255,255,.14);border-radius:999px;background:rgba(255,255,255,.06);color:#cfcbd3;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
-  .rm-dot{width:7px;height:7px;border-radius:50%;background:#ec4899;box-shadow:0 0 12px rgba(236,72,153,.6)}
-  .rm-header h2{margin:0;color:#fff;font-size:clamp(28px,4.4vw,40px);font-weight:800;line-height:1.1;letter-spacing:-.03em}
-  .rm-card{display:grid;grid-template-columns:180px minmax(0,1fr);gap:22px;padding:16px;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:#111214}
-  .rm-cover-link{display:block;align-self:start}
-  .rm-cover{aspect-ratio:2/3;overflow:hidden;border-radius:8px;background:radial-gradient(120% 100% at 50% 0%,color-mix(in srgb,var(--manga-tint) 35%,#15151a),#09090c 75%)}
-  .rm-cover img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s ease}
-  .rm-cover-link:hover img{transform:scale(1.03)}
-  .rm-content{min-width:0;align-self:center}
-  .rm-label{margin:0 0 8px;color:#f9a8d4;font-size:9px;font-weight:750;letter-spacing:.14em}
-  .rm-content h3{margin:0;font-size:clamp(21px,3vw,29px);font-weight:800;line-height:1.15;letter-spacing:-.025em}
-  .rm-content h3 a{color:inherit;text-decoration:none}
-  .rm-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;color:#a5a5aa;font-size:11px}
-  .rm-score{color:#f9a8d4}
-  .rm-genres{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0;padding:0;list-style:none}
-  .rm-genres li{padding:4px 8px;border:1px solid rgba(255,255,255,.1);border-radius:999px;color:#c7c4cb;font-size:10px}
-  .rm-synopsis{margin:12px 0 0;color:#b7b7bd;font-size:12px;line-height:1.6}
-  .rm-link{display:inline-flex;align-items:center;gap:8px;margin-top:15px;color:#f9a8d4;font-size:12px;font-weight:700;text-decoration:none}
-  .rm-link:hover{color:#fff}
-  .rm-unavailable{margin:0;color:#929297;font-size:13px}
-  @media(max-width:600px){.rm-inner{width:calc(100% - 26px)}.rm-card{grid-template-columns:112px minmax(0,1fr);gap:13px;padding:10px;border-radius:9px}.rm-header h2{font-size:28px}.rm-content h3{font-size:18px}.rm-label{font-size:8px;margin-bottom:6px}.rm-meta{gap:6px;margin-top:7px;font-size:9px}.rm-genres{gap:4px;margin-top:8px}.rm-genres li{padding:3px 6px;font-size:8px}.rm-synopsis{margin-top:8px;font-size:10px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}.rm-link{margin-top:10px;font-size:10px}}
+.featured-manga{margin:0 auto;width:min(calc(100% - 32px),900px);padding:30px 0 34px;border-top:1px solid rgba(255,255,255,.12);color:#f5f2ec}
+.fm-heading{margin:0 0 4px}.fm-heading h2{margin:0;font-size:clamp(27px,4vw,36px);font-weight:750;letter-spacing:-.035em;line-height:1.1}.fm-heading p{margin:7px 0 0;color:#85828b;font-size:13px;line-height:1.45}
+.fm{display:flex;gap:18px;padding:20px 0 0;color:inherit;text-decoration:none}.fm-cover{flex:0 0 168px;width:168px;aspect-ratio:2/3;object-fit:cover;border-radius:2px 5px 5px 2px;background:#1f2a33;box-shadow:inset 3px 0 0 rgba(0,0,0,.28),0 14px 24px -14px rgba(0,0,0,.9)}
+.fm-ph{display:flex;align-items:flex-end;padding:14px;color:#e9e2d0;font-family:"Newsreader",Georgia,serif;font-size:26px;line-height:1.02}.fm-tx{flex:1;min-width:0;display:flex;flex-direction:column}
+.fm-title{margin:0;font-family:"Newsreader",Georgia,serif;font-weight:600;font-size:30px;line-height:1.02;letter-spacing:-.02em}.fm-by{margin-top:8px;font-size:13px;color:#b9b5bf}.fm-meta{margin-top:4px;font-size:12px;color:#77737d}
+.fm-syn{margin:12px 0 0;font-family:"Newsreader",Georgia,serif;font-size:15px;line-height:1.5;color:#cfcbd3;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}.fm-go{margin-top:auto;padding-top:14px;font-size:14px;font-weight:600;color:#f472b6}
+.fm:focus-visible{outline:2px solid #f472b6;outline-offset:5px;border-radius:3px}
+@media(min-width:768px){.featured-manga{padding:38px 0 42px}.fm{gap:32px;padding-top:24px}.fm-cover{flex-basis:240px;width:240px}.fm-title{font-size:44px}}
+@media(max-width:480px){.featured-manga{width:calc(100% - 26px)}.fm{gap:14px}.fm-cover{flex-basis:124px;width:124px}.fm-title{font-size:24px}.fm-syn{font-size:14px;line-height:1.42;-webkit-line-clamp:5}}
 </style>
