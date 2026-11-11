@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/anime-of-the-month",
+      "schedule": "15 0 1 * *"
+    }
+  ]
+}
