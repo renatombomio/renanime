@@ -7,6 +7,8 @@ import Hero from "../components/hero/Hero.astro";
 import HomeGallery from "../components/home/HomeGallery";
 import AnimeOfTheWeek from "../components/home/AnimeOfTheWeek.astro";
 import WeeklyEpisodes from "../components/home/WeeklyEpisodes.astro";
+import RecommendedManga from "../components/home/RecommendedManga.astro";
+import { getRecommendedManga } from "../lib/recommended-manga";
 import SeasonalFeaturedAnime from "../components/home/SeasonalFeaturedAnime.astro";
 import { getSeasonFeaturedAnime } from "../lib/season-featured-anime";
 import HomeCommunity from "../components/home/HomeCommunity.astro";
@@ -35,6 +37,12 @@ try {
   seasonalAnime = payload.anime;
 } catch (error) {
   console.error("[home] Seasonal featured anime unavailable:", error);
+}
+let recommendedManga = null;
+try {
+  recommendedManga = await getRecommendedManga();
+} catch (error) {
+  console.error("[home] Recommended manga unavailable:", error);
 }
 let weeklyEpisodes = [];
 try {
@@ -93,6 +101,19 @@ try {
         subtitle: isEnglish ? "Top 5 by popularity · AniList" : "Top 5 por popularidad · AniList",
         episode: isEnglish ? "Episode" : "Episodio",
         episodeShort: "Ep.",
+      }}
+    />
+
+    <RecommendedManga
+      manga={recommendedManga}
+      labels={{
+        eyebrow: isEnglish ? "AniList selection" : "Selección AniList",
+        title: isEnglish ? "Recommended manga" : "Manga recomendado",
+        unavailable: isEnglish ? "The manga recommendation is temporarily unavailable." : "La recomendación de manga no está disponible temporalmente.",
+        readMore: isEnglish ? "View manga on AniList" : "Ver manga en AniList",
+        score: isEnglish ? "Score" : "Puntuación",
+        chapters: isEnglish ? "chapters" : "capítulos",
+        volumes: isEnglish ? "volumes" : "volúmenes",
       }}
     />
 
