@@ -12,7 +12,6 @@ export interface Props {
   labels: {
     eyebrow: string;
     title: string;
-    subtitle: string;
     ariaLabel: string;
   };
 }
@@ -26,7 +25,6 @@ const featured = anime;
     <header class="sf-header">
       <p class="sf-eyebrow"><span class="sf-dot" aria-hidden="true"></span>{labels.eyebrow}</p>
       <h2 id="seasonal-featured-title">{labels.title}</h2>
-      <p class="sf-subtitle">{labels.subtitle}</p>
     </header>
 
     <div class="sf-marquee" role="region" aria-label={labels.ariaLabel}>
@@ -97,7 +95,6 @@ const featured = anime;
     line-height: 1.1;
     letter-spacing: -.02em;
   }
-  .sf-subtitle { margin: 8px 0 0; color: #8f8a96; font-size: 14px; }
   .sf-marquee { width: 100%; overflow: hidden; }
   .sf-track {
     display: flex;
@@ -161,7 +158,6 @@ const featured = anime;
   @media (max-width: 640px) {
     .seasonal-featured { width: calc(100% - 2rem); padding: 2.5rem 0; }
     .sf-header h2 { font-size: 28px; }
-    .sf-subtitle { font-size: 13px; }
     .sf-card { flex-basis: 142px; width: 142px; }
     .sf-track { animation-duration: 70s; }
   }
