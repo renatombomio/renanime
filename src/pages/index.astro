@@ -7,6 +7,7 @@ import Hero from "../components/hero/Hero.astro";
 import HomeGallery from "../components/home/HomeGallery";
 import AnimeOfTheWeek from "../components/home/AnimeOfTheWeek.astro";
 import WeeklyEpisodes from "../components/home/WeeklyEpisodes.astro";
+import SeasonalFeaturedAnime from "../components/home/SeasonalFeaturedAnime.astro";
 import HomeCommunity from "../components/home/HomeCommunity.astro";
 import { createSupabaseSsrClient } from "../lib/supabase-ssr";
 import { getWatchedLibrary } from "../data/library";
@@ -27,6 +28,20 @@ try {
 } catch (error) { console.error("[home] Community data unavailable:", error); }
 const lang = Astro.locals.lang;
 const isEnglish = lang === "en";
+let seasonalAnime = [];
+try {
+  const response = await fetch(new URL("/api/season-featured-anime", Astro.url), {
+    headers: { Accept: "application/json" },
+    redirect: "manual",
+    cache: "no-store",
+  });
+  if (!response.ok) throw new Error(`Seasonal anime API returned HTTP ${response.status}`);
+  const payload = await response.json();
+  if (!payload.success || !Array.isArray(payload.anime)) throw new Error("Seasonal anime API returned an invalid payload.");
+  seasonalAnime = payload.anime;
+} catch (error) {
+  console.error("[home] Seasonal featured anime unavailable:", error);
+}
 let weeklyEpisodes = [];
 try {
   const requestCookie = Astro.request.headers.get("cookie");
@@ -66,6 +81,15 @@ try {
     </section>
 
     <AnimeOfTheWeek />
+    <SeasonalFeaturedAnime
+      anime={seasonalAnime}
+      labels={{
+        eyebrow: isEnglish ? "Now airing" : "En emisión",
+        title: isEnglish ? "Season highlights" : "Estrenos de temporada",
+        subtitle: isEnglish ? "The five most popular anime of the current season · AniList" : "Los cinco animes más populares de la temporada actual · AniList",
+        ariaLabel: isEnglish ? "Featured anime of the current season" : "Animes destacados de la temporada actual",
+      }}
+    />
     <WeeklyEpisodes
       episodes={weeklyEpisodes}
       href={(animeId) => localizedPath(lang, `/anime/${animeId}/`)}
