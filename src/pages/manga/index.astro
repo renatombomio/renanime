@@ -12,7 +12,8 @@ const search = url.searchParams.get("q")?.trim() ?? "";
 const rawDemographic = url.searchParams.get("demographic")?.toUpperCase() ?? "";
 const allowed = ["SHOUNEN", "SEINEN", "SHOUJO", "JOSEI"];
 const demographic = allowed.includes(rawDemographic) ? rawDemographic as MangaDemographic : null;
-const data = await getMangaHome({ search, demographic });
+const unclassified = url.searchParams.get("unclassified") === "1";
+const data = await getMangaHome({ search, demographic, unclassified });
 const basePath = localizedPath(lang, "/manga/");
 const detailPath = (id: number) => localizedPath(lang, `/manga/${id}/`);
 const coverAlt = (title: string) => isEnglish ? `${title} cover` : `Portada de ${title}`;
@@ -38,7 +39,7 @@ const queryFor = (next: { q?: string; demographic?: MangaDemographic | null }) =
   if (nextDemo) params.set("demographic", nextDemo.toLowerCase());
   return `${basePath}${params.size ? `?${params.toString()}` : ""}`;
 };
-const unclassifiedPath = `${basePath}?demographic=unclassified`;
+const unclassifiedPath = `${basePath}?${search ? `q=${encodeURIComponent(search)}&` : ""}unclassified=1`;
 ---
 <Layout title="Manga — Renanime" description={isEnglish ? "Discover manga, explore demographics and find your next read." : "Descubre manga, explora demografías y encuentra tu próxima lectura."}>
   <Navbar />
@@ -53,7 +54,7 @@ const unclassifiedPath = `${basePath}?demographic=unclassified`;
       </form>
     </header>
     <nav class="demographic-nav" aria-label={isEnglish ? "Manga demographics" : "Demografías del manga"}>
-      <a class:list={["demographic-link", !demographic && "is-current"]} href={queryFor({ demographic: null })}>{isEnglish ? "All" : "Todos"}</a>
+      <a class:list={["demographic-link", !demographic && !unclassified && "is-current"]} href={queryFor({ demographic: null })}>{isEnglish ? "All" : "Todos"}</a>
       {categories.map((category) => <a class:list={["demographic-link", demographic === category.id && "is-current"]} href={queryFor({ demographic: category.id })}>{category.label}</a>)}
     </nav>
     {(search || demographic) && <p class="results-caption">{isEnglish ? "Results" : "Resultados"}{search ? ` · “${search}”` : ""}{demographic ? ` · ${demographicLabel(demographic, lang)}` : ""}</p>}
