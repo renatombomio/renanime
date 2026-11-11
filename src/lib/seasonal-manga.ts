@@ -3,6 +3,7 @@ type AniListManga = {
   title: { romaji: string | null; english: string | null; native: string | null };
   coverImage: { extraLarge: string | null; large: string | null };
   description: string | null;
+  volumes: number | null;
   staff: { edges: Array<{ role: string; node: { name: { full: string | null } } }> };
 };
 
@@ -17,6 +18,7 @@ export type SeasonalMangaItem = {
   author: string | null;
   cover: string | null;
   synopsis: string | null;
+  volumes: number | null;
 };
 
 const ENDPOINT = "https://graphql.anilist.co";
@@ -45,6 +47,7 @@ export async function getSeasonalManga(): Promise<SeasonalMangaItem | null> {
             title { romaji english native }
             coverImage { extraLarge large }
             description(asHtml: false)
+            volumes
             staff(perPage: 10, sort: RELEVANCE) {
               edges { role node { name { full } } }
             }
@@ -74,6 +77,7 @@ export async function getSeasonalManga(): Promise<SeasonalMangaItem | null> {
     author: author?.node.name.full || null,
     cover: item.coverImage.extraLarge || item.coverImage.large || null,
     synopsis: cleanDescription(item.description),
+    volumes: item.volumes,
   };
 
   cache = { manga, expiresAt: Date.now() + CACHE_MS };

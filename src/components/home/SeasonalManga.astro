@@ -6,8 +6,9 @@ interface Props {
     author: string | null;
     cover: string | null;
     synopsis: string | null;
+    volumes: number | null;
   } | null;
-  labels: { title: string; subtitle: string; author: string };
+  labels: { title: string; subtitle: string; author: string; volumes: string; volumesUnavailable: string };
 }
 const { manga, labels } = Astro.props;
 ---
@@ -28,6 +29,7 @@ const { manga, labels } = Astro.props;
         <div class="sm-copy">
           <h3>{manga.title}</h3>
           {manga.author && <p class="sm-author">{labels.author} {manga.author}</p>}
+          <p class="sm-volumes">{labels.volumes}: {manga.volumes ?? labels.volumesUnavailable}</p>
           {manga.synopsis && <p class="sm-synopsis">{manga.synopsis}</p>}
           <span class="sm-source">AniList · Manga</span>
         </div>
@@ -48,6 +50,7 @@ const { manga, labels } = Astro.props;
   .sm-copy{min-width:0;padding-top:2px}
   .sm-copy h3{margin:0;font:650 clamp(22px,3vw,30px)/1.12 "Newsreader",Georgia,serif;letter-spacing:-.02em}
   .sm-author{margin:7px 0 0;color:#aaa6af;font-size:12px}
+  .sm-volumes{margin:7px 0 0;color:#aaa6af;font-size:12px;font-weight:600}
   .sm-synopsis{display:-webkit-box;margin:10px 0 0;overflow:hidden;color:#c9c5cd;font:400 15px/1.5 "Newsreader",Georgia,serif;-webkit-box-orient:vertical;-webkit-line-clamp:5}
   .sm-source{display:block;margin-top:12px;color:#77737d;font-size:10px;letter-spacing:.04em}
   @media(min-width:700px){.sm-feature{grid-template-columns:150px minmax(0,1fr);gap:22px}.sm-heading{margin-bottom:18px}}
