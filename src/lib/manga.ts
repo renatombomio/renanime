@@ -19,7 +19,7 @@ const FIELDS = `id title { romaji english native } coverImage { extraLarge large
 const DEMOGRAPHICS: Record<MangaDemographic, string> = { SHOUNEN: "Shounen", SEINEN: "Seinen", SHOUJO: "Shoujo", JOSEI: "Josei" };
 function cleanDescription(value?: string | null): string | null {
   if (!value) return null;
-  return value.replace(/<br\\s*\\/?\\s*>/gi, " ").replace(/<[^>]*>/g, " ")
+  return value.replace(/<br[^>]*>/gi, " ").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() || null;
     .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/\\s+/g, " ").trim() || null;
 }
