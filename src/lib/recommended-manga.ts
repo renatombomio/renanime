@@ -75,7 +75,7 @@ export async function getRecommendedManga(): Promise<RecommendedManga | null> {
     title: item.title.romaji || item.title.english || item.title.native || "Untitled",
     cover: item.coverImage.extraLarge || item.coverImage.large || "",
     tint: item.coverImage.color || "#ec4899",
-    description: (item.description || "").replace(/<[^>]*>/g, " ").replace(/\\s+/g, " ").trim(),
+    description: (item.description || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim(),
     genres: item.genres || [],
     score: item.meanScore ?? item.averageScore ?? null,
     chapters: item.chapters,
