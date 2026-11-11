@@ -211,5 +211,9 @@
   "homeCommunity.emptyMembers": "La comunidad está empezando a crecer.",
   "homeCommunity.emptyActivity": "Todavía no hay actividad reciente.",
   "homeCommunity.viewAll": "Ver comunidad",
-  "homeCommunity.commented": "ha comentado en"
+  "homeCommunity.commented": "ha comentado en",
+  "homeSeasonal.eyebrow": "En emisión",
+  "homeSeasonal.title": "Estrenos de temporada",
+  "homeSeasonal.subtitle": "Los cinco animes más populares de la temporada actual · AniList",
+  "homeSeasonal.ariaLabel": "Animes destacados de la temporada actual"
 }
