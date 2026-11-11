@@ -5,6 +5,7 @@ interface Props {
   manga: RecommendedManga | null;
   labels: {
     eyebrow: string;
+    pick: string;
     title: string;
     unavailable: string;
     readMore: string;
@@ -35,7 +36,7 @@ const synopsis = manga?.description
           </div>
         </a>
         <div class="rm-content">
-          <p class="rm-label">ANILIST PICK</p>
+          <p class="rm-label">{labels.pick}</p>
           <h3><a href={manga.siteUrl} target="_blank" rel="noopener noreferrer">{manga.title}</a></h3>
           <div class="rm-meta">
             {manga.score !== null && <span class="rm-score">★ {(manga.score / 10).toFixed(1)} / 10</span>}
