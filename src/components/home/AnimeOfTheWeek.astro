@@ -10,7 +10,7 @@ const DEFAULT_STREAMING_REGION = "ES";
 
 const [{ data: activeSelection, error: selectionError }, { data: latestSelection }] = await Promise.all([
   supabase.from("anime_of_the_week").select("anilist_id, week_start, week_end, selection_source, selection_reason, source_rank")
-    .lte("week_start", today).gt("week_end", today).order("week_start", { ascending: false }).limit(1).maybeSingle(),
+    .lte("week_start", today).gte("week_end", today).order("week_start", { ascending: false }).limit(1).maybeSingle(),
   supabase.from("anime_of_the_week").select("anilist_id, week_start, week_end, selection_source, selection_reason, source_rank")
     .order("week_start", { ascending: false }).limit(1).maybeSingle(),
 ]);
@@ -35,7 +35,7 @@ const fetchAnimeById = async (id: number): Promise<AnimeData | null> => {
   const response = await fetch("https://graphql.anilist.co", {
     method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({
-      query: `query WeeklyAnime($id: Int!) {
+      query: `query MonthlyAnime($id: Int!) {
         Media(id: $id, type: ANIME) {
           id title { romaji english native } idMal format meanScore averageScore episodes
           description(asHtml: false) trailer { id site } coverImage { extraLarge large } siteUrl
@@ -55,32 +55,33 @@ if (activeSelection?.anilist_id) {
   catch (error) { console.error("Active anime of the week lookup failed:", error); }
 }
 
-// If the weekly editorial pick is missing or expired, use the best-rated
-// non-adult anime from the current AniList season instead of showing an empty slot.
+// If the monthly selection is missing or expired, use the most popular
+// currently airing non-adult anime from the current AniList season.
 if (!anime) {
   const now = new Date();
   const month = now.getUTCMonth() + 1;
-  const season = month <= 3 ? "WINTER" : month <= 6 ? "SPRING" : month <= 9 ? "SUMMER" : "FALL";
+  const season = month === 12 || month <= 2 ? "WINTER" : month <= 5 ? "SPRING" : month <= 8 ? "SUMMER" : "FALL";
+  const seasonYear = month === 12 ? now.getUTCFullYear() + 1 : now.getUTCFullYear();
   try {
     const response = await fetch("https://graphql.anilist.co", {
       method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
-        query: `query WeeklyFallback($season: MediaSeason!, $year: Int!) {
+        query: `query MonthlyFallback($season: MediaSeason!, $year: Int!) {
           Page(page: 1, perPage: 20) {
-            media(type: ANIME, season: $season, seasonYear: $year, isAdult: false, sort: SCORE_DESC) {
+            media(type: ANIME, season: $season, seasonYear: $year, status: RELEASING, isAdult: false, sort: POPULARITY_DESC) {
               id title { romaji english native } idMal format meanScore averageScore episodes
               description(asHtml: false) trailer { id site } coverImage { extraLarge large } siteUrl
             }
           }
         }`,
-        variables: { season, year: now.getUTCFullYear() },
+        variables: { season, year: seasonYear },
       }),
       signal: AbortSignal.timeout(10000),
     });
     if (response.ok) {
       const payload = await response.json();
       const candidates: AnimeData[] = payload.data?.Page?.media ?? [];
-      anime = candidates.find((candidate) => (candidate.meanScore ?? candidate.averageScore ?? 0) > 0) ?? candidates[0] ?? null;
+      anime = candidates[0] ?? null;
     }
   } catch (error) { console.error("Seasonal anime of the week fallback failed:", error); }
 }
@@ -131,7 +132,7 @@ const availableProviders = providerConfig.flatMap((provider) => {
 <section class="anime-week" aria-labelledby="anime-week-title">
   <div class="anime-week-inner">
     <div class="anime-week-heading">
-      <h2 id="anime-week-title">{isEnglish ? "Featured anime" : "Anime destacado"}</h2>
+      <h2 id="anime-week-title">{isEnglish ? "Anime of the month" : "Anime del mes"}</h2>
     </div>
 
     {anime ? (
@@ -170,7 +171,7 @@ const availableProviders = providerConfig.flatMap((provider) => {
       </div>
     ) : (
       <div class="anime-week-unavailable">
-        {isEnglish ? "The weekly selection is being prepared." : "Estamos preparando la selección de esta semana."}
+        {isEnglish ? "The monthly selection is being prepared." : "Estamos preparando la selección de este mes."}
       </div>
     )}
   </div>
@@ -180,7 +181,7 @@ const availableProviders = providerConfig.flatMap((provider) => {
   .anime-week{padding:26px 0 22px;background:transparent;color:#f5f2ec;border-top:1px solid rgba(255,255,255,.08)}
   .anime-week-inner{width:min(calc(100% - 32px),900px);margin:0 auto}
   .anime-week-heading{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-  .anime-week-heading:after{content:"WEEKLY PICK";font:600 9px/1 ui-monospace,monospace;letter-spacing:.1em;color:#999;border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:5px 7px}
+  .anime-week-heading:after{content:"MONTHLY PICK";font:600 9px/1 ui-monospace,monospace;letter-spacing:.1em;color:#999;border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:5px 7px}
   .anime-week-heading h2{margin:0;font:800 clamp(30px,4vw,42px)/1.05 Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:-.035em}
   .anime-week-card{display:grid;grid-template-columns:150px minmax(0,1fr);align-items:start;gap:18px;width:100%;max-width:900px;padding:14px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:#111214;color:inherit;text-decoration:none;transition:border-color .2s,background .2s}
   .anime-week-poster{width:150px;aspect-ratio:3/4;overflow:hidden;border-radius:7px;background:#19191b}
