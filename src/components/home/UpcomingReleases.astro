@@ -1,0 +1,228 @@
+---
+interface Item {
+  id: number;
+  title: string;
+  poster?: string | null;
+  date: string;
+  format: "SERIES" | "MOVIE";
+  href: string;
+}
+
+interface Props {
+  items: Item[];
+  locale: "es" | "en";
+  labels: { title: string; subtitle: string; series: string; movie: string };
+}
+
+const { items, locale, labels } = Astro.props;
+const sorted = [...items].sort((a, b) => a.date.localeCompare(b.date));
+const monthFmt = new Intl.DateTimeFormat(locale === "en" ? "en-GB" : "es-ES", { month: "long", timeZone: "UTC" });
+const dayFmt = new Intl.DateTimeFormat(locale === "en" ? "en-GB" : "es-ES", { weekday: "short", timeZone: "UTC" });
+
+const groups: { key: string; label: string; items: (Item & { day: number; weekday: string })[] }[] = [];
+for (const item of sorted) {
+  const date = new Date(`${item.date}T00:00:00Z`);
+  const key = item.date.slice(0, 7);
+  let group = groups.find((entry) => entry.key === key);
+  if (!group) {
+    group = { key, label: monthFmt.format(date), items: [] };
+    groups.push(group);
+  }
+  group.items.push({
+    ...item,
+    day: date.getUTCDate(),
+    weekday: dayFmt.format(date).replace(".", ""),
+  });
+}
+---
+
+{groups.length > 0 && (
+  <section class="ur" aria-labelledby="ur-title">
+    <header class="ur-head">
+      <h2 id="ur-title">{labels.title}</h2>
+      <p>{labels.subtitle}</p>
+    </header>
+
+    <div class="ur-rail" data-ur-rail tabindex="0" role="region" aria-label={labels.title}>
+      <div class="ur-track">
+        {groups.map((group) => (
+          <div class="ur-group">
+            <span class="ur-month">{group.label}</span>
+            <ul class="ur-list">
+              {group.items.map((item) => (
+                <li>
+                  <a href={item.href} draggable="false">
+                    {item.poster
+                      ? <img src={item.poster} alt="" width="148" height="222" loading="lazy" decoding="async" draggable="false" />
+                      : <span class="ur-ph" aria-hidden="true"></span>}
+                    <span class="ur-date"><b>{item.day}</b><i>{item.weekday}</i></span>
+                    <span class="ur-title">{item.title}</span>
+                    <span class="ur-kind">{item.format === "MOVIE" ? labels.movie : labels.series}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+    <div class="ur-bar" aria-hidden="true"><span data-ur-bar></span></div>
+  </section>
+)}
+
+<style>
+  .ur { padding: 36px 0 8px; color: #f2efe9; }
+  .ur-head { padding: 0 16px; }
+  .ur-head h2 { margin: 0; font-size: 26px; font-weight: 500; letter-spacing: -.01em; }
+  .ur-head p { margin: 6px 0 0; font-size: 13px; color: #8d8993; }
+
+  .ur-rail {
+    margin-top: 18px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scroll-padding-left: 16px;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    cursor: grab;
+    outline-offset: 4px;
+    -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent);
+    mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent);
+  }
+  .ur-rail::-webkit-scrollbar { display: none; }
+  .ur-rail.is-drag { cursor: grabbing; scroll-snap-type: none; scroll-behavior: auto; user-select: none; }
+  .ur-track { display: flex; gap: 28px; padding: 0 16px; width: max-content; }
+  .ur-group { display: flex; flex-direction: column; gap: 12px; scroll-snap-align: start; }
+  .ur-month {
+    padding-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #a39fa9;
+    text-transform: capitalize;
+    border-bottom: 1px solid rgba(255,255,255,.12);
+  }
+  .ur-list { display: flex; gap: 12px; margin: 0; padding: 0; list-style: none; }
+  .ur-list li { flex: 0 0 148px; }
+  .ur-list a { display: block; color: inherit; text-decoration: none; -webkit-user-drag: none; }
+  .ur-list img, .ur-ph {
+    display: block;
+    width: 148px;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: 6px;
+    background: #17171b;
+    pointer-events: none;
+  }
+  .ur-date { display: flex; align-items: baseline; gap: 6px; margin-top: 12px; }
+  .ur-date b { font-size: 28px; font-weight: 700; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .ur-date i { font-style: normal; font-size: 12px; color: #8d8993; text-transform: capitalize; }
+  .ur-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-top: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .ur-kind { display: block; margin-top: 3px; font-size: 12px; color: #77737d; }
+  .ur-list a:hover .ur-title, .ur-list a:focus-visible .ur-title { color: #f472b6; }
+  .ur-list a:focus-visible { outline: 2px solid #ec4899; outline-offset: 4px; border-radius: 6px; }
+
+  .ur-bar { height: 2px; margin: 18px 16px 0; background: rgba(255,255,255,.1); border-radius: 2px; overflow: hidden; }
+  .ur-bar span { display: block; height: 100%; width: 20%; background: #f2efe9; border-radius: 2px; transform-origin: left; }
+
+  @media (min-width: 768px) {
+    .ur-rail { scroll-padding-left: 0; }
+    .ur-head, .ur-track { padding-left: 0; padding-right: 0; }
+    .ur-bar { margin-left: 0; margin-right: 0; }
+    .ur-list li { flex-basis: 176px; }
+    .ur-list img, .ur-ph { width: 176px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .ur-rail { scroll-behavior: auto; } }
+</style>
+
+<script>
+  function initUpcomingReleases() {
+    document.querySelectorAll<HTMLElement>("[data-ur-rail]").forEach((rail) => {
+      if (rail.dataset.urInit) return;
+      rail.dataset.urInit = "1";
+      const bar = rail.parentElement?.querySelector<HTMLElement>("[data-ur-bar]");
+
+      const updateProgress = () => {
+        if (!bar) return;
+        const max = rail.scrollWidth - rail.clientWidth;
+        const visible = rail.scrollWidth > 0 ? rail.clientWidth / rail.scrollWidth : 1;
+        bar.style.width = Math.max(10, visible * 100) + "%";
+        const offset = max > 0 ? (rail.scrollLeft / max) * (100 / visible - 100) : 0;
+        bar.style.transform = `translateX(${offset}%)`;
+      };
+
+      rail.addEventListener("scroll", updateProgress, { passive: true });
+      window.addEventListener("resize", updateProgress);
+      updateProgress();
+
+      // Permite desplazar el carrusel con la rueda vertical cuando el puntero está encima.
+      rail.addEventListener("wheel", (event) => {
+        if (Math.abs(event.deltaY) > Math.abs(event.deltaX) && rail.scrollWidth > rail.clientWidth) {
+          event.preventDefault();
+          rail.scrollLeft += event.deltaY;
+        }
+      }, { passive: false });
+
+      let pointerDown = false;
+      let startX = 0;
+      let startLeft = 0;
+      let dragged = false;
+
+      rail.addEventListener("pointerdown", (event) => {
+        if (event.pointerType !== "mouse" || event.button !== 0) return;
+        pointerDown = true;
+        dragged = false;
+        startX = event.clientX;
+        startLeft = rail.scrollLeft;
+      });
+
+      window.addEventListener("pointermove", (event) => {
+        if (!pointerDown) return;
+        const delta = event.clientX - startX;
+        if (Math.abs(delta) > 4) {
+          dragged = true;
+          rail.classList.add("is-drag");
+        }
+        if (dragged) rail.scrollLeft = startLeft - delta;
+      });
+
+      const stopDragging = () => {
+        pointerDown = false;
+        rail.classList.remove("is-drag");
+      };
+      window.addEventListener("pointerup", stopDragging);
+      window.addEventListener("pointercancel", stopDragging);
+
+      rail.addEventListener("click", (event) => {
+        if (!dragged) return;
+        event.preventDefault();
+        event.stopPropagation();
+        dragged = false;
+      }, true);
+
+      rail.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          rail.scrollBy({ left: 320, behavior: "smooth" });
+        } else if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          rail.scrollBy({ left: -320, behavior: "smooth" });
+        }
+      });
+
+      // Evita que una selección accidental de texto aparezca al arrastrar.
+      rail.addEventListener("dragstart", (event) => event.preventDefault());
+    });
+  }
+
+  initUpcomingReleases();
+  document.addEventListener("astro:page-load", initUpcomingReleases);
+</script>

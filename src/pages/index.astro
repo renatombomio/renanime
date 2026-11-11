@@ -9,6 +9,7 @@ import AnimeOfTheWeek from "../components/home/AnimeOfTheWeek.astro";
 import WeeklyEpisodes from "../components/home/WeeklyEpisodes.astro";
 import SeasonalFeaturedAnime from "../components/home/SeasonalFeaturedAnime.astro";
 import SeasonalManga from "../components/home/SeasonalManga.astro";
+import UpcomingReleases from "../components/home/UpcomingReleases.astro";
 import { getSeasonFeaturedAnime } from "../lib/season-featured-anime";
 import { getSeasonalManga } from "../lib/seasonal-manga";
 import HomeCommunity from "../components/home/HomeCommunity.astro";
@@ -62,6 +63,20 @@ try {
 } catch (error) {
   console.error("[home] Weekly popular episodes unavailable:", error);
 }
+let upcomingReleases = [];
+try {
+  const response = await fetch(new URL("/api/upcoming-releases", Astro.url), {
+    headers: { Accept: "application/json" },
+    redirect: "manual",
+    cache: "no-store",
+  });
+  if (!response.ok) throw new Error(`Upcoming releases API returned HTTP ${response.status}`);
+  const payload = await response.json();
+  if (!payload.success || !Array.isArray(payload.items)) throw new Error("Upcoming releases API returned an invalid payload.");
+  upcomingReleases = payload.items;
+} catch (error) {
+  console.error("[home] Upcoming releases unavailable:", error);
+}
 ---
 
 <Layout
@@ -113,7 +128,19 @@ try {
         episodeShort: "Ep.",
       }}
     />
-
+    <UpcomingReleases
+      items={upcomingReleases.map((item) => ({
+        ...item,
+        href: localizedPath(lang, `/anime/${item.id}/`),
+      }))}
+      locale={lang}
+      labels={{
+        title: isEnglish ? "Upcoming releases" : "Próximos lanzamientos",
+        subtitle: isEnglish ? "Anime series and movies arriving in the next 90 days." : "Series y películas de anime que llegan en los próximos 90 días.",
+        series: isEnglish ? "Series" : "Serie",
+        movie: isEnglish ? "Movie" : "Película",
+      }}
+    />
 
     <HomeCommunity
       members={communityMembers}
