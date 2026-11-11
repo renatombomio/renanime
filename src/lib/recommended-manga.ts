@@ -17,9 +17,9 @@ const ENDPOINT = "https://graphql.anilist.co";
 let cache: { expiresAt: number; manga: RecommendedManga | null; rawSynopsis: string | null } | null = null;
 const CACHE_MS = 60 * 60 * 1000;
 function cleanDescription(value: string): string {
-  return value.replace(/<br\\s*\\/?>/gi, " ").replace(/<[^>]*>/g, " ")
+  return value.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]*>/g, " ")
     .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/\\s+/g, " ").trim();
+    .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/\s+/g, " ").trim();
 }
 async function translateToSpanish(value: string): Promise<string | null> {
   const clean = cleanDescription(value);
