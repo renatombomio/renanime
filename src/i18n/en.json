@@ -211,5 +211,9 @@
   "homeCommunity.emptyMembers": "The community is just getting started.",
   "homeCommunity.emptyActivity": "No recent activity yet.",
   "homeCommunity.viewAll": "View community",
-  "homeCommunity.commented": "commented on"
+  "homeCommunity.commented": "commented on",
+  "homeSeasonal.eyebrow": "Now airing",
+  "homeSeasonal.title": "Season highlights",
+  "homeSeasonal.subtitle": "The five most popular anime of the current season · AniList",
+  "homeSeasonal.ariaLabel": "Featured anime of the current season"
 }
