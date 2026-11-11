@@ -8,7 +8,7 @@ type AniListAnime = {
 };
 
 type AniListResponse = {
-  data?: { Page?: { media?: AniListAnime[] } };
+  data?: { Page?: { pageInfo?: { hasNextPage: boolean }; media?: AniListAnime[] } };
   errors?: Array<{ message?: string }>;
 };
 
@@ -31,46 +31,66 @@ function getCurrentSeason(date: Date) {
   return { season: "FALL", year: date.getUTCFullYear() };
 }
 
-export async function getSeasonFeaturedAnime() {
-  const current = getCurrentSeason(new Date());
-  const response = await fetch(ANILIST_ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify({
-      query: `query SeasonalFeaturedAnime($season: MediaSeason!, $year: Int!) {
-        Page(page: 1, perPage: 5) {
-          media(
-            type: ANIME,
-            season: $season,
-            seasonYear: $year,
-            status: RELEASING,
-            isAdult: false,
-            sort: POPULARITY_DESC
-          ) {
-            id
-            title { romaji english }
-            coverImage { extraLarge large color }
-            bannerImage
-            format
-            popularity
-          }
-        }
-      }`,
-      variables: { season: current.season, year: current.year },
-    }),
-    signal: AbortSignal.timeout(12_000),
-  });
+let cachedSeasonalResult: { expiresAt: number; result: { season: { season: string; year: number }; anime: SeasonalAnime[] } } | null = null;
+const CACHE_MS = 60 * 60 * 1000;
 
-  if (!response.ok) throw new Error(`AniList returned HTTP ${response.status}`);
-  const payload = await response.json() as AniListResponse;
-  if (payload.errors?.length) {
-    throw new Error(payload.errors.map((item) => item.message).filter(Boolean).join("; "));
+export async function getSeasonFeaturedAnime() {
+  if (cachedSeasonalResult && cachedSeasonalResult.expiresAt > Date.now()) {
+    return cachedSeasonalResult.result;
   }
 
-  const media = payload.data?.Page?.media;
-  if (!Array.isArray(media)) throw new Error("AniList returned an invalid seasonal anime response.");
+  const current = getCurrentSeason(new Date());
+  const allMedia: AniListAnime[] = [];
+  let page = 1;
+  let hasNextPage = true;
 
-  const anime: SeasonalAnime[] = media.map((item) => ({
+  while (hasNextPage) {
+    const response = await fetch(ANILIST_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        query: `query SeasonalAnime($season: MediaSeason!, $year: Int!, $page: Int!) {
+          Page(page: $page, perPage: 50) {
+            pageInfo { hasNextPage }
+            media(
+              type: ANIME,
+              season: $season,
+              seasonYear: $year,
+              status: RELEASING,
+              isAdult: false,
+              sort: POPULARITY_DESC
+            ) {
+              id
+              title { romaji english }
+              coverImage { extraLarge large color }
+              bannerImage
+              format
+              popularity
+            }
+          }
+        }`,
+        variables: { season: current.season, year: current.year, page },
+      }),
+      signal: AbortSignal.timeout(12_000),
+    });
+
+    if (!response.ok) throw new Error(`AniList returned HTTP ${response.status}`);
+    const payload = await response.json() as AniListResponse;
+    if (payload.errors?.length) {
+      throw new Error(payload.errors.map((item) => item.message).filter(Boolean).join("; "));
+    }
+
+    const pageData = payload.data?.Page;
+    if (!pageData || !Array.isArray(pageData.media)) {
+      throw new Error("AniList returned an invalid seasonal anime response.");
+    }
+
+    allMedia.push(...pageData.media);
+    hasNextPage = pageData.pageInfo?.hasNextPage ?? false;
+    page += 1;
+  }
+
+  const anime: SeasonalAnime[] = allMedia.map((item) => ({
     id: item.id,
     title: item.title.romaji || item.title.english || "Untitled",
     cover: item.coverImage.extraLarge || item.coverImage.large || item.bannerImage || "",
@@ -78,5 +98,7 @@ export async function getSeasonFeaturedAnime() {
     popularity: item.popularity,
   })).filter((item) => Boolean(item.cover));
 
-  return { season: current, anime };
+  const result = { season: current, anime };
+  cachedSeasonalResult = { result, expiresAt: Date.now() + CACHE_MS };
+  return result;
 }
