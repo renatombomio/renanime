@@ -18,7 +18,7 @@ export interface Props {
 }
 
 const { anime, labels } = Astro.props;
-const featured = anime.slice(0, 5);
+const featured = anime;
 ---
 
 {featured.length > 0 && (
@@ -102,7 +102,7 @@ const featured = anime.slice(0, 5);
   .sf-track {
     display: flex;
     width: max-content;
-    animation: sf-scroll 42s linear infinite;
+    animation: sf-scroll 85s linear infinite;
     will-change: transform;
   }
   .sf-group {
@@ -163,7 +163,7 @@ const featured = anime.slice(0, 5);
     .sf-header h2 { font-size: 28px; }
     .sf-subtitle { font-size: 13px; }
     .sf-card { flex-basis: 142px; width: 142px; }
-    .sf-track { animation-duration: 34s; }
+    .sf-track { animation-duration: 70s; }
   }
   @media (prefers-reduced-motion: reduce) {
     .sf-track { animation: none; }
