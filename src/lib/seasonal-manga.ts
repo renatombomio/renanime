@@ -28,7 +28,7 @@ function cleanDescription(value: string | null): string | null {
   return value.replace(/<br[^>]*>/gi, " ").replace(/<[^>]*>/g, " ")
     .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"').replace(/&#39;/g, "'")
-    .replace(/\\s+/g, " ").trim() || null;
+    .replace(/\s+/g, " ").trim() || null;
 }
 
 export async function getSeasonalManga(): Promise<SeasonalMangaItem | null> {
