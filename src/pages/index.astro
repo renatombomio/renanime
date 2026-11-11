@@ -40,7 +40,7 @@ try {
 }
 let recommendedManga = null;
 try {
-  recommendedManga = await getRecommendedManga();
+  recommendedManga = await getRecommendedManga(lang);
 } catch (error) {
   console.error("[home] Recommended manga unavailable:", error);
 }
@@ -106,15 +106,11 @@ try {
 
     <RecommendedManga
       manga={recommendedManga}
+      href={recommendedManga?.siteUrl || "#"}
       labels={{
-        eyebrow: isEnglish ? "AniList selection" : "Selección AniList",
-        pick: isEnglish ? "ANILIST RECOMMENDATION" : "RECOMENDACIÓN DE ANILIST",
-        title: isEnglish ? "Recommended manga" : "Manga recomendado",
-        unavailable: isEnglish ? "The manga recommendation is temporarily unavailable." : "La recomendación de manga no está disponible temporalmente.",
-        readMore: isEnglish ? "View manga on AniList" : "Ver manga en AniList",
-        score: isEnglish ? "Score" : "Puntuación",
-        chapters: isEnglish ? "chapters" : "capítulos",
-        volumes: isEnglish ? "volumes" : "volúmenes",
+        subtitle: isEnglish ? "A story worth discovering" : "Una historia que merece ser descubierta",
+        volumes: isEnglish ? "volumes" : "tomos",
+        cta: isEnglish ? "View details" : "Ver ficha",
       }}
     />
 
