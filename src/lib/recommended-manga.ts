@@ -36,8 +36,6 @@ async function translateToSpanish(value: string): Promise<string | null> {
   const translated: string[] = [];
   for (const chunk of chunks) {
     try {
-      const url = ENDPOINT.replace("/graphql", "") + "/unused";
-      void url;
       const requestUrl = "https://api.mymemory.translated.net/get?" + new URLSearchParams({ q: chunk, langpair: "en|es", mt: "1" });
       const response = await fetch(requestUrl, { signal: AbortSignal.timeout(8000) });
       if (!response.ok) return null;
