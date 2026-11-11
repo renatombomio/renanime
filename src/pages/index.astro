@@ -7,8 +7,6 @@ import Hero from "../components/hero/Hero.astro";
 import HomeGallery from "../components/home/HomeGallery";
 import AnimeOfTheWeek from "../components/home/AnimeOfTheWeek.astro";
 import WeeklyEpisodes from "../components/home/WeeklyEpisodes.astro";
-import RecommendedManga from "../components/home/RecommendedManga.astro";
-import { getRecommendedManga } from "../lib/recommended-manga";
 import SeasonalFeaturedAnime from "../components/home/SeasonalFeaturedAnime.astro";
 import { getSeasonFeaturedAnime } from "../lib/season-featured-anime";
 import HomeCommunity from "../components/home/HomeCommunity.astro";
@@ -37,12 +35,6 @@ try {
   seasonalAnime = payload.anime;
 } catch (error) {
   console.error("[home] Seasonal featured anime unavailable:", error);
-}
-let recommendedManga = null;
-try {
-  recommendedManga = await getRecommendedManga(lang);
-} catch (error) {
-  console.error("[home] Recommended manga unavailable:", error);
 }
 let weeklyEpisodes = [];
 try {
