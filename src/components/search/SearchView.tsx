@@ -442,7 +442,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
           </div>
           <div className="search-info">
             <h3>{title}</h3>
-            {row === "hidden" ? (item.averageScore != null && <span className="search-score"><strong>{(item.averageScore / 10).toFixed(1)}</strong><span> / 10</span></span>) : row === "season" ? <span>{formatShortDate(item.startDate, item.format, lang)}</span> : row === "trending" ? null : <span>{formatDate(item.startDate, lang)} · {item.format === "MOVIE" ? t("detail.film") : item.format ? t("detail.series") : t("detail.unknownFormat")}</span>}
+            {row === "hidden" ? (item.averageScore != null && <span className="search-score"><strong>{(item.averageScore / 10).toFixed(1)}</strong><span> / 10</span></span>) : row === "season" ? <span>{formatShortDate(item.startDate, item.format, lang)}</span> : row === "trending" ? null : <span>{formatShortDate(item.startDate, item.format, lang)}</span>}
           </div>
         </a>
       </article>
