@@ -14,6 +14,8 @@ interface Media {
   format?: string | null;
   popularity?: number | null;
   averageScore?: number | null;
+  seasonYear?: number | null;
+  status?: string | null;
   genres?: string[];
   tags?: { name: string; rank?: number | null }[];
 }
@@ -273,6 +275,24 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
   const [filters, setFilters] = useState({ genre: "", year: "", format: "", status: "" });
   const [filtersReady, setFiltersReady] = useState(false);
   const lastSurpriseId = useRef<number | null>(null);
+  const [filtersReady, setFiltersReady] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setFilters({ genre: params.get("genre") ?? "", year: params.get("year") ?? "", format: params.get("format") ?? "", status: params.get("status") ?? "" });
+    setFiltersReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!filtersReady) return;
+    const params = new URLSearchParams(window.location.search);
+    for (const [key, value] of Object.entries(filters)) {
+      if (value) params.set(key, value);
+      else params.delete(key);
+    }
+    const queryString = params.toString();
+    window.history.replaceState({}, "", `${window.location.pathname}${queryString ? `?${queryString}` : ""}`);
+  }, [filters, filtersReady]);
 
   useEffect(() => {
     const value = query.trim();
@@ -400,7 +420,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
     (!filters.format || item.format === filters.format) &&
     (!filters.status || item.status === filters.status);
   const updateFilter = (key: keyof typeof filters, value: string) => setFilters((current) => ({ ...current, [key]: current[key] === value ? "" : value }));
-  const surprisePool = allDiscoveryItems.filter(matchesFilters);
+  const surprisePool = [...new Map(allDiscoveryItems.filter(matchesFilters).map((item) => [item.id, item])).values()];
   const surprise = () => {
     if (!surprisePool.length) return;
     const candidates = surprisePool.filter((item) => item.id !== lastSurpriseId.current);
@@ -449,6 +469,16 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         .search-filter-option[aria-pressed="true"] { border-bottom-color: #ec4899; color: #f2efe9; }
         .search-filter-tab:focus-visible, .search-filter-option:focus-visible { outline: 2px solid #ec4899; outline-offset: 3px; }
         .search-discovery { display: grid; gap: clamp(2.4rem, 5vw, 4rem); }
+        .search-filters { display: flex; gap: 1.2rem; overflow-x: auto; margin: -1.4rem 0 1rem; border-bottom: 1px solid rgba(255,255,255,.08); scrollbar-width: none; }
+        .search-filters::-webkit-scrollbar { display: none; }
+        .search-filter-tab { flex: 0 0 auto; padding: .65rem 0 .7rem; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #8d8993; font: 400 .8rem/1.2 var(--font-body); cursor: pointer; white-space: nowrap; }
+        .search-filter-tab[aria-selected="true"] { border-bottom-color: #ec4899; color: #f2efe9; font-weight: 600; }
+        .search-filter-options { display: flex; flex-wrap: wrap; gap: .5rem 1rem; margin: 0 0 1rem; }
+        .search-filter-option { padding: .35rem 0; border: 0; border-bottom: 1px solid transparent; background: transparent; color: #8d8993; font: 400 .78rem/1.3 var(--font-body); cursor: pointer; }
+        .search-filter-option[aria-pressed="true"] { border-bottom-color: #ec4899; color: #f2efe9; }
+        .search-filter-tab:focus-visible, .search-filter-option:focus-visible, .search-discovery-count button:focus-visible { outline: 2px solid #ec4899; outline-offset: 3px; }
+        .search-discovery-count { display: flex; justify-content: space-between; align-items: center; margin: 0 0 1.7rem; color: #77737d; font: 400 .75rem/1.3 var(--font-body); }
+        .search-discovery-count button { padding: 0; border: 0; background: transparent; color: #f472b6; font: 600 .78rem/1.3 var(--font-body); cursor: pointer; }
         .search-discovery-row { min-width: 0; }
         .search-row-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 1.15rem; }
         .search-row-copy { display: grid; gap: .45rem; min-width: 0; }
@@ -501,8 +531,15 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("search.placeholder")} aria-label={t("search.label")} />
       </form>
 
-      {showDiscovery && (
-        <div className="search-discovery">
+      {showDiscovery && <>
+        <nav className="search-filters" aria-label={lang === "en" ? "Search filters" : "Filtros de búsqueda"}>
+          {(["discover", "genre", "year", "format", "status"] as const).map((tab) => <button key={tab} type="button" className="search-filter-tab" aria-selected={activeFilter === tab} onClick={() => setActiveFilter(tab)}>{({ discover: t("search.filterDiscover"), genre: t("search.filterGenre"), year: t("search.filterYear"), format: t("search.filterFormat"), status: t("search.filterStatus") })[tab]}</button>)}
+        </nav>
+        {activeFilter !== "discover" && <div className="search-filter-options" role="group" aria-label={activeFilter}>
+          {(options[activeFilter] ?? []).map((value) => <button key={value} type="button" className="search-filter-option" aria-pressed={filters[activeFilter] === String(value)} onClick={() => setFilters((current) => ({ ...current, [activeFilter]: current[activeFilter] === String(value) ? "" : String(value) }))}>{String(value).replaceAll("_", " ").toLocaleLowerCase(lang === "en" ? "en" : "es")}</button>)}
+        </div>}
+        <div className="search-discovery-count"><span>{t("search.titleCount").replace("{count}", String(surprisePool.length))}</span>{surprisePool.length > 0 && <button type="button" onClick={surprise}>{t("search.surprise")}</button>}</div>
+        {activeFilter === "discover" && <div className="search-discovery">
           {discoveryLoading && <p className="search-discovery-status" role="status" aria-live="polite">{t("search.discoveryLoading")}</p>}
           {discoveryError && !discoveryLoading && <p className="search-discovery-status" role="status">{t("search.discoveryError")}</p>}
           {discovery && DISCOVERY_ROWS.map((row) => {
@@ -522,8 +559,8 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
               </section>
             );
           })}
-        </div>
-      )}
+        </div>}
+      </>}
 
       {loading && <p className="search-status" role="status" aria-live="polite">{t("search.loading")}</p>}
       {!loading && searchError && <p className="search-status" role="alert">{t("search.error")}</p>}
