@@ -274,7 +274,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
   const [personalLibraryReady, setPersonalLibraryReady] = useState(false);
   const [discovery, setDiscovery] = useState<Record<DiscoveryRowId, Media[]> | null>(null);
   const [discoveryLoading, setDiscoveryLoading] = useState(true);
-  const [discoveryError, setDiscoveryError] = useState(false);\n  const [activeFilter, setActiveFilter] = useState<"discover" | "genre" | "year" | "format" | "status">("discover");\n  const [filters, setFilters] = useState({ genre: "", year: "", format: "", status: "" });
+  const [discoveryError, setDiscoveryError] = useState(false);\n  const [activeFilter, setActiveFilter] = useState<"discover" | "genre" | "year" | "format" | "status">("discover");\n  const [filters, setFilters] = useState({ genre: "", year: "", format: "", status: "" });\n  const [filtersReady, setFiltersReady] = useState(false);
 
   useEffect(() => {
     const value = query.trim();
