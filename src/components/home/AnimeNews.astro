@@ -1,0 +1,72 @@
+---
+interface Item {
+  id: string;
+  title: string;
+  summary: string;
+  url: string;
+  image: string | null;
+  publishedAt: string;
+  source: string;
+}
+interface Props { items: Item[]; locale: "es" | "en"; }
+const { items, locale } = Astro.props;
+const dateFormat = new Intl.DateTimeFormat(locale === "en" ? "en-GB" : "es-ES", {
+  day: "numeric", month: "short", timeZone: "Europe/Madrid",
+});
+---
+{items.length > 0 && (
+  <section class="anime-news" aria-labelledby="anime-news-title">
+    <header class="news-heading">
+      <div>
+        <p class="news-kicker">{locale === "en" ? "From the anime world" : "Desde el mundo del anime"}</p>
+        <h2 id="anime-news-title">{locale === "en" ? "Latest news" : "Noticias"}</h2>
+      </div>
+      <span class="news-updated">{locale === "en" ? "Latest stories" : "Última hora"}</span>
+    </header>
+    <div class="news-grid">
+      {items.slice(0, 3).map((item, index) => (
+        <article class:list={["news-card", { "news-card--lead": index === 0 }]}>
+          <a class="news-link" href={item.url} target="_blank" rel="noopener noreferrer" aria-label={item.title}>
+            <div class="news-image">
+              {item.image ? <img src={item.image} alt="" loading="lazy" decoding="async" /> : <span aria-hidden="true">RENANIME</span>}
+            </div>
+            <div class="news-copy">
+              <div class="news-meta">
+                <span>{item.source}</span>
+                <time datetime={item.publishedAt}>{dateFormat.format(new Date(item.publishedAt))}</time>
+              </div>
+              <h3>{item.title}</h3>
+              {item.summary && <p>{item.summary}</p>}
+              <span class="news-read">{locale === "en" ? "Read the story" : "Leer noticia"} <span aria-hidden="true">↗</span></span>
+            </div>
+          </a>
+        </article>
+      ))}
+    </div>
+  </section>
+)}
+<style>
+  .anime-news{width:min(calc(100% - (var(--gutter)*2)),var(--container-max));margin:0 auto;padding:3.25rem 0 2.5rem;color:#f5f2ec}
+  .news-heading{display:flex;align-items:end;justify-content:space-between;gap:1rem;margin-bottom:1.35rem}
+  .news-kicker{margin:0 0 .55rem;color:#f472b6;font-size:.66rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase}
+  .news-heading h2{margin:0;font-size:clamp(2rem,4vw,2.8rem);font-weight:750;letter-spacing:-.04em;line-height:1}
+  .news-updated{color:#929297;font-size:.72rem;white-space:nowrap}
+  .news-grid{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:1rem}
+  .news-card{min-width:0;overflow:hidden;background:#111114;border:1px solid rgba(255,255,255,.08);border-radius:12px}
+  .news-link{display:flex;height:100%;flex-direction:column;color:inherit;text-decoration:none}
+  .news-image{position:relative;aspect-ratio:16/9;overflow:hidden;background:radial-gradient(ellipse at 70% 20%,#34303a,#141418 70%);display:grid;place-items:center}
+  .news-image img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease}
+  .news-image span{color:#8d8993;font-size:.7rem;font-weight:800;letter-spacing:.2em}
+  .news-copy{display:flex;flex:1;flex-direction:column;padding:1rem}
+  .news-meta{display:flex;justify-content:space-between;gap:.6rem;color:#929297;font-size:.65rem}
+  .news-meta span{color:#f0a2c7;font-weight:650}
+  .news-copy h3{margin:.75rem 0 0;font-size:1rem;line-height:1.28;font-weight:700;letter-spacing:-.02em}
+  .news-card--lead .news-copy h3{font-size:1.25rem}
+  .news-copy p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin:.6rem 0 0;color:#aaa6af;font-size:.78rem;line-height:1.5}
+  .news-read{display:inline-flex;gap:.35rem;align-items:center;margin-top:auto;padding-top:1rem;color:#d7d2da;font-size:.7rem;font-weight:650}
+  .news-link:hover .news-image img{transform:scale(1.04)}
+  .news-link:hover h3,.news-link:focus-visible h3{color:#f472b6}
+  .news-link:focus-visible{outline:2px solid #ec4899;outline-offset:-3px;border-radius:12px}
+  @media(max-width:760px){.anime-news{width:calc(100% - 2rem);padding:2.6rem 0 2rem}.news-grid{grid-template-columns:1fr;gap:.8rem}.news-card--lead .news-link{display:grid;grid-template-columns:42% minmax(0,1fr)}.news-card--lead .news-image{height:100%;min-height:150px;aspect-ratio:auto}.news-card--lead .news-copy{padding:.8rem}.news-card--lead .news-copy h3{font-size:1rem}.news-card:not(.news-card--lead) .news-link{display:grid;grid-template-columns:34% minmax(0,1fr)}.news-card:not(.news-card--lead) .news-image{height:100%;min-height:112px;aspect-ratio:auto}.news-card:not(.news-card--lead) .news-copy{padding:.75rem}.news-card:not(.news-card--lead) .news-copy h3{margin-top:.5rem;font-size:.9rem}.news-copy p{display:none}.news-read{padding-top:.7rem}}
+  @media(prefers-reduced-motion:reduce){.news-image img{transition:none}}
+</style>

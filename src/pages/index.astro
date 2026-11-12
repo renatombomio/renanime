@@ -9,6 +9,8 @@ import AnimeOfTheWeek from "../components/home/AnimeOfTheWeek.astro";
 import WeeklyEpisodes from "../components/home/WeeklyEpisodes.astro";
 import SeasonalFeaturedAnime from "../components/home/SeasonalFeaturedAnime.astro";
 import UpcomingReleases from "../components/home/UpcomingReleases.astro";
+import AnimeNews from "../components/home/AnimeNews.astro";
+import { getAnimeNews } from "../lib/anime-news";
 import { getUpcomingReleases } from "./api/upcoming-releases";
 import { getSeasonFeaturedAnime } from "../lib/season-featured-anime";
 import HomeCommunity from "../components/home/HomeCommunity.astro";
@@ -61,6 +63,12 @@ try {
   upcomingReleases = await getUpcomingReleases();
 } catch (error) {
   console.error("[home] Upcoming releases unavailable:", error);
+}
+let animeNews = [];
+try {
+  animeNews = await getAnimeNews();
+} catch (error) {
+  console.error("[home] Anime news unavailable:", error);
 }
 ---
 
@@ -116,6 +124,8 @@ try {
         movie: isEnglish ? "Movie" : "Película",
       }}
     />
+
+    <AnimeNews items={animeNews} locale={lang} />
 
     <HomeCommunity
       members={communityMembers}
