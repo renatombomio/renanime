@@ -256,7 +256,7 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
   return { discover, hidden, trending, season: seasonItems, topRated };
 }
 
-async function fetchFilteredAnime(filters: { genre: string[]; year: string; status: string }): Promise<{ items: Media[]; total: number }> {
+async function fetchFilteredAnime(filters: { genre: string[]; year: string; status: string }, signal?: AbortSignal): Promise<{ items: Media[]; total: number }> {
   const query = `query FilterAnime($genres: [String], $status: MediaStatus, $dateAfter: FuzzyDateInt, $dateBefore: FuzzyDateInt) {
     Page(page: 1, perPage: 50) {
       pageInfo { total }
@@ -264,12 +264,14 @@ async function fetchFilteredAnime(filters: { genre: string[]; year: string; stat
     }
   }`;
   const selectedYear = filters.year && filters.year !== "before-2016" ? Number(filters.year) : null;
-  const dateAfter = selectedYear ? selectedYear * 10000 - 1 : null;
-  const dateBefore = selectedYear ? (selectedYear + 1) * 10000 + 1 : filters.year === "before-2016" ? 20160101 : null;
+  // AniList accepts fuzzy dates; YYYY0000 represents a year boundary.
+  const dateAfter = selectedYear ? selectedYear * 10000 : null;
+  const dateBefore = selectedYear ? (selectedYear + 1) * 10000 : filters.year === "before-2016" ? 20160000 : null;
   const response = await fetch("https://graphql.anilist.co", {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({ query, variables: { genres: filters.genre.length ? filters.genre : null, status: filters.status || null, dateAfter, dateBefore } }),
+    signal,
   });
   const payload = await response.json();
   if (!response.ok || payload.errors?.length) {
@@ -457,11 +459,16 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
 
   useEffect(() => {
     if (!hasFilters || submitted.trim()) { setFilterResults([]); setFilterTotal(0); setFilterLoading(false); setFilterError(false); return; }
-    let cancelled = false;
-    setFilterLoading(true);
-    setFilterError(false);
-    fetchFilteredAnime(filters).then((data) => { if (!cancelled) { setFilterResults(data.items); setFilterTotal(data.total); } }).catch(() => { if (!cancelled) setFilterError(true); }).finally(() => { if (!cancelled) setFilterLoading(false); });
-    return () => { cancelled = true; };
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => {
+      setFilterLoading(true);
+      setFilterError(false);
+      fetchFilteredAnime(filters, controller.signal)
+        .then((data) => { setFilterResults(data.items); setFilterTotal(data.total); })
+        .catch((error) => { if (error?.name !== "AbortError") setFilterError(true); })
+        .finally(() => { if (!controller.signal.aborted) setFilterLoading(false); });
+    }, 250);
+    return () => { window.clearTimeout(timeout); controller.abort(); };
   }, [filterKey, submitted]);
   const renderCard = (item: Media, index: number, row?: DiscoveryRowId) => {
     const title = lang === "en"
