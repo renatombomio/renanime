@@ -256,11 +256,11 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
   return { discover, hidden, trending, season: seasonItems, topRated };
 }
 
-async function fetchFilteredAnime(filters: { genre: string[]; year: string; format: string; status: string }): Promise<{ items: Media[]; total: number }> {
-  const query = `query FilterAnime($genres: [String], $format: MediaFormat, $status: MediaStatus, $dateAfter: FuzzyDateInt, $dateBefore: FuzzyDateInt) {
+async function fetchFilteredAnime(filters: { genre: string[]; year: string; status: string }): Promise<{ items: Media[]; total: number }> {
+  const query = `query FilterAnime($genres: [String], $status: MediaStatus, $dateAfter: FuzzyDateInt, $dateBefore: FuzzyDateInt) {
     Page(page: 1, perPage: 50) {
       pageInfo { total }
-      media(type: ANIME, genre_in: $genres, format: $format, status: $status, startDate_greater: $dateAfter, startDate_lesser: $dateBefore, sort: POPULARITY_DESC, isAdult: false) { ${MEDIA_FIELDS} }
+      media(type: ANIME, genre_in: $genres, status: $status, startDate_greater: $dateAfter, startDate_lesser: $dateBefore, sort: POPULARITY_DESC, isAdult: false) { ${MEDIA_FIELDS} }
     }
   }`;
   const selectedYear = filters.year && filters.year !== "before-2016" ? Number(filters.year) : null;
@@ -269,7 +269,7 @@ async function fetchFilteredAnime(filters: { genre: string[]; year: string; form
   const response = await fetch("https://graphql.anilist.co", {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify({ query, variables: { genres: filters.genre.length ? filters.genre : null, format: filters.format || null, status: filters.status || null, dateAfter, dateBefore } }),
+    body: JSON.stringify({ query, variables: { genres: filters.genre.length ? filters.genre : null, status: filters.status || null, dateAfter, dateBefore } }),
   });
   const payload = await response.json();
   if (!response.ok || payload.errors?.length) {
@@ -292,19 +292,19 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
   const [discovery, setDiscovery] = useState<Record<DiscoveryRowId, Media[]> | null>(null);
   const [discoveryLoading, setDiscoveryLoading] = useState(true);
   const [discoveryError, setDiscoveryError] = useState(false);
-  const [activeFilter, setActiveFilter] = useState<"discover" | "genre" | "year" | "format" | "status">("discover");
-  const [filters, setFilters] = useState({ genre: [] as string[], year: "", format: "", status: "" });
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filters, setFilters] = useState({ genre: [] as string[], year: "", status: "" });
   const [filterResults, setFilterResults] = useState<Media[]>([]);
   const [filterTotal, setFilterTotal] = useState(0);
   const [filterLoading, setFilterLoading] = useState(false);
   const [filterError, setFilterError] = useState(false);
-  const [lastAppliedFilter, setLastAppliedFilter] = useState<keyof typeof filters | null>(null);
+  const [lastAppliedFilter, setLastAppliedFilter] = useState<"genre" | "year" | "status" | null>(null);
   const [filtersReady, setFiltersReady] = useState(false);
   const lastSurpriseId = useRef<number | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    setFilters({ genre: params.getAll("genre"), year: params.get("year") ?? "", format: params.get("format") ?? "", status: params.get("status") ?? "" });
+    setFilters({ genre: params.getAll("genre"), year: params.get("year") ?? "", status: params.get("status") ?? "" });
     setFiltersReady(true);
   }, []);
 
@@ -434,16 +434,14 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
   const showDiscovery = !query.trim() && !submitted.trim();
   const allDiscoveryItems = discovery ? Object.values(discovery).flat() : [];
   const genres = ["Action", "Adventure", "Comedy", "Drama", "Fantasy", "Horror", "Mahou Shoujo", "Mecha", "Music", "Mystery", "Psychological", "Romance", "Sci-Fi", "Slice of Life", "Sports", "Supernatural", "Thriller"];
-  const formats = ["TV", "TV_SHORT", "MOVIE", "SPECIAL", "OVA", "ONA", "MUSIC"];
-  const statuses = ["FINISHED", "RELEASING", "NOT_YET_RELEASED", "CANCELLED"];
+  const statuses = ["FINISHED", "RELEASING"];
   const currentYear = new Date().getFullYear();
   const years = [...Array.from({ length: 10 }, (_, index) => String(currentYear - index)), "before-2016"];
-  const options = { genre: genres, year: years, format: formats, status: statuses };
-  const hasFilters = filters.genre.length > 0 || Boolean(filters.year || filters.format || filters.status);
+  const options = { genre: genres, year: years, status: statuses };
+  const hasFilters = filters.genre.length > 0 || Boolean(filters.year || filters.status);
   const matchesFilters = (item: Media) =>
     (!filters.genre.length || filters.genre.some((genre) => item.genres?.includes(genre))) &&
     (!filters.year || (filters.year === "before-2016" ? (item.seasonYear ?? item.startDate?.year ?? 9999) < 2017 : String(item.seasonYear ?? item.startDate?.year ?? "") === filters.year)) &&
-    (!filters.format || item.format === filters.format) &&
     (!filters.status || item.status === filters.status);
   const filterKey = JSON.stringify(filters);
   const surprisePool = [...new Map(allDiscoveryItems.filter(matchesFilters).map((item) => [item.id, item])).values()];
@@ -456,13 +454,13 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
   };
 
   useEffect(() => {
-    if (activeFilter === "discover" && !hasFilters) { setFilterResults([]); setFilterTotal(0); setFilterLoading(false); setFilterError(false); return; }
+    if (!hasFilters || submitted.trim()) { setFilterResults([]); setFilterTotal(0); setFilterLoading(false); setFilterError(false); return; }
     let cancelled = false;
     setFilterLoading(true);
     setFilterError(false);
     fetchFilteredAnime(filters).then((data) => { if (!cancelled) { setFilterResults(data.items); setFilterTotal(data.total); } }).catch(() => { if (!cancelled) setFilterError(true); }).finally(() => { if (!cancelled) setFilterLoading(false); });
     return () => { cancelled = true; };
-  }, [activeFilter, filterKey]);
+  }, [filterKey, submitted]);
   const renderCard = (item: Media, index: number, row?: DiscoveryRowId) => {
     const title = lang === "en"
       ? (item.title?.english || item.title?.romaji || t("detail.noTitle"))
@@ -495,23 +493,24 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         .search-more:hover:not(:disabled) { background: var(--color-paper-50); color: var(--color-ink-950); }
         .search-discovery-count { display: flex; justify-content: space-between; align-items: center; margin: -.45rem 0 1.5rem; color: #77737d; font: 400 .72rem/1.3 var(--font-body); }
         .search-discovery-count button { padding: 0; border: 0; background: transparent; color: #f472b6; font: 600 .75rem/1.3 var(--font-body); cursor: pointer; }
-        .search-filters { display: flex; gap: 1.2rem; overflow-x: auto; margin: -1.4rem 0 1.25rem; border-bottom: 1px solid rgba(255,255,255,.08); scrollbar-width: none; }
-        .search-filter-tab { flex: 0 0 auto; padding: .65rem 0 .7rem; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #8d8993; font: 400 .8rem/1.2 var(--font-body); cursor: pointer; }
-        .search-filter-tab[aria-selected="true"] { border-bottom-color: #ec4899; color: #f2efe9; font-weight: 600; }
-        .search-filter-tab[data-has-filter="true"] { color: #f472b6; }
-        .search-filter-options { display: flex; flex-wrap: wrap; gap: .55rem 1rem; margin: 0 0 1.5rem; }
-        .search-filter-option { padding: .35rem 0; border: 0; border-bottom: 1px solid transparent; background: transparent; color: #8d8993; font: 400 .78rem/1.3 var(--font-body); cursor: pointer; }
-        .search-filter-option[aria-pressed="true"] { border-bottom: 2px solid #ec4899; color: #f472b6; }
-        .search-filter-tab:focus-visible, .search-filter-option:focus-visible { outline: 2px solid #ec4899; outline-offset: 3px; }
+        .search-filter-trigger-row { display: flex; align-items: center; gap: .65rem; min-height: 2.2rem; margin: -1.45rem 0 1rem; }
+        .search-filter-trigger { padding: .25rem 0; border: 0; background: transparent; color: #f2efe9; font: 600 14px/1.3 var(--font-body); cursor: pointer; }
+        .search-filter-badge { display: inline-grid; width: 19px; height: 19px; place-items: center; border-radius: 50%; background: #ec4899; color: #09090b; font: 700 11px/1 var(--font-body); }
+        .search-filter-current { min-width: 0; overflow: hidden; color: #8d8993; font: 400 12px/1.3 var(--font-body); text-overflow: ellipsis; white-space: nowrap; }
+        .search-filter-trigger:focus-visible, .search-filter-pill:focus-visible, .search-filter-panel-footer button:focus-visible { outline: 2px solid #ec4899; outline-offset: 3px; }
+        .search-filter-panel { display: grid; gap: 1.15rem; margin: 0 0 1.6rem; padding: 1rem 0 0; border-top: 1px solid rgba(255,255,255,.08); }
+        .search-filter-group { min-width: 0; }
+        .search-filter-group h3 { margin: 0 0 .65rem; color: #77737d; font: 500 12px/1.2 var(--font-body); }
+        .search-filter-pills { display: flex; gap: .55rem; overflow-x: auto; padding: 2px 2px 7px; scrollbar-width: none; }
+        .search-filter-pills::-webkit-scrollbar { display: none; }
+        .search-filter-pill { flex: 0 0 auto; padding: 7px 14px; border: 1px solid rgba(255,255,255,.12); border-radius: 999px; background: transparent; color: #a39fa9; font: 400 13.5px/1.25 var(--font-body); cursor: pointer; white-space: nowrap; }
+        .search-filter-pill[aria-pressed="true"] { border-color: #f2efe9; background: #f2efe9; color: #09090b; font-weight: 600; }
+        .search-filter-panel-footer { display: flex; align-items: center; justify-content: space-between; color: #77737d; font: 400 12px/1.3 var(--font-body); }
+        .search-filter-panel-footer button { padding: 0; border: 0; background: transparent; color: #f472b6; font: 600 12px/1.3 var(--font-body); cursor: pointer; }
+        .search-filter-results-count { margin: 0 0 1rem; color: #77737d; font: 400 12px/1.3 var(--font-body); }
+        .search-filter-empty { padding: 1.5rem 0; }
         .search-discovery { display: grid; gap: clamp(2.4rem, 5vw, 4rem); }
-        .search-filters { display: flex; gap: 1.2rem; overflow-x: auto; margin: -1.4rem 0 1rem; border-bottom: 1px solid rgba(255,255,255,.08); scrollbar-width: none; }
-        .search-filters::-webkit-scrollbar { display: none; }
-        .search-filter-tab { flex: 0 0 auto; padding: .65rem 0 .7rem; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #8d8993; font: 400 .8rem/1.2 var(--font-body); cursor: pointer; white-space: nowrap; }
-        .search-filter-tab[aria-selected="true"] { border-bottom-color: #ec4899; color: #f2efe9; font-weight: 600; }
-        .search-filter-options { display: flex; flex-wrap: wrap; gap: .5rem 1rem; margin: 0 0 1rem; }
-        .search-filter-option { padding: .35rem 0; border: 0; border-bottom: 1px solid transparent; background: transparent; color: #8d8993; font: 400 .78rem/1.3 var(--font-body); cursor: pointer; }
-        .search-filter-option[aria-pressed="true"] { border-bottom-color: #ec4899; color: #f2efe9; }
-        .search-filter-tab:focus-visible, .search-filter-option:focus-visible, .search-discovery-count button:focus-visible { outline: 2px solid #ec4899; outline-offset: 3px; }
+.search-discovery-count button:focus-visible { outline: 2px solid #ec4899; outline-offset: 3px; }
         .search-discovery-count { display: flex; justify-content: space-between; align-items: center; margin: 0 0 1.7rem; color: #77737d; font: 400 .75rem/1.3 var(--font-body); }
         .search-discovery-count button { padding: 0; border: 0; background: transparent; color: #f472b6; font: 600 .78rem/1.3 var(--font-body); cursor: pointer; }
         .search-discovery-row { min-width: 0; }
@@ -572,19 +571,45 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("search.placeholder")} aria-label={t("search.label")} />
       </form>
 
-      <nav className="search-filters" aria-label={lang === "en" ? "Search filters" : "Filtros de búsqueda"}>
-          {(["discover", "genre", "year", "format", "status"] as const).map((tab) => <button key={tab} type="button" className="search-filter-tab" aria-selected={activeFilter === tab} data-has-filter={tab === "genre" ? filters.genre.length > 0 : tab !== "discover" && Boolean(filters[tab])} onClick={() => setActiveFilter(tab)}>{({ discover: t("search.filterDiscover"), genre: t("search.filterGenre"), year: t("search.filterYear"), format: t("search.filterFormat"), status: t("search.filterStatus") })[tab]}</button>)}
-      </nav>
-      {activeFilter !== "discover" && <div className="search-filter-options" role="group" aria-label={activeFilter}>
-        {(options[activeFilter] ?? []).map((value) => {
-          const selected = activeFilter === "genre" ? filters.genre.includes(value) : filters[activeFilter] === value;
-          const labels: Record<string, [string, string]> = { Action: ["Acción", "Action"], Adventure: ["Aventura", "Adventure"], Comedy: ["Comedia", "Comedy"], Drama: ["Drama", "Drama"], Fantasy: ["Fantasía", "Fantasy"], Horror: ["Terror", "Horror"], "Mahou Shoujo": ["Chicas mágicas", "Magical Girl"], Mecha: ["Mecha", "Mecha"], Music: ["Música", "Music"], Mystery: ["Misterio", "Mystery"], Psychological: ["Psicológico", "Psychological"], Romance: ["Romance", "Romance"], "Sci-Fi": ["Ciencia ficción", "Sci-Fi"], "Slice of Life": ["Recuentos de la vida", "Slice of Life"], Sports: ["Deportes", "Sports"], Supernatural: ["Sobrenatural", "Supernatural"], Thriller: ["Suspense", "Thriller"], TV: ["Serie TV", "TV Series"], TV_SHORT: ["TV corto", "TV Short"], MOVIE: ["Película", "Movie"], SPECIAL: ["Especial", "Special"], OVA: ["OVA", "OVA"], ONA: ["ONA", "ONA"], MUSIC: ["Música", "Music"], FINISHED: ["Finalizado", "Finished"], RELEASING: ["En emisión", "Releasing"], NOT_YET_RELEASED: ["Próximamente", "Upcoming"], CANCELLED: ["Cancelado", "Cancelled"], "before-2016": ["Antes de 2016", "Before 2016"] };
-          const label = labels[value]?.[lang === "en" ? 1 : 0] ?? value;
-          return <button key={value} type="button" className="search-filter-option" aria-pressed={selected} onClick={() => { setLastAppliedFilter(activeFilter); setFilters((current) => activeFilter === "genre" ? { ...current, genre: selected ? current.genre.filter((item) => item !== value) : [...current.genre, value] } : { ...current, [activeFilter]: selected ? "" : value }); }}>{label}</button>;
-        })}
-      </div>}
-      {showDiscovery && activeFilter === "discover" && !hasFilters && <div className="search-discovery-count"><span>{lang === "en" ? "Selected anime to discover" : "Anime seleccionado para descubrir"}</span>{surprisePool.length > 0 && <button type="button" onClick={surprise}>{t("search.surprise")}</button>}</div>}
-      {showDiscovery && activeFilter === "discover" && !hasFilters && <div className="search-discovery">
+      <div className="search-filter-control">
+        <div className="search-filter-trigger-row">
+          <button className="search-filter-trigger" type="button" aria-expanded={filtersOpen} onClick={() => setFiltersOpen((open) => !open)}>{lang === "en" ? "Filters" : "Filtros"}</button>
+          {hasFilters && <span className="search-filter-badge" aria-label={lang === "en" ? "Active filters" : "Filtros activos"}>{filters.genre.length + Number(Boolean(filters.year)) + Number(Boolean(filters.status))}</span>}
+          <span className="search-filter-current">{[
+            ...filters.genre.map((genre) => ({ Action: lang === "en" ? "Action" : "Acción", Adventure: lang === "en" ? "Adventure" : "Aventura", Comedy: lang === "en" ? "Comedy" : "Comedia", Drama: "Drama", Fantasy: lang === "en" ? "Fantasy" : "Fantasía", Horror: lang === "en" ? "Horror" : "Terror", "Sci-Fi": lang === "en" ? "Sci-Fi" : "Ciencia ficción" }[genre] ?? genre)),
+            ...(filters.year ? [filters.year === "before-2016" ? (lang === "en" ? "Before 2016" : "Antes de 2016") : filters.year] : []),
+            ...(filters.status ? [filters.status === "FINISHED" ? (lang === "en" ? "Finished" : "Finalizado") : (lang === "en" ? "Releasing" : "En emisión")] : []),
+          ].join(" · ")}</span>
+        </div>
+        {filtersOpen && <section className="search-filter-panel" aria-label={lang === "en" ? "Anime filters" : "Filtros de anime"}>
+          {([
+            ["genre", lang === "en" ? "GENRE" : "GÉNERO", genres],
+            ["year", lang === "en" ? "YEAR" : "AÑO", years],
+            ["status", lang === "en" ? "STATUS" : "ESTADO", statuses],
+          ] as const).map(([key, heading, values]) => <div className="search-filter-group" key={key}>
+            <h3>{heading}</h3>
+            <div className="search-filter-pills" role="group" aria-label={heading}>
+              {values.map((value) => {
+                const selected = key === "genre" ? filters.genre.includes(value) : filters[key] === value;
+                const labels: Record<string, [string, string]> = { Action: ["Acción", "Action"], Adventure: ["Aventura", "Adventure"], Comedy: ["Comedia", "Comedy"], Drama: ["Drama", "Drama"], Fantasy: ["Fantasía", "Fantasy"], Horror: ["Terror", "Horror"], "Mahou Shoujo": ["Chicas mágicas", "Magical Girl"], Mecha: ["Mecha", "Mecha"], Music: ["Música", "Music"], Mystery: ["Misterio", "Mystery"], Psychological: ["Psicológico", "Psychological"], Romance: ["Romance", "Romance"], "Sci-Fi": ["Ciencia ficción", "Sci-Fi"], "Slice of Life": ["Recuentos de la vida", "Slice of Life"], Sports: ["Deportes", "Sports"], Supernatural: ["Sobrenatural", "Supernatural"], Thriller: ["Suspense", "Thriller"], FINISHED: ["Finalizado", "Finished"], RELEASING: ["En emisión", "Releasing"], "before-2016": ["Antes de 2016", "Before 2016"] };
+                const label = labels[value]?.[lang === "en" ? 1 : 0] ?? value;
+                return <button key={value} type="button" className="search-filter-pill" aria-pressed={selected} onClick={() => {
+                  setLastAppliedFilter(key);
+                  setFilters((current) => key === "genre"
+                    ? { ...current, genre: selected ? current.genre.filter((item) => item !== value) : [...current.genre, value] }
+                    : { ...current, [key]: selected ? "" : value });
+                }}>{label}</button>;
+              })}
+            </div>
+          </div>)}
+          <div className="search-filter-panel-footer">
+            <span>{filterLoading ? t("search.loading") : `${filterTotal.toLocaleString(lang === "en" ? "en-GB" : "es-ES")} ${lang === "en" ? "titles" : "títulos"}`}</span>
+            {hasFilters && <button type="button" onClick={() => { setFilters({ genre: [], year: "", status: "" }); setLastAppliedFilter(null); }}>{lang === "en" ? "Clear" : "Limpiar"}</button>}
+          </div>
+        </section>}
+      </div>
+      {showDiscovery && !hasFilters && <div className="search-discovery-count"><span>{lang === "en" ? "Anime selected to discover" : "Anime seleccionado para descubrir"}</span>{surprisePool.length > 0 && <button type="button" onClick={surprise}>{t("search.surprise")}</button>}</div>}
+      {showDiscovery && !hasFilters && <div className="search-discovery">
           {discoveryLoading && <p className="search-discovery-status" role="status" aria-live="polite">{t("search.discoveryLoading")}</p>}
           {discoveryError && !discoveryLoading && <p className="search-discovery-status" role="status">{t("search.discoveryError")}</p>}
           {discovery && DISCOVERY_ROWS.map((row) => {
@@ -592,29 +617,18 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
             if (!items.length) return null;
             return (
               <section className="search-discovery-row" key={row.id} aria-labelledby={`search-row-${row.id}`}>
-                <header className="search-row-heading">
-                  <div className="search-row-copy">
-                    <h2 id={`search-row-${row.id}`}>{t(row.titleKey)}</h2>
-                    <p>{t(row.descriptionKey)}</p>
-                  </div>
-                </header>
-                <div className="search-row-track" aria-label={t(row.titleKey)} tabIndex={0} role="region">
-                  {items.map((item, index) => renderCard(item, index, row.id))}
-                </div>
+                <header className="search-row-heading"><div className="search-row-copy"><h2 id={`search-row-${row.id}`}>{t(row.titleKey)}</h2><p>{t(row.descriptionKey)}</p></div></header>
+                <div className="search-row-track" aria-label={t(row.titleKey)} tabIndex={0} role="region">{items.map((item, index) => renderCard(item, index, row.id))}</div>
               </section>
             );
           })}
       </div>}
-
-      {showDiscovery && (activeFilter !== "discover" || hasFilters) && <>
-        <div className="search-filter-summary">
-          <span>{filterTotal.toLocaleString(lang === "en" ? "en-GB" : "es-ES")} {lang === "en" ? "titles" : "títulos"}{filters.year ? " · " + (filters.year === "before-2016" ? (lang === "en" ? "Before 2016" : "Antes de 2016") : filters.year) : ""}{filters.genre.length ? " · " + filters.genre.map((genre) => ({ Action: lang === "en" ? "Action" : "Acción", Adventure: lang === "en" ? "Adventure" : "Aventura", Comedy: lang === "en" ? "Comedy" : "Comedia", Fantasy: lang === "en" ? "Fantasy" : "Fantasía", Horror: lang === "en" ? "Horror" : "Terror", Music: lang === "en" ? "Music" : "Música", Mystery: lang === "en" ? "Mystery" : "Misterio", Romance: "Romance", "Sci-Fi": lang === "en" ? "Sci-Fi" : "Ciencia ficción" }[genre] ?? genre)).join(", ") : ""}{filters.format ? " · " + ({ TV: lang === "en" ? "TV Series" : "Serie TV", TV_SHORT: lang === "en" ? "TV Short" : "TV corto", MOVIE: lang === "en" ? "Movie" : "Película", SPECIAL: lang === "en" ? "Special" : "Especial", OVA: "OVA", ONA: "ONA", MUSIC: lang === "en" ? "Music" : "Música" }[filters.format] ?? filters.format) : ""}{filters.status ? " · " + ({ FINISHED: lang === "en" ? "Finished" : "Finalizado", RELEASING: lang === "en" ? "Releasing" : "En emisión", NOT_YET_RELEASED: lang === "en" ? "Upcoming" : "Próximamente", CANCELLED: lang === "en" ? "Cancelled" : "Cancelado" }[filters.status] ?? filters.status) : ""}</span>
-          {hasFilters && <button type="button" onClick={() => { setFilters({ genre: [], year: "", format: "", status: "" }); setLastAppliedFilter(null); }}>{lang === "en" ? "Clear" : "Limpiar"}</button>}
-        </div>
+      {hasFilters && showDiscovery && <>
+        <div className="search-filter-results-count">{filterTotal.toLocaleString(lang === "en" ? "en-GB" : "es-ES")} {lang === "en" ? "titles" : "títulos"}</div>
         {filterLoading && <p className="search-status" role="status">{t("search.loading")}</p>}
         {filterError && <p className="search-status" role="alert">{lang === "en" ? "Could not load titles." : "No se han podido cargar los títulos."}</p>}
         {!filterLoading && !filterError && filterResults.length > 0 && <div className="search-grid search-filtered-grid">{filterResults.map((item, index) => renderCard(item, index))}</div>}
-        {!filterLoading && !filterError && filterResults.length === 0 && <div className="search-filter-empty"><p>{lang === "en" ? "Nothing matches that combination" : "Nada con esa combinación"}</p><button type="button" onClick={() => { if (!lastAppliedFilter) { setFilters({ genre: [], year: "", format: "", status: "" }); return; } setFilters((current) => lastAppliedFilter === "genre" ? { ...current, genre: current.genre.slice(0, -1) } : { ...current, [lastAppliedFilter]: "" }); }}>{lang === "en" ? "Remove the last filter" : "Quitar el último filtro"}</button></div>}
+        {!filterLoading && !filterError && filterResults.length === 0 && <div className="search-filter-empty"><p>{lang === "en" ? "Nothing matches that combination" : "Nada con esa combinación"}</p><button type="button" onClick={() => { if (!lastAppliedFilter) { setFilters({ genre: [], year: "", status: "" }); return; } setFilters((current) => lastAppliedFilter === "genre" ? { ...current, genre: current.genre.slice(0, -1) } : { ...current, [lastAppliedFilter]: "" }); }}>{lang === "en" ? "Remove the last filter" : "Quitar el último filtro"}</button></div>}
       </>}
       {loading && <p className="search-status" role="status" aria-live="polite">{t("search.loading")}</p>}
       {!loading && searchError && <p className="search-status" role="alert">{t("search.error")}</p>}
