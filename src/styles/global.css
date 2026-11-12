@@ -357,3 +357,94 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
   font-size: .48rem;
   letter-spacing: .28em;
 }
+
+
+/* Location-aware day theme. Coordinates stay in this browser and are never sent to Renanime. */
+:root[data-time-theme="day"] {
+  color-scheme: light;
+  --color-ink-950: #f5f3ef;
+  --color-ink-900: #ffffff;
+  --color-ink-850: #eeece8;
+  --color-ink-800: #e7e4df;
+  --color-ink-700: #dcd8d1;
+  --color-ink-600: #cbc6be;
+  --color-paper-50: #19181b;
+  --color-paper-100: #29272c;
+  --color-paper-200: #49464e;
+  --color-paper-300: #625e67;
+  --color-muted-400: #77727d;
+  --color-muted-500: #918c96;
+  --color-muted-600: #aaa5ae;
+  --color-border: rgba(25, 24, 27, .10);
+  --color-border-strong: rgba(25, 24, 27, .20);
+  --color-border-card: rgba(25, 24, 27, .12);
+  --color-border-card-hover: rgba(25, 24, 27, .25);
+  --color-border-card-strong: rgba(25, 24, 27, .32);
+  --color-border-detail: rgba(25, 24, 27, .28);
+  --color-overlay: rgba(245, 243, 239, .82);
+  --color-backdrop: rgba(25, 24, 27, .22);
+  --color-background: #f5f3ef;
+  --color-surface: #ffffff;
+  --color-surface-raised: #eeece8;
+  --color-surface-hover: #e7e4df;
+  --color-text-primary: #19181b;
+  --color-text-secondary: #49464e;
+  --color-text-muted: #77727d;
+  --color-border-subtle: rgba(25, 24, 27, .10);
+  --gradient-hero: linear-gradient(180deg, rgba(245,243,239,.02), rgba(245,243,239,.84));
+  --gradient-vignette: radial-gradient(circle at center, transparent 35%, rgba(245,243,239,.28) 100%);
+  --shadow-soft: 0 8px 30px rgba(30, 25, 20, .08);
+  --shadow-deep: 0 24px 80px rgba(30, 25, 20, .16);
+  --shadow-card: 0 12px 34px rgba(30, 25, 20, .08);
+  --shadow-card-hover: 0 18px 42px rgba(30, 25, 20, .13);
+}
+:root[data-time-theme="day"] html,
+:root[data-time-theme="day"] body { background: #f5f3ef; color: #19181b; }
+:root[data-time-theme="day"] body { background: #f5f3ef; color: #19181b; }
+:root[data-time-theme="day"] .site-header { background: rgba(255,255,255,.92); border-bottom-color: rgba(25,24,27,.10); }
+:root[data-time-theme="day"] .site-header .brand,
+:root[data-time-theme="day"] .site-header .desktop-nav a[aria-current="page"],
+:root[data-time-theme="day"] .site-header .desktop-nav a:hover { color: #19181b; }
+:root[data-time-theme="day"] .site-header .desktop-nav a { color: #77727d; }
+:root[data-time-theme="day"] .mobile-panel { background: #fff; border-color: rgba(25,24,27,.12); }
+:root[data-time-theme="day"] .mobile-panel a { color: #49464e; border-bottom-color: rgba(25,24,27,.10); }
+:root[data-time-theme="day"] .site-footer { background: #eeece8; color: #49464e; }
+:root[data-time-theme="day"] .anime-week-card,
+:root[data-time-theme="day"] .collection-card a,
+:root[data-time-theme="day"] .favorite-card a,
+:root[data-time-theme="day"] .card-info,
+:root[data-time-theme="day"] .favorite-caption { background: #fff; color: #19181b; border-color: rgba(25,24,27,.12); }
+:root[data-time-theme="day"] .anime-week-content h3,
+:root[data-time-theme="day"] .card-info h3,
+:root[data-time-theme="day"] .favorite-caption h3,
+:root[data-time-theme="day"] .sf-card figcaption,
+:root[data-time-theme="day"] .nw,
+:root[data-time-theme="day"] .ur { color: #19181b; }
+:root[data-time-theme="day"] .sf-eyebrow { color: #625e67; border-color: rgba(25,24,27,.14); background: rgba(255,255,255,.65); }
+:root[data-time-theme="day"] .sf-header h2 { color: #19181b; }
+:root[data-time-theme="day"] .nw-meta,
+:root[data-time-theme="day"] .ur-head p { color: #77727d; }
+:root[data-time-theme="day"] .nw-meta b { color: #49464e; }
+:root[data-time-theme="day"] .nw-lead,
+:root[data-time-theme="day"] .nw-list li { border-color: rgba(25,24,27,.14); }
+:root[data-time-theme="day"] .ur-month { color: #625e67; border-bottom-color: rgba(25,24,27,.14); }
+:root[data-time-theme="day"] .ur-bar { background: rgba(25,24,27,.12); }
+:root[data-time-theme="day"] .ur-bar span { background: #19181b; }
+:root[data-time-theme="day"] .anime-week-synopsis { color: #625e67; }
+:root[data-time-theme="day"] .anime-week-meta { color: #77727d; }
+:root[data-time-theme="day"] .anime-week-poster,
+:root[data-time-theme="day"] .ur-list img,
+:root[data-time-theme="day"] .ur-ph { background: #e7e4df; }
+:root[data-time-theme="day"] .anime-week-trailer { background: #19181b; }
+:root[data-time-theme="day"] .collection-filters button.is-active,
+:root[data-time-theme="day"] .collection-filters button:hover { color: #19181b; }
+:root[data-time-theme="day"] .collection-tools input,
+:root[data-time-theme="day"] .collection-tools select { background: #fff; color: #19181b; border-color: rgba(25,24,27,.18); }
+:root[data-time-theme="day"] .load-more,
+:root[data-time-theme="day"] .home-gallery-load-more { color: #49464e; border-color: rgba(25,24,27,.18); }
+:root[data-time-theme="day"] .load-more:hover,
+:root[data-time-theme="day"] .home-gallery-load-more:hover { background: #19181b; color: #fff; }
+:root[data-time-theme="day"] .anime-detail-hero { background-color: #f5f3ef; }
+:root[data-time-theme="day"] .anime-detail-copy h1,
+:root[data-time-theme="day"] .anime-detail-back { color: #19181b; }
+:root[data-time-theme="day"] .anime-detail-synopsis { color: #49464e; }
