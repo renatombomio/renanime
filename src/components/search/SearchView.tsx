@@ -530,15 +530,14 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("search.placeholder")} aria-label={t("search.label")} />
       </form>
 
-      {showDiscovery && <>
-        <nav className="search-filters" aria-label={lang === "en" ? "Search filters" : "Filtros de búsqueda"}>
+      <nav className="search-filters" aria-label={lang === "en" ? "Search filters" : "Filtros de búsqueda"}>
           {(["discover", "genre", "year", "format", "status"] as const).map((tab) => <button key={tab} type="button" className="search-filter-tab" aria-selected={activeFilter === tab} onClick={() => setActiveFilter(tab)}>{({ discover: t("search.filterDiscover"), genre: t("search.filterGenre"), year: t("search.filterYear"), format: t("search.filterFormat"), status: t("search.filterStatus") })[tab]}</button>)}
-        </nav>
-        {activeFilter !== "discover" && <div className="search-filter-options" role="group" aria-label={activeFilter}>
+      </nav>
+      {activeFilter !== "discover" && <div className="search-filter-options" role="group" aria-label={activeFilter}>
           {(options[activeFilter] ?? []).map((value) => <button key={value} type="button" className="search-filter-option" aria-pressed={filters[activeFilter] === String(value)} onClick={() => setFilters((current) => ({ ...current, [activeFilter]: current[activeFilter] === String(value) ? "" : String(value) }))}>{String(value).replaceAll("_", " ").toLocaleLowerCase(lang === "en" ? "en" : "es")}</button>)}
-        </div>}
-        <div className="search-discovery-count"><span>{t("search.titleCount").replace("{count}", String(surprisePool.length))}</span>{surprisePool.length > 0 && <button type="button" onClick={surprise}>{t("search.surprise")}</button>}</div>
-        {activeFilter === "discover" && <div className="search-discovery">
+      </div>}
+      {showDiscovery && <div className="search-discovery-count"><span>{t("search.titleCount").replace("{count}", String(surprisePool.length))}</span>{surprisePool.length > 0 && <button type="button" onClick={surprise}>{t("search.surprise")}</button>}</div>}
+      {showDiscovery && activeFilter === "discover" && <div className="search-discovery">
           {discoveryLoading && <p className="search-discovery-status" role="status" aria-live="polite">{t("search.discoveryLoading")}</p>}
           {discoveryError && !discoveryLoading && <p className="search-discovery-status" role="status">{t("search.discoveryError")}</p>}
           {discovery && DISCOVERY_ROWS.map((row) => {
@@ -558,8 +557,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
               </section>
             );
           })}
-        </div>}
-      </>}
+      </div>}
 
       {loading && <p className="search-status" role="status" aria-live="polite">{t("search.loading")}</p>}
       {!loading && searchError && <p className="search-status" role="alert">{t("search.error")}</p>}
