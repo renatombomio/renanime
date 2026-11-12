@@ -54,7 +54,7 @@ async function claimCacheLock(key:string,owner:string):Promise<boolean> {
 }
 async function releaseCacheLock(key:string,owner:string) {
   if(!cacheClient||!cacheToken) return;
-  const {error}=await cacheClient.rpc("anime_search_cache_release",{p_cache_key:key,p_owner:owner,p_token:cacheToken});
+  const {error}=await cacheClient.rpc("anime_search_cache_release",{p_cache_key:key,p_owner:owner});
   if(error) console.warn("[anime-search] cache lock release failed:",error.message);
 }
 async function anilist(query:string,variables:Record<string,unknown>) {
