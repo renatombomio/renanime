@@ -8,10 +8,7 @@ type AniListAnime = {
   format: string | null;
   popularity: number;
 };
-type AniListResponse = {
-  data?: { Page?: { pageInfo?: { hasNextPage: boolean }; media?: AniListAnime[] } };
-  errors?: Array<{ message?: string }>;
-};
+type AniListResponse = { data?: { Page?: { pageInfo?: { hasNextPage: boolean }; media?: AniListAnime[] } }; errors?: Array<{ message?: string }> };
 export type SeasonalAnime = { id: number; title: string; cover: string; tint: string; popularity: number };
 type SeasonalResult = { season: { season: string; year: number }; anime: SeasonalAnime[] };
 const ANILIST_ENDPOINT = "https://graphql.anilist.co";
@@ -23,20 +20,17 @@ function getCurrentSeason(date: Date) {
   if (month <= 8) return { season: "SUMMER", year: date.getUTCFullYear() };
   return { season: "FALL", year: date.getUTCFullYear() };
 }
-export async function getSeasonFeaturedAnime() {
+export async function getSeasonFeaturedAnime(): Promise<SeasonalResult> {
   const current = getCurrentSeason(new Date());
-  return getPersistentCache<SeasonalResult>("season-featured", current, 3600, async () => {
+  const cached = await getPersistentCache<SeasonalResult>("season-featured", current, 3600, async () => {
     const allMedia: AniListAnime[] = [];
-    let page = 1;
-    let hasNextPage = true;
+    let page = 1, hasNextPage = true;
     while (hasNextPage) {
       const response = await fetch(ANILIST_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
           query: `query SeasonalAnime($season: MediaSeason!, $year: Int!, $page: Int!) {
-            Page(page: $page, perPage: 50) {
-              pageInfo { hasNextPage }
+            Page(page: $page, perPage: 50) { pageInfo { hasNextPage }
               media(type: ANIME, season: $season, seasonYear: $year, status: RELEASING, isAdult: false, sort: POPULARITY_DESC) {
                 id title { romaji english } coverImage { extraLarge large color } bannerImage format popularity
               }
@@ -62,4 +56,5 @@ export async function getSeasonFeaturedAnime() {
     })).filter((item) => Boolean(item.cover));
     return { season: current, anime };
   });
+  return cached.value;
 }
