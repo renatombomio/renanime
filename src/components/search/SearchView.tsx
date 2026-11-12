@@ -257,28 +257,16 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
 }
 
 async function fetchFilteredAnime(filters: { genre: string[]; year: string; status: string }, signal?: AbortSignal): Promise<{ items: Media[]; total: number }> {
-  const query = `query FilterAnime($genres: [String], $status: MediaStatus, $dateAfter: FuzzyDateInt, $dateBefore: FuzzyDateInt) {
-    Page(page: 1, perPage: 50) {
-      pageInfo { total }
-      media(type: ANIME, genre_in: $genres, status: $status, startDate_greater: $dateAfter, startDate_lesser: $dateBefore, sort: POPULARITY_DESC, isAdult: false) { ${MEDIA_FIELDS} }
-    }
-  }`;
-  const selectedYear = filters.year && filters.year !== "before-2016" ? Number(filters.year) : null;
-  // AniList accepts fuzzy dates; YYYY0000 represents a year boundary.
-  const dateAfter = selectedYear ? selectedYear * 10000 : null;
-  const dateBefore = selectedYear ? (selectedYear + 1) * 10000 : filters.year === "before-2016" ? 20160000 : null;
-  const response = await fetch("https://graphql.anilist.co", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify({ query, variables: { genres: filters.genre.length ? filters.genre : null, status: filters.status || null, dateAfter, dateBefore } }),
-    signal,
-  });
+  const params = new URLSearchParams();
+  filters.genre.forEach((genre) => params.append("genre", genre));
+  if (filters.year) params.set("year", filters.year);
+  if (filters.status) params.set("status", filters.status);
+  const response = await fetch("/api/anime-search?" + params.toString(), { signal });
   const payload = await response.json();
-  if (!response.ok || payload.errors?.length) {
-    throw new Error(payload.errors?.map((error: { message?: string }) => error.message).join("; ") || "Filter request failed");
-  }
-  return { items: payload.data?.Page?.media ?? [], total: payload.data?.Page?.pageInfo?.total ?? 0 };
+  if (!response.ok || !payload.success) throw new Error(payload.error || "Filter request failed");
+  return { items: payload.items ?? [], total: payload.total ?? 0 };
 }
+
 export default function SearchView({ lang = "es" }: { lang?: Lang }) {
   const t = useT(lang);
   const [query, setQuery] = useState("");
@@ -389,33 +377,16 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
     setSearchError(false);
     const search = async () => {
       try {
-        const response = await fetch("https://graphql.anilist.co", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify({
-            query: "query Search($search:String!,$page:Int!,$perPage:Int!){Page(page:$page,perPage:$perPage){pageInfo{hasNextPage} media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} startDate{year month day} coverImage{extraLarge large} format genres seasonYear status averageScore}}}",
-            variables: { search: submitted, page, perPage: PAGE_SIZE },
-          }),
-        });
-        if (!response.ok) throw new Error("AniList request failed");
+        const params = new URLSearchParams({ q: submitted, page: String(page) });
+        const response = await fetch("/api/anime-search?" + params.toString());
         const payload = await response.json();
-        if (payload.errors?.length) throw new Error("AniList GraphQL error");
-        const primary = payload.data?.Page?.media ?? [];
-        const media = primary.length ? primary : await fetchJikanSearch(submitted, page);
+        if (!response.ok || !payload.success) throw new Error(payload.error || "Search request failed");
         if (cancelled) return;
-        setResults((current) => page === 1 ? media : [...current, ...media]);
-        setHasNext(Boolean(primary.length && payload.data?.Page?.pageInfo?.hasNextPage));
+        setResults((current) => page === 1 ? payload.items ?? [] : [...current, ...(payload.items ?? [])]);
+        setHasNext(Boolean(payload.hasNextPage));
         setSearchError(false);
       } catch {
-        try {
-          const fallback = await fetchJikanSearch(submitted, page);
-          if (cancelled) return;
-          setResults((current) => page === 1 ? fallback : [...current, ...fallback]);
-          setHasNext(false);
-          setSearchError(false);
-        } catch {
-          if (!cancelled) setSearchError(true);
-        }
+        if (!cancelled) setSearchError(true);
       } finally {
         if (!cancelled) setLoading(false);
       }
