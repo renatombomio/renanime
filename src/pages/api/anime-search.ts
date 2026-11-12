@@ -18,7 +18,10 @@ const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
 const supabaseKey = import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
 const cacheToken = import.meta.env.ANIME_SEARCH_CACHE_TOKEN;
 const cacheClient = supabaseUrl && supabaseKey
-  ? createClient(supabaseUrl, supabaseKey, { auth: { persistSession:false, autoRefreshToken:false, detectSessionInUrl:false } })
+  ? createClient(supabaseUrl, supabaseKey, {
+      auth: { persistSession:false, autoRefreshToken:false, detectSessionInUrl:false },
+      global: { headers: { "x-cache-token": cacheToken ?? "", "X-Client-Info": "renanime-search-cache" } }
+    })
   : null;
 
 function fail(error:string,status:number,retry?:string) {
@@ -32,20 +35,20 @@ async function digest(value:string):Promise<string> {
 }
 async function readCache(key:string):Promise<Data|null> {
   if(!cacheClient||!cacheToken) return null;
-  const {data,error}=await cacheClient.rpc("anime_search_cache_get",{p_cache_key:key,p_token:cacheToken});
+  const {data,error}=await cacheClient.rpc("anime_search_cache_get",{p_cache_key:key});
   if(error) { console.warn("[anime-search] cache read failed:",error.message); return null; }
   return data && typeof data==="object" && Array.isArray(data.items) ? data as Data : null;
 }
 async function writeCache(key:string,type:"search"|"filters",filters:Record<string,unknown>,data:Data,ttl:number) {
   if(!cacheClient||!cacheToken) return;
   const {error}=await cacheClient.rpc("anime_search_cache_put",{
-    p_cache_key:key,p_query_type:type,p_filters:filters,p_payload:data,p_ttl_seconds:data.source==="jikan"?Math.min(ttl,1800):ttl,p_token:cacheToken
+    p_cache_key:key,p_query_type:type,p_filters:filters,p_payload:data,p_ttl_seconds:data.source==="jikan"?Math.min(ttl,1800):ttl
   });
   if(error) console.warn("[anime-search] cache write failed:",error.message);
 }
 async function claimCacheLock(key:string,owner:string):Promise<boolean> {
   if(!cacheClient||!cacheToken) return false;
-  const {data,error}=await cacheClient.rpc("anime_search_cache_claim",{p_cache_key:key,p_owner:owner,p_token:cacheToken});
+  const {data,error}=await cacheClient.rpc("anime_search_cache_claim",{p_cache_key:key,p_owner:owner});
   if(error) { console.warn("[anime-search] cache lock failed:",error.message); return false; }
   return data===true;
 }
