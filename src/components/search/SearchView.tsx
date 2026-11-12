@@ -448,7 +448,6 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
     const image = item.coverImage?.extraLarge || item.coverImage?.large;
     return (
       <article className={`search-result${row === "trending" ? " search-result-trending" : ""}`} key={item.id}>
-        {row === "trending" && <span className="search-rank" aria-label={`${index + 1}`}>{index + 1}</span>}
         <a className="search-card" href={item.providerId?.startsWith("mal-") ? `${lang === "en" ? "/en" : ""}/anime/search?title=${encodeURIComponent(item.title?.romaji || item.title?.english || "")}` : `${lang === "en" ? "/en" : ""}/anime/${item.id}`} aria-label={title}>
           <div className="search-poster">
             {image ? <img src={image} alt="" loading={index < 4 ? "eager" : "lazy"} /> : <div className="search-poster-placeholder">{title}</div>}
@@ -501,10 +500,8 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         .search-row-track { display: flex; gap: .9rem; overflow-x: auto; padding: .1rem .05rem .8rem; margin: 0 -.05rem; scroll-snap-type: x mandatory; overscroll-behavior-inline: contain; scrollbar-width: none; }
         .search-row-track::-webkit-scrollbar { display: none; }
         .search-result { flex: 0 0 132px; min-width: 0; scroll-snap-align: start; }
-        .search-result-trending { flex: 0 0 auto; display: flex; align-items: flex-start; gap: 12px; }
-        .search-result-trending .search-card { width: 124px; flex: 0 0 124px; }
-        .search-rank { flex: 0 0 56px; width: 56px; margin: 0; padding-top: 3px; color: #09090b; -webkit-text-stroke: 2px #f2efe9; font: 500 72px/.8 var(--font-body); letter-spacing: -.06em; text-align: right; }
-        .search-result-trending:nth-child(n + 11) .search-rank { flex-basis: 64px; width: 64px; }
+        .search-result-trending { flex: 0 0 132px; }
+        .search-result-trending .search-card { width: 100%; }
         .search-score { color: #77737d !important; font-size: .72rem !important; }
         .search-score strong { color: #f2efe9; font-weight: 600; }
         .search-card { display: block; min-width: 0; color: inherit; text-decoration: none; }
@@ -534,7 +531,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
           .search-row-heading p { font-size: .8rem; }
           .search-row-track { gap: .7rem; }
           .search-result { flex-basis: 132px; }
-          .search-result-trending { flex-basis: 168px; }
+          .search-result-trending { flex-basis: 132px; }
           .search-result-trending .search-card { flex-basis: 132px; }
           .search-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem .55rem; }
           .search-info { padding-top: .55rem; }
