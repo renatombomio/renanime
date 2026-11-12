@@ -426,14 +426,14 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         .search-row-heading p { max-width: 38rem; margin: 0; color: var(--color-muted-400); font: 400 .85rem/1.5 var(--font-body); }
         .search-row-track { display: flex; gap: .9rem; overflow-x: auto; padding: .1rem .05rem .8rem; margin: 0 -.05rem; scroll-snap-type: x mandatory; overscroll-behavior-inline: contain; scrollbar-width: none; }
         .search-row-track::-webkit-scrollbar { display: none; }
-        .search-result { flex: 0 0 clamp(125px, 15vw, 180px); min-width: 0; scroll-snap-align: start; }\n        .search-result-trending { flex-basis: 168px; display: flex; align-items: flex-end; gap: .2rem; }\n        .search-result-trending .search-card { width: 132px; flex: 0 0 132px; }\n        .search-rank { flex: 1 1 auto; align-self: center; margin-bottom: 2.1rem; color: transparent; -webkit-text-stroke: 2px #f2efe9; font: 500 clamp(3.5rem, 6vw, 5.5rem)/.85 var(--font-body); letter-spacing: -.08em; }\n        .search-score { color: #77737d !important; font-size: .72rem !important; }\n        .search-score strong { color: #f2efe9; font-weight: 600; }
+        .search-result { flex: 0 0 132px; min-width: 0; scroll-snap-align: start; }\n        .search-result-trending { flex-basis: 168px; display: flex; align-items: flex-end; gap: .2rem; }\n        .search-result-trending .search-card { width: 132px; flex: 0 0 132px; }\n        .search-rank { flex: 1 1 auto; align-self: center; margin-bottom: 2.1rem; color: transparent; -webkit-text-stroke: 2px #f2efe9; font: 500 clamp(3.5rem, 6vw, 5.5rem)/.85 var(--font-body); letter-spacing: -.08em; }\n        .search-score { color: #77737d !important; font-size: .72rem !important; }\n        .search-score strong { color: #f2efe9; font-weight: 600; }
         .search-card { display: block; min-width: 0; color: inherit; text-decoration: none; }
         .search-poster { aspect-ratio: 2 / 3; overflow: hidden; background: var(--color-ink-900); }
         .search-poster img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 500ms cubic-bezier(.2,.7,.2,1); }
         .search-poster-placeholder { display: grid; width: 100%; height: 100%; place-items: center; padding: .8rem; color: var(--color-muted-400); font-size: .75rem; text-align: center; }
         .search-card:hover .search-poster img { transform: scale(1.035); }
         .search-info { display: grid; gap: .35rem; padding: .65rem .05rem 0; }
-        .search-info h3 { display: -webkit-box; overflow: hidden; margin: 0; color: var(--color-paper-50); font: 500 .78rem/1.3 var(--font-body); -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .search-info h3 { display: -webkit-box; height: 2.6em; overflow: hidden; margin: 0; color: var(--color-paper-50); font: 500 .78rem/1.3 var(--font-body); -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
         .search-info span { color: var(--color-muted-400); font: 400 .65rem/1.3 var(--font-body); }
         .search-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2.5rem 1rem; }
         .search-grid .search-result { flex: initial; }
@@ -480,7 +480,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
                     <p>{t(row.descriptionKey)}</p>
                   </div>
                 </header>
-                <div className="search-row-track" aria-label={t(row.titleKey)}>
+                <div className="search-row-track" aria-label={t(row.titleKey)} tabIndex={0} role="region">
                   {items.map((item, index) => renderCard(item, index, row.id))}
                 </div>
               </section>
