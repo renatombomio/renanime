@@ -558,10 +558,15 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
           {(["discover", "genre", "year", "format", "status"] as const).map((tab) => <button key={tab} type="button" className="search-filter-tab" aria-selected={activeFilter === tab} onClick={() => setActiveFilter(tab)}>{({ discover: t("search.filterDiscover"), genre: t("search.filterGenre"), year: t("search.filterYear"), format: t("search.filterFormat"), status: t("search.filterStatus") })[tab]}</button>)}
       </nav>
       {activeFilter !== "discover" && <div className="search-filter-options" role="group" aria-label={activeFilter}>
-          {(options[activeFilter] ?? []).map((value) => <button key={value} type="button" className="search-filter-option" aria-pressed={filters[activeFilter] === String(value)} onClick={() => setFilters((current) => ({ ...current, [activeFilter]: current[activeFilter] === String(value) ? "" : String(value) }))}>{String(value).replaceAll("_", " ").toLocaleLowerCase(lang === "en" ? "en" : "es")}</button>)}
+        {(options[activeFilter] ?? []).map((value) => {
+          const selected = activeFilter === "genre" ? filters.genre.includes(value) : filters[activeFilter] === value;
+          const labels: Record<string, [string, string]> = { Action: ["Acción", "Action"], Adventure: ["Aventura", "Adventure"], Comedy: ["Comedia", "Comedy"], Drama: ["Drama", "Drama"], Fantasy: ["Fantasía", "Fantasy"], Horror: ["Terror", "Horror"], "Mahou Shoujo": ["Chicas mágicas", "Magical Girl"], Mecha: ["Mecha", "Mecha"], Music: ["Música", "Music"], Mystery: ["Misterio", "Mystery"], Psychological: ["Psicológico", "Psychological"], Romance: ["Romance", "Romance"], "Sci-Fi": ["Ciencia ficción", "Sci-Fi"], "Slice of Life": ["Recuentos de la vida", "Slice of Life"], Sports: ["Deportes", "Sports"], Supernatural: ["Sobrenatural", "Supernatural"], Thriller: ["Suspense", "Thriller"], TV: ["Serie TV", "TV Series"], TV_SHORT: ["TV corto", "TV Short"], MOVIE: ["Película", "Movie"], SPECIAL: ["Especial", "Special"], OVA: ["OVA", "OVA"], ONA: ["ONA", "ONA"], MUSIC: ["Música", "Music"], FINISHED: ["Finalizado", "Finished"], RELEASING: ["En emisión", "Releasing"], NOT_YET_RELEASED: ["Próximamente", "Upcoming"], CANCELLED: ["Cancelado", "Cancelled"], "before-2016": ["Antes de 2016", "Before 2016"] };
+          const label = labels[value]?.[lang === "en" ? 1 : 0] ?? value;
+          return <button key={value} type="button" className="search-filter-option" aria-pressed={selected} onClick={() => { setLastAppliedFilter(activeFilter); setFilters((current) => activeFilter === "genre" ? { ...current, genre: selected ? current.genre.filter((item) => item !== value) : [...current.genre, value] } : { ...current, [activeFilter]: selected ? "" : value }); }}>{label}</button>;
+        })}
       </div>}
-      {showDiscovery && <div className="search-discovery-count"><span>{t("search.titleCount").replace("{count}", String(surprisePool.length))}</span>{surprisePool.length > 0 && <button type="button" onClick={surprise}>{t("search.surprise")}</button>}</div>}
-      {showDiscovery && activeFilter === "discover" && <div className="search-discovery">
+      {showDiscovery && activeFilter === "discover" && !hasFilters && <div className="search-discovery-count"><span>{lang === "en" ? "Selected anime to discover" : "Anime seleccionado para descubrir"}</span>{surprisePool.length > 0 && <button type="button" onClick={surprise}>{t("search.surprise")}</button>}</div>}
+      {showDiscovery && activeFilter === "discover" && !hasFilters && <div className="search-discovery">
           {discoveryLoading && <p className="search-discovery-status" role="status" aria-live="polite">{t("search.discoveryLoading")}</p>}
           {discoveryError && !discoveryLoading && <p className="search-discovery-status" role="status">{t("search.discoveryError")}</p>}
           {discovery && DISCOVERY_ROWS.map((row) => {
@@ -583,6 +588,16 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
           })}
       </div>}
 
+      {showDiscovery && (activeFilter !== "discover" || hasFilters) && <>
+        <div className="search-filter-summary">
+          <span>{filterTotal.toLocaleString(lang === "en" ? "en-GB" : "es-ES")} {lang === "en" ? "titles" : "títulos"}{filters.year ? " · " + (filters.year === "before-2016" ? (lang === "en" ? "Before 2016" : "Antes de 2016") : filters.year) : ""}{filters.genre.length ? " · " + filters.genre.join(", ") : ""}{filters.format ? " · " + filters.format : ""}{filters.status ? " · " + filters.status : ""}</span>
+          {hasFilters && <button type="button" onClick={() => { setFilters({ genre: [], year: "", format: "", status: "" }); setLastAppliedFilter(null); }}>{lang === "en" ? "Clear" : "Limpiar"}</button>}
+        </div>
+        {filterLoading && <p className="search-status" role="status">{t("search.loading")}</p>}
+        {filterError && <p className="search-status" role="alert">{lang === "en" ? "Could not load titles." : "No se han podido cargar los títulos."}</p>}
+        {!filterLoading && !filterError && filterResults.length > 0 && <div className="search-grid search-filtered-grid">{filterResults.map((item, index) => renderCard(item, index))}</div>}
+        {!filterLoading && !filterError && filterResults.length === 0 && <div className="search-filter-empty"><p>{lang === "en" ? "Nothing matches that combination" : "Nada con esa combinación"}</p><button type="button" onClick={() => { if (!lastAppliedFilter) { setFilters({ genre: [], year: "", format: "", status: "" }); return; } setFilters((current) => lastAppliedFilter === "genre" ? { ...current, genre: current.genre.slice(0, -1) } : { ...current, [lastAppliedFilter]: "" }); }}>{lang === "en" ? "Remove the last filter" : "Quitar el último filtro"}</button></div>}
+      </>}
       {loading && <p className="search-status" role="status" aria-live="polite">{t("search.loading")}</p>}
       {!loading && searchError && <p className="search-status" role="alert">{t("search.error")}</p>}
       {!loading && !searchError && submitted && !results.length && <p className="search-status" role="status" aria-live="polite">{t("search.empty").split("{query}").join(submitted)}</p>}
