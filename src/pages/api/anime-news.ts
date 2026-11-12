@@ -5,7 +5,7 @@ export const GET: APIRoute = async () => {
   try {
     const items = await getAnimeNews();
     return Response.json({ success: true, items }, {
-      headers: { "Cache-Control": "public, s-maxage=900, stale-while-revalidate=1800" },
+      headers: { "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=3600" },
     });
   } catch (error) {
     console.error("[anime-news] RSS feeds unavailable:", error);

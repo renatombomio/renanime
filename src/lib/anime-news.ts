@@ -7,7 +7,7 @@ const FEEDS: FeedSource[] = [
   { name: "Crunchyroll News", url: "https://cr-news-api-service.prd.crunchyrollsvc.com/v1/en-US/rss" },
   { name: "Anime News Network", url: "https://www.animenewsnetwork.com/news/rss.xml?ann-edition=us" },
 ];
-const CACHE_MS = 15 * 60 * 1000;
+const CACHE_MS = 24 * 60 * 60 * 1000;
 const MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
 const EXCLUDED = /\b(manga|manhwa|webtoon|graphic novel|comic book)\b/i;
 let cache: { expiresAt: number; items: AnimeNewsItem[] } | null = null;
@@ -58,7 +58,7 @@ export async function getAnimeNews(now = Date.now()): Promise<AnimeNewsItem[]> {
   const available = responses.flatMap((result) => result.status === "fulfilled" ? [result.value] : []);
   if (!available.length) throw new Error("All anime news feeds are unavailable.");
   const items = available.flatMap(({ source, xml }) => parseFeed(xml, source, now)).sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
-  const unique = [...new Map(items.map((item) => [item.url, item])).values()].slice(0, 4);
+  const unique = [...new Map(items.map((item) => [item.url, item])).values()].slice(0, 5);
   cache = { items: unique, expiresAt: Date.now() + CACHE_MS };
   return unique;
 }
