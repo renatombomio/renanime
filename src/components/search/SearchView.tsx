@@ -486,7 +486,8 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         .search-discovery-count button { padding: 0; border: 0; background: transparent; color: #f472b6; font: 600 .75rem/1.3 var(--font-body); cursor: pointer; }
         .search-filters { display: flex; gap: 1.2rem; overflow-x: auto; margin: -1.4rem 0 1.25rem; border-bottom: 1px solid rgba(255,255,255,.08); scrollbar-width: none; }
         .search-filter-tab { flex: 0 0 auto; padding: .65rem 0 .7rem; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #8d8993; font: 400 .8rem/1.2 var(--font-body); cursor: pointer; }
-        .search-filter-tab[aria-selected="true"] { border-bottom-color: #ec4899; color: #f2efe9; font-weight: 600; }\n        .search-filter-tab[data-has-filter="true"] { color: #f472b6; }
+        .search-filter-tab[aria-selected="true"] { border-bottom-color: #ec4899; color: #f2efe9; font-weight: 600; }
+        .search-filter-tab[data-has-filter="true"] { color: #f472b6; }
         .search-filter-options { display: flex; flex-wrap: wrap; gap: .55rem 1rem; margin: 0 0 1.5rem; }
         .search-filter-option { padding: .35rem 0; border: 0; border-bottom: 1px solid transparent; background: transparent; color: #8d8993; font: 400 .78rem/1.3 var(--font-body); cursor: pointer; }
         .search-filter-option[aria-pressed="true"] { border-bottom: 2px solid #ec4899; color: #f472b6; }
@@ -512,7 +513,8 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         .search-result { flex: 0 0 132px; min-width: 0; scroll-snap-align: start; }
         .search-result-trending { flex: 0 0 auto; display: flex; align-items: flex-start; gap: 12px; }
         .search-result-trending .search-card { width: 124px; flex: 0 0 124px; }
-        .search-rank { flex: 0 0 56px; width: 56px; margin: 0; padding-top: 3px; color: #09090b; -webkit-text-stroke: 2px #f2efe9; font: 500 72px/.8 var(--font-body); letter-spacing: -.06em; text-align: right; }\n        .search-result-trending:nth-child(n + 11) .search-rank { flex-basis: 64px; width: 64px; }
+        .search-rank { flex: 0 0 56px; width: 56px; margin: 0; padding-top: 3px; color: #09090b; -webkit-text-stroke: 2px #f2efe9; font: 500 72px/.8 var(--font-body); letter-spacing: -.06em; text-align: right; }
+        .search-result-trending:nth-child(n + 11) .search-rank { flex-basis: 64px; width: 64px; }
         .search-score { color: #77737d !important; font-size: .72rem !important; }
         .search-score strong { color: #f2efe9; font-weight: 600; }
         .search-card { display: block; min-width: 0; color: inherit; text-decoration: none; }
@@ -523,7 +525,12 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         .search-info { display: grid; gap: .35rem; padding: .65rem .05rem 0; }
         .search-info h3 { display: -webkit-box; height: 2.6em; overflow: hidden; margin: 0; color: var(--color-paper-50); font: 500 .78rem/1.3 var(--font-body); -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
         .search-info span { color: var(--color-muted-400); font: 400 .65rem/1.3 var(--font-body); }
-        .search-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem 1rem; }\n        .search-filter-summary { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin: .3rem 0 1.4rem; color: #f2efe9; font: 400 .8rem/1.4 var(--font-body); }\n        .search-filter-summary button, .search-filter-empty button { border: 0; padding: 0; background: transparent; color: #f472b6; font: 600 .78rem/1.4 var(--font-body); cursor: pointer; }\n        .search-filter-empty { padding: 2rem 0; color: #f2efe9; font: 400 .9rem/1.4 var(--font-body); }\n        .search-filter-empty p { margin: 0 0 .7rem; }\n        .search-filtered-grid .search-result { min-width: 0; }
+        .search-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem 1rem; }
+        .search-filter-summary { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin: .3rem 0 1.4rem; color: #f2efe9; font: 400 .8rem/1.4 var(--font-body); }
+        .search-filter-summary button, .search-filter-empty button { border: 0; padding: 0; background: transparent; color: #f472b6; font: 600 .78rem/1.4 var(--font-body); cursor: pointer; }
+        .search-filter-empty { padding: 2rem 0; color: #f2efe9; font: 400 .9rem/1.4 var(--font-body); }
+        .search-filter-empty p { margin: 0 0 .7rem; }
+        .search-filtered-grid .search-result { min-width: 0; }
         .search-grid .search-result { flex: initial; }
         .search-status { color: var(--color-muted-400); font: 400 .8rem/1.5 var(--font-body); }
         .search-more { display: block; margin: 2.5rem auto 0; }
