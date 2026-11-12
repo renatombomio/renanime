@@ -137,7 +137,7 @@
   "actions.removeFromList": "Quitar de mi lista",
   "actions.add": "＋ Añadir a mi lista",
   "meta.skip": "Saltar al contenido",
-  "search.placeholder": "Busca por título…",
+  "search.placeholder": "Busca por título…",\n  "search.filterDiscover": "Descubrir",\n  "search.filterGenre": "Género",\n  "search.filterYear": "Año",\n  "search.filterFormat": "Formato",\n  "search.filterStatus": "Estado",\n  "search.surprise": "Sorpréndeme",\n  "search.titleCount": "Más de {count} títulos",
   "search.label": "Buscar anime",
   "search.submit": "Buscar",
   "search.loading": "Buscando…",
