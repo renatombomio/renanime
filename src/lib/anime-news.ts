@@ -23,7 +23,7 @@ function readTag(xml: string, tag: string): string {
   return decodeEntities((match?.[1] ?? "").replace(/^<!\[CDATA\[([\s\S]*)\]\]>$/, "$1").trim());
 }
 function cleanText(value: string): string {
-  return decodeEntities(value.replace(/<script[\s\S]*?<\\/script>/gi, " ").replace(/<style[\s\S]*?<\\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\\s+/g, " ")).trim();
+  return decodeEntities(value.replace(/<script[\s\S]*?<\/script>/gi, " ").replace(/<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ")).trim();
 }
 function extractImage(xml: string): string | null {
   const candidates = [
@@ -39,18 +39,18 @@ function extractImage(xml: string): string | null {
   return null;
 }
 function parseFeed(xml: string, source: FeedSource, now: number): AnimeNewsItem[] {
-  return [...xml.matchAll(/<item\b[^>]*>([\s\S]*?)<\\/item>/gi)].flatMap((match) => {
+  return [...xml.matchAll(/<item\b[^>]*>([\s\S]*?)<\/item>/gi)].flatMap((match) => {
     const raw = match[1], title = cleanText(readTag(raw, "title")), link = readTag(raw, "link");
     const description = cleanText(readTag(raw, "description") || readTag(raw, "content:encoded"));
     const timestamp = Date.parse(readTag(raw, "pubDate") || readTag(raw, "published") || readTag(raw, "updated"));
-    if (!title || !/^https?:\\/\\//i.test(link) || EXCLUDED.test(title) || !Number.isFinite(timestamp) || now - timestamp > MAX_AGE_MS || timestamp > now + 60 * 60 * 1000) return [];
+    if (!title || !/^https?:\/\//i.test(link) || EXCLUDED.test(title) || !Number.isFinite(timestamp) || now - timestamp > MAX_AGE_MS || timestamp > now + 60 * 60 * 1000) return [];
     return [{ id: source.name + ":" + link, title, summary: description.slice(0, 190), url: link,
       image: extractImage(raw), publishedAt: new Date(timestamp).toISOString(), source: source.name }];
   });
 }
 export async function getAnimeNews(now = Date.now()): Promise<AnimeNewsItem[]> {
   const bucket = Math.floor(now / (15 * 60 * 1000));
-  return getPersistentCache<AnimeNewsItem[]>("anime-news", { bucket }, 900, async () => {
+  const cached = await getPersistentCache<AnimeNewsItem[]>("anime-news", { bucket }, 900, async () => {
     const responses = await Promise.allSettled(FEEDS.map(async (source) => {
       const response = await fetch(source.url, { headers: { Accept: "application/rss+xml, application/xml, text/xml" }, signal: AbortSignal.timeout(10_000) });
       if (!response.ok) throw new Error(source.name + " RSS returned HTTP " + response.status);
@@ -61,5 +61,6 @@ export async function getAnimeNews(now = Date.now()): Promise<AnimeNewsItem[]> {
     const items = available.flatMap(({ source, xml }) => parseFeed(xml, source, now))
       .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
     return [...new Map(items.map((item) => [item.url, item])).values()].slice(0, 4);
-  }).then((result) => result.value);
+  });
+  return cached.value;
 }
