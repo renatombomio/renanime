@@ -272,13 +272,18 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
   const [discoveryLoading, setDiscoveryLoading] = useState(true);
   const [discoveryError, setDiscoveryError] = useState(false);
   const [activeFilter, setActiveFilter] = useState<"discover" | "genre" | "year" | "format" | "status">("discover");
-  const [filters, setFilters] = useState({ genre: "", year: "", format: "", status: "" });
+  const [filters, setFilters] = useState({ genre: [] as string[], year: "", format: "", status: "" });
+  const [filterResults, setFilterResults] = useState<Media[]>([]);
+  const [filterTotal, setFilterTotal] = useState(0);
+  const [filterLoading, setFilterLoading] = useState(false);
+  const [filterError, setFilterError] = useState(false);
+  const [lastAppliedFilter, setLastAppliedFilter] = useState<keyof typeof filters | null>(null);
   const [filtersReady, setFiltersReady] = useState(false);
   const lastSurpriseId = useRef<number | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    setFilters({ genre: params.get("genre") ?? "", year: params.get("year") ?? "", format: params.get("format") ?? "", status: params.get("status") ?? "" });
+    setFilters({ genre: params.getAll("genre"), year: params.get("year") ?? "", format: params.get("format") ?? "", status: params.get("status") ?? "" });
     setFiltersReady(true);
   }, []);
 
@@ -286,8 +291,9 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
     if (!filtersReady) return;
     const params = new URLSearchParams(window.location.search);
     for (const [key, value] of Object.entries(filters)) {
-      if (value) params.set(key, value);
-      else params.delete(key);
+      params.delete(key);
+      if (Array.isArray(value)) value.forEach((item) => params.append(key, item));
+      else if (value) params.set(key, value);
     }
     const queryString = params.toString();
     window.history.replaceState({}, "", `${window.location.pathname}${queryString ? `?${queryString}` : ""}`);
@@ -406,19 +412,19 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
 
   const showDiscovery = !query.trim() && !submitted.trim();
   const allDiscoveryItems = discovery ? Object.values(discovery).flat() : [];
-  const filterItems = results.length ? results : allDiscoveryItems;
-  const options = {
-    genre: [...new Set(filterItems.flatMap((item) => item.genres ?? []))].sort(),
-    year: [...new Set(filterItems.map((item) => item.seasonYear ?? item.startDate?.year).filter((value): value is number => Boolean(value)))].sort((a, b) => b - a).map(String),
-    format: [...new Set(filterItems.map((item) => item.format).filter((value): value is string => Boolean(value)))].sort(),
-    status: [...new Set(filterItems.map((item) => item.status).filter((value): value is string => Boolean(value)))].sort(),
-  };
+  const genres = ["Action", "Adventure", "Comedy", "Drama", "Fantasy", "Horror", "Mahou Shoujo", "Mecha", "Music", "Mystery", "Psychological", "Romance", "Sci-Fi", "Slice of Life", "Sports", "Supernatural", "Thriller"];
+  const formats = ["TV", "TV_SHORT", "MOVIE", "SPECIAL", "OVA", "ONA", "MUSIC"];
+  const statuses = ["FINISHED", "RELEASING", "NOT_YET_RELEASED", "CANCELLED"];
+  const currentYear = new Date().getFullYear();
+  const years = [...Array.from({ length: 10 }, (_, index) => String(currentYear - index)), "before-2016"];
+  const options = { genre: genres, year: years, format: formats, status: statuses };
+  const hasFilters = filters.genre.length > 0 || Boolean(filters.year || filters.format || filters.status);
   const matchesFilters = (item: Media) =>
-    (!filters.genre || item.genres?.includes(filters.genre)) &&
-    (!filters.year || String(item.seasonYear ?? item.startDate?.year ?? "") === filters.year) &&
+    (!filters.genre.length || filters.genre.some((genre) => item.genres?.includes(genre))) &&
+    (!filters.year || (filters.year === "before-2016" ? (item.seasonYear ?? item.startDate?.year ?? 9999) < 2016 : String(item.seasonYear ?? item.startDate?.year ?? "") === filters.year)) &&
     (!filters.format || item.format === filters.format) &&
     (!filters.status || item.status === filters.status);
-  const updateFilter = (key: keyof typeof filters, value: string) => setFilters((current) => ({ ...current, [key]: current[key] === value ? "" : value }));
+  const filterKey = JSON.stringify(filters);
   const surprisePool = [...new Map(allDiscoveryItems.filter(matchesFilters).map((item) => [item.id, item])).values()];
   const surprise = () => {
     if (!surprisePool.length) return;
