@@ -486,10 +486,10 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         .search-discovery-count button { padding: 0; border: 0; background: transparent; color: #f472b6; font: 600 .75rem/1.3 var(--font-body); cursor: pointer; }
         .search-filters { display: flex; gap: 1.2rem; overflow-x: auto; margin: -1.4rem 0 1.25rem; border-bottom: 1px solid rgba(255,255,255,.08); scrollbar-width: none; }
         .search-filter-tab { flex: 0 0 auto; padding: .65rem 0 .7rem; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #8d8993; font: 400 .8rem/1.2 var(--font-body); cursor: pointer; }
-        .search-filter-tab[aria-selected="true"] { border-bottom-color: #ec4899; color: #f2efe9; font-weight: 600; }
+        .search-filter-tab[aria-selected="true"] { border-bottom-color: #ec4899; color: #f2efe9; font-weight: 600; }\n        .search-filter-tab[data-has-filter="true"] { color: #f472b6; }
         .search-filter-options { display: flex; flex-wrap: wrap; gap: .55rem 1rem; margin: 0 0 1.5rem; }
         .search-filter-option { padding: .35rem 0; border: 0; border-bottom: 1px solid transparent; background: transparent; color: #8d8993; font: 400 .78rem/1.3 var(--font-body); cursor: pointer; }
-        .search-filter-option[aria-pressed="true"] { border-bottom-color: #ec4899; color: #f2efe9; }
+        .search-filter-option[aria-pressed="true"] { border-bottom: 2px solid #ec4899; color: #f472b6; }
         .search-filter-tab:focus-visible, .search-filter-option:focus-visible { outline: 2px solid #ec4899; outline-offset: 3px; }
         .search-discovery { display: grid; gap: clamp(2.4rem, 5vw, 4rem); }
         .search-filters { display: flex; gap: 1.2rem; overflow-x: auto; margin: -1.4rem 0 1rem; border-bottom: 1px solid rgba(255,255,255,.08); scrollbar-width: none; }
@@ -523,12 +523,12 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         .search-info { display: grid; gap: .35rem; padding: .65rem .05rem 0; }
         .search-info h3 { display: -webkit-box; height: 2.6em; overflow: hidden; margin: 0; color: var(--color-paper-50); font: 500 .78rem/1.3 var(--font-body); -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
         .search-info span { color: var(--color-muted-400); font: 400 .65rem/1.3 var(--font-body); }
-        .search-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2.5rem 1rem; }
+        .search-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem 1rem; }\n        .search-filter-summary { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin: .3rem 0 1.4rem; color: #f2efe9; font: 400 .8rem/1.4 var(--font-body); }\n        .search-filter-summary button, .search-filter-empty button { border: 0; padding: 0; background: transparent; color: #f472b6; font: 600 .78rem/1.4 var(--font-body); cursor: pointer; }\n        .search-filter-empty { padding: 2rem 0; color: #f2efe9; font: 400 .9rem/1.4 var(--font-body); }\n        .search-filter-empty p { margin: 0 0 .7rem; }\n        .search-filtered-grid .search-result { min-width: 0; }
         .search-grid .search-result { flex: initial; }
         .search-status { color: var(--color-muted-400); font: 400 .8rem/1.5 var(--font-body); }
         .search-more { display: block; margin: 2.5rem auto 0; }
         .search-discovery-status { color: var(--color-muted-400); font: 400 .8rem/1.5 var(--font-body); }
-        @media (max-width: 1100px) { .search-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+        @media (max-width: 1100px) { .search-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
         @media (max-width: 760px) {
           .search-form { margin-bottom: 2rem; }
           .search-discovery { gap: 2.5rem; }
@@ -539,7 +539,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
           .search-result { flex-basis: 132px; }
           .search-result-trending { flex-basis: 168px; }
           .search-result-trending .search-card { flex-basis: 132px; }
-          .search-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.8rem .7rem; }
+          .search-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem .55rem; }
           .search-info { padding-top: .55rem; }
         }
         @media (max-width: 520px) {
@@ -555,7 +555,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
       </form>
 
       <nav className="search-filters" aria-label={lang === "en" ? "Search filters" : "Filtros de búsqueda"}>
-          {(["discover", "genre", "year", "format", "status"] as const).map((tab) => <button key={tab} type="button" className="search-filter-tab" aria-selected={activeFilter === tab} onClick={() => setActiveFilter(tab)}>{({ discover: t("search.filterDiscover"), genre: t("search.filterGenre"), year: t("search.filterYear"), format: t("search.filterFormat"), status: t("search.filterStatus") })[tab]}</button>)}
+          {(["discover", "genre", "year", "format", "status"] as const).map((tab) => <button key={tab} type="button" className="search-filter-tab" aria-selected={activeFilter === tab} data-has-filter={tab === "genre" ? filters.genre.length > 0 : tab !== "discover" && Boolean(filters[tab])} onClick={() => setActiveFilter(tab)}>{({ discover: t("search.filterDiscover"), genre: t("search.filterGenre"), year: t("search.filterYear"), format: t("search.filterFormat"), status: t("search.filterStatus") })[tab]}</button>)}
       </nav>
       {activeFilter !== "discover" && <div className="search-filter-options" role="group" aria-label={activeFilter}>
         {(options[activeFilter] ?? []).map((value) => {
