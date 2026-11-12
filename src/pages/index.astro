@@ -8,11 +8,9 @@ import HomeGallery from "../components/home/HomeGallery";
 import AnimeOfTheWeek from "../components/home/AnimeOfTheWeek.astro";
 import WeeklyEpisodes from "../components/home/WeeklyEpisodes.astro";
 import SeasonalFeaturedAnime from "../components/home/SeasonalFeaturedAnime.astro";
-import SeasonalManga from "../components/home/SeasonalManga.astro";
 import UpcomingReleases from "../components/home/UpcomingReleases.astro";
 import { getUpcomingReleases } from "./api/upcoming-releases";
 import { getSeasonFeaturedAnime } from "../lib/season-featured-anime";
-import { getSeasonalManga } from "../lib/seasonal-manga";
 import HomeCommunity from "../components/home/HomeCommunity.astro";
 import { createSupabaseSsrClient } from "../lib/supabase-ssr";
 import { getWatchedLibrary } from "../data/library";
@@ -39,12 +37,6 @@ try {
   seasonalAnime = payload.anime;
 } catch (error) {
   console.error("[home] Seasonal featured anime unavailable:", error);
-}
-let seasonalManga = null;
-try {
-  seasonalManga = await getSeasonalManga();
-} catch (error) {
-  console.error("[home] Seasonal manga unavailable:", error);
 }
 let weeklyEpisodes = [];
 try {
@@ -97,16 +89,6 @@ try {
         eyebrow: isEnglish ? "Now airing" : "En emisión",
         title: isEnglish ? "Season highlights" : "Estrenos de temporada",
         ariaLabel: isEnglish ? "Featured anime of the current season" : "Animes destacados de la temporada actual",
-      }}
-    />
-    <SeasonalManga
-      manga={seasonalManga}
-      labels={{
-        title: isEnglish ? "Manga of the season" : "Manga de la temporada",
-        subtitle: isEnglish ? "A little something for manga readers." : "Un pequeño guiño para quienes también leen manga.",
-        author: isEnglish ? "by" : "por",
-        volumes: isEnglish ? "Volumes" : "Tomos",
-        volumesUnavailable: isEnglish ? "Unavailable" : "No disponibles",
       }}
     />
     <WeeklyEpisodes
