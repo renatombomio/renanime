@@ -363,14 +363,6 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
   }, [personalLibraryReady, personalEntries]);
 
   useEffect(() => {
-    if (activeFilter === "discover" && !hasFilters) { setFilterResults([]); setFilterTotal(0); setFilterLoading(false); setFilterError(false); return; }
-    let cancelled = false;
-    setFilterLoading(true);
-    setFilterError(false);
-    fetchFilteredAnime(filters).then((data) => { if (!cancelled) { setFilterResults(data.items); setFilterTotal(data.total); } }).catch(() => { if (!cancelled) setFilterError(true); }).finally(() => { if (!cancelled) setFilterLoading(false); });
-    return () => { cancelled = true; };
-  }, [activeFilter, filterKey]);
-  useEffect(() => {
     if (!submitted.trim()) {
       setResults([]);
       setHasNext(false);
@@ -452,6 +444,14 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
     window.location.href = `${lang === "en" ? "/en" : ""}/anime/${selected.id}`;
   };
 
+  useEffect(() => {
+    if (activeFilter === "discover" && !hasFilters) { setFilterResults([]); setFilterTotal(0); setFilterLoading(false); setFilterError(false); return; }
+    let cancelled = false;
+    setFilterLoading(true);
+    setFilterError(false);
+    fetchFilteredAnime(filters).then((data) => { if (!cancelled) { setFilterResults(data.items); setFilterTotal(data.total); } }).catch(() => { if (!cancelled) setFilterError(true); }).finally(() => { if (!cancelled) setFilterLoading(false); });
+    return () => { cancelled = true; };
+  }, [activeFilter, filterKey]);
   const renderCard = (item: Media, index: number, row?: DiscoveryRowId) => {
     const title = lang === "en"
       ? (item.title?.english || item.title?.romaji || t("detail.noTitle"))
