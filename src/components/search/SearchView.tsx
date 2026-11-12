@@ -275,7 +275,6 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
   const [filters, setFilters] = useState({ genre: "", year: "", format: "", status: "" });
   const [filtersReady, setFiltersReady] = useState(false);
   const lastSurpriseId = useRef<number | null>(null);
-  const [filtersReady, setFiltersReady] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
