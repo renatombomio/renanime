@@ -490,16 +490,15 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
           .search-info { padding-top: .55rem; }
         }
         @media (max-width: 520px) {
-          .search-form { grid-template-columns: minmax(0, 1fr) auto; gap: .4rem; }
-          .search-form button { padding-inline: .8rem; }
+          .search-form { gap: .55rem; }
           .search-row-heading h2 { font-size: 1.65rem; }
           .search-row-heading p { font-size: .76rem; }
           .search-result:not(.search-result-trending) { flex-basis: 118px; }
         }
       `}</style>
       <form className="search-form" onSubmit={submit}>
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="10.8" cy="10.8" r="6.3" /><path d="m15.5 15.5 4 4" /></svg>
         <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("search.placeholder")} aria-label={t("search.label")} />
-        <button type="submit">{t("search.submit")}</button>
       </form>
 
       {showDiscovery && (
