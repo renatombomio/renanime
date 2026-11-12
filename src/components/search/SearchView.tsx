@@ -363,6 +363,14 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
   }, [personalLibraryReady, personalEntries]);
 
   useEffect(() => {
+    if (activeFilter === "discover" && !hasFilters) { setFilterResults([]); setFilterTotal(0); setFilterLoading(false); setFilterError(false); return; }
+    let cancelled = false;
+    setFilterLoading(true);
+    setFilterError(false);
+    fetchFilteredAnime(filters).then((data) => { if (!cancelled) { setFilterResults(data.items); setFilterTotal(data.total); } }).catch(() => { if (!cancelled) setFilterError(true); }).finally(() => { if (!cancelled) setFilterLoading(false); });
+    return () => { cancelled = true; };
+  }, [activeFilter, filterKey]);
+  useEffect(() => {
     if (!submitted.trim()) {
       setResults([]);
       setHasNext(false);
