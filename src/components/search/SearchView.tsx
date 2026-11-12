@@ -18,14 +18,13 @@ interface Media {
   tags?: { name: string; rank?: number | null }[];
 }
 
-type DiscoveryRowId = "discover" | "hidden" | "trending" | "season" | "upcoming" | "topRated";
+type DiscoveryRowId = "discover" | "hidden" | "trending" | "season" | "topRated";
 const PAGE_SIZE = 12;
 const DISCOVERY_ROWS: { id: DiscoveryRowId; titleKey: TranslationKey; descriptionKey: TranslationKey }[] = [
   { id: "discover", titleKey: "search.rowDiscover", descriptionKey: "search.rowDiscoverDescription" },
   { id: "hidden", titleKey: "search.rowHidden", descriptionKey: "search.rowHiddenDescription" },
   { id: "trending", titleKey: "search.rowTrending", descriptionKey: "search.rowTrendingDescription" },
   { id: "season", titleKey: "search.rowSeason", descriptionKey: "search.rowSeasonDescription" },
-  { id: "upcoming", titleKey: "search.rowUpcoming", descriptionKey: "search.rowUpcomingDescription" },
   { id: "topRated", titleKey: "search.rowTopRated", descriptionKey: "search.rowTopRatedDescription" },
 ];
 
@@ -100,9 +99,6 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
       }
       season: Page(page: 1, perPage: 50) {
         media(type: ANIME, season: $season, seasonYear: $year, sort: POPULARITY_DESC, isAdult: false) { ${MEDIA_FIELDS} }
-      }
-      upcoming: Page(page: 1, perPage: 50) {
-        media(type: ANIME, status: NOT_YET_RELEASED, sort: POPULARITY_DESC, isAdult: false) { ${MEDIA_FIELDS} }
       }
       topRated: Page(page: 1, perPage: 50) {
         media(type: ANIME, sort: SCORE_DESC, isAdult: false) { ${MEDIA_FIELDS} }
@@ -250,21 +246,12 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
   );
   const trending = claim(pages.trending?.media ?? [], used);
   const seasonItems = claim(pages.season?.media ?? [], used);
-  const upcoming = claim(
-    (pages.upcoming?.media ?? []).filter((media: Media) => {
-      const date = media.startDate;
-      if (!date?.year) return false;
-      const timestamp = new Date(date.year, (date.month ?? 1) - 1, date.day ?? 1).getTime();
-      return timestamp > Date.now();
-    }),
-    used,
-  );
   const topRated = claim(
     (pages.topRated?.media ?? []).filter((media: Media) => (media.averageScore ?? 0) >= 75),
     used,
   );
 
-  return { discover, hidden, trending, season: seasonItems, upcoming, topRated };
+  return { discover, hidden, trending, season: seasonItems, topRated };
 }
 
 export default function SearchView({ lang = "es" }: { lang?: Lang }) {
