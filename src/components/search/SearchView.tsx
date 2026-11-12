@@ -274,7 +274,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
   const [personalLibraryReady, setPersonalLibraryReady] = useState(false);
   const [discovery, setDiscovery] = useState<Record<DiscoveryRowId, Media[]> | null>(null);
   const [discoveryLoading, setDiscoveryLoading] = useState(true);
-  const [discoveryError, setDiscoveryError] = useState(false);
+  const [discoveryError, setDiscoveryError] = useState(false);\n  const [activeFilter, setActiveFilter] = useState<"discover" | "genre" | "year" | "format" | "status">("discover");\n  const [filters, setFilters] = useState({ genre: "", year: "", format: "", status: "" });
 
   useEffect(() => {
     const value = query.trim();
@@ -346,7 +346,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
           method: "POST",
           headers: { "Content-Type": "application/json", Accept: "application/json" },
           body: JSON.stringify({
-            query: "query Search($search:String!,$page:Int!,$perPage:Int!){Page(page:$page,perPage:$perPage){pageInfo{hasNextPage} media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} startDate{year month day} coverImage{extraLarge large} format}}}",
+            query: "query Search($search:String!,$page:Int!,$perPage:Int!){Page(page:$page,perPage:$perPage){pageInfo{hasNextPage} media(search:$search,type:ANIME,sort:SEARCH_MATCH){id title{romaji english} startDate{year month day} coverImage{extraLarge large} format genres seasonYear status averageScore}}}",
             variables: { search: submitted, page, perPage: PAGE_SIZE },
           }),
         });
@@ -387,7 +387,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
     setSubmitted(query.trim());
   };
 
-  const showDiscovery = !query.trim() && !submitted.trim();
+  const showDiscovery = !query.trim() && !submitted.trim();\n  const allDiscoveryItems = discovery ? Object.values(discovery).flat() : [];\n  const filterItems = results.length ? results : allDiscoveryItems;\n  const options = {\n    genre: [...new Set(filterItems.flatMap((item) => item.genres ?? []))].sort(),\n    year: [...new Set(filterItems.map((item) => item.seasonYear ?? item.startDate?.year).filter((value): value is number => Boolean(value)))].sort((a, b) => b - a).map(String),\n    format: [...new Set(filterItems.map((item) => item.format).filter((value): value is string => Boolean(value)))].sort(),\n    status: [...new Set(filterItems.map((item) => item.status).filter((value): value is string => Boolean(value)))].sort(),\n  };\n  const matchesFilters = (item: Media) =>\n    (!filters.genre || item.genres?.includes(filters.genre)) &&\n    (!filters.year || String(item.seasonYear ?? item.startDate?.year ?? "") === filters.year) &&\n    (!filters.format || item.format === filters.format) &&\n    (!filters.status || item.status === filters.status);\n  const updateFilter = (key: keyof typeof filters, value: string) => setFilters((current) => ({ ...current, [key]: current[key] === value ? "" : value }));
 
   const renderCard = (item: Media, index: number) => {
     const title = lang === "en"
@@ -418,7 +418,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         .search-form:focus-within { outline: 2px solid #ec4899; outline-offset: 3px; }
         .search-more { min-height: 3rem; padding: .7rem 1rem; border: 1px solid var(--color-border-strong); background: transparent; color: var(--color-paper-50); font: 500 .72rem/1 var(--font-body); cursor: pointer; }
         .search-more:hover:not(:disabled) { background: var(--color-paper-50); color: var(--color-ink-950); }
-        .search-discovery { display: grid; gap: clamp(2.4rem, 5vw, 4rem); }
+        .search-filters { display: flex; gap: 1.2rem; overflow-x: auto; margin: -1.4rem 0 1.25rem; border-bottom: 1px solid rgba(255,255,255,.08); scrollbar-width: none; }\n        .search-filter-tab { flex: 0 0 auto; padding: .65rem 0 .7rem; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #8d8993; font: 400 .8rem/1.2 var(--font-body); cursor: pointer; }\n        .search-filter-tab[aria-selected="true"] { border-bottom-color: #ec4899; color: #f2efe9; font-weight: 600; }\n        .search-filter-options { display: flex; flex-wrap: wrap; gap: .55rem 1rem; margin: 0 0 1.5rem; }\n        .search-filter-option { padding: .35rem 0; border: 0; border-bottom: 1px solid transparent; background: transparent; color: #8d8993; font: 400 .78rem/1.3 var(--font-body); cursor: pointer; }\n        .search-filter-option[aria-pressed="true"] { border-bottom-color: #ec4899; color: #f2efe9; }\n        .search-filter-tab:focus-visible, .search-filter-option:focus-visible { outline: 2px solid #ec4899; outline-offset: 3px; }\n        .search-discovery { display: grid; gap: clamp(2.4rem, 5vw, 4rem); }
         .search-discovery-row { min-width: 0; }
         .search-row-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 1.15rem; }
         .search-row-copy { display: grid; gap: .45rem; min-width: 0; }
@@ -470,7 +470,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
           {discoveryLoading && <p className="search-discovery-status" role="status" aria-live="polite">{t("search.discoveryLoading")}</p>}
           {discoveryError && !discoveryLoading && <p className="search-discovery-status" role="status">{t("search.discoveryError")}</p>}
           {discovery && DISCOVERY_ROWS.map((row) => {
-            const items = discovery[row.id] ?? [];
+            const items = (discovery[row.id] ?? []).filter(matchesFilters);
             if (!items.length) return null;
             return (
               <section className="search-discovery-row" key={row.id} aria-labelledby={`search-row-${row.id}`}>
@@ -494,7 +494,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
       {!loading && !searchError && submitted && !results.length && <p className="search-status" role="status" aria-live="polite">{t("search.empty").split("{query}").join(submitted)}</p>}
       {results.length > 0 && (
         <>
-          <div className="search-grid" aria-busy={loading}>{results.map(renderCard)}</div>
+          <div className="search-grid" aria-busy={loading}>{results.filter(matchesFilters).map(renderCard)}</div>
           {(hasNext || searchError) && (
             <button className="search-more" type="button" onClick={() => searchError ? setRetry((current) => current + 1) : setPage((current) => current + 1)} disabled={loading}>
               {loading ? t("search.loading") : searchError ? t("search.retry") : t("search.more")}
