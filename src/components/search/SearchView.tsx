@@ -277,6 +277,22 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
   const [discoveryError, setDiscoveryError] = useState(false);
 
   useEffect(() => {
+    const value = query.trim();
+    if (value.length < 2) {
+      if (!value) setSubmitted("");
+      return;
+    }
+    const timeout = window.setTimeout(() => {
+      setPage(1);
+      setResults([]);
+      setHasNext(false);
+      setSearchError(false);
+      setSubmitted(value);
+    }, 300);
+    return () => window.clearTimeout(timeout);
+  }, [query]);
+
+  useEffect(() => {
     let cancelled = false;
     const syncPersonalLibrary = () => setPersonalEntries(getPersonalLibrary());
     const unsubscribe = subscribeToPersonalLibrary(syncPersonalLibrary);
@@ -397,11 +413,11 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
     <div className="search-view">
       <style>{`
         .search-view { width: 100%; }
-        .search-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .6rem; align-items: stretch; margin-bottom: 2.5rem; }
-        .search-form input { min-width: 0; height: 3rem; padding: .75rem .9rem; border: 1px solid var(--color-border-strong); border-radius: 0; background: var(--color-ink-900); color: var(--color-paper-50); font: 400 .9rem/1.2 var(--font-body); outline: none; }
-        .search-form input:focus-visible { border-color: var(--color-paper-50); outline: 2px solid rgba(245,242,236,.25); outline-offset: 2px; }
-        .search-form button, .search-more { min-height: 3rem; padding: .7rem 1rem; border: 1px solid var(--color-border-strong); background: transparent; color: var(--color-paper-50); font: 500 .72rem/1 var(--font-body); cursor: pointer; }
-        .search-form button:hover, .search-more:hover:not(:disabled) { background: var(--color-paper-50); color: var(--color-ink-950); }
+        .search-form { display: flex; align-items: center; gap: .7rem; min-height: 3rem; margin-bottom: 2.5rem; padding: 0 .95rem; border: 1px solid rgba(255,255,255,.09); border-radius: 999px; background: #131316; }
+        .search-form input { flex: 1; min-width: 0; height: 2.9rem; padding: .7rem 0; border: 0; background: transparent; color: var(--color-paper-50); font: 400 .9rem/1.2 var(--font-body); outline: none; }
+        .search-form:focus-within { outline: 2px solid #ec4899; outline-offset: 3px; }
+        .search-more { min-height: 3rem; padding: .7rem 1rem; border: 1px solid var(--color-border-strong); background: transparent; color: var(--color-paper-50); font: 500 .72rem/1 var(--font-body); cursor: pointer; }
+        .search-more:hover:not(:disabled) { background: var(--color-paper-50); color: var(--color-ink-950); }
         .search-discovery { display: grid; gap: clamp(2.4rem, 5vw, 4rem); }
         .search-discovery-row { min-width: 0; }
         .search-row-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 1.15rem; }
