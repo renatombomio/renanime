@@ -311,6 +311,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
   useEffect(() => {
     if (!filtersReady) return;
     const params = new URLSearchParams(window.location.search);
+    params.delete("format");
     for (const [key, value] of Object.entries(filters)) {
       params.delete(key);
       if (Array.isArray(value)) value.forEach((item) => params.append(key, item));
@@ -433,6 +434,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
 
   const showDiscovery = !query.trim() && !submitted.trim();
   const allDiscoveryItems = discovery ? Object.values(discovery).flat() : [];
+  const discoveryCount = new Set(allDiscoveryItems.map((item) => item.id)).size;
   const genres = ["Action", "Adventure", "Comedy", "Drama", "Fantasy", "Horror", "Mahou Shoujo", "Mecha", "Music", "Mystery", "Psychological", "Romance", "Sci-Fi", "Slice of Life", "Sports", "Supernatural", "Thriller"];
   const statuses = ["FINISHED", "RELEASING"];
   const currentYear = new Date().getFullYear();
@@ -441,7 +443,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
   const hasFilters = filters.genre.length > 0 || Boolean(filters.year || filters.status);
   const matchesFilters = (item: Media) =>
     (!filters.genre.length || filters.genre.some((genre) => item.genres?.includes(genre))) &&
-    (!filters.year || (filters.year === "before-2016" ? (item.seasonYear ?? item.startDate?.year ?? 9999) < 2017 : String(item.seasonYear ?? item.startDate?.year ?? "") === filters.year)) &&
+    (!filters.year || (filters.year === "before-2016" ? (item.seasonYear ?? item.startDate?.year ?? 9999) < 2016 : String(item.seasonYear ?? item.startDate?.year ?? "") === filters.year)) &&
     (!filters.status || item.status === filters.status);
   const filterKey = JSON.stringify(filters);
   const surprisePool = [...new Map(allDiscoveryItems.filter(matchesFilters).map((item) => [item.id, item])).values()];
@@ -583,9 +585,9 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         </div>
         {filtersOpen && <section className="search-filter-panel" aria-label={lang === "en" ? "Anime filters" : "Filtros de anime"}>
           {([
-            ["genre", lang === "en" ? "GENRE" : "GÉNERO", genres],
-            ["year", lang === "en" ? "YEAR" : "AÑO", years],
-            ["status", lang === "en" ? "STATUS" : "ESTADO", statuses],
+            ["genre", lang === "en" ? "Genre" : "Género", genres],
+            ["year", lang === "en" ? "Year" : "Año", years],
+            ["status", lang === "en" ? "Status" : "Estado", statuses],
           ] as const).map(([key, heading, values]) => <div className="search-filter-group" key={key}>
             <h3>{heading}</h3>
             <div className="search-filter-pills" role="group" aria-label={heading}>
@@ -608,7 +610,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
           </div>
         </section>}
       </div>
-      {showDiscovery && !hasFilters && <div className="search-discovery-count"><span>{lang === "en" ? "Anime selected to discover" : "Anime seleccionado para descubrir"}</span>{surprisePool.length > 0 && <button type="button" onClick={surprise}>{t("search.surprise")}</button>}</div>}
+      {showDiscovery && !hasFilters && <div className="search-discovery-count"><span>{lang === "en" ? `${discoveryCount} titles selected to discover` : `${discoveryCount} títulos seleccionados para descubrir`}</span>{surprisePool.length > 0 && <button type="button" onClick={surprise}>{t("search.surprise")}</button>}</div>}
       {showDiscovery && !hasFilters && <div className="search-discovery">
           {discoveryLoading && <p className="search-discovery-status" role="status" aria-live="polite">{t("search.discoveryLoading")}</p>}
           {discoveryError && !discoveryLoading && <p className="search-discovery-status" role="status">{t("search.discoveryError")}</p>}
