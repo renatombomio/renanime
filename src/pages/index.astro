@@ -125,7 +125,14 @@ try {
       }}
     />
 
-    <AnimeNews items={animeNews} locale={lang} />
+    <AnimeNews
+      items={animeNews}
+      locale={lang}
+      labels={{
+        title: isEnglish ? "News" : "Noticias",
+        subtitle: isEnglish ? "The latest from the world of anime." : "Lo último del mundo del anime.",
+      }}
+    />
 
     <HomeCommunity
       members={communityMembers}
