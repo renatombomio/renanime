@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { getLibrary } from "../../data/library";
 import { getPersonalLibrary, hydratePersonalLibrary, subscribeToPersonalLibrary } from "../../data/personal-library";
 import type { PersonalAnimeEntry } from "../../types/personal";
@@ -53,7 +53,7 @@ function currentSeason(date = new Date()): { season: "WINTER" | "SPRING" | "SUMM
   return { season, year: date.getFullYear() };
 }
 
-function formatDate(date: Media["startDate"], lang: Lang) {
+function formatShortDate(date: Media["startDate"], format: string | null | undefined, lang: Lang) {\n  if (!date?.year || !date.month || !date.day) return date?.year ? String(date.year) : "";\n  const currentYear = new Date().getFullYear();\n  const dateLabel = new Intl.DateTimeFormat(lang === "en" ? "en-GB" : "es-ES", { day: "numeric", month: "short" }).format(new Date(date.year, date.month - 1, date.day));\n  return `${dateLabel}${date.year !== currentYear ? ` ${date.year}` : ""} · ${format === "MOVIE" ? (lang === "en" ? "Film" : "Película") : (lang === "en" ? "Series" : "Serie")}`;\n}\n\nfunction formatDate(date: Media["startDate"], lang: Lang) {
   if (!date?.year) return lang === "en" ? "Unknown date" : "Fecha desconocida";
   if (!date.month || !date.day) return String(date.year);
   return new Date(date.year, date.month - 1, date.day).toLocaleDateString(
@@ -62,7 +62,7 @@ function formatDate(date: Media["startDate"], lang: Lang) {
   );
 }
 
-const MEDIA_FIELDS = "id title { romaji english } startDate { year month day } coverImage { extraLarge large } format popularity averageScore genres tags { name rank }";
+const MEDIA_FIELDS = "id title { romaji english } startDate { year month day } coverImage { extraLarge large } format popularity averageScore genres seasonYear status tags { name rank }";
 
 async function fetchJikanSearch(query: string, page: number): Promise<Media[]> {
   const entries = await jikanProvider.search({ query, page, perPage: PAGE_SIZE });
@@ -274,7 +274,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
   const [personalLibraryReady, setPersonalLibraryReady] = useState(false);
   const [discovery, setDiscovery] = useState<Record<DiscoveryRowId, Media[]> | null>(null);
   const [discoveryLoading, setDiscoveryLoading] = useState(true);
-  const [discoveryError, setDiscoveryError] = useState(false);\n  const [activeFilter, setActiveFilter] = useState<"discover" | "genre" | "year" | "format" | "status">("discover");\n  const [filters, setFilters] = useState({ genre: "", year: "", format: "", status: "" });\n  const [filtersReady, setFiltersReady] = useState(false);
+  const [discoveryError, setDiscoveryError] = useState(false);\n  const [activeFilter, setActiveFilter] = useState<"discover" | "genre" | "year" | "format" | "status">("discover");\n  const [filters, setFilters] = useState({ genre: "", year: "", format: "", status: "" });\n  const [filtersReady, setFiltersReady] = useState(false);\n  const lastSurpriseId = useRef<number | null>(null);
 
   useEffect(() => {
     const value = query.trim();
@@ -387,22 +387,22 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
     setSubmitted(query.trim());
   };
 
-  const showDiscovery = !query.trim() && !submitted.trim();\n  const allDiscoveryItems = discovery ? Object.values(discovery).flat() : [];\n  const filterItems = results.length ? results : allDiscoveryItems;\n  const options = {\n    genre: [...new Set(filterItems.flatMap((item) => item.genres ?? []))].sort(),\n    year: [...new Set(filterItems.map((item) => item.seasonYear ?? item.startDate?.year).filter((value): value is number => Boolean(value)))].sort((a, b) => b - a).map(String),\n    format: [...new Set(filterItems.map((item) => item.format).filter((value): value is string => Boolean(value)))].sort(),\n    status: [...new Set(filterItems.map((item) => item.status).filter((value): value is string => Boolean(value)))].sort(),\n  };\n  const matchesFilters = (item: Media) =>\n    (!filters.genre || item.genres?.includes(filters.genre)) &&\n    (!filters.year || String(item.seasonYear ?? item.startDate?.year ?? "") === filters.year) &&\n    (!filters.format || item.format === filters.format) &&\n    (!filters.status || item.status === filters.status);\n  const updateFilter = (key: keyof typeof filters, value: string) => setFilters((current) => ({ ...current, [key]: current[key] === value ? "" : value }));
+  const showDiscovery = !query.trim() && !submitted.trim();\n  const allDiscoveryItems = discovery ? Object.values(discovery).flat() : [];\n  const filterItems = results.length ? results : allDiscoveryItems;\n  const options = {\n    genre: [...new Set(filterItems.flatMap((item) => item.genres ?? []))].sort(),\n    year: [...new Set(filterItems.map((item) => item.seasonYear ?? item.startDate?.year).filter((value): value is number => Boolean(value)))].sort((a, b) => b - a).map(String),\n    format: [...new Set(filterItems.map((item) => item.format).filter((value): value is string => Boolean(value)))].sort(),\n    status: [...new Set(filterItems.map((item) => item.status).filter((value): value is string => Boolean(value)))].sort(),\n  };\n  const matchesFilters = (item: Media) =>\n    (!filters.genre || item.genres?.includes(filters.genre)) &&\n    (!filters.year || String(item.seasonYear ?? item.startDate?.year ?? "") === filters.year) &&\n    (!filters.format || item.format === filters.format) &&\n    (!filters.status || item.status === filters.status);\n  const updateFilter = (key: keyof typeof filters, value: string) => setFilters((current) => ({ ...current, [key]: current[key] === value ? "" : value }));\n  const surprisePool = allDiscoveryItems.filter(matchesFilters);\n  const surprise = () => {\n    if (!surprisePool.length) return;\n    const candidates = surprisePool.filter((item) => item.id !== lastSurpriseId.current);\n    const selected = (candidates.length ? candidates : surprisePool)[Math.floor(Math.random() * (candidates.length ? candidates.length : surprisePool.length))];\n    lastSurpriseId.current = selected.id;\n    window.location.href = `${lang === "en" ? "/en" : ""}/anime/${selected.id}`;\n  };
 
-  const renderCard = (item: Media, index: number) => {
+  const renderCard = (item: Media, index: number, row?: DiscoveryRowId) => {
     const title = lang === "en"
       ? (item.title?.english || item.title?.romaji || t("detail.noTitle"))
       : (item.title?.romaji || item.title?.english || t("detail.noTitle"));
     const image = item.coverImage?.extraLarge || item.coverImage?.large;
     return (
-      <article className="search-result" key={item.id}>
+      <article className={`search-result${row === "trending" ? " search-result-trending" : ""}`} key={item.id}>\n        {row === "trending" && <span className="search-rank" aria-label={`${index + 1}`}>{index + 1}</span>}
         <a className="search-card" href={item.providerId?.startsWith("mal-") ? `${lang === "en" ? "/en" : ""}/anime/search?title=${encodeURIComponent(item.title?.romaji || item.title?.english || "")}` : `${lang === "en" ? "/en" : ""}/anime/${item.id}`} aria-label={title}>
           <div className="search-poster">
             {image ? <img src={image} alt="" loading={index < 4 ? "eager" : "lazy"} /> : <div className="search-poster-placeholder">{title}</div>}
           </div>
           <div className="search-info">
             <h3>{title}</h3>
-            <span>{formatDate(item.startDate, lang)} · {item.format === "MOVIE" ? t("detail.film") : item.format ? t("detail.series") : t("detail.unknownFormat")}</span>
+            {row === "hidden" ? (item.averageScore != null && <span className="search-score"><strong>{(item.averageScore / 10).toFixed(1)}</strong><span> / 10</span></span>) : row === "season" || row === "upcoming" ? <span>{formatShortDate(item.startDate, item.format, lang)}</span> : row === "trending" ? null : <span>{formatDate(item.startDate, lang)} · {item.format === "MOVIE" ? t("detail.film") : item.format ? t("detail.series") : t("detail.unknownFormat")}</span>}
           </div>
         </a>
       </article>
@@ -418,7 +418,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         .search-form:focus-within { outline: 2px solid #ec4899; outline-offset: 3px; }
         .search-more { min-height: 3rem; padding: .7rem 1rem; border: 1px solid var(--color-border-strong); background: transparent; color: var(--color-paper-50); font: 500 .72rem/1 var(--font-body); cursor: pointer; }
         .search-more:hover:not(:disabled) { background: var(--color-paper-50); color: var(--color-ink-950); }
-        .search-filters { display: flex; gap: 1.2rem; overflow-x: auto; margin: -1.4rem 0 1.25rem; border-bottom: 1px solid rgba(255,255,255,.08); scrollbar-width: none; }\n        .search-filter-tab { flex: 0 0 auto; padding: .65rem 0 .7rem; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #8d8993; font: 400 .8rem/1.2 var(--font-body); cursor: pointer; }\n        .search-filter-tab[aria-selected="true"] { border-bottom-color: #ec4899; color: #f2efe9; font-weight: 600; }\n        .search-filter-options { display: flex; flex-wrap: wrap; gap: .55rem 1rem; margin: 0 0 1.5rem; }\n        .search-filter-option { padding: .35rem 0; border: 0; border-bottom: 1px solid transparent; background: transparent; color: #8d8993; font: 400 .78rem/1.3 var(--font-body); cursor: pointer; }\n        .search-filter-option[aria-pressed="true"] { border-bottom-color: #ec4899; color: #f2efe9; }\n        .search-filter-tab:focus-visible, .search-filter-option:focus-visible { outline: 2px solid #ec4899; outline-offset: 3px; }\n        .search-discovery { display: grid; gap: clamp(2.4rem, 5vw, 4rem); }
+        .search-discovery-count { display: flex; justify-content: space-between; align-items: center; margin: -.45rem 0 1.5rem; color: #77737d; font: 400 .72rem/1.3 var(--font-body); }\n        .search-discovery-count button { padding: 0; border: 0; background: transparent; color: #f472b6; font: 600 .75rem/1.3 var(--font-body); cursor: pointer; }\n        .search-filters { display: flex; gap: 1.2rem; overflow-x: auto; margin: -1.4rem 0 1.25rem; border-bottom: 1px solid rgba(255,255,255,.08); scrollbar-width: none; }\n        .search-filter-tab { flex: 0 0 auto; padding: .65rem 0 .7rem; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #8d8993; font: 400 .8rem/1.2 var(--font-body); cursor: pointer; }\n        .search-filter-tab[aria-selected="true"] { border-bottom-color: #ec4899; color: #f2efe9; font-weight: 600; }\n        .search-filter-options { display: flex; flex-wrap: wrap; gap: .55rem 1rem; margin: 0 0 1.5rem; }\n        .search-filter-option { padding: .35rem 0; border: 0; border-bottom: 1px solid transparent; background: transparent; color: #8d8993; font: 400 .78rem/1.3 var(--font-body); cursor: pointer; }\n        .search-filter-option[aria-pressed="true"] { border-bottom-color: #ec4899; color: #f2efe9; }\n        .search-filter-tab:focus-visible, .search-filter-option:focus-visible { outline: 2px solid #ec4899; outline-offset: 3px; }\n        .search-discovery { display: grid; gap: clamp(2.4rem, 5vw, 4rem); }
         .search-discovery-row { min-width: 0; }
         .search-row-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; margin-bottom: 1.15rem; }
         .search-row-copy { display: grid; gap: .45rem; min-width: 0; }
@@ -426,7 +426,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         .search-row-heading p { max-width: 38rem; margin: 0; color: var(--color-muted-400); font: 400 .85rem/1.5 var(--font-body); }
         .search-row-track { display: flex; gap: .9rem; overflow-x: auto; padding: .1rem .05rem .8rem; margin: 0 -.05rem; scroll-snap-type: x mandatory; overscroll-behavior-inline: contain; scrollbar-width: none; }
         .search-row-track::-webkit-scrollbar { display: none; }
-        .search-result { flex: 0 0 clamp(125px, 15vw, 180px); min-width: 0; scroll-snap-align: start; }
+        .search-result { flex: 0 0 clamp(125px, 15vw, 180px); min-width: 0; scroll-snap-align: start; }\n        .search-result-trending { flex-basis: 168px; display: flex; align-items: flex-end; gap: .2rem; }\n        .search-result-trending .search-card { width: 132px; flex: 0 0 132px; }\n        .search-rank { flex: 1 1 auto; align-self: center; margin-bottom: 2.1rem; color: transparent; -webkit-text-stroke: 2px #f2efe9; font: 500 clamp(3.5rem, 6vw, 5.5rem)/.85 var(--font-body); letter-spacing: -.08em; }\n        .search-score { color: #77737d !important; font-size: .72rem !important; }\n        .search-score strong { color: #f2efe9; font-weight: 600; }
         .search-card { display: block; min-width: 0; color: inherit; text-decoration: none; }
         .search-poster { aspect-ratio: 2 / 3; overflow: hidden; background: var(--color-ink-900); }
         .search-poster img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 500ms cubic-bezier(.2,.7,.2,1); }
@@ -448,7 +448,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
           .search-row-heading h2 { font-size: 1.85rem; }
           .search-row-heading p { font-size: .8rem; }
           .search-row-track { gap: .7rem; }
-          .search-result { flex-basis: 132px; }
+          .search-result { flex-basis: 132px; }\n          .search-result-trending { flex-basis: 168px; }\n          .search-result-trending .search-card { flex-basis: 132px; }
           .search-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.8rem .7rem; }
           .search-info { padding-top: .55rem; }
         }
@@ -481,7 +481,7 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
                   </div>
                 </header>
                 <div className="search-row-track" aria-label={t(row.titleKey)}>
-                  {items.map(renderCard)}
+                  {items.map((item, index) => renderCard(item, index, row.id))}
                 </div>
               </section>
             );
