@@ -93,11 +93,11 @@ async function loadCached(key:string,type:"search"|"filters",filters:Record<stri
   let ownsLock=await claimCacheLock(key,owner);
   if(!ownsLock) {
     // Another server instance is filling this exact query. Wait for its result.
-    for(let attempt=0;attempt<10;attempt++) {
-      await new Promise(resolve=>setTimeout(resolve,400));
+    for(let attempt=0;attempt<24;attempt++) {
+      await new Promise(resolve=>setTimeout(resolve,500));
       const shared=await readCache(key);
       if(shared) return {data:shared,cache:"HIT"};
-      if(attempt===4) ownsLock=await claimCacheLock(key,owner);
+      if(attempt===12) ownsLock=await claimCacheLock(key,owner);
       if(ownsLock) break;
     }
   }
