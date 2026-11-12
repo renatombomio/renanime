@@ -257,13 +257,24 @@ async function fetchDiscoveryRows(personalEntries: PersonalAnimeEntry[] = []): P
 }
 
 async function fetchFilteredAnime(filters: { genre: string[]; year: string; format: string; status: string }): Promise<{ items: Media[]; total: number }> {
-  const query = `query FilterAnime($genres: [String], $year: Int, $format: MediaFormat, $status: MediaStatus, $before: FuzzyDateInt) {
-    Page(page: 1, perPage: 50) { pageInfo { total } media(type: ANIME, genre_in: $genres, seasonYear: $year, format: $format, status: $status, startDate_lesser: $before, sort: POPULARITY_DESC, isAdult: false) { ${MEDIA_FIELDS} } }
+  const query = `query FilterAnime($genres: [String], $format: MediaFormat, $status: MediaStatus, $dateAfter: FuzzyDateInt, $dateBefore: FuzzyDateInt) {
+    Page(page: 1, perPage: 50) {
+      pageInfo { total }
+      media(type: ANIME, genre_in: $genres, format: $format, status: $status, startDate_greater: $dateAfter, startDate_lesser: $dateBefore, sort: POPULARITY_DESC, isAdult: false) { ${MEDIA_FIELDS} }
+    }
   }`;
-  const response = await fetch("https://graphql.anilist.co", { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify({ query, variables: { genres: filters.genre.length ? filters.genre : null, year: filters.year && filters.year !== "before-2016" ? Number(filters.year) : null, format: filters.format || null, status: filters.status || null, before: filters.year === "before-2016" ? 20170101 : null } }) });
-  if (!response.ok) throw new Error("Filter request failed");
+  const selectedYear = filters.year && filters.year !== "before-2016" ? Number(filters.year) : null;
+  const dateAfter = selectedYear ? selectedYear * 10000 - 1 : null;
+  const dateBefore = selectedYear ? (selectedYear + 1) * 10000 + 1 : filters.year === "before-2016" ? 20160101 : null;
+  const response = await fetch("https://graphql.anilist.co", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({ query, variables: { genres: filters.genre.length ? filters.genre : null, format: filters.format || null, status: filters.status || null, dateAfter, dateBefore } }),
+  });
   const payload = await response.json();
-  if (payload.errors?.length) throw new Error("Filter query failed");
+  if (!response.ok || payload.errors?.length) {
+    throw new Error(payload.errors?.map((error: { message?: string }) => error.message).join("; ") || "Filter request failed");
+  }
   return { items: payload.data?.Page?.media ?? [], total: payload.data?.Page?.pageInfo?.total ?? 0 };
 }
 export default function SearchView({ lang = "es" }: { lang?: Lang }) {
