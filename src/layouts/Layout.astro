@@ -130,7 +130,13 @@ import Analytics from '@vercel/analytics/astro';
   }
 
   function applySolarTheme(location: SolarLocation) {
-    if (document.body.classList.contains("theme-ghibli")) return;
+    if (document.body.classList.contains("theme-ghibli")) {
+      delete document.documentElement.dataset.timeTheme;
+      delete document.body.dataset.timeTheme;
+      const themeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+      if (themeColor) themeColor.content = "#FFF7E8";
+      return;
+    }
     const now = new Date();
     const sunrise = solarEvent(now, location.latitude, location.longitude, true);
     const sunset = solarEvent(now, location.latitude, location.longitude, false);
@@ -143,7 +149,11 @@ import Analytics from '@vercel/analytics/astro';
   }
 
   async function initSolarTheme() {
-    if (document.body.classList.contains("theme-ghibli")) return;
+    if (document.body.classList.contains("theme-ghibli")) {
+      delete document.documentElement.dataset.timeTheme;
+      delete document.body.dataset.timeTheme;
+      return;
+    }
     const key = "renanime-solar-location";
     let location: SolarLocation | null = null;
     try {

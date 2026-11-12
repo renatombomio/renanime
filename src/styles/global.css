@@ -362,19 +362,19 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
 /* Location-aware day theme. Coordinates stay in this browser and are never sent to Renanime. */
 :root[data-time-theme="day"] {
   color-scheme: light;
-  --color-ink-950: #f5f3ef;
+  --color-ink-950: #ffffff;
   --color-ink-900: #ffffff;
-  --color-ink-850: #eeece8;
-  --color-ink-800: #e7e4df;
-  --color-ink-700: #dcd8d1;
-  --color-ink-600: #cbc6be;
-  --color-paper-50: #19181b;
-  --color-paper-100: #29272c;
-  --color-paper-200: #49464e;
-  --color-paper-300: #625e67;
-  --color-muted-400: #77727d;
-  --color-muted-500: #918c96;
-  --color-muted-600: #aaa5ae;
+  --color-ink-850: #f5f5f5;
+  --color-ink-800: #eeeeee;
+  --color-ink-700: #e5e5e5;
+  --color-ink-600: #d4d4d4;
+  --color-paper-50: #111111;
+  --color-paper-100: #222222;
+  --color-paper-200: #444444;
+  --color-paper-300: #666666;
+  --color-muted-400: #737373;
+  --color-muted-500: #8a8a8a;
+  --color-muted-600: #a3a3a3;
   --color-border: rgba(25, 24, 27, .10);
   --color-border-strong: rgba(25, 24, 27, .20);
   --color-border-card: rgba(25, 24, 27, .12);
@@ -383,20 +383,20 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
   --color-border-detail: rgba(25, 24, 27, .28);
   --color-overlay: rgba(245, 243, 239, .82);
   --color-backdrop: rgba(25, 24, 27, .22);
-  --color-background: #f5f3ef;
+  --color-background: #ffffff;
   --color-surface: #ffffff;
-  --color-surface-raised: #eeece8;
-  --color-surface-hover: #e7e4df;
-  --color-text-primary: #19181b;
-  --color-text-secondary: #49464e;
-  --color-text-muted: #77727d;
+  --color-surface-raised: #f5f5f5;
+  --color-surface-hover: #eeeeee;
+  --color-text-primary: #111111;
+  --color-text-secondary: #444444;
+  --color-text-muted: #737373;
   --color-border-subtle: rgba(25, 24, 27, .10);
-  --gradient-hero: linear-gradient(180deg, rgba(245,243,239,.02), rgba(245,243,239,.84));
-  --gradient-vignette: radial-gradient(circle at center, transparent 35%, rgba(245,243,239,.28) 100%);
-  --shadow-soft: 0 8px 30px rgba(30, 25, 20, .08);
-  --shadow-deep: 0 24px 80px rgba(30, 25, 20, .16);
+  --gradient-hero: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.88));
+  --gradient-vignette: radial-gradient(circle at center, transparent 35%, rgba(255,255,255,.28) 100%);
+  --shadow-soft: 0 8px 30px rgba(0, 0, 0, .08);
+  --shadow-deep: 0 24px 80px rgba(0, 0, 0, .16);
   --shadow-card: 0 12px 34px rgba(30, 25, 20, .08);
-  --shadow-card-hover: 0 18px 42px rgba(30, 25, 20, .13);
+  --shadow-card-hover: 0 18px 42px rgba(0, 0, 0, .13);
 }
 :root[data-time-theme="day"] html,
 :root[data-time-theme="day"] body { background: #f5f3ef; color: #19181b; }
@@ -448,3 +448,58 @@ html.mobile-menu-open,html.mobile-menu-open body { overflow:hidden; }
 :root[data-time-theme="day"] .anime-detail-copy h1,
 :root[data-time-theme="day"] .anime-detail-back { color: #19181b; }
 :root[data-time-theme="day"] .anime-detail-synopsis { color: #49464e; }
+
+/* Day mode applies across the complete non-Ghibli experience. */
+:root[data-time-theme="day"] {
+  color-scheme: light;
+  background: #fff;
+  color: #111;
+}
+:root[data-time-theme="day"] body {
+  background: #fff !important;
+  color: #111;
+}
+:root[data-time-theme="day"] main,
+:root[data-time-theme="day"] .page,
+:root[data-time-theme="day"] .page-shell,
+:root[data-time-theme="day"] .profile-page,
+:root[data-time-theme="day"] .community-page,
+:root[data-time-theme="day"] .debates-page,
+:root[data-time-theme="day"] .search-page,
+:root[data-time-theme="day"] .genres-page,
+:root[data-time-theme="day"] .collection-page,
+:root[data-time-theme="day"] .favorites-page {
+  color: #111;
+}
+:root[data-time-theme="day"] .site-footer {
+  background: #f5f5f5;
+  color: #444;
+  border-top-color: rgba(0,0,0,.1);
+}
+:root[data-time-theme="day"] .site-header {
+  background: rgba(255,255,255,.94);
+  color: #111;
+  border-bottom-color: rgba(0,0,0,.1);
+}
+:root[data-time-theme="day"] .site-header .brand,
+:root[data-time-theme="day"] .site-header .desktop-nav a[aria-current="page"],
+:root[data-time-theme="day"] .site-header .desktop-nav a:hover,
+:root[data-time-theme="day"] .site-header .mobile-toggle {
+  color: #111;
+}
+:root[data-time-theme="day"] .mobile-panel,
+:root[data-time-theme="day"] [role="dialog"],
+:root[data-time-theme="day"] [role="menu"] {
+  background: #fff;
+  color: #111;
+  border-color: rgba(0,0,0,.12);
+}
+:root[data-time-theme="day"] input,
+:root[data-time-theme="day"] textarea,
+:root[data-time-theme="day"] select {
+  color-scheme: light;
+}
+:root[data-time-theme="day"] ::selection {
+  background: var(--color-accent);
+  color: #fff;
+}
