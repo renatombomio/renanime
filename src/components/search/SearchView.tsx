@@ -53,7 +53,14 @@ function currentSeason(date = new Date()): { season: "WINTER" | "SPRING" | "SUMM
   return { season, year: date.getFullYear() };
 }
 
-function formatShortDate(date: Media["startDate"], format: string | null | undefined, lang: Lang) {\n  if (!date?.year || !date.month || !date.day) return date?.year ? String(date.year) : "";\n  const currentYear = new Date().getFullYear();\n  const dateLabel = new Intl.DateTimeFormat(lang === "en" ? "en-GB" : "es-ES", { day: "numeric", month: "short" }).format(new Date(date.year, date.month - 1, date.day));\n  return `${dateLabel}${date.year !== currentYear ? ` ${date.year}` : ""} · ${format === "MOVIE" ? (lang === "en" ? "Film" : "Película") : (lang === "en" ? "Series" : "Serie")}`;\n}\n\nfunction formatDate(date: Media["startDate"], lang: Lang) {
+function formatShortDate(date: Media["startDate"], format: string | null | undefined, lang: Lang) {
+  if (!date?.year || !date.month || !date.day) return date?.year ? String(date.year) : "";
+  const currentYear = new Date().getFullYear();
+  const dateLabel = new Intl.DateTimeFormat(lang === "en" ? "en-GB" : "es-ES", { day: "numeric", month: "short" }).format(new Date(date.year, date.month - 1, date.day));
+  return `${dateLabel}${date.year !== currentYear ? ` ${date.year}` : ""} · ${format === "MOVIE" ? (lang === "en" ? "Film" : "Película") : (lang === "en" ? "Series" : "Serie")}`;
+}
+
+function formatDate(date: Media["startDate"], lang: Lang) {
   if (!date?.year) return lang === "en" ? "Unknown date" : "Fecha desconocida";
   if (!date.month || !date.day) return String(date.year);
   return new Date(date.year, date.month - 1, date.day).toLocaleDateString(
@@ -274,7 +281,11 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
   const [personalLibraryReady, setPersonalLibraryReady] = useState(false);
   const [discovery, setDiscovery] = useState<Record<DiscoveryRowId, Media[]> | null>(null);
   const [discoveryLoading, setDiscoveryLoading] = useState(true);
-  const [discoveryError, setDiscoveryError] = useState(false);\n  const [activeFilter, setActiveFilter] = useState<"discover" | "genre" | "year" | "format" | "status">("discover");\n  const [filters, setFilters] = useState({ genre: "", year: "", format: "", status: "" });\n  const [filtersReady, setFiltersReady] = useState(false);\n  const lastSurpriseId = useRef<number | null>(null);
+  const [discoveryError, setDiscoveryError] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<"discover" | "genre" | "year" | "format" | "status">("discover");
+  const [filters, setFilters] = useState({ genre: "", year: "", format: "", status: "" });
+  const [filtersReady, setFiltersReady] = useState(false);
+  const lastSurpriseId = useRef<number | null>(null);
 
   useEffect(() => {
     const value = query.trim();
@@ -387,7 +398,29 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
     setSubmitted(query.trim());
   };
 
-  const showDiscovery = !query.trim() && !submitted.trim();\n  const allDiscoveryItems = discovery ? Object.values(discovery).flat() : [];\n  const filterItems = results.length ? results : allDiscoveryItems;\n  const options = {\n    genre: [...new Set(filterItems.flatMap((item) => item.genres ?? []))].sort(),\n    year: [...new Set(filterItems.map((item) => item.seasonYear ?? item.startDate?.year).filter((value): value is number => Boolean(value)))].sort((a, b) => b - a).map(String),\n    format: [...new Set(filterItems.map((item) => item.format).filter((value): value is string => Boolean(value)))].sort(),\n    status: [...new Set(filterItems.map((item) => item.status).filter((value): value is string => Boolean(value)))].sort(),\n  };\n  const matchesFilters = (item: Media) =>\n    (!filters.genre || item.genres?.includes(filters.genre)) &&\n    (!filters.year || String(item.seasonYear ?? item.startDate?.year ?? "") === filters.year) &&\n    (!filters.format || item.format === filters.format) &&\n    (!filters.status || item.status === filters.status);\n  const updateFilter = (key: keyof typeof filters, value: string) => setFilters((current) => ({ ...current, [key]: current[key] === value ? "" : value }));\n  const surprisePool = allDiscoveryItems.filter(matchesFilters);\n  const surprise = () => {\n    if (!surprisePool.length) return;\n    const candidates = surprisePool.filter((item) => item.id !== lastSurpriseId.current);\n    const selected = (candidates.length ? candidates : surprisePool)[Math.floor(Math.random() * (candidates.length ? candidates.length : surprisePool.length))];\n    lastSurpriseId.current = selected.id;\n    window.location.href = `${lang === "en" ? "/en" : ""}/anime/${selected.id}`;\n  };
+  const showDiscovery = !query.trim() && !submitted.trim();
+  const allDiscoveryItems = discovery ? Object.values(discovery).flat() : [];
+  const filterItems = results.length ? results : allDiscoveryItems;
+  const options = {
+    genre: [...new Set(filterItems.flatMap((item) => item.genres ?? []))].sort(),
+    year: [...new Set(filterItems.map((item) => item.seasonYear ?? item.startDate?.year).filter((value): value is number => Boolean(value)))].sort((a, b) => b - a).map(String),
+    format: [...new Set(filterItems.map((item) => item.format).filter((value): value is string => Boolean(value)))].sort(),
+    status: [...new Set(filterItems.map((item) => item.status).filter((value): value is string => Boolean(value)))].sort(),
+  };
+  const matchesFilters = (item: Media) =>
+    (!filters.genre || item.genres?.includes(filters.genre)) &&
+    (!filters.year || String(item.seasonYear ?? item.startDate?.year ?? "") === filters.year) &&
+    (!filters.format || item.format === filters.format) &&
+    (!filters.status || item.status === filters.status);
+  const updateFilter = (key: keyof typeof filters, value: string) => setFilters((current) => ({ ...current, [key]: current[key] === value ? "" : value }));
+  const surprisePool = allDiscoveryItems.filter(matchesFilters);
+  const surprise = () => {
+    if (!surprisePool.length) return;
+    const candidates = surprisePool.filter((item) => item.id !== lastSurpriseId.current);
+    const selected = (candidates.length ? candidates : surprisePool)[Math.floor(Math.random() * (candidates.length ? candidates.length : surprisePool.length))];
+    lastSurpriseId.current = selected.id;
+    window.location.href = `${lang === "en" ? "/en" : ""}/anime/${selected.id}`;
+  };
 
   const renderCard = (item: Media, index: number, row?: DiscoveryRowId) => {
     const title = lang === "en"
@@ -395,7 +428,8 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
       : (item.title?.romaji || item.title?.english || t("detail.noTitle"));
     const image = item.coverImage?.extraLarge || item.coverImage?.large;
     return (
-      <article className={`search-result${row === "trending" ? " search-result-trending" : ""}`} key={item.id}>\n        {row === "trending" && <span className="search-rank" aria-label={`${index + 1}`}>{index + 1}</span>}
+      <article className={`search-result${row === "trending" ? " search-result-trending" : ""}`} key={item.id}>
+        {row === "trending" && <span className="search-rank" aria-label={`${index + 1}`}>{index + 1}</span>}
         <a className="search-card" href={item.providerId?.startsWith("mal-") ? `${lang === "en" ? "/en" : ""}/anime/search?title=${encodeURIComponent(item.title?.romaji || item.title?.english || "")}` : `${lang === "en" ? "/en" : ""}/anime/${item.id}`} aria-label={title}>
           <div className="search-poster">
             {image ? <img src={image} alt="" loading={index < 4 ? "eager" : "lazy"} /> : <div className="search-poster-placeholder">{title}</div>}
@@ -435,7 +469,12 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
         .search-row-heading p { max-width: 38rem; margin: 0; color: var(--color-muted-400); font: 400 .85rem/1.5 var(--font-body); }
         .search-row-track { display: flex; gap: .9rem; overflow-x: auto; padding: .1rem .05rem .8rem; margin: 0 -.05rem; scroll-snap-type: x mandatory; overscroll-behavior-inline: contain; scrollbar-width: none; }
         .search-row-track::-webkit-scrollbar { display: none; }
-        .search-result { flex: 0 0 132px; min-width: 0; scroll-snap-align: start; }\n        .search-result-trending { flex-basis: 168px; display: flex; align-items: flex-end; gap: .2rem; }\n        .search-result-trending .search-card { width: 132px; flex: 0 0 132px; }\n        .search-rank { flex: 1 1 auto; align-self: center; margin-bottom: 2.1rem; color: transparent; -webkit-text-stroke: 2px #f2efe9; font: 500 clamp(3.5rem, 6vw, 5.5rem)/.85 var(--font-body); letter-spacing: -.08em; }\n        .search-score { color: #77737d !important; font-size: .72rem !important; }\n        .search-score strong { color: #f2efe9; font-weight: 600; }
+        .search-result { flex: 0 0 132px; min-width: 0; scroll-snap-align: start; }
+        .search-result-trending { flex-basis: 168px; display: flex; align-items: flex-end; gap: .2rem; }
+        .search-result-trending .search-card { width: 132px; flex: 0 0 132px; }
+        .search-rank { flex: 1 1 auto; align-self: center; margin-bottom: 2.1rem; color: transparent; -webkit-text-stroke: 2px #f2efe9; font: 500 clamp(3.5rem, 6vw, 5.5rem)/.85 var(--font-body); letter-spacing: -.08em; }
+        .search-score { color: #77737d !important; font-size: .72rem !important; }
+        .search-score strong { color: #f2efe9; font-weight: 600; }
         .search-card { display: block; min-width: 0; color: inherit; text-decoration: none; }
         .search-poster { aspect-ratio: 2 / 3; overflow: hidden; background: var(--color-ink-900); }
         .search-poster img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 500ms cubic-bezier(.2,.7,.2,1); }
@@ -457,7 +496,9 @@ export default function SearchView({ lang = "es" }: { lang?: Lang }) {
           .search-row-heading h2 { font-size: 1.85rem; }
           .search-row-heading p { font-size: .8rem; }
           .search-row-track { gap: .7rem; }
-          .search-result { flex-basis: 132px; }\n          .search-result-trending { flex-basis: 168px; }\n          .search-result-trending .search-card { flex-basis: 132px; }
+          .search-result { flex-basis: 132px; }
+          .search-result-trending { flex-basis: 168px; }
+          .search-result-trending .search-card { flex-basis: 132px; }
           .search-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.8rem .7rem; }
           .search-info { padding-top: .55rem; }
         }
