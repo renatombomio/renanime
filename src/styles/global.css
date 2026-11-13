@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "./tokens.css";
 @import "./utilities.css";
+@import "./day-mode.css";
 
 html {
   overflow-y: auto;

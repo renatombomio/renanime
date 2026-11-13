@@ -1,0 +1,273 @@
+/* Renanime 2.0 — high-contrast daytime theme.
+   Night mode remains the default; these overrides only apply when solar theme is day.
+   Ghibli deliberately does not receive data-time-theme and remains isolated. */
+:root[data-time-theme="day"] {
+  color-scheme: light;
+  --color-ink-950: #f5f5f7;
+  --color-ink-900: #ffffff;
+  --color-ink-850: #f0f0f3;
+  --color-ink-800: #e8e8ed;
+  --color-ink-700: #dedee5;
+  --color-ink-600: #c9c9d2;
+  --color-paper-50: #17171c;
+  --color-paper-100: #26262d;
+  --color-paper-200: #45454f;
+  --color-paper-300: #5d5d68;
+  --color-muted-400: #62626e;
+  --color-muted-500: #747480;
+  --color-muted-600: #858591;
+  --color-border: rgba(25, 25, 35, .12);
+  --color-border-strong: rgba(25, 25, 35, .22);
+  --color-border-card: rgba(25, 25, 35, .13);
+  --color-border-card-hover: rgba(25, 25, 35, .28);
+  --color-border-card-strong: rgba(25, 25, 35, .38);
+  --color-border-detail: rgba(25, 25, 35, .3);
+  --color-overlay: rgba(255,255,255,.9);
+  --color-backdrop: rgba(20,20,28,.28);
+  --color-overlay-detail: rgba(255,255,255,.9);
+  --color-overlay-control: rgba(255,255,255,.88);
+  --color-overlay-library: rgba(255,255,255,.82);
+  --color-placeholder-glow: rgba(30,30,40,.06);
+  --color-background: #f5f5f7;
+  --color-surface: #ffffff;
+  --color-surface-raised: #f1f1f4;
+  --color-surface-hover: #e9e9ee;
+  --color-text-primary: #17171c;
+  --color-text-secondary: #45454f;
+  --color-text-muted: #62626e;
+  --color-border-subtle: rgba(25,25,35,.12);
+  --shadow-soft: 0 8px 30px rgba(25,25,35,.08);
+  --shadow-deep: 0 24px 80px rgba(25,25,35,.16);
+  --shadow-overlay: 0 24px 60px rgba(25,25,35,.2);
+  --shadow-card: 0 8px 24px rgba(25,25,35,.07);
+  --shadow-card-hover: 0 14px 32px rgba(25,25,35,.12);
+  --gradient-hero: linear-gradient(180deg, rgba(9,9,11,.02) 0%, rgba(9,9,11,.72) 100%);
+  --gradient-vignette: radial-gradient(circle at center, transparent 35%, rgba(9,9,11,.48) 100%);
+}
+html[data-time-theme="day"],
+html[data-time-theme="day"] body {
+  background: var(--color-background);
+  color: var(--color-text-primary);
+}
+html[data-time-theme="day"] body { color-scheme: light; }
+html[data-time-theme="day"] input,
+html[data-time-theme="day"] textarea,
+html[data-time-theme="day"] select { color-scheme: light; }
+html[data-time-theme="day"] input::placeholder,
+html[data-time-theme="day"] textarea::placeholder { color: #777783; }
+html[data-time-theme="day"] .site-header {
+  background: rgba(255,255,255,.96);
+  border-bottom-color: rgba(25,25,35,.12);
+  color: #17171c;
+}
+html[data-time-theme="day"] .site-header .brand,
+html[data-time-theme="day"] .site-header .mobile-toggle,
+html[data-time-theme="day"] .site-header .language-toggle,
+html[data-time-theme="day"] .site-header button { color: #17171c; }
+html[data-time-theme="day"] .site-header .language-toggle { border-color: rgba(25,25,35,.2); }
+html[data-time-theme="day"] .mobile-panel { background:#fff; border-color:rgba(25,25,35,.14); }
+html[data-time-theme="day"] .mobile-panel a { color:#34343d; border-bottom-color:rgba(25,25,35,.1); }
+html[data-time-theme="day"] .site-footer { background:#fff; color:#45454f; border-top-color:rgba(25,25,35,.12); }
+
+/* Profile: keep the cover artwork dramatic, but make the profile itself a light surface. */
+html[data-time-theme="day"]:has(.profile-page),
+html[data-time-theme="day"]:has(.profile-page) body,
+html[data-time-theme="day"] body:has(.profile-page),
+html[data-time-theme="day"] body:has(.profile-page) .profile-page,
+html[data-time-theme="day"] body:has(.profile-page) .profile-card {
+  background:#f5f5f7 !important;
+  color:#17171c !important;
+}
+html[data-time-theme="day"] body:has(.profile-page) .profile-header { border-bottom-color:rgba(25,25,35,.14); }
+html[data-time-theme="day"] body:has(.profile-page) .cover-preview::after {
+  background:linear-gradient(180deg,rgba(0,0,0,.02) 28%,rgba(0,0,0,.2) 58%,#f5f5f7 100%);
+}
+html[data-time-theme="day"] body:has(.profile-page) .avatar-preview { border-color:#f5f5f7; }
+html[data-time-theme="day"] body:has(.profile-page) .profile-edit-toggle {
+  color:#17171c; border-color:rgba(25,25,35,.2); background:rgba(255,255,255,.9);
+}
+html[data-time-theme="day"] body:has(.profile-page) .handle,
+html[data-time-theme="day"] body:has(.profile-page) .profile-about p { color:#45454f; }
+html[data-time-theme="day"] body:has(.profile-page) .profile-location-view,
+html[data-time-theme="day"] body:has(.profile-page) .profile-stat span,
+html[data-time-theme="day"] body:has(.profile-page) .profile-comments-total,
+html[data-time-theme="day"] body:has(.profile-page) .profile-anime-card-meta span,
+html[data-time-theme="day"] body:has(.profile-page) .profile-anime-empty,
+html[data-time-theme="day"] body:has(.profile-page) .field-hint,
+html[data-time-theme="day"] body:has(.profile-page) .upload-note { color:#62626e !important; }
+html[data-time-theme="day"] body:has(.profile-page) .genre-tags span {
+  border-color:rgba(25,25,35,.16); background:#fff; color:#34343d;
+}
+html[data-time-theme="day"] body:has(.profile-page) .profile-anime-card { color:#17171c !important; }
+html[data-time-theme="day"] body:has(.profile-page) .profile-character-card,
+html[data-time-theme="day"] body:has(.profile-page) .privacy-setting {
+  border-color:rgba(25,25,35,.14); background:#fff;
+}
+html[data-time-theme="day"] body:has(.profile-page) .profile-character-copy span,
+html[data-time-theme="day"] body:has(.profile-page) .profile-character-empty,
+html[data-time-theme="day"] body:has(.profile-page) .privacy-setting small,
+html[data-time-theme="day"] body:has(.profile-page) .editor-fields label { color:#555560; }
+html[data-time-theme="day"] body:has(.profile-page) .privacy-setting strong { color:#17171c; }
+html[data-time-theme="day"] body:has(.profile-page) .editor-fields input,
+html[data-time-theme="day"] body:has(.profile-page) .editor-fields textarea {
+  border-color:rgba(25,25,35,.18); background:#fff; color:#17171c;
+}
+html[data-time-theme="day"] body:has(.profile-page) .username-input { border-color:rgba(25,25,35,.18); background:#fff; color:#555560; }
+
+/* Public profiles */
+html[data-time-theme="day"] body:has(.public-profile-page),
+html[data-time-theme="day"] body:has(.public-profile-page) .public-profile-page,
+html[data-time-theme="day"] body:has(.public-profile-page) .public-profile { background:#f5f5f7 !important; color:#17171c !important; }
+html[data-time-theme="day"] body:has(.public-profile-page) .public-cover:after { background:linear-gradient(180deg,transparent 35%,#f5f5f7 100%); }
+html[data-time-theme="day"] body:has(.public-profile-page) .public-identity img { border-color:#f5f5f7; }
+html[data-time-theme="day"] body:has(.public-profile-page) .public-identity p,
+html[data-time-theme="day"] body:has(.public-profile-page) .public-about p { color:#45454f; }
+html[data-time-theme="day"] body:has(.public-profile-page) .public-location,
+html[data-time-theme="day"] body:has(.public-profile-page) .public-stats span,
+html[data-time-theme="day"] body:has(.public-profile-page) .public-library-heading span,
+html[data-time-theme="day"] body:has(.public-profile-page) .public-anime-meta,
+html[data-time-theme="day"] body:has(.public-profile-page) .public-anime-empty { color:#62626e; }
+html[data-time-theme="day"] body:has(.public-profile-page) .public-interests span { border-color:rgba(25,25,35,.16); color:#34343d; }
+html[data-time-theme="day"] body:has(.public-profile-page) .public-anime-card { color:#17171c; }
+
+/* Community, debate feed and activity */
+html[data-time-theme="day"] .community-feed,
+html[data-time-theme="day"] .debates,
+html[data-time-theme="day"] .conversation { background:#f5f5f7 !important; color:#17171c !important; }
+html[data-time-theme="day"] .community-feed .srch,
+html[data-time-theme="day"] .debates .feed-search input,
+html[data-time-theme="day"] .debates .create-row .compose-field {
+  background:#fff; border-color:rgba(25,25,35,.16); color:#34343d;
+}
+html[data-time-theme="day"] .community-feed .srch input,
+html[data-time-theme="day"] .debates .feed-search input { color:#17171c; }
+html[data-time-theme="day"] .community-feed .srch input::placeholder,
+html[data-time-theme="day"] .debates .feed-search input::placeholder { color:#747480; }
+html[data-time-theme="day"] .community-feed .member,
+html[data-time-theme="day"] .community-feed .author,
+html[data-time-theme="day"] .debates .author,
+html[data-time-theme="day"] .conversation .author { color:#34343d; }
+html[data-time-theme="day"] .community-feed .members-grid,
+html[data-time-theme="day"] .community-feed .post,
+html[data-time-theme="day"] .community-feed .activity-feed,
+html[data-time-theme="day"] .community-feed .actv,
+html[data-time-theme="day"] .debates .post,
+html[data-time-theme="day"] .conversation .thread { border-color:rgba(25,25,35,.12); }
+html[data-time-theme="day"] .community-feed .tx,
+html[data-time-theme="day"] .community-feed .actv,
+html[data-time-theme="day"] .community-feed .activity-quote,
+html[data-time-theme="day"] .debates .tx,
+html[data-time-theme="day"] .conversation .thread .body,
+html[data-time-theme="day"] .conversation .reply p { color:#45454f; }
+html[data-time-theme="day"] .community-feed .actv b,
+html[data-time-theme="day"] .community-feed .actv q,
+html[data-time-theme="day"] .debates .body h2,
+html[data-time-theme="day"] .conversation .thread h1,
+html[data-time-theme="day"] .conversation .replies h2 { color:#17171c; }
+html[data-time-theme="day"] .community-feed .hd time,
+html[data-time-theme="day"] .community-feed .sec small,
+html[data-time-theme="day"] .community-feed .actv em,
+html[data-time-theme="day"] .community-feed .community-note,
+html[data-time-theme="day"] .debates .hd time,
+html[data-time-theme="day"] .debates .empty,
+html[data-time-theme="day"] .conversation .author time,
+html[data-time-theme="day"] .conversation .reply time,
+html[data-time-theme="day"] .conversation .empty,
+html[data-time-theme="day"] .conversation .login,
+html[data-time-theme="day"] .conversation .not-found p { color:#62626e; }
+html[data-time-theme="day"] .community-feed .tag,
+html[data-time-theme="day"] .debates .tag,
+html[data-time-theme="day"] .conversation .category { background:#e9e9ee; color:#45454f; }
+html[data-time-theme="day"] .debates .sort a,
+html[data-time-theme="day"] .debates .cats a,
+html[data-time-theme="day"] .debates .cat-choice { background:#fff; border-color:rgba(25,25,35,.15); color:#45454f; }
+html[data-time-theme="day"] .debates .sort a.active,
+html[data-time-theme="day"] .debates .cats a.active,
+html[data-time-theme="day"] .debates .cat-choice.active { background:rgba(236,72,153,.1); color:#9d174d; border-color:rgba(190,24,93,.32); }
+html[data-time-theme="day"] .debates .post-menu,
+html[data-time-theme="day"] .debates .composer-sheet,
+html[data-time-theme="day"] .debates .sheet-panel,
+html[data-time-theme="day"] .debates .report-dialog { background:#fff; color:#17171c; border-color:rgba(25,25,35,.15); }
+html[data-time-theme="day"] .debates .post-menu button,
+html[data-time-theme="day"] .debates .report-dialog label { color:#34343d; }
+html[data-time-theme="day"] .debates #debate-title,
+html[data-time-theme="day"] .debates #debate-body,
+html[data-time-theme="day"] .debates .report-dialog select,
+html[data-time-theme="day"] .debates .report-dialog textarea,
+html[data-time-theme="day"] .conversation #reply-form textarea { color:#17171c; background:#fff; border-color:rgba(25,25,35,.18); }
+html[data-time-theme="day"] .debates #debate-title::placeholder,
+html[data-time-theme="day"] .debates #debate-body::placeholder { color:#747480; }
+html[data-time-theme="day"] .debates .feed-toast { background:#fff; color:#17171c; border-color:rgba(25,25,35,.16); }
+
+/* Search / discovery */
+html[data-time-theme="day"] .search-form { background:#fff; border-color:rgba(25,25,35,.18); }
+html[data-time-theme="day"] .search-form input { color:#17171c; }
+html[data-time-theme="day"] .search-discovery-count,
+html[data-time-theme="day"] .search-filter-current,
+html[data-time-theme="day"] .search-filter-group h3,
+html[data-time-theme="day"] .search-filter-panel-footer,
+html[data-time-theme="day"] .search-filter-results-count,
+html[data-time-theme="day"] .search-status,
+html[data-time-theme="day"] .search-discovery-status { color:#62626e; }
+html[data-time-theme="day"] .search-filter-trigger,
+html[data-time-theme="day"] .search-filter-summary,
+html[data-time-theme="day"] .search-filter-empty { color:#17171c; }
+html[data-time-theme="day"] .search-filter-panel { border-top-color:rgba(25,25,35,.14); }
+html[data-time-theme="day"] .search-filter-pill { background:#fff; border-color:rgba(25,25,35,.16); color:#45454f; }
+html[data-time-theme="day"] .search-filter-pill[aria-pressed="true"] { background:#17171c; border-color:#17171c; color:#fff; }
+html[data-time-theme="day"] .search-row-heading h2,
+html[data-time-theme="day"] .search-info h3 { color:#17171c; }
+html[data-time-theme="day"] .search-row-heading p,
+html[data-time-theme="day"] .search-info span { color:#62626e; }
+html[data-time-theme="day"] .search-score strong { color:#34343d; }
+
+/* Monthly anime and home sections */
+html[data-time-theme="day"] .anime-week { color:#17171c; border-top-color:rgba(25,25,35,.14); }
+html[data-time-theme="day"] .anime-week-heading h2 { color:#17171c !important; }
+html[data-time-theme="day"] .anime-week-heading:after { color:#62626e; border-color:rgba(25,25,35,.16); }
+html[data-time-theme="day"] .anime-week-card { background:#fff; color:#17171c; border-color:rgba(25,25,35,.14); box-shadow:0 5px 20px rgba(25,25,35,.05); }
+html[data-time-theme="day"] .anime-week-card:hover { background:#fafafa; }
+html[data-time-theme="day"] .anime-week-synopsis { color:#45454f; }
+html[data-time-theme="day"] .anime-week-meta { color:#62626e; }
+html[data-time-theme="day"] .anime-week-meta span+span:before { color:#858591; }
+html[data-time-theme="day"] .anime-week-unavailable { color:#62626e; }
+html[data-time-theme="day"] .anime-week-provider { color:#34343d; }
+html[data-time-theme="day"] .anime-week-trailer { background:#e8e8ed; }
+html[data-time-theme="day"] .home-section,
+html[data-time-theme="day"] .home-section h2,
+html[data-time-theme="day"] .section-heading,
+html[data-time-theme="day"] .section-heading h2 { color:#17171c; }
+
+/* Reusable surfaces and controls with explicit night-mode colors */
+html[data-time-theme="day"] .collection-card a,
+html[data-time-theme="day"] .favorite-card a,
+html[data-time-theme="day"] .card-info,
+html[data-time-theme="day"] .favorite-caption,
+html[data-time-theme="day"] .surface,
+html[data-time-theme="day"] .surface-editorial,
+html[data-time-theme="day"] .surface-raised { background:#fff; color:#17171c; border-color:rgba(25,25,35,.14); }
+html[data-time-theme="day"] .card-info h3,
+html[data-time-theme="day"] .favorite-caption h3 { color:#17171c; }
+html[data-time-theme="day"] .meta,
+html[data-time-theme="day"] .meta span:last-child,
+html[data-time-theme="day"] .favorite-caption span { color:#62626e; }
+html[data-time-theme="day"] .collection-filters button,
+html[data-time-theme="day"] .collection-count,
+html[data-time-theme="day"] .favorites-intro,
+html[data-time-theme="day"] .favorites-controls button { color:#555560; }
+html[data-time-theme="day"] .collection-filters button.is-active { color:#17171c; }
+html[data-time-theme="day"] .collection-tools input,
+html[data-time-theme="day"] .collection-tools select { background:#fff; color:#17171c; border-color:rgba(25,25,35,.18); }
+html[data-time-theme="day"] .load-more,
+html[data-time-theme="day"] .home-gallery-load-more { color:#34343d; border-color:rgba(25,25,35,.2); }
+html[data-time-theme="day"] .anime-detail-copy h1,
+html[data-time-theme="day"] .anime-detail-meta,
+html[data-time-theme="day"] .anime-detail-meta strong { color:#17171c; }
+html[data-time-theme="day"] .anime-detail-back,
+html[data-time-theme="day"] .anime-detail-synopsis { color:#45454f; }
+html[data-time-theme="day"] .anime-detail-synopsis-wrap,
+html[data-time-theme="day"] .anime-detail-translate { background:rgba(255,255,255,.92); color:#34343d; border-color:rgba(25,25,35,.16); }
+html[data-time-theme="day"] .anime-detail-meta small,
+html[data-time-theme="day"] .anime-detail-genres span { color:#62626e; }
+html[data-time-theme="day"] .anime-detail-video { background:#e8e8ed; border-color:rgba(25,25,35,.15); }
+html[data-time-theme="day"] .mobile-toggle { color:#17171c; }
